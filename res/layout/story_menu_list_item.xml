@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TextView
+        android:id="@+id/story_menu_list_item_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:text="Title" />
+
+    <TextView
+        android:id="@+id/story_menu_list_item_summary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/story_menu_list_item_title"
+        android:text="Text" />
+
+    <TextView
+        android:id="@+id/story_menu_list_item_author"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/story_menu_list_item_summary"
+        android:text="Author" />
+
+    <TextView
+        android:id="@+id/story_menu_list_item_words"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/story_menu_list_item_author"
+        android:layout_alignBottom="@+id/story_menu_list_item_author"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@+id/story_menu_list_item_author"
+        android:text="Words"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/story_menu_list_item_follows"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/story_menu_list_item_words"
+        android:layout_alignBottom="@+id/story_menu_list_item_words"
+        android:layout_marginLeft="18dp"
+        android:layout_toRightOf="@+id/story_menu_list_item_words"
+        android:text="Follows"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+</RelativeLayout>

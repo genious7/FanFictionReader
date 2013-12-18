@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.gmail.michaelchentejada.fanfictionreader"
+    android:versionCode="1"
+    android:versionName="1.0" android:installLocation="preferExternal">
+
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="18" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@android:style/Theme.Black">
+        <activity
+            android:name="com.gmail.michaelchentejada.fanfictionreader.MainMenu"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name="com.gmail.michaelchentejada.fanfictionreader.BrowseMenu"></activity>
+        <activity android:name="com.gmail.michaelchentejada.fanfictionreader.CategoryMenu"></activity>
+        <activity android:name="com.gmail.michaelchentejada.fanfictionreader.StoryMenu"></activity>
+    </application>
+
+</manifest>
