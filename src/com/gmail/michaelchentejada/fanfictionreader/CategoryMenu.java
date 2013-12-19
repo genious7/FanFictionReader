@@ -6,6 +6,7 @@ package com.gmail.michaelchentejada.fanfictionreader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -37,6 +38,9 @@ public class CategoryMenu extends Activity {
 	private Context context;
 	private ProgressDialog progress;
 	private ListView listView;
+	private boolean crossover;
+	private boolean firstRun = true;
+	private int position2=0;
 	private parseSite asynctask = new parseSite();
 	private final OnItemClickListener listener = new OnItemClickListener() {
 		@Override
@@ -48,14 +52,31 @@ public class CategoryMenu extends Activity {
 		}
 	};
 
-	private final OnItemSelectedListener sortlistener = new OnItemSelectedListener() {
+	private final OnItemSelectedListener filterListener = new OnItemSelectedListener() {
 
 		@Override
-		public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-			System.out.println(arg2+""+arg3);
-			Collections.sort(list, new ListComparator(arg2));
+		public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long id2) {		
+			if  (firstRun){
+				firstRun = false;
+			}else{
+				position2=position;
+				char selector = ' ';
+				if (position == 0) {
+					selector = ' ';
+				}else if (position == 1){
+					selector = '1';
+				}else{
+					selector = (char) ('a'+position-2);
+				}
+				String url = "https://m.fanfiction.net"+(crossover ? "/crossovers":"")+FANFIC_URLS[id] + "?l=" + Character.toString(selector);
+				asynctask.cancel(true);
+				asynctask =  new parseSite();
+				asynctask.execute(url);
+			}
+/*			
+			Collections.sort(list, new ListComparator(position));
 			SimpleAdapter adapter = new SimpleAdapter(context, list, R.layout.category_menu_list_item, new String[] {Parser.TITLE,Parser.VIEWS}, new int[] {R.id.category_menu_title,R.id.category_menu_views});
-			listView.setAdapter(adapter);
+			listView.setAdapter(adapter);*/
 		}
 
 		@Override
@@ -65,8 +86,9 @@ public class CategoryMenu extends Activity {
 
 	private final OnCheckedChangeListener crossoverListener = new OnCheckedChangeListener() {
 		@Override
-		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {				
-			String url = isChecked ? "http://www.fanfiction.net/crossovers"+FANFIC_URLS[id] : "http://www.fanfiction.net"+FANFIC_URLS[id];
+		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {	
+			crossover = isChecked;
+			String url = isChecked ? "https://m.fanfiction.net/crossovers"+FANFIC_URLS[id] : "https://m.fanfiction.net"+FANFIC_URLS[id];
 			asynctask.cancel(true);
 			asynctask =  new parseSite();
 			asynctask.execute(url);
@@ -96,24 +118,32 @@ public class CategoryMenu extends Activity {
 		listView.addHeaderView(header);
 		listView.setOnItemClickListener(listener);
 		
-		Spinner spinner = (Spinner)header.findViewById(R.id.category_menu_header_sort);
-		ArrayAdapter<CharSequence> sortAdapter = new ArrayAdapter<CharSequence>(context, android.R.layout.simple_spinner_item, getResources().getStringArray(R.array.SortBy));
-		sortAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		spinner.setAdapter(sortAdapter);
-		spinner.setOnItemSelectedListener(sortlistener);
 		
+		Spinner spinner = (Spinner)header.findViewById(R.id.category_menu_header_filter);
+		List<String> filterList = new ArrayList<String>();
+		filterList.add(getString(R.string.top_200));
+		filterList.add("#");
+		for (char i = 'A'; i <= 'Z'; i++) {
+			filterList.add(Character.toString(i));
+		}
+		
+		ArrayAdapter<String> filterAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, filterList);
+		filterAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		spinner.setAdapter(filterAdapter);
+		spinner.setOnItemSelectedListener(filterListener);
+		
+		crossover = getIntent().getBooleanExtra("Crossover", false);
 		ToggleButton crossoverButton = (ToggleButton)findViewById(R.id.category_menu_header_crossover_selector);
-		crossoverButton.setOnCheckedChangeListener(crossoverListener);
+		crossoverButton.setChecked(crossover);
+		crossoverButton.setOnCheckedChangeListener(crossoverListener);	
 		
 		if (savedInstanceState == null){
-			id = getIntent().getIntExtra("Id", 0);
-			boolean crossover = getIntent().getBooleanExtra("Crossover", false);
-				
+			id = getIntent().getIntExtra("Id", 0);	
 			if (id >FANFIC_URLS.length){
 				end(getResources().getString(R.string.dialog_unspecified));
 			}else{
 				setResult(RESULT_OK);
-				String url = crossover ? "http://www.fanfiction.net/crossovers"+FANFIC_URLS[id] : "http://www.fanfiction.net"+FANFIC_URLS[id];
+				String url = crossover ? "https://m.fanfiction.net/crossovers"+FANFIC_URLS[id] : "https://m.fanfiction.net"+FANFIC_URLS[id];
 				asynctask.execute(url);
 			}
 			
@@ -121,6 +151,8 @@ public class CategoryMenu extends Activity {
 			list = (ArrayList<HashMap<String, String>>) savedInstanceState.getSerializable("List");
 			SimpleAdapter adapter = new SimpleAdapter(context, list, R.layout.category_menu_list_item, new String[] {Parser.TITLE,Parser.VIEWS}, new int[] {R.id.category_menu_title,R.id.category_menu_views});
 			listView.setAdapter(adapter);
+			firstRun=true;
+			spinner.setSelection(savedInstanceState.getInt("Position",0));
 		}
 }
 	
@@ -130,6 +162,7 @@ public class CategoryMenu extends Activity {
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		outState.putSerializable("List", list);
+		outState.putInt("Positon", position2);
 		super.onSaveInstanceState(outState);
 	}
 	
@@ -160,8 +193,7 @@ public class CategoryMenu extends Activity {
 			progress.setOnCancelListener(new OnCancelListener() {
 				@Override
 				public void onCancel(DialogInterface dialog) {
-					finish();
-					
+					finish();	
 				}
 			});
 			progress.show();
@@ -170,6 +202,7 @@ public class CategoryMenu extends Activity {
 		
 		@Override
 		protected ArrayList<HashMap<String, String>> doInBackground(String... url) {
+			
 			return Parser.Categories(url[0]);
 		}
 		

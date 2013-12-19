@@ -29,30 +29,28 @@ public class Parser {
 	public static ArrayList<HashMap<String, String>> Categories(String url){	
 		try {
 			org.jsoup.nodes.Document document = Jsoup.connect(url).get();
-			Elements titles = document.select("#list_output div > a");
-			Elements views = document.select("#list_output div > span");
+			Elements titles = document.select("div#content > div.bs > a");
 			
 			ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String,String>>();
 			
-			for (int i = 0; i < (titles.size()<views.size()?titles.size():views.size()); i++) {
+			for (int i = 0; i < titles.size(); i++) {
 				HashMap<String, String> TempMap = new HashMap<String, String>();
 				TempMap.put(TITLE, titles.get(i).ownText());
 				TempMap.put(URL, titles.get(i).attr("href"));
 	
-				String n_views = views.get(i).ownText().replaceAll("[() ]", "");
+				String n_views = titles.get(i).child(0).ownText().replaceAll("[() ]", "");
 				TempMap.put(VIEWS,n_views + " Stories");
 				
-				n_views = (views.get(i).ownText().contains("K")||views.get(i).ownText().contains("k"))? Integer.toString((int)(Double.parseDouble(n_views.replaceAll("[^\\d[.]]", ""))*1000)) :n_views.replaceAll("[^\\d[.]]", "");
+				n_views = (n_views.contains("K")||n_views.contains("k"))? Integer.toString((int)(Double.parseDouble(n_views.replaceAll("[^\\d[.]]", ""))*1000)) :n_views.replaceAll("[^\\d[.]]", "");
 				TempMap.put(VIEWS_INT, n_views );
 				list.add(TempMap);
 			}
 			return list;
 		} catch (IOException e) {
-			e.printStackTrace();
+			return null;
 		}
-		
-		return null;
 	}
+	
 	public static ArrayList<HashMap<String, String>> Stories(String url){	
 		try {
 			org.jsoup.nodes.Document document = Jsoup.connect(url).get();

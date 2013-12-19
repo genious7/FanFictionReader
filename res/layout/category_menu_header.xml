@@ -14,12 +14,12 @@
         android:textOn="@string/toggle_crossover" />
 
     <Spinner
-        android:id="@+id/category_menu_header_sort"
+        android:id="@+id/category_menu_header_filter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/category_menu_header_crossover_selector"
-        android:layout_alignParentLeft="false"
         android:layout_alignParentTop="true"
         android:layout_toLeftOf="@+id/category_menu_header_crossover_selector" />
+
 
 </RelativeLayout>

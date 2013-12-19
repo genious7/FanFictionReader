@@ -27,9 +27,6 @@
 	<string name="dialog_internet">Internet access is required</string>
 	<string name="dialog_loading">Loading…</string>
 	<string name="dialog_unspecified">Unspecified Error</string>
-	<string-array name="SortBy">
-		
-		<item >Stories</item><item>A-Z</item>		
-	</string-array>
 	<string name="label_stories">Stories</string>
+	<string name="top_200">Top 200</string>
 </resources>
