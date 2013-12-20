@@ -16,7 +16,6 @@ import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -34,49 +33,41 @@ import android.widget.ToggleButton;
  * @author Michael Chen
  */
 public class CategoryMenu extends Activity {
+	/*
+	 * Variables representing current state
+	 */
+	private boolean crossover;
+	private boolean sort; //true = a-z ; false = views
+	private int position2=0;
 	
 	private Context context;
 	private ProgressDialog progress;
 	private ListView listView;
-	private boolean crossover;
-	private boolean firstRun = true;
-	private int position2=0;
+	
 	private parseSite asynctask = new parseSite();
 	private final OnItemClickListener listener = new OnItemClickListener() {
 		@Override
 		public void onItemClick(AdapterView<?> arg0, View arg1, int position, long id) {
-			Log.d("Category Menu","Id:" + id + " & url:" + list.get((int)id).get(Parser.URL));
-			Parser.Stories("http://www.fanfiction.net" + list.get((int)id).get(Parser.URL));
-			// TODO Auto-generated method stub
-			
+			if (crossover){
+				
+			}else{
+				Intent i = new Intent(context,StoryMenu.class);
+				i.putExtra("URL", list.get((int)id).get(Parser.URL));
+				startActivityForResult(i, 0);	
+			}
+				
 		}
 	};
-
 	private final OnItemSelectedListener filterListener = new OnItemSelectedListener() {
 
 		@Override
-		public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long id2) {		
-			if  (firstRun){
-				firstRun = false;
-			}else{
-				position2=position;
-				char selector = ' ';
-				if (position == 0) {
-					selector = ' ';
-				}else if (position == 1){
-					selector = '1';
-				}else{
-					selector = (char) ('a'+position-2);
-				}
-				String url = "https://m.fanfiction.net"+(crossover ? "/crossovers":"")+FANFIC_URLS[id] + "?l=" + Character.toString(selector);
+		public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long id2) {	
+			if  (position != position2){
+				position2 = position;
 				asynctask.cancel(true);
 				asynctask =  new parseSite();
-				asynctask.execute(url);
+				asynctask.execute();
 			}
-/*			
-			Collections.sort(list, new ListComparator(position));
-			SimpleAdapter adapter = new SimpleAdapter(context, list, R.layout.category_menu_list_item, new String[] {Parser.TITLE,Parser.VIEWS}, new int[] {R.id.category_menu_title,R.id.category_menu_views});
-			listView.setAdapter(adapter);*/
 		}
 
 		@Override
@@ -84,25 +75,26 @@ public class CategoryMenu extends Activity {
 		}
 	};
 
-	private final OnCheckedChangeListener crossoverListener = new OnCheckedChangeListener() {
+	private final OnCheckedChangeListener sortListener = new OnCheckedChangeListener() {
+		
 		@Override
-		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {	
-			crossover = isChecked;
-			String url = isChecked ? "https://m.fanfiction.net/crossovers"+FANFIC_URLS[id] : "https://m.fanfiction.net"+FANFIC_URLS[id];
-			asynctask.cancel(true);
-			asynctask =  new parseSite();
-			asynctask.execute(url);
+		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			Collections.sort(list, new ListComparator(isChecked));
+			SimpleAdapter adapter = new SimpleAdapter(context, list, R.layout.category_menu_list_item, new String[] {Parser.TITLE,Parser.VIEWS}, new int[] {R.id.category_menu_title,R.id.category_menu_views});
+			listView.setAdapter(adapter);
+			sort = isChecked;
 		}
 	};
+	
 	private static final String[] FANFIC_URLS = {"/anime/",
-		"/book/",
-		"/cartoon/",
-		"/comic/",
-		"/game/",
-		"/misc/",
-		"/movie/",
-		"/play/",
-		"/tv/"}; 
+		"book/",
+		"cartoon/",
+		"comic/",
+		"game/",
+		"misc/",
+		"movie/",
+		"play/",
+		"tv/"}; 
 	private ArrayList<HashMap<String, String>> list;
 	private int id = 0;
 	
@@ -127,15 +119,19 @@ public class CategoryMenu extends Activity {
 			filterList.add(Character.toString(i));
 		}
 		
+		position2 = (savedInstanceState == null)? 0 : savedInstanceState.getInt("Positon");
 		ArrayAdapter<String> filterAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, filterList);
 		filterAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spinner.setAdapter(filterAdapter);
+		spinner.setSelection(position2);
 		spinner.setOnItemSelectedListener(filterListener);
 		
 		crossover = getIntent().getBooleanExtra("Crossover", false);
-		ToggleButton crossoverButton = (ToggleButton)findViewById(R.id.category_menu_header_crossover_selector);
-		crossoverButton.setChecked(crossover);
-		crossoverButton.setOnCheckedChangeListener(crossoverListener);	
+		
+		sort = (savedInstanceState==null)? false : savedInstanceState.getBoolean("Sort");
+		ToggleButton sortButton = (ToggleButton)findViewById(R.id.category_menu_sort);
+		sortButton.setChecked(sort);
+		sortButton.setOnCheckedChangeListener(sortListener);	
 		
 		if (savedInstanceState == null){
 			id = getIntent().getIntExtra("Id", 0);	
@@ -143,16 +139,13 @@ public class CategoryMenu extends Activity {
 				end(getResources().getString(R.string.dialog_unspecified));
 			}else{
 				setResult(RESULT_OK);
-				String url = crossover ? "https://m.fanfiction.net/crossovers"+FANFIC_URLS[id] : "https://m.fanfiction.net"+FANFIC_URLS[id];
-				asynctask.execute(url);
+				asynctask.execute();
 			}
 			
 		}else {
 			list = (ArrayList<HashMap<String, String>>) savedInstanceState.getSerializable("List");
 			SimpleAdapter adapter = new SimpleAdapter(context, list, R.layout.category_menu_list_item, new String[] {Parser.TITLE,Parser.VIEWS}, new int[] {R.id.category_menu_title,R.id.category_menu_views});
-			listView.setAdapter(adapter);
-			firstRun=true;
-			spinner.setSelection(savedInstanceState.getInt("Position",0));
+			listView.setAdapter(adapter);	
 		}
 }
 	
@@ -163,8 +156,11 @@ public class CategoryMenu extends Activity {
 	protected void onSaveInstanceState(Bundle outState) {
 		outState.putSerializable("List", list);
 		outState.putInt("Positon", position2);
+		outState.putBoolean("Crossover", crossover);
+		outState.putBoolean("Sort", sort);
 		super.onSaveInstanceState(outState);
 	}
+	
 	
 	/**
 	 * Ends the current intent. Only called when an error occurs. Passes a string containing the error message
@@ -183,7 +179,7 @@ public class CategoryMenu extends Activity {
 	 * @author Michael Chen
 	 *
 	 */
-	private class parseSite extends AsyncTask<String, Void, ArrayList<HashMap<String, String>>>{
+	private class parseSite extends AsyncTask<Void, Void, ArrayList<HashMap<String, String>>>{
 
 		@Override
 		protected void onPreExecute() {
@@ -201,9 +197,9 @@ public class CategoryMenu extends Activity {
 		}
 		
 		@Override
-		protected ArrayList<HashMap<String, String>> doInBackground(String... url) {
-			
-			return Parser.Categories(url[0]);
+		protected ArrayList<HashMap<String, String>> doInBackground(Void... params) {
+			String url = "https://m.fanfiction.net/"+(crossover ?"crossovers/":"")+FANFIC_URLS[id] + "?l=" + sortKey();
+			return Parser.Categories(url);
 		}
 		
 		@Override
@@ -212,7 +208,8 @@ public class CategoryMenu extends Activity {
 			progress.dismiss();
 			if (result != null) {
 				list = result;
-				SimpleAdapter adapter = new SimpleAdapter(context, result, R.layout.category_menu_list_item, new String[] {Parser.TITLE,Parser.VIEWS}, new int[] {R.id.category_menu_title,R.id.category_menu_views});
+				Collections.sort(list, new ListComparator(sort));
+				SimpleAdapter adapter = new SimpleAdapter(context, list, R.layout.category_menu_list_item, new String[] {Parser.TITLE,Parser.VIEWS}, new int[] {R.id.category_menu_title,R.id.category_menu_views});
 				listView.setAdapter(adapter);				
 			}else{
 				end(getResources().getString(R.string.dialog_internet));	
@@ -229,5 +226,17 @@ public class CategoryMenu extends Activity {
 	protected void onDestroy() {
 		asynctask.cancel(true);
 		super.onDestroy();
+	}
+	
+	private String sortKey (){
+			char selector = ' ';
+			if (position2 == 0) {
+				selector = ' ';
+			}else if (position2 == 1){
+				selector = '1';
+			}else{
+				selector = (char) ('a'+position2-2);
+			}
+			return Character.toString(selector);
 	}
 }

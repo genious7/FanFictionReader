@@ -31,8 +31,8 @@ public final class R {
         public static final int browseMenuListView=0x7f080000;
         public static final int browse_menu_label=0x7f080005;
         public static final int categoryMenuListView=0x7f080001;
-        public static final int category_menu_header_crossover_selector=0x7f080006;
-        public static final int category_menu_header_filter=0x7f080007;
+        public static final int category_menu_header_filter=0x7f080006;
+        public static final int category_menu_sort=0x7f080007;
         public static final int category_menu_title=0x7f080008;
         public static final int category_menu_views=0x7f080009;
         public static final int list_item_icon=0x7f08000a;
@@ -85,6 +85,8 @@ public final class R {
         public static final int menu_button_my_library=0x7f050003;
         public static final int menu_button_search=0x7f050006;
         public static final int menu_button_settings=0x7f050008;
+        public static final int sort_alphabetical=0x7f05001a;
+        public static final int sort_numerical=0x7f05001b;
         public static final int toggle_crossover=0x7f050014;
         public static final int toggle_regular=0x7f050013;
         public static final int top_200=0x7f050019;

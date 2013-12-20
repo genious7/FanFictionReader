@@ -29,4 +29,6 @@
 	<string name="dialog_unspecified">Unspecified Error</string>
 	<string name="label_stories">Stories</string>
 	<string name="top_200">Top 200</string>
+	<string name="sort_alphabetical">A-Z</string>
+	<string name="sort_numerical">1—9</string>
 </resources>
