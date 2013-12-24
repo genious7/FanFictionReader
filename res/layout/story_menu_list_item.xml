@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/story_menu_list_item_title"
-        android:text="Text" />
+        android:text="Summary" />
 
     <TextView
         android:id="@+id/story_menu_list_item_author"
