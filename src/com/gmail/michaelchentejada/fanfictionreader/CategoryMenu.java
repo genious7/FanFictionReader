@@ -26,6 +26,7 @@ import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 /**
@@ -53,7 +54,7 @@ public class CategoryMenu extends Activity {
 			}else{
 				Intent i = new Intent(context,StoryMenu.class);
 				i.putExtra("URL", list.get((int)id).get(Parser.URL));
-				startActivityForResult(i, 0);	
+				startActivityForResult(i, 1);	
 			}
 				
 		}
@@ -102,10 +103,10 @@ public class CategoryMenu extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		this.setContentView(R.layout.activity_category_menu);
+		this.setContentView(R.layout.activity_list_view);
 		
 		context = this;
-		listView = (ListView) findViewById(R.id.categoryMenuListView);
+		listView = (ListView) findViewById(R.id.menuListView);
 		View header = (View)getLayoutInflater().inflate(R.layout.category_menu_header, null);
 		listView.addHeaderView(header);
 		listView.setOnItemClickListener(listener);
@@ -238,5 +239,17 @@ public class CategoryMenu extends Activity {
 				selector = (char) ('a'+position2-2);
 			}
 			return Character.toString(selector);
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == 1 && resultCode == RESULT_CANCELED){
+			int duration = Toast.LENGTH_SHORT;
+
+			Toast toast = Toast.makeText(context, data.getStringExtra("Error"), duration);
+			toast.show();
+		}
+		super.onActivityResult(requestCode, resultCode, data);
+		
 	}
 }

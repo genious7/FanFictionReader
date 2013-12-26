@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
 
 public class Parser {
 	
@@ -131,4 +133,41 @@ public class Parser {
 		return null;
 	}
 	
+	public static ArrayList<HashMap<String, Integer>> Filter(String url){
+		try {
+			org.jsoup.nodes.Document document = Jsoup.connect(url).get();
+			Elements form = document.select("form#myform > select");
+			
+			Elements[] filter = {
+					form.select("[title=sort options] > option"),
+					form.select("[title=time range options] > option"),
+					form.select("[title=genre 1 filter] > option"),
+					form.select("[title=genre 2 filter] > option"),
+					form.select("[title=rating filter] > option"),
+					form.select("[title=language filter] > option"),
+					form.select("[title=length in words filter] > option"),
+					form.select("[title=story status] > option"),
+					form.select("[title=character 1 filter] > option"),
+					form.select("[title=character 2 filter] > option"),
+					form.select("[title=character 3 filter] > option"),
+					form.select("[title=character 4 filter] > option")};
+			
+			ArrayList<HashMap<String, Integer>> list = new ArrayList<HashMap<String,Integer>>();		
+			HashMap<String, Integer> TempMap = new HashMap<String, Integer>();
+			
+			for (Elements j : filter) {
+				for (Element k : j) {
+					TempMap.put(k.ownText(), Integer.valueOf(k.attr("value")));
+				}
+				list.add(TempMap);
+				TempMap = new HashMap<String,Integer>();
+			}
+
+			return list;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
 }

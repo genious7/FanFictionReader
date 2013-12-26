@@ -12,8 +12,10 @@ import android.content.DialogInterface.OnCancelListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
@@ -24,6 +26,7 @@ public class StoryMenu extends Activity {
 	private ProgressDialog progressDialog;
 	
 	private ArrayList<HashMap<String, String>> list;
+	private ArrayList<HashMap<String, Integer>> filterList;
 	private ParseStories asyncTask = new ParseStories();
 	
 	private final OnItemClickListener listListener = new OnItemClickListener() {
@@ -35,9 +38,20 @@ public class StoryMenu extends Activity {
 			
 		}
 	};
+	
+	private final OnClickListener filterListener = new OnClickListener() {	
+		@Override
+		public void onClick(View v) {
+			Intent i = new Intent(context,FilterMenu.class);
+			i.putExtra("Filter List", filterList);
+			startActivityForResult(i, 1);	
+			
+		}
+	};
 
 	protected void onSaveInstanceState(Bundle outState) {
-		outState.putSerializable("List", list);
+ 		outState.putSerializable("List", list);
+		outState.putSerializable("Filter List", filterList);
 		super.onSaveInstanceState(outState);
 	}
 	
@@ -45,11 +59,17 @@ public class StoryMenu extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		this.setContentView(R.layout.activity_story_menu);
+		this.setContentView(R.layout.activity_list_view);
 		
+		setResult(RESULT_OK);
 		context = this;
-		listView = (ListView)findViewById(R.id.storyMenuListView);
+		listView = (ListView)findViewById(R.id.menuListView);
+		View header = (View)getLayoutInflater().inflate(R.layout.story_menu_header, null);
+		listView.addHeaderView(header);
 		listView.setOnItemClickListener(listListener);
+		
+		Button filterButton = (Button)findViewById(R.id.story_menu_filter);
+		filterButton.setOnClickListener(filterListener);
 		
 		String url = "https://m.fanfiction.net" + getIntent().getStringExtra("URL");
 		
@@ -57,6 +77,7 @@ public class StoryMenu extends Activity {
 			asyncTask.execute(url);
 		} else {
 			list = (ArrayList<HashMap<String, String>>) savedInstanceState.getSerializable("List");
+			filterList = (ArrayList<HashMap<String, Integer>>) savedInstanceState.getSerializable("Filter List");
 			SimpleAdapter adapter = new SimpleAdapter(context, list,
 					R.layout.story_menu_list_item, new String[] {
 							Parser.TITLE, Parser.SUMMARY, Parser.AUTHOR,
@@ -89,6 +110,10 @@ public class StoryMenu extends Activity {
 		@Override
 		protected ArrayList<HashMap<String, String>> doInBackground(
 				String... url) {
+			
+			if (filterList==null) {
+				filterList=Parser.Filter(url[0]);
+			}
 			return Parser.Stories(url[0]);
 		}
 		@Override

@@ -22,6 +22,7 @@
 	<string name="category_button_movies">Movies</string>
 	<string name="category_button_plays">Plays &amp; Musicals</string>
 	<string name="category_button_tv">TV Shows</string>
+	
 	<string name="toggle_regular">Regular</string>
 	<string name="toggle_crossover">Crossover</string>
 	<string name="dialog_internet">Internet access is required</string>
@@ -31,4 +32,5 @@
 	<string name="top_200">Top 200</string>
 	<string name="sort_alphabetical">A-Z</string>
 	<string name="sort_numerical">1—9</string>
+	<string name="story_menu_filter">Filter</string>
 </resources>

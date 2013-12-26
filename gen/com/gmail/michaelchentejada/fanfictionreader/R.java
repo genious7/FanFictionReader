@@ -27,36 +27,40 @@ public final class R {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
-        public static final int action_settings=0x7f080011;
-        public static final int browseMenuListView=0x7f080000;
-        public static final int browse_menu_label=0x7f080005;
-        public static final int categoryMenuListView=0x7f080001;
-        public static final int category_menu_header_filter=0x7f080006;
-        public static final int category_menu_sort=0x7f080007;
-        public static final int category_menu_title=0x7f080008;
-        public static final int category_menu_views=0x7f080009;
-        public static final int list_item_icon=0x7f08000a;
-        public static final int list_item_title=0x7f08000b;
-        public static final int mainMenuListView=0x7f080002;
-        public static final int storyMenuListView=0x7f080003;
-        public static final int story_menu_list_item_author=0x7f08000e;
-        public static final int story_menu_list_item_follows=0x7f080010;
-        public static final int story_menu_list_item_summary=0x7f08000d;
-        public static final int story_menu_list_item_title=0x7f08000c;
-        public static final int story_menu_list_item_words=0x7f08000f;
-        public static final int xoverSelector=0x7f080004;
+        public static final int action_settings=0x7f080016;
+        public static final int browse_menu_label=0x7f080009;
+        public static final int category_menu_header_filter=0x7f08000a;
+        public static final int category_menu_sort=0x7f08000b;
+        public static final int category_menu_title=0x7f08000c;
+        public static final int category_menu_views=0x7f08000d;
+        public static final int filter_genre_1=0x7f080006;
+        public static final int filter_genre_2=0x7f080005;
+        public static final int filter_sort_option=0x7f080000;
+        public static final int filter_time_range=0x7f080002;
+        public static final int list_item_icon=0x7f08000e;
+        public static final int list_item_title=0x7f08000f;
+        public static final int menuListView=0x7f080007;
+        public static final int story_menu_filter=0x7f080010;
+        public static final int story_menu_list_item_author=0x7f080013;
+        public static final int story_menu_list_item_follows=0x7f080015;
+        public static final int story_menu_list_item_summary=0x7f080012;
+        public static final int story_menu_list_item_title=0x7f080011;
+        public static final int story_menu_list_item_words=0x7f080014;
+        public static final int textView1=0x7f080001;
+        public static final int textView2=0x7f080003;
+        public static final int textView3=0x7f080004;
+        public static final int xoverSelector=0x7f080008;
     }
     public static final class layout {
-        public static final int activity_browse_menu=0x7f030000;
-        public static final int activity_category_menu=0x7f030001;
-        public static final int activity_main_menu=0x7f030002;
-        public static final int activity_story_menu=0x7f030003;
-        public static final int browse_menu_header=0x7f030004;
-        public static final int browse_menu_list_item=0x7f030005;
-        public static final int category_menu_header=0x7f030006;
-        public static final int category_menu_list_item=0x7f030007;
-        public static final int main_menu_list_item=0x7f030008;
-        public static final int story_menu_list_item=0x7f030009;
+        public static final int activity_filter_view=0x7f030000;
+        public static final int activity_list_view=0x7f030001;
+        public static final int browse_menu_header=0x7f030002;
+        public static final int browse_menu_list_item=0x7f030003;
+        public static final int category_menu_header=0x7f030004;
+        public static final int category_menu_list_item=0x7f030005;
+        public static final int main_menu_list_item=0x7f030006;
+        public static final int story_menu_header=0x7f030007;
+        public static final int story_menu_list_item=0x7f030008;
     }
     public static final class menu {
         public static final int main_menu=0x7f070000;
@@ -87,6 +91,7 @@ public final class R {
         public static final int menu_button_settings=0x7f050008;
         public static final int sort_alphabetical=0x7f05001a;
         public static final int sort_numerical=0x7f05001b;
+        public static final int story_menu_filter=0x7f05001c;
         public static final int toggle_crossover=0x7f050014;
         public static final int toggle_regular=0x7f050013;
         public static final int top_200=0x7f050019;

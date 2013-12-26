@@ -26,7 +26,7 @@ public class BrowseMenu extends Activity {
 	@Override 
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		this.setContentView(R.layout.activity_browse_menu);
+		this.setContentView(R.layout.activity_list_view);
 		
 		String[] categories = {	getResources().getString(R.string.category_button_anime),
 								getResources().getString(R.string.category_button_books),
@@ -39,7 +39,7 @@ public class BrowseMenu extends Activity {
 								getResources().getString(R.string.category_button_tv)};
 		
 		ArrayAdapter<String> browseAdapter= new ArrayAdapter<String>(this, R.layout.browse_menu_list_item, categories);
-		ListView category_menu= (ListView)findViewById(R.id.browseMenuListView);
+		ListView category_menu= (ListView)findViewById(R.id.menuListView);
 		
 		View header = (View)getLayoutInflater().inflate(R.layout.browse_menu_header, null);
 		category_menu.addHeaderView(header);

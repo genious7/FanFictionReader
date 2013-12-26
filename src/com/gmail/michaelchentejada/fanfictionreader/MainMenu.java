@@ -15,7 +15,7 @@ public class MainMenu extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);		
-		setContentView(R.layout.activity_main_menu);
+		setContentView(R.layout.activity_list_view);
 		
 		MenuItem menuItems[] = new MenuItem[]{
 				new MenuItem(drawable.ic_menu_agenda, getResources().getString(R.string.menu_button_my_library)),
@@ -28,7 +28,7 @@ public class MainMenu extends Activity {
 		};
 		
 		MainMenuAdapter Adapter = new MainMenuAdapter(this, R.layout.main_menu_list_item, menuItems);
-		ListView listView = (ListView) findViewById(R.id.mainMenuListView);
+		ListView listView = (ListView) findViewById(R.id.menuListView);
 		listView.setAdapter(Adapter);
 		
 		listView.setOnItemClickListener(new OnItemClickListener() {
