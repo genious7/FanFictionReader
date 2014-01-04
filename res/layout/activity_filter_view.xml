@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollView1"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
+        
+		<RelativeLayout
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:scrollbarAlwaysDrawVerticalTrack="false" >
+
+			<TextView
+			    android:id="@+id/text_sort"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:gravity="center_vertical"
+			    android:text="@string/filter_sort" />
+
+		    <Spinner
+		        android:id="@+id/filter_sort_option"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentTop="true"
+		        android:layout_toRightOf="@+id/text_sort" />
+
+		    <Spinner
+		        android:id="@+id/filter_time_range"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_alignLeft="@+id/filter_sort_option"
+		        android:layout_below="@+id/filter_sort_option" />
+
+		    <TextView
+		        android:id="@+id/text_time_range"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_alignBottom="@+id/filter_time_range"
+		        android:layout_alignParentLeft="true"
+		        android:layout_alignTop="@+id/filter_time_range"
+		        android:gravity="center_vertical"
+		        android:text="@string/filter_date" />
+
+		    <TextView
+		        android:id="@+id/text_genre"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_alignBottom="@+id/linearLayout1"
+		        android:layout_alignParentLeft="true"
+		        android:layout_below="@+id/filter_time_range"
+		        android:gravity="center_vertical"
+		        android:text="@string/filter_genre" />
+
+		    <LinearLayout
+		        android:id="@+id/linearLayout1"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_alignLeft="@+id/filter_sort_option"
+		        android:layout_below="@+id/filter_time_range" >
+
+		        <Spinner
+		            android:id="@+id/filter_genre_1"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:layout_weight="1" />
+
+		        <Spinner
+		            android:id="@+id/filter_genre_2"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:layout_weight="1" />
+		    </LinearLayout>
+
+		    <TextView
+		        android:id="@+id/text_rating"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_alignBottom="@+id/filter_rating"
+		        android:layout_alignParentLeft="true"
+		        android:layout_below="@+id/linearLayout1"
+		        android:gravity="center_vertical"
+		        android:text="@string/filter_rating" />
+
+		    <Spinner
+		        android:id="@+id/filter_rating"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_alignLeft="@+id/filter_sort_option"
+		        android:layout_below="@+id/linearLayout1" />
+
+		    <TextView
+		        android:id="@+id/text_languague"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_alignBottom="@+id/filter_languague"
+		        android:layout_alignParentLeft="true"
+		        android:layout_below="@+id/filter_rating"
+		        android:gravity="center_vertical"
+		        android:text="@string/filter_languague" />
+
+		    <Spinner
+		        android:id="@+id/filter_languague"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_alignLeft="@+id/filter_sort_option"
+		        android:layout_below="@+id/filter_rating" />
+
+		    <TextView
+		        android:id="@+id/text_status"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_alignBottom="@+id/filter_status"
+		        android:layout_alignParentLeft="true"
+		        android:layout_below="@+id/filter_languague"
+		        android:gravity="center_vertical"
+		        android:text="@string/filter_status" />
+
+		    <Spinner
+		        android:id="@+id/filter_status"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_alignLeft="@+id/filter_sort_option"
+		        android:layout_below="@+id/filter_languague" />
+
+		    <TextView android:id="@+id/text_length" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentLeft="true" android:layout_below="@id/filter_status" android:gravity="center_vertical" android:text="@string/filter_lenght" /><Spinner
+            android:id="@+id/filter_length"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/filter_sort_option"
+            android:layout_below="@id/filter_status" />
+<LinearLayout
+		        android:id="@+id/linearLayout2"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_alignLeft="@+id/filter_sort_option"
+		        android:layout_below="@id/filter_length" >
+
+		        <Spinner
+		            android:id="@+id/filter_character_a"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:layout_weight="1" />
+
+		        <Spinner
+		            android:id="@+id/filter_character_b"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:layout_weight="1" />
+		    </LinearLayout>
+
+		    <LinearLayout
+		        android:id="@+id/layout_characters_row_2"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_alignLeft="@+id/filter_sort_option"
+		        android:layout_below="@+id/linearLayout2" >
+
+		        <Spinner
+		            android:id="@+id/filter_character_c"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:layout_weight="1" />
+
+		        <Spinner
+		            android:id="@+id/filter_character_d"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:layout_weight="1" />
+
+		    </LinearLayout>
+		    
+		    <TextView
+		        android:id="@+id/text_characters"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_alignBottom="@id/layout_characters_row_2"
+		        android:layout_alignParentLeft="true"
+		        android:layout_below="@id/filter_length"
+		        android:gravity="center_vertical"
+		        android:text="@string/filter_character" />
+
+		    <Button
+		        android:id="@+id/filter_run"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentBottom="true"
+		        android:layout_alignParentLeft="false"
+		        android:layout_below="@id/layout_characters_row_2"
+		        android:layout_centerHorizontal="true"
+		        android:text="@string/filter_execute" />
+
+		    
+
+		    
+
+		</RelativeLayout>
+
+</ScrollView>

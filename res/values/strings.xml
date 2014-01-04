@@ -33,4 +33,14 @@
 	<string name="sort_alphabetical">A-Z</string>
 	<string name="sort_numerical">1—9</string>
 	<string name="story_menu_filter">Filter</string>
+	<string name="filter_sort">Sort options</string>
+	<string name="filter_date">Time Range</string>
+	<string name="filter_genre">Genre</string>
+	<string name="filter_rating">Rating</string>
+	<string name="filter_languague">Languague</string>
+	<string name="filter_character">Character</string>
+	<string name="filter_status">Status</string>
+	<string name="filter_execute">Apply Filters</string>
+	<string name="dialog_cancelled">Cancelled</string>
+	<string name="filter_lenght">Length</string>
 </resources>

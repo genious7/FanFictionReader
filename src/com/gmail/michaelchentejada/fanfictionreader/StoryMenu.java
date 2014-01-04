@@ -1,7 +1,10 @@
 package com.gmail.michaelchentejada.fanfictionreader;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import org.jsoup.Jsoup;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -11,6 +14,7 @@ import android.content.Intent;
 import android.content.DialogInterface.OnCancelListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -18,15 +22,20 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 public class StoryMenu extends Activity {
 	
 	private ListView listView;
+	private Button loadPage;
 	private Context context;
 	private ProgressDialog progressDialog;
+	private int[] filter = {1,0,0,0,0,0,0,0,0,0,0,0};
+	private int numberOfPages = 1;
+	private int currentPages = 1;
 	
 	private ArrayList<HashMap<String, String>> list;
-	private ArrayList<HashMap<String, Integer>> filterList;
+	private ArrayList<LinkedHashMap<String, Integer>> filterList;
 	private ParseStories asyncTask = new ParseStories();
 	
 	private final OnItemClickListener listListener = new OnItemClickListener() {
@@ -34,8 +43,17 @@ public class StoryMenu extends Activity {
 		@Override
 		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 				long arg3) {
-			// TODO Auto-generated method stub
 			
+		}
+	};
+	
+	private final OnClickListener addPageListener = new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			asyncTask.cancel(true);
+			asyncTask = new ParseStories();
+			asyncTask.execute();	
 		}
 	};
 	
@@ -43,7 +61,14 @@ public class StoryMenu extends Activity {
 		@Override
 		public void onClick(View v) {
 			Intent i = new Intent(context,FilterMenu.class);
+			ArrayList<ArrayList<String>> keys = new ArrayList<ArrayList<String>>();
+			
+			for (int j = 0; j < filterList.size(); j++) {
+				keys.add(new ArrayList<String>(filterList.get(j).keySet()));
+			}
+			
 			i.putExtra("Filter List", filterList);
+			i.putExtra("Keyset", keys);
 			startActivityForResult(i, 1);	
 			
 		}
@@ -52,6 +77,8 @@ public class StoryMenu extends Activity {
 	protected void onSaveInstanceState(Bundle outState) {
  		outState.putSerializable("List", list);
 		outState.putSerializable("Filter List", filterList);
+		outState.putInt("Pages", numberOfPages);
+		outState.putInt("Current Page",currentPages);
 		super.onSaveInstanceState(outState);
 	}
 	
@@ -66,18 +93,23 @@ public class StoryMenu extends Activity {
 		listView = (ListView)findViewById(R.id.menuListView);
 		View header = (View)getLayoutInflater().inflate(R.layout.story_menu_header, null);
 		listView.addHeaderView(header);
+		View footer = (View)getLayoutInflater().inflate(R.layout.story_menu_footer, null);
+		listView.addFooterView(footer);
 		listView.setOnItemClickListener(listListener);
 		
 		Button filterButton = (Button)findViewById(R.id.story_menu_filter);
 		filterButton.setOnClickListener(filterListener);
 		
-		String url = "https://m.fanfiction.net" + getIntent().getStringExtra("URL");
+		loadPage = (Button)findViewById(R.id.story_load_pages);
+		loadPage.setOnClickListener(addPageListener);
 		
 		if (savedInstanceState == null) {
-			asyncTask.execute(url);
+			asyncTask.execute();
 		} else {
 			list = (ArrayList<HashMap<String, String>>) savedInstanceState.getSerializable("List");
-			filterList = (ArrayList<HashMap<String, Integer>>) savedInstanceState.getSerializable("Filter List");
+			filterList = (ArrayList<LinkedHashMap<String, Integer>>) savedInstanceState.getSerializable("Filter List");
+			numberOfPages = savedInstanceState.getInt("Pages");
+			currentPages = savedInstanceState.getInt("Current Page");
 			SimpleAdapter adapter = new SimpleAdapter(context, list,
 					R.layout.story_menu_list_item, new String[] {
 							Parser.TITLE, Parser.SUMMARY, Parser.AUTHOR,
@@ -92,7 +124,7 @@ public class StoryMenu extends Activity {
 		
 	}
 	
-	private class ParseStories extends AsyncTask<String, Void, ArrayList<HashMap<String, String>>>{
+	private class ParseStories extends AsyncTask<Void, Void, ArrayList<HashMap<String, String>>>{
 		@Override
 		protected void onPreExecute() {
 			progressDialog = new ProgressDialog(context);
@@ -108,13 +140,25 @@ public class StoryMenu extends Activity {
 			super.onPreExecute();
 		}
 		@Override
-		protected ArrayList<HashMap<String, String>> doInBackground(
-				String... url) {
+		protected ArrayList<HashMap<String, String>> doInBackground(Void...voids) {
 			
-			if (filterList==null) {
-				filterList=Parser.Filter(url[0]);
+			String url = "https://m.fanfiction.net" + getIntent().getStringExtra("URL");
+			url = url + "?srt=" + filter[0] + "&t=" + filter[1] + "&g1=" + filter[2] + "&g2=" + filter[3] + "&r=" + filter[4] + "&lan=" + + filter[5] + "&len=" + filter[6] + "&s=" + filter[7] + "&c1=" + filter[8] + "&c2=" + filter[9] + "&c3="+ filter[10] + "&c4=" + filter[11];
+			try {
+				org.jsoup.nodes.Document document = Jsoup.connect(url).get();
+				if (filterList==null) {
+					filterList=Parser.Filter(url,document);
+				}
+				if (currentPages == 1) {
+					numberOfPages = Parser.Pages(url, document);
+				}
+				return Parser.Stories(url,document);	
+				
+			} catch (IOException e) {
+				Log.e("StoryMenu - doInBackground", Log.getStackTraceString(e));
+				return null;
 			}
-			return Parser.Stories(url[0]);
+
 		}
 		@Override
 		
@@ -122,7 +166,14 @@ public class StoryMenu extends Activity {
 			progressDialog.dismiss();
 			
 			if (result != null) {
-				list = result;
+				
+				if (currentPages == 1) {
+					list = result;
+					loadPage.setEnabled(true);
+				}else{
+					list.addAll(result);
+				}
+					
 				SimpleAdapter adapter = new SimpleAdapter(context, list,
 						R.layout.story_menu_list_item, new String[] {
 								Parser.TITLE, Parser.SUMMARY, Parser.AUTHOR,
@@ -133,7 +184,14 @@ public class StoryMenu extends Activity {
 								R.id.story_menu_list_item_words,
 								R.id.story_menu_list_item_follows });
 				listView.setAdapter(adapter);
+				
+				loadPage.setText("Page " + currentPages + " of " + numberOfPages);
+				currentPages++;
+				if (currentPages > numberOfPages) {
+					loadPage.setEnabled(false);
+				}
 				super.onPostExecute(result);
+				
 			}else{
 				end(getResources().getString(R.string.dialog_internet));
 			}
@@ -151,5 +209,21 @@ public class StoryMenu extends Activity {
 	protected void onDestroy() {
 		asyncTask.cancel(true);
 		super.onDestroy();
+	}
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode==1){//Filter Menu
+			if (resultCode==RESULT_CANCELED) {
+				Toast toast = Toast.makeText(context, getResources().getString(R.string.dialog_cancelled), Toast.LENGTH_SHORT);
+				toast.show();
+			}else if (resultCode == RESULT_OK) {
+				currentPages = 1;
+				filter = data.getIntArrayExtra("Filter");
+				asyncTask.cancel(true);
+				asyncTask = new ParseStories();
+				asyncTask.execute();
+			}
+		}
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 }
