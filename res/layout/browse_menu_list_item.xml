@@ -5,7 +5,9 @@
         android:layout_height="match_parent"
         android:gravity="center_vertical"
         android:minHeight="@dimen/main_menu_icon_size"
+        android:paddingBottom="@dimen/top_bottom_padding"
         android:paddingLeft="@dimen/main_menu_icon_padding"
+        android:paddingTop="@dimen/top_bottom_padding"
         android:text="@string/category_button_anime"
         android:textSize="@dimen/menu_title_text_size"
         android:textStyle="bold" />

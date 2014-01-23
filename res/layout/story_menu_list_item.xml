@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/top_bottom_padding"
+    android:paddingLeft="@dimen/main_menu_icon_padding"
+    android:paddingRight="@dimen/main_menu_icon_padding"
+    android:paddingTop="@dimen/top_bottom_padding" >
 
     <TextView
         android:id="@+id/story_menu_list_item_title"
@@ -10,6 +14,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:text="Title"
+        android:textSize="@dimen/menu_title_text_size"
         android:textStyle="bold" />
 
     <TextView
@@ -20,34 +25,66 @@
         android:layout_below="@+id/story_menu_list_item_title"
         android:text="Summary" />
 
-    <TextView
-        android:id="@+id/story_menu_list_item_author"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
         android:layout_below="@+id/story_menu_list_item_summary"
-        android:text="Author" />
+        android:gravity="center_horizontal" >
 
-    <TextView
-        android:id="@+id/story_menu_list_item_words"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/story_menu_list_item_author"
-        android:layout_alignBottom="@+id/story_menu_list_item_author"
-        android:layout_marginLeft="20dp"
-        android:layout_toRightOf="@+id/story_menu_list_item_author"
-        android:text="Words"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        <TextView
+            android:id="@+id/story_menu_list_item_author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Author" />
 
-    <TextView
-        android:id="@+id/story_menu_list_item_follows"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/story_menu_list_item_words"
-        android:layout_alignBottom="@+id/story_menu_list_item_words"
-        android:layout_marginLeft="18dp"
-        android:layout_toRightOf="@+id/story_menu_list_item_words"
-        android:text="Follows"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        <TextView
+            android:id="@+id/detail_rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="right"
+            android:text="@string/story_menu_words" />
+
+        <TextView
+            android:id="@+id/story_menu_list_item_words"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="890" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="right"
+            android:text="@string/story_menu_chapters" />
+
+        <TextView
+            android:id="@+id/story_menu_list_item_chapters"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="1" />
+
+        <TextView
+            android:id="@+id/detail_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="right"
+            android:text="@string/story_menu_follows" />
+
+        <TextView
+            android:id="@+id/story_menu_list_item_follows"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="1k" />
+
+    </LinearLayout>
 
 </RelativeLayout>

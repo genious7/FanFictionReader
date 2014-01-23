@@ -2,6 +2,7 @@ package com.gmail.michaelchentejada.fanfictionreader;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,18 +18,32 @@ public class FilterMenu extends Activity {
 	private Spinner[] filterSpinner;
 	private ArrayList<HashMap<String, Integer>> filterList = new ArrayList<HashMap<String, Integer>>();
 	
+	private static final String SPINNER_POSITION = "Spinners";
+	
+	//References to data coming from parent activity
+	protected static final String KEYSET = "Keyset";
+	protected static final String FILTER_LIST = "Filter List";
+	protected static final String SELECTED_KEYS = "Selected Keys";
+	
 	private OnClickListener runFilter = new OnClickListener() {
 		
 		@Override
 		public void onClick(View v) {
 			int[] result = new int[12];
 			
+			//Obtain the currently selected position values
 			for (int i = 0; i < filterSpinner.length; i++) {
-				result[i] = filterList.get(i).get(filterSpinner[i].getSelectedItem().toString());
+				if (filterSpinner[i].getSelectedItem() == null){
+					result[i] = 0;
+				}else{
+					result[i] = filterList.get(i).get(filterSpinner[i].getSelectedItem().toString());
+				}
 			}
 			
+			//Pass them back to the parent activity
 			Intent results = new Intent();
-			results.putExtra("Filter", result);
+			results.putExtra(FILTER_LIST, result);
+			results.putExtra(SELECTED_KEYS, selectedPositions());
 			setResult(RESULT_OK, results);	
 			finish();
 		}
@@ -47,8 +62,8 @@ public class FilterMenu extends Activity {
 		runButton.setOnClickListener(runFilter);
 		
 		//Load the filter list
-		filterList = (ArrayList<HashMap<String, Integer>>) getIntent().getSerializableExtra("Filter List");
-		ArrayList<ArrayList<String>> keys = (ArrayList<ArrayList<String>>) getIntent().getSerializableExtra("Keyset");
+		filterList = (ArrayList<HashMap<String, Integer>>) getIntent().getSerializableExtra(FILTER_LIST);
+		ArrayList<ArrayList<String>> keys = (ArrayList<ArrayList<String>>) getIntent().getSerializableExtra(KEYSET);
 		
 		//Error Detection
 		if (filterList == null || keys == null) {
@@ -76,13 +91,23 @@ public class FilterMenu extends Activity {
 		for (int i = 0; i < filterSpinner.length; i++) {
 			ArrayAdapter<String> filterAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, keys.get(i));
 			filterSpinner[i].setAdapter(filterAdapter);
+			if (keys.get(i).isEmpty()) {
+				filterSpinner[i].setVisibility(View.GONE);
+			}
 		}
 		
 		//Set positions upon orientation change
 		if (savedInstanceState != null) {
-			int[] buffer = savedInstanceState.getIntArray("Spinner");
+			int[] buffer = savedInstanceState.getIntArray(SPINNER_POSITION);
 			for (int i = 0; i < filterSpinner.length; i++) {
 				filterSpinner[i].setSelection(buffer[i]);
+			}
+		}else{ //Set positions to what was present on previous search.
+			int[] selected_keys = getIntent().getIntArrayExtra(SELECTED_KEYS);
+			if (selected_keys != null) {
+				for (int i = 0; i < filterSpinner.length; i++) {
+					filterSpinner[i].setSelection(selected_keys[i]);
+				}
 			}
 		}
 	}
@@ -92,11 +117,19 @@ public class FilterMenu extends Activity {
 	 */
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
+		outState.putIntArray(SPINNER_POSITION, selectedPositions());
+		super.onSaveInstanceState(outState);
+	}
+	
+	/**
+	 * Returns the selected positions of every currently displayed spinner.
+	 * @return The selected position of each spinner, in the order dictated by filterSpinner
+	 */
+	private int[] selectedPositions(){
 		int[] buffer = new int[filterSpinner.length];
 		for (int i = 0; i < filterSpinner.length; i++) {
 			buffer[i] = filterSpinner[i].getSelectedItemPosition();
 		}
-		outState.putIntArray("Spinner", buffer);
-		super.onSaveInstanceState(outState);
+		return buffer;
 	}
 }

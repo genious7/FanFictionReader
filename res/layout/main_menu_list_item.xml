@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingRight="@dimen/main_menu_icon_padding" >
+    android:paddingBottom="@dimen/top_bottom_padding"
+    android:paddingTop="@dimen/top_bottom_padding" >
 
     <ImageView
         android:id="@+id/list_item_icon"
@@ -13,6 +14,7 @@
         android:contentDescription="@string/menu_button_content_description"
         android:maxHeight="@dimen/main_menu_icon_size"
         android:maxWidth="@dimen/main_menu_icon_size"
+        android:paddingLeft="@dimen/main_menu_icon_padding"
         android:paddingRight="@dimen/main_menu_icon_padding"
         android:src="@android:drawable/ic_menu_manage" />
 
@@ -24,6 +26,7 @@
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/list_item_icon"
         android:gravity="center_vertical"
+        android:minHeight="@dimen/main_menu_icon_size"
         android:text="@string/menu_button_my_library"
         android:textSize="@dimen/menu_title_text_size"
         android:textStyle="bold" />

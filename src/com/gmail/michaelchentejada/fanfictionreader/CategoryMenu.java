@@ -3,10 +3,13 @@
  */
 package com.gmail.michaelchentejada.fanfictionreader;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+
+import org.jsoup.Jsoup;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -42,7 +45,6 @@ public class CategoryMenu extends Activity {
 	private int position2=0;
 	
 	private Context context;
-	private ProgressDialog progress;
 	private ListView listView;
 	
 	private parseSite asynctask = new parseSite();
@@ -50,7 +52,9 @@ public class CategoryMenu extends Activity {
 		@Override
 		public void onItemClick(AdapterView<?> arg0, View arg1, int position, long id) {
 			if (crossover){
-				
+				Intent i = new Intent(context,SubCategoryMenu.class);
+				i.putExtra("URL", list.get((int)id).get(Parser.URL));
+				startActivityForResult(i, 1);	
 			}else{
 				Intent i = new Intent(context,StoryMenu.class);
 				i.putExtra("URL", list.get((int)id).get(Parser.URL));
@@ -104,6 +108,7 @@ public class CategoryMenu extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.activity_list_view);
+		setResult(RESULT_OK);
 		
 		context = this;
 		listView = (ListView) findViewById(R.id.menuListView);
@@ -139,7 +144,6 @@ public class CategoryMenu extends Activity {
 			if (id >FANFIC_URLS.length){
 				end(getResources().getString(R.string.dialog_unspecified));
 			}else{
-				setResult(RESULT_OK);
 				asynctask.execute();
 			}
 			
@@ -181,7 +185,8 @@ public class CategoryMenu extends Activity {
 	 *
 	 */
 	private class parseSite extends AsyncTask<Void, Void, ArrayList<HashMap<String, String>>>{
-
+		private ProgressDialog progress;
+		
 		@Override
 		protected void onPreExecute() {
 			progress = new ProgressDialog(context);
@@ -200,7 +205,12 @@ public class CategoryMenu extends Activity {
 		@Override
 		protected ArrayList<HashMap<String, String>> doInBackground(Void... params) {
 			String url = "https://m.fanfiction.net/"+(crossover ?"crossovers/":"")+FANFIC_URLS[id] + "?l=" + sortKey();
-			return Parser.Categories(url);
+			try {
+				org.jsoup.nodes.Document document = Jsoup.connect(url).get();
+				return Parser.Categories(url,document);				
+			} catch (IOException e) {
+				return null;
+			}
 		}
 		
 		@Override

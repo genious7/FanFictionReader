@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:minHeight="@dimen/main_menu_icon_size"
+    android:paddingBottom="@dimen/top_bottom_padding"
+    android:paddingTop="@dimen/top_bottom_padding" >
 
     <TextView
         android:id="@+id/category_menu_title"

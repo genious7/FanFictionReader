@@ -121,13 +121,23 @@
 		        android:layout_alignLeft="@+id/filter_sort_option"
 		        android:layout_below="@+id/filter_languague" />
 
-		    <TextView android:id="@+id/text_length" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentLeft="true" android:layout_below="@id/filter_status" android:gravity="center_vertical" android:text="@string/filter_lenght" /><Spinner
-            android:id="@+id/filter_length"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/filter_sort_option"
-            android:layout_below="@id/filter_status" />
-<LinearLayout
+		    <TextView
+		        android:id="@+id/text_length"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_alignBottom="@+id/filter_length"
+		        android:layout_alignParentLeft="true"
+		        android:layout_below="@id/filter_status"
+		        android:gravity="center_vertical"
+		        android:text="@string/filter_lenght" />
+
+		    <Spinner
+	            android:id="@+id/filter_length"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_alignLeft="@+id/filter_sort_option"
+	            android:layout_below="@id/filter_status" />
+			<LinearLayout
 		        android:id="@+id/linearLayout2"
 		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"

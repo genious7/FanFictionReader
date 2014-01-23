@@ -24,6 +24,7 @@ public class Parser {
 	public static final String AUTHOR = "Author";
 	public static final String AUTHOR_URL = "Author Url";
 	public static final String SUMMARY = "Summary";
+	public static final String CROSSOVER = "Crossover Category";
 	public static final String RATING = "Rating";
 	public static final String LANGUAGUE = "Languague";
 	public static final String GENRE = "Genre";	
@@ -41,29 +42,26 @@ public class Parser {
 	 * @param url The url of the selected category
 	 * @return A hashmap containing target url's, titles, and views if the Internet connection is valid, null otherwise
 	 */
-	public static ArrayList<HashMap<String, String>> Categories(String url){	
-		try {
-			org.jsoup.nodes.Document document = Jsoup.connect(url).get();
-			Elements titles = document.select("div#content > div.bs > a");
+	public static ArrayList<HashMap<String, String>> Categories(String url, Document document){	
+
+		Elements titles = document.select("div#content > div.bs > a");
+		
+		ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String,String>>();
+		
+		for (int i = 0; i < titles.size(); i++) {
+			HashMap<String, String> TempMap = new HashMap<String, String>();
+			TempMap.put(TITLE, titles.get(i).ownText());
+			TempMap.put(URL, titles.get(i).attr("href"));
+
+			String n_views = titles.get(i).child(0).ownText().replaceAll("[() ]", "");
+			TempMap.put(VIEWS,n_views + " Stories");
 			
-			ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String,String>>();
-			
-			for (int i = 0; i < titles.size(); i++) {
-				HashMap<String, String> TempMap = new HashMap<String, String>();
-				TempMap.put(TITLE, titles.get(i).ownText());
-				TempMap.put(URL, titles.get(i).attr("href"));
-	
-				String n_views = titles.get(i).child(0).ownText().replaceAll("[() ]", "");
-				TempMap.put(VIEWS,n_views + " Stories");
-				
-				n_views = (n_views.contains("K")||n_views.contains("k"))? Integer.toString((int)(Double.parseDouble(n_views.replaceAll("[^\\d[.]]", ""))*1000)) :n_views.replaceAll("[^\\d[.]]", "");
-				TempMap.put(VIEWS_INT, n_views );
-				list.add(TempMap);
-			}
-			return list;
-		} catch (IOException e) {
-			return null;
+			n_views = (n_views.contains("K")||n_views.contains("k"))? Integer.toString((int)(Double.parseDouble(n_views.replaceAll("[^\\d[.]]", ""))*1000)) :n_views.replaceAll("[^\\d[.]]", "");
+			TempMap.put(VIEWS_INT, n_views );
+			list.add(TempMap);
 		}
+		return list;
+
 	}
 	
 	public static ArrayList<HashMap<String, String>> Stories(String url, Document document){	
@@ -80,7 +78,7 @@ public class Parser {
 			
 			TempMap.put(TITLE, titles.get(i).ownText());
 			
-			TempMap.put(URL, titles.get(i).attr("href"));
+			TempMap.put(URL, titles.get(i).attr("href").replaceAll("(?<=/s/\\d{1,10}/).+", ""));
 			
 			TempMap.put(AUTHOR, authors.get(i).ownText());
 			
@@ -90,32 +88,36 @@ public class Parser {
 
 			String attrib[] = attribs.get(i).text().split("\\s*,\\s*");
 			
-			TempMap.put(RATING, attrib[0]);		
-			TempMap.put(LANGUAGUE,attrib[1]);
-			int j = 2;
-			if (!(attrib[j].contains("chapter")||attrib[j].contains("words"))) {
-				TempMap.put(GENRE,attrib[j]);
-				j++;
+			int j = 0;
+			if (attrib[j].contains("&")) {
+				TempMap.put(CROSSOVER,attrib[j++]);
 			}else{
-				TempMap.put(GENRE,"None");
+				TempMap.put(CROSSOVER,"0");
 			}
+			TempMap.put(RATING, attrib[j++]);
+			TempMap.put(LANGUAGUE,attrib[j++]);
+			
+			if (!(attrib[j].contains("chapter")||attrib[j].contains("words"))) {
+				TempMap.put(GENRE,attrib[j++]);
+			}else{
+				TempMap.put(GENRE,"0");
+			}
+			
 			if (attrib[j].contains("chapter")) {
-				TempMap.put(CHAPTER,attrib[j].replaceFirst("(?i)chapters:\\s*", ""));
-				j++;
+				TempMap.put(CHAPTER,attrib[j++].replaceFirst("(?i)chapters:\\s*", ""));
 			}else{
 				TempMap.put(CHAPTER,"1");
 			}
-			TempMap.put(LENGHT,attrib[j].replaceFirst("(?i)words:\\s*", ""));
-			j++;
+			
+			TempMap.put(LENGHT,attrib[j++].replaceFirst("(?i)words:\\s*", ""));
+			
 			if (attrib[j].contains("favs")) {
-				TempMap.put(FAVORITES,attrib[j].replaceFirst("(?i)favs:\\s*", ""));
-				j++;
+				TempMap.put(FAVORITES,attrib[j++].replaceFirst("(?i)favs:\\s*", ""));
 			}else{
 				TempMap.put(FAVORITES,"0");
 			}
 			if (attrib[j].contains("follows")) {
-				TempMap.put(FOLLOWS,attrib[j].replaceFirst("(?i)follows:\\s*", ""));
-				j++;
+				TempMap.put(FOLLOWS,attrib[j++].replaceFirst("(?i)follows:\\s*", ""));
 			}else{
 				TempMap.put(FOLLOWS,"0");
 			}
@@ -181,5 +183,16 @@ public class Parser {
 			Log.e("Parser - Number of pages", Log.getStackTraceString(e));
 			return 1;		
 		}
+	}
+	
+	public static String storyHTML(String url) throws IOException{
+		org.jsoup.nodes.Document document = Jsoup.connect(url).get();
+		Elements titles = document.select("div#storycontent");
+		return titles.html();
+	}
+	
+	public static String crossoverUrl (Document document){
+		Elements url = document.select("div#content > center > a");
+		return url.first().attr("href");
 	}
 }

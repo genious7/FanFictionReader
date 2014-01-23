@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <include
+        android:layout_height="wrap_content"
+        layout="@layout/category_menu_header" />
+
+    <Button
+        android:id="@+id/sub_category_menu_all_crossovers"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/crossover_menu_all_crossovers" />
+
+</LinearLayout>
