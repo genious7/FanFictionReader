@@ -4,7 +4,6 @@ import java.util.HashMap;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -19,6 +18,7 @@ public class DetailDisplay extends Activity {
 	private final static int[] textviews = {
 				R.id.detail_author,
 				R.id.detail_crossover,
+				R.id.detail_category,
 				R.id.detail_rating,
 				R.id.detail_languague,
 				R.id.detail_genre,
@@ -33,6 +33,7 @@ public class DetailDisplay extends Activity {
 	private final static int[] labels = {
 				R.id.detail_author_label,
 				R.id.detail_crossover_label,
+				R.id.detail_category_label,
 				R.id.detail_rating_label,
 				R.id.detail_languague_label,
 				R.id.detail_genre_label,
@@ -47,6 +48,7 @@ public class DetailDisplay extends Activity {
 	private final static String[] hashMapKeys = {
 			Parser.AUTHOR,
 			Parser.CROSSOVER,
+			Parser.CATEGORY,
 			Parser.RATING,
 			Parser.LANGUAGUE,
 			Parser.GENRE,
@@ -68,7 +70,7 @@ public class DetailDisplay extends Activity {
 		HashMap<String, String> values = (HashMap<String, String>) getIntent().getSerializableExtra(MAP);
 		this.setTitle(values.get(Parser.TITLE));
 		
-		for (int i = 0; i < textviews.length; i++) {		
+		for (int i = 0; i < textviews.length; i++) {	
 			if (values.get(hashMapKeys[i]).equals("0")) {
 				((TextView)findViewById(textviews[i])).setVisibility(View.GONE);
 				((TextView)findViewById(labels[i])).setVisibility(View.GONE);

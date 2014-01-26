@@ -25,6 +25,7 @@ public class Parser {
 	public static final String AUTHOR_URL = "Author Url";
 	public static final String SUMMARY = "Summary";
 	public static final String CROSSOVER = "Crossover Category";
+	public static final String CATEGORY = "Category";
 	public static final String RATING = "Rating";
 	public static final String LANGUAGUE = "Languague";
 	public static final String GENRE = "Genre";	
@@ -64,7 +65,7 @@ public class Parser {
 
 	}
 	
-	public static ArrayList<HashMap<String, String>> Stories(String url, Document document){	
+	public static ArrayList<HashMap<String, String>> Stories(String url, Document document, boolean justIn){	
 		Elements summaries = document.select("div#content > div.bs");
 		Elements titles = summaries.select("a[href~=(?i)/s/\\d+/1/.*]");
 		Elements authors = summaries.select("a[href^=/u/]");
@@ -89,10 +90,17 @@ public class Parser {
 			String attrib[] = attribs.get(i).text().split("\\s*,\\s*");
 			
 			int j = 0;
+			
 			if (attrib[j].contains("&")) {
 				TempMap.put(CROSSOVER,attrib[j++]);
+				TempMap.put(CATEGORY,"0");
 			}else{
 				TempMap.put(CROSSOVER,"0");
+				if (justIn) {
+					TempMap.put(CATEGORY,attrib[j++]);
+				}else{
+					TempMap.put(CATEGORY,"0");
+				}		
 			}
 			TempMap.put(RATING, attrib[j++]);
 			TempMap.put(LANGUAGUE,attrib[j++]);
@@ -136,6 +144,7 @@ public class Parser {
 	
 	public static ArrayList<LinkedHashMap<String, Integer>> Filter(String url, Document document){
 		Elements form = document.select("form#myform > select");
+		Elements form2 = document.select("form#justin > select");
 		
 		Elements[] filter = {
 				form.select("[title=sort options] > option"),
@@ -149,7 +158,10 @@ public class Parser {
 				form.select("[title=character 1 filter] > option"),
 				form.select("[title=character 2 filter] > option"),
 				form.select("[title=character 3 filter] > option"),
-				form.select("[title=character 4 filter] > option")};
+				form.select("[title=character 4 filter] > option"),
+				form2.select("[name=s] > option"),
+				form2.select("[title=Filter by Category] > option"),
+				form2.select("[name=l] > option"),};
 		
 		ArrayList<LinkedHashMap<String, Integer>> list = new ArrayList<LinkedHashMap<String,Integer>>();		
 		LinkedHashMap<String, Integer> TempMap = new LinkedHashMap<String, Integer>();

@@ -31,8 +31,8 @@
 	<string name="dialog_unspecified">Unspecified Error</string>
 	<string name="label_stories">Stories</string>
 	<string name="top_200">Top 200</string>
-	<string name="sort_alphabetical">A-Z</string>
-	<string name="sort_numerical">1—9</string>
+	<string name="sort_alphabetical">A\nZ</string>
+	<string name="sort_numerical">9\n1</string>
 	<string name="story_menu_filter">Filter</string>
 	
 	<string name="filter_sort">Sort options</string>
@@ -45,6 +45,8 @@
 	<string name="filter_execute">Apply Filters</string>
 	<string name="dialog_cancelled">Cancelled</string>
 	<string name="filter_lenght">Length</string>
+	<string name="filter_category">Category</string>
+	<string name="filter_type">Type</string>
 	
 	<string name="story_menu_follows">Follows: </string>
 	<string name="story_menu_words">Words:  </string>
@@ -60,5 +62,6 @@
 	<string name="detail_updated">Updated:</string>
 	<string name="detail_published">Published: </string>
 	<string name="detail_crossover">Crossover: </string>
+	<string name="detail_category">Category: </string>
 	<string name="detail_author">Author: </string>
 </resources>

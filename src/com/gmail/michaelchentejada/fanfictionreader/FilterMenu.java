@@ -24,12 +24,13 @@ public class FilterMenu extends Activity {
 	protected static final String KEYSET = "Keyset";
 	protected static final String FILTER_LIST = "Filter List";
 	protected static final String SELECTED_KEYS = "Selected Keys";
+	protected static final String JUST_IN = "Just In";
 	
 	private OnClickListener runFilter = new OnClickListener() {
 		
 		@Override
 		public void onClick(View v) {
-			int[] result = new int[12];
+			int[] result = new int[filterSpinner.length];
 			
 			//Obtain the currently selected position values
 			for (int i = 0; i < filterSpinner.length; i++) {
@@ -73,7 +74,7 @@ public class FilterMenu extends Activity {
 		
 		//Load Spinners
 		filterSpinner = new Spinner[]{
-				(Spinner)findViewById(R.id.filter_sort_option),
+				(Spinner)findViewById(R.id.filter_sort_options),
 				(Spinner)findViewById(R.id.filter_time_range),
 				(Spinner)findViewById(R.id.filter_genre_1),
 				(Spinner)findViewById(R.id.filter_genre_2),
@@ -84,8 +85,17 @@ public class FilterMenu extends Activity {
 				(Spinner)findViewById(R.id.filter_character_a),
 				(Spinner)findViewById(R.id.filter_character_b),
 				(Spinner)findViewById(R.id.filter_character_c),
-				(Spinner)findViewById(R.id.filter_character_d)
+				(Spinner)findViewById(R.id.filter_character_d),
+				(Spinner)findViewById(R.id.filter_type),
+				(Spinner)findViewById(R.id.filter_category),
+				(Spinner)findViewById(R.id.filter_languague_just_in)
 		};
+		
+		if (getIntent().getBooleanExtra(JUST_IN, false)) {
+			findViewById(R.id.regularFilter).setVisibility(View.GONE);
+		}else{
+			findViewById(R.id.just_in_filter).setVisibility(View.GONE);
+		}
 		
 		//Load values on spinners
 		for (int i = 0; i < filterSpinner.length; i++) {

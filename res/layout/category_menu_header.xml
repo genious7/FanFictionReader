@@ -3,22 +3,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
+    <ToggleButton
+        android:id="@+id/category_menu_sort"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/sort_button"
+        android:gravity="top|right"
+        android:text="@string/sort_alphabetical"
+        android:textAppearance="?android:attr/textAppearanceButton"
+        android:textColor="@android:color/primary_text_dark"
+        android:textOff="@string/sort_numerical"
+        android:textOn="@string/sort_alphabetical"
+        android:textStyle="bold" />
+
     <Spinner
         android:id="@+id/category_menu_header_filter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/category_menu_sort"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/category_menu_sort" />
-
-    <ToggleButton
-        android:id="@+id/category_menu_sort"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:text="@string/sort_alphabetical"
-        android:textOff="@string/sort_numerical"
-        android:textOn="@string/sort_alphabetical" />
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

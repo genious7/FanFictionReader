@@ -11,7 +11,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.Spanned;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -114,7 +113,6 @@ public class StoryDisplay extends Activity {
 	}
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
-		Log.v("StoryDisplay-OnCreate", story.toString());
 		outState.putInt(CURRENTPAGE, onSavePage);
 		outState.putCharSequence(CURRENTSTORY, Story);
 		super.onSaveInstanceState(outState);
@@ -178,6 +176,9 @@ public class StoryDisplay extends Activity {
 					first.setEnabled(true);
 				}
 			}else{
+				if (currentPage == 1) {
+					finish();
+				}
 				Toast toast = Toast.makeText(context, getResources().getString(R.string.dialog_internet), Toast.LENGTH_SHORT);
 				toast.show();
 			}

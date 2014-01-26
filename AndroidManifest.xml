@@ -14,7 +14,7 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@android:style/Theme.Black" android:debuggable="true">
+        android:theme="@style/AppTheme">
         <activity
             android:name="com.gmail.michaelchentejada.fanfictionreader.MainMenu"
             android:label="@string/app_name" >
@@ -24,13 +24,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.gmail.michaelchentejada.fanfictionreader.BrowseMenu"></activity>
-        <activity android:name="com.gmail.michaelchentejada.fanfictionreader.CategoryMenu"></activity>
-        <activity android:name="com.gmail.michaelchentejada.fanfictionreader.StoryMenu"></activity>
-        <activity android:name="com.gmail.michaelchentejada.fanfictionreader.FilterMenu" android:theme="@android:style/Theme.Dialog"></activity>
+        <activity android:name="BrowseMenu"></activity>
+        <activity android:name="CategoryMenu"></activity>
+        <activity android:name="StoryMenu"></activity>
+        <activity android:name="FilterMenu" android:theme="@style/Dialog" android:label="@string/story_menu_filter"></activity>
         <activity android:name="StoryDisplay"></activity>
         <activity android:name="SubCategoryMenu"></activity>
-        <activity android:name="DetailDisplay" android:theme="@android:style/Theme.Dialog"></activity>
+        <activity android:name="DetailDisplay" android:theme="@style/Dialog"></activity>
     </application>
 
 </manifest>

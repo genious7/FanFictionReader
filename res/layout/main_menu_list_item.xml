@@ -14,6 +14,8 @@
         android:contentDescription="@string/menu_button_content_description"
         android:maxHeight="@dimen/main_menu_icon_size"
         android:maxWidth="@dimen/main_menu_icon_size"
+        android:minHeight="@dimen/main_menu_icon_size"
+        android:minWidth="@dimen/main_menu_icon_size"
         android:paddingLeft="@dimen/main_menu_icon_padding"
         android:paddingRight="@dimen/main_menu_icon_padding"
         android:src="@android:drawable/ic_menu_manage" />

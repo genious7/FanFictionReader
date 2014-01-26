@@ -32,14 +32,18 @@ public class StoryMenu extends Activity {
 	private Button loadPage; //Button to load additional pages
 	private Context context; //Current context
 
-	private int[] filter = {1,0,0,0,0,0,0,0,0,0,0,0};//Selected filter, default values applied.
+	private int[] filter = {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0};//Selected filter, default values applied.
 	private int[] selectedPositions = null; //Variable used to restore current filter.
 	private int numberOfPages = 1;//Total number of pages
 	private int currentPage = 0;//Currently loaded page
 	
+	protected final static String URL = "URL";
+	protected final static String JUST_IN = "JustIn";
 	
+	private boolean justIn = false;
 	private ArrayList<LinkedHashMap<String, Integer>> filterList; //Filter elements
 	private ArrayList<HashMap<String, String>> list; //List of stories
+	private SimpleAdapter adapter;
 	private ParseStories asyncTask = new ParseStories(); //Async Task
 	
 	/**
@@ -99,6 +103,7 @@ public class StoryMenu extends Activity {
 			i.putExtra(FilterMenu.FILTER_LIST, filterList);//HashMap
 			i.putExtra(FilterMenu.KEYSET, keys);//Ordered KeySet
 			i.putExtra(FilterMenu.SELECTED_KEYS, selectedPositions);//Position selected on previous filter, may equal null 
+			i.putExtra(FilterMenu.JUST_IN, justIn);
 			startActivityForResult(i, 1);		
 		}
 	};
@@ -137,6 +142,12 @@ public class StoryMenu extends Activity {
 		loadPage = (Button)findViewById(R.id.story_load_pages);
 		loadPage.setOnClickListener(addPageListener);
 		
+		justIn = getIntent().getBooleanExtra(JUST_IN, false);
+		
+		if (justIn) {
+			loadPage.setVisibility(View.GONE);
+		}
+		
 		if (savedInstanceState == null) {
 			asyncTask.execute();
 		} else {
@@ -151,7 +162,7 @@ public class StoryMenu extends Activity {
 				loadPage.setEnabled(false);
 			}
 			
-			SimpleAdapter adapter = new SimpleAdapter(context, list,
+			adapter = new SimpleAdapter(context, list,
 					R.layout.story_menu_list_item, new String[] {
 							Parser.TITLE, Parser.SUMMARY, Parser.AUTHOR,
 							Parser.LENGHT, Parser.FOLLOWS ,Parser.CHAPTER}, new int[] {
@@ -189,7 +200,18 @@ public class StoryMenu extends Activity {
 		protected ArrayList<HashMap<String, String>> doInBackground(Void...voids) {
 			
 			String url = "https://m.fanfiction.net" + getIntent().getStringExtra("URL");
-			url = url + "?srt=" + filter[0] + "&t=" + filter[1] + "&g1=" + filter[2] + "&g2=" + filter[3] + "&r=" + filter[4] + "&lan=" + + filter[5] + "&len=" + filter[6] + "&s=" + filter[7] + "&c1=" + filter[8] + "&c2=" + filter[9] + "&c3="+ filter[10] + "&c4=" + filter[11] + "&p=" + currentPage;
+			
+			if (justIn) {
+				url = url + "?s=" + filter[12] + "&cid=" + filter[13] + "&l="
+						+ filter[14];
+			}else {				
+				url = url + "?srt=" + filter[0] + "&t=" + filter[1] + "&g1="
+						+ filter[2] + "&g2=" + filter[3] + "&r=" + filter[4]
+						+ "&lan=" + +filter[5] + "&len=" + filter[6] + "&s="
+						+ filter[7] + "&c1=" + filter[8] + "&c2=" + filter[9]
+						+ "&c3=" + filter[10] + "&c4=" + filter[11] + "&p="
+						+ currentPage;
+			}
 			
 			try {
 				org.jsoup.nodes.Document document = Jsoup.connect(url).get();
@@ -198,11 +220,10 @@ public class StoryMenu extends Activity {
 					filterList=Parser.Filter(url,document);
 				}
 				
-				if (currentPage == 1) { //If the first page is being loaded, then load the total number of pages as well.
-					numberOfPages = Parser.Pages(url, document);
-				}
-				
-				return Parser.Stories(url,document);//Parse the rest of the info
+				if (!justIn && currentPage == 1 ) {//If the first page is being loaded, then load the total number of pages as well.
+						numberOfPages = Parser.Pages(url, document);
+					}
+				return Parser.Stories(url,document,justIn);//Parse the rest of the info
 				
 			} catch (IOException e) {
 				Log.e("StoryMenu - doInBackground", Log.getStackTraceString(e));
@@ -215,40 +236,33 @@ public class StoryMenu extends Activity {
 		protected void onPostExecute(ArrayList<HashMap<String, String>> result) {
 			progressDialog.dismiss();
 			
-			int position[] = {0,0};//Used to restore position if adding new elements
-			
 			if (result != null) {	
 				
 				if (currentPage == 1) {
 					list = result;
 					loadPage.setEnabled(true);
+					
+					adapter = new SimpleAdapter(context, list,
+							R.layout.story_menu_list_item, new String[] {
+									Parser.TITLE, Parser.SUMMARY, Parser.AUTHOR,
+									Parser.LENGHT, Parser.FOLLOWS ,Parser.CHAPTER}, new int[] {
+									R.id.story_menu_list_item_title,
+									R.id.story_menu_list_item_summary,
+									R.id.story_menu_list_item_author,
+									R.id.story_menu_list_item_words,
+									R.id.story_menu_list_item_follows,
+									R.id.story_menu_list_item_chapters});
+					
+					listView.setAdapter(adapter);
 				}else{
 					list.addAll(result);
-					position[0] = listView.getFirstVisiblePosition();
-					position[1] = listView.getChildAt(0).getTop();
+					adapter.notifyDataSetChanged();
 				}
 					
-				SimpleAdapter adapter = new SimpleAdapter(context, list,
-						R.layout.story_menu_list_item, new String[] {
-								Parser.TITLE, Parser.SUMMARY, Parser.AUTHOR,
-								Parser.LENGHT, Parser.FOLLOWS ,Parser.CHAPTER}, new int[] {
-								R.id.story_menu_list_item_title,
-								R.id.story_menu_list_item_summary,
-								R.id.story_menu_list_item_author,
-								R.id.story_menu_list_item_words,
-								R.id.story_menu_list_item_follows,
-								R.id.story_menu_list_item_chapters});
-				
-				listView.setAdapter(adapter);
-				
 				loadPage.setText("Page " + currentPage + " of " + numberOfPages);
 				
 				if (currentPage >= numberOfPages) {
 					loadPage.setEnabled(false);
-				}
-				
-				if (position[0] != 0) {
-					listView.setSelectionFromTop(position[0], position[1]);
 				}
 				
 				super.onPostExecute(result);
