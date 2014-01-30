@@ -2,7 +2,6 @@
 <resources>
 
     <string name="app_name">Fanfiction Reader</string>
-    <string name="action_settings">Settings</string>
 
 	<string name="menu_button_content_description">Menu Button</string>
 	<string name="menu_button_my_library">My Library</string>
@@ -14,22 +13,25 @@
 	<string name="menu_button_about">About</string>
 	
 	<string name="category_button_all">All</string>
-	<string name="category_button_anime">Anime</string>
-	<string name="category_button_books">Books</string>
-	<string name="category_button_cartoons">Cartoons</string>
-	<string name="category_button_comics">Comics</string>
-	<string name="category_button_games">Games</string>
-	<string name="category_button_misc">Misc</string>
-	<string name="category_button_movies">Movies</string>
-	<string name="category_button_plays">Plays &amp; Musicals</string>
-	<string name="category_button_tv">TV Shows</string>
+
+	<string-array name="category_button">
+		<item >Anime</item>
+		<item >Books</item>
+		<item >Cartoons</item>
+		<item >Comics</item>
+		<item >Games</item>
+		<item >Misc</item>
+		<item >Movies</item>
+		<item >Plays &amp; Musicals</item>
+		<item >TV Shows</item>
+	</string-array>
+	<string name="communities_button">General Communities</string>
 	
 	<string name="toggle_regular">Regular</string>
 	<string name="toggle_crossover">Crossover</string>
 	<string name="dialog_internet">Internet access is required</string>
 	<string name="dialog_loading">Loading…</string>
 	<string name="dialog_unspecified">Unspecified Error</string>
-	<string name="label_stories">Stories</string>
 	<string name="top_200">Top 200</string>
 	<string name="sort_alphabetical">A\nZ</string>
 	<string name="sort_numerical">9\n1</string>
@@ -48,20 +50,37 @@
 	<string name="filter_category">Category</string>
 	<string name="filter_type">Type</string>
 	
-	<string name="story_menu_follows">Follows: </string>
-	<string name="story_menu_words">Words:  </string>
-	<string name="story_menu_chapters">Chapters: </string>
+	<string name="story_menu_follows">Follows:\u0020</string>
+	<string name="story_menu_words">Words:\u0020</string>
+	<string name="story_menu_chapters">Chapters:\u0020</string>
 	<string name="crossover_menu_all_crossovers">All Crossovers</string>
-	<string name="detail_rating">Rating: </string>
-	<string name="detail_languague">Languague: </string>
-	<string name="detail_genre">Genre: </string>
-	<string name="detail_chapters">Chapters: </string>
-	<string name="detail_words">Words: </string>
-	<string name="detail_favorites">Favorites: </string>
-	<string name="detail_follows">Follows: </string>
-	<string name="detail_updated">Updated:</string>
-	<string name="detail_published">Published: </string>
-	<string name="detail_crossover">Crossover: </string>
-	<string name="detail_category">Category: </string>
-	<string name="detail_author">Author: </string>
+	<string name="detail_rating">Rating:\u0020</string>
+	<string name="detail_languague">Languague:\u0020</string>
+	<string name="detail_genre">Genre:\u0020</string>
+	<string name="detail_chapters">Chapters:\u0020</string>
+	<string name="detail_words">Words:\u0020</string>
+	<string name="detail_favorites">Favorites:\u0020</string>
+	<string name="detail_follows">Follows:\u0020</string>
+	<string name="detail_updated">Updated:\u0020</string>
+	<string name="detail_published">Published:\u0020</string>
+	<string name="detail_crossover">Crossover:\u0020</string>
+	<string name="detail_category">Category:\u0020</string>
+	<string name="detail_author">Author:\u0020</string>
+	<string name="read_story_chapter">Chapter\u0020</string>
+	<string name="story_add_page_button">Page %1$d of %2$d</string>
+	<string name="pref_text_size">Text size</string>
+	<string-array name="pref_text_size_entries">
+		<item >Small</item>
+		<item >Medium</item>
+		<item >Large</item>
+	</string-array>
+	<string name="Parser_Stories">%1$s Stories</string>
+	<string-array name="sort_communities">
+	    <item >Sort by followers</item>
+		<item >Sort by staff</item>
+		<item >Sort by stories</item>
+		<item >Sort by create date</item>
+		<item >Random</item>
+	</string-array>
+	
 </resources>

@@ -27,11 +27,17 @@ import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 public class StoryMenu extends Activity {
+	private enum classState{
+		NORMAL,
+		JUSTIN,
+		COMMUNITIES
+	}
 	
 	private ListView listView; //Main ListView
 	private Button loadPage; //Button to load additional pages
 	private Context context; //Current context
 
+	private classState appState;
 	private int[] filter = {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0};//Selected filter, default values applied.
 	private int[] selectedPositions = null; //Variable used to restore current filter.
 	private int numberOfPages = 1;//Total number of pages
@@ -39,10 +45,10 @@ public class StoryMenu extends Activity {
 	
 	protected final static String URL = "URL";
 	protected final static String JUST_IN = "JustIn";
+	protected final static String COMMUNITY = "Community";
 	
-	private boolean justIn = false;
 	private ArrayList<LinkedHashMap<String, Integer>> filterList; //Filter elements
-	private ArrayList<HashMap<String, String>> list; //List of stories
+	private ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String,String>>(); //List of stories
 	private SimpleAdapter adapter;
 	private ParseStories asyncTask = new ParseStories(); //Async Task
 	
@@ -57,7 +63,7 @@ public class StoryMenu extends Activity {
 			i.putExtra(StoryDisplay.TITLE, list.get((int) arg3).get(Parser.TITLE));
 			i.putExtra(StoryDisplay.CHAPTERS, list.get((int) arg3).get(Parser.CHAPTER));
 			i.putExtra(StoryDisplay.URL, list.get((int) arg3).get(Parser.URL));
-			startActivityForResult(i, 2);
+			startActivity(i);
 		}
 	};
 	
@@ -69,7 +75,7 @@ public class StoryMenu extends Activity {
 				int arg2, long arg3) {
 			Intent i = new Intent(context,DetailDisplay.class);
 			i.putExtra(DetailDisplay.MAP,list.get((int) arg3));
-			startActivityForResult(i, 3);
+			startActivity(i);
 			return false;
 		}
 	};
@@ -103,7 +109,6 @@ public class StoryMenu extends Activity {
 			i.putExtra(FilterMenu.FILTER_LIST, filterList);//HashMap
 			i.putExtra(FilterMenu.KEYSET, keys);//Ordered KeySet
 			i.putExtra(FilterMenu.SELECTED_KEYS, selectedPositions);//Position selected on previous filter, may equal null 
-			i.putExtra(FilterMenu.JUST_IN, justIn);
 			startActivityForResult(i, 1);		
 		}
 	};
@@ -122,7 +127,6 @@ public class StoryMenu extends Activity {
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.activity_list_view);
 		
-		setResult(RESULT_OK);// Set to OK unless an error occurs
 		context = this;
 		
 		//Set the ListView header and footer
@@ -134,6 +138,19 @@ public class StoryMenu extends Activity {
 		listView.setOnItemClickListener(listListener);
 		listView.setOnItemLongClickListener(openMenu);
 		
+		//Set adapter
+		adapter = new SimpleAdapter(context, list,
+				R.layout.story_menu_list_item, new String[] {
+						Parser.TITLE, Parser.SUMMARY, Parser.AUTHOR,
+						Parser.LENGHT, Parser.FOLLOWS ,Parser.CHAPTER}, new int[] {
+						R.id.story_menu_list_item_title,
+						R.id.story_menu_list_item_summary,
+						R.id.story_menu_list_item_author,
+						R.id.story_menu_list_item_words,
+						R.id.story_menu_list_item_follows,
+						R.id.story_menu_list_item_chapters});
+		listView.setAdapter(adapter);
+		
 		//Set the filtering button
 		Button filterButton = (Button)findViewById(R.id.story_menu_filter);
 		filterButton.setOnClickListener(filterListener);
@@ -142,12 +159,15 @@ public class StoryMenu extends Activity {
 		loadPage = (Button)findViewById(R.id.story_load_pages);
 		loadPage.setOnClickListener(addPageListener);
 		
-		justIn = getIntent().getBooleanExtra(JUST_IN, false);
-		
-		if (justIn) {
+		if (getIntent().getBooleanExtra(JUST_IN, false)){
+			appState = classState.JUSTIN;
 			loadPage.setVisibility(View.GONE);
+		}else if (getIntent().getBooleanExtra(COMMUNITY, false)){
+			appState = classState.COMMUNITIES;
+		}else{
+			appState = classState.NORMAL;
 		}
-		
+	
 		if (savedInstanceState == null) {
 			asyncTask.execute();
 		} else {
@@ -155,24 +175,13 @@ public class StoryMenu extends Activity {
 			numberOfPages = savedInstanceState.getInt("Pages");
 			currentPage = savedInstanceState.getInt("Current Page");
 			
-			list = (ArrayList<HashMap<String, String>>) savedInstanceState.getSerializable("List");
+			list.addAll((ArrayList<HashMap<String, String>>) savedInstanceState.getSerializable("List"));
 			
-			loadPage.setText("Page " + currentPage + " of " + numberOfPages);
+			loadPage.setText(String.format(getResources().getString(R.string.story_add_page_button), currentPage, numberOfPages));
 			if (currentPage >= numberOfPages) {
 				loadPage.setEnabled(false);
 			}
 			
-			adapter = new SimpleAdapter(context, list,
-					R.layout.story_menu_list_item, new String[] {
-							Parser.TITLE, Parser.SUMMARY, Parser.AUTHOR,
-							Parser.LENGHT, Parser.FOLLOWS ,Parser.CHAPTER}, new int[] {
-							R.id.story_menu_list_item_title,
-							R.id.story_menu_list_item_summary,
-							R.id.story_menu_list_item_author,
-							R.id.story_menu_list_item_words,
-							R.id.story_menu_list_item_follows,
-							R.id.story_menu_list_item_chapters});
-			listView.setAdapter(adapter);
 		}
 		
 	}
@@ -199,20 +208,25 @@ public class StoryMenu extends Activity {
 		@Override
 		protected ArrayList<HashMap<String, String>> doInBackground(Void...voids) {
 			
-			String url = "https://m.fanfiction.net" + getIntent().getStringExtra("URL");
+			String url = "https://m.fanfiction.net" + getIntent().getStringExtra(URL);
 			
-			if (justIn) {
-				url = url + "?s=" + filter[12] + "&cid=" + filter[13] + "&l="
-						+ filter[14];
-			}else {				
+			switch (appState) {
+			case JUSTIN:
+				url = url + "?s=" + filter[12] + "&cid=" + filter[13] + "&l="+ filter[14];
+				break;
+			case NORMAL:
 				url = url + "?srt=" + filter[0] + "&t=" + filter[1] + "&g1="
 						+ filter[2] + "&g2=" + filter[3] + "&r=" + filter[4]
 						+ "&lan=" + +filter[5] + "&len=" + filter[6] + "&s="
 						+ filter[7] + "&c1=" + filter[8] + "&c2=" + filter[9]
 						+ "&c3=" + filter[10] + "&c4=" + filter[11] + "&p="
 						+ currentPage;
+				break;
+			case COMMUNITIES:
+				url = url + filter[4] + "/" + filter[0] + "/" + currentPage + "/"+ filter[2] + "/" + filter[6] + "/" + filter[7] +  "/" + filter[1] + "/";
+				break;
 			}
-			
+						
 			try {
 				org.jsoup.nodes.Document document = Jsoup.connect(url).get();
 				
@@ -220,11 +234,15 @@ public class StoryMenu extends Activity {
 					filterList=Parser.Filter(url,document);
 				}
 				
-				if (!justIn && currentPage == 1 ) {//If the first page is being loaded, then load the total number of pages as well.
-						numberOfPages = Parser.Pages(url, document);
-					}
-				return Parser.Stories(url,document,justIn);//Parse the rest of the info
+				if (appState !=  classState.JUSTIN && currentPage == 1 ) {//If the first page is being loaded, then load the total number of pages as well.
+						numberOfPages = Parser.Pages(document);
+				}
 				
+				if (appState == classState.JUSTIN || appState == classState.COMMUNITIES){
+					return Parser.Stories(url,document,true);//Parse the rest of the info
+				}else{
+					return Parser.Stories(url,document,false);//Parse the rest of the info
+				}
 			} catch (IOException e) {
 				Log.e("StoryMenu - doInBackground", Log.getStackTraceString(e));
 				return null;
@@ -237,47 +255,25 @@ public class StoryMenu extends Activity {
 			progressDialog.dismiss();
 			
 			if (result != null) {	
-				
-				if (currentPage == 1) {
-					list = result;
-					loadPage.setEnabled(true);
-					
-					adapter = new SimpleAdapter(context, list,
-							R.layout.story_menu_list_item, new String[] {
-									Parser.TITLE, Parser.SUMMARY, Parser.AUTHOR,
-									Parser.LENGHT, Parser.FOLLOWS ,Parser.CHAPTER}, new int[] {
-									R.id.story_menu_list_item_title,
-									R.id.story_menu_list_item_summary,
-									R.id.story_menu_list_item_author,
-									R.id.story_menu_list_item_words,
-									R.id.story_menu_list_item_follows,
-									R.id.story_menu_list_item_chapters});
-					
-					listView.setAdapter(adapter);
-				}else{
-					list.addAll(result);
-					adapter.notifyDataSetChanged();
-				}
-					
-				loadPage.setText("Page " + currentPage + " of " + numberOfPages);
-				
+				list.addAll(result);
+				adapter.notifyDataSetChanged();				
+				loadPage.setText(String.format(getResources().getString(R.string.story_add_page_button), currentPage, numberOfPages));
 				if (currentPage >= numberOfPages) {
 					loadPage.setEnabled(false);
-				}
-				
-				super.onPostExecute(result);
-				
+				}else{
+					loadPage.setEnabled(true);
+				}				
 			}else{
-				end(getResources().getString(R.string.dialog_internet)); //Connection error
+				Toast toast = Toast.makeText(context, getString(R.string.dialog_internet), Toast.LENGTH_SHORT);
+				toast.show();
+				if (currentPage == 1) {
+					finish();
+				}else{
+					currentPage--;
+				}
 			}
+			super.onPostExecute(result);	
 		}
-	}
-	
-	private void end(String error){
-		Intent end = new Intent();
-		end.putExtra("Error", error);
-		setResult(RESULT_CANCELED, end);
-		finish();
 	}
 	
 	@Override
@@ -297,12 +293,11 @@ public class StoryMenu extends Activity {
 				currentPage = 0;
 				filter = data.getIntArrayExtra(FilterMenu.FILTER_LIST);
 				selectedPositions = data.getIntArrayExtra(FilterMenu.SELECTED_KEYS);
+				list.clear();
 				asyncTask.cancel(true);
 				asyncTask = new ParseStories();
 				asyncTask.execute();
 			}
-		}else if (requestCode == 2) { //Read Story
-			
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}

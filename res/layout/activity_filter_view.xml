@@ -220,13 +220,6 @@
                     </LinearLayout>
                 </LinearLayout>
             </TableRow>
-        </TableLayout>
-
-        <TableLayout
-            android:id="@+id/just_in_filter"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:stretchColumns="1" >
 
             <TableRow
                 android:id="@+id/tableRow9"

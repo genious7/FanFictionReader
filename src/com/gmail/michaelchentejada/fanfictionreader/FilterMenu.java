@@ -24,7 +24,6 @@ public class FilterMenu extends Activity {
 	protected static final String KEYSET = "Keyset";
 	protected static final String FILTER_LIST = "Filter List";
 	protected static final String SELECTED_KEYS = "Selected Keys";
-	protected static final String JUST_IN = "Just In";
 	
 	private OnClickListener runFilter = new OnClickListener() {
 		
@@ -91,17 +90,35 @@ public class FilterMenu extends Activity {
 				(Spinner)findViewById(R.id.filter_languague_just_in)
 		};
 		
-		if (getIntent().getBooleanExtra(JUST_IN, false)) {
-			findViewById(R.id.regularFilter).setVisibility(View.GONE);
-		}else{
-			findViewById(R.id.just_in_filter).setVisibility(View.GONE);
+		View[] tableRows = new View[]{
+				findViewById(R.id.tableRow1),
+				findViewById(R.id.tableRow2),
+				findViewById(R.id.tableRow3),
+				findViewById(R.id.tableRow3),
+				findViewById(R.id.tableRow4),
+				findViewById(R.id.tableRow5),
+				findViewById(R.id.tableRow6),
+				findViewById(R.id.tableRow7),
+				findViewById(R.id.tableRow8),
+				findViewById(R.id.tableRow8),
+				findViewById(R.id.tableRow8),
+				findViewById(R.id.tableRow8),
+				findViewById(R.id.tableRow9),
+				findViewById(R.id.tableRow10),
+				findViewById(R.id.tableRow11)
+		};
+		
+		for (View view : tableRows) {
+			view.setVisibility(View.GONE);
 		}
 		
 		//Load values on spinners
 		for (int i = 0; i < filterSpinner.length; i++) {
 			ArrayAdapter<String> filterAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, keys.get(i));
-			filterSpinner[i].setAdapter(filterAdapter);
-			if (keys.get(i).isEmpty()) {
+			filterSpinner[i].setAdapter(filterAdapter);		
+			if (!keys.get(i).isEmpty()) {			
+				tableRows[i].setVisibility(View.VISIBLE);
+			}else{
 				filterSpinner[i].setVisibility(View.GONE);
 			}
 		}

@@ -36,14 +36,15 @@ public class Parser {
 	public static final String UPDATED = "Updated";
 	public static final String PUBLISHED = "Published";
 	public static final String PAGES = "Pages";
+	public static final String STAFF = "Staff";
 	
 	/**
 	 * Obtains the list of sub-categories inside one of the main categories.
 	 * @author Michael Chen
-	 * @param url The url of the selected category
+	 * @param storyString Story Resource
 	 * @return A hashmap containing target url's, titles, and views if the Internet connection is valid, null otherwise
 	 */
-	public static ArrayList<HashMap<String, String>> Categories(String url, Document document){	
+	public static ArrayList<HashMap<String, String>> Categories(String storyString, Document document){	
 
 		Elements titles = document.select("div#content > div.bs > a");
 		
@@ -55,7 +56,7 @@ public class Parser {
 			TempMap.put(URL, titles.get(i).attr("href"));
 
 			String n_views = titles.get(i).child(0).ownText().replaceAll("[() ]", "");
-			TempMap.put(VIEWS,n_views + " Stories");
+			TempMap.put(VIEWS,String.format(storyString, n_views));
 			
 			n_views = (n_views.contains("K")||n_views.contains("k"))? Integer.toString((int)(Double.parseDouble(n_views.replaceAll("[^\\d[.]]", ""))*1000)) :n_views.replaceAll("[^\\d[.]]", "");
 			TempMap.put(VIEWS_INT, n_views );
@@ -65,8 +66,39 @@ public class Parser {
 
 	}
 	
+	public static ArrayList<HashMap<String, String>> Communities(String StoryResource, Document document){	
+
+		Elements base = document.select("div#content > div.bs");
+		Elements title = base.select("a");
+		Elements summary = base.select("div.z-padtop");
+		
+		ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String,String>>();
+		
+		for (int i = 0; i < base.size(); i++) {
+			HashMap<String, String> TempMap = new HashMap<String, String>();
+			TempMap.put(TITLE, title.get(i).ownText());
+			TempMap.put(URL, title.get(i).attr("href"));
+
+			String n_views = title.get(i).child(0).ownText().replaceAll("[() ]", "");
+			TempMap.put(VIEWS,String.format(StoryResource, n_views));
+			
+			TempMap.put(SUMMARY,summary.get(i).ownText());
+			
+			String attrib[] = summary.get(i).child(0).ownText().toString().split("\\s+-\\s+");
+			TempMap.put(LANGUAGUE,attrib[0]);
+			TempMap.put(STAFF,attrib[1].replaceAll("(?i)staff:\\s*", ""));
+			TempMap.put(FOLLOWS,attrib[2].replaceAll("(?i)followers:\\s*", ""));
+			TempMap.put(PUBLISHED,attrib[3].replaceAll("(?i)since:\\s*", ""));
+			TempMap.put(AUTHOR,attrib[4].replaceAll("(?i)founder:\\s*", ""));
+			
+			list.add(TempMap);
+		}
+		return list;
+
+	}
+	
 	public static ArrayList<HashMap<String, String>> Stories(String url, Document document, boolean justIn){	
-		Elements summaries = document.select("div#content > div.bs");
+		Elements summaries = document.select("div#content div.bs");
 		Elements titles = summaries.select("a[href~=(?i)/s/\\d+/1/.*]");
 		Elements authors = summaries.select("a[href^=/u/]");
 		
@@ -143,13 +175,12 @@ public class Parser {
 	}
 	
 	public static ArrayList<LinkedHashMap<String, Integer>> Filter(String url, Document document){
-		Elements form = document.select("form#myform > select");
-		Elements form2 = document.select("form#justin > select");
+		Elements form = document.select("div#content div#d_menu form > select");
 		
 		Elements[] filter = {
 				form.select("[title=sort options] > option"),
 				form.select("[title=time range options] > option"),
-				form.select("[title=genre 1 filter] > option"),
+				form.select("[title=genre 1 filter] > option,[title=genre filter] > option"),
 				form.select("[title=genre 2 filter] > option"),
 				form.select("[title=rating filter] > option"),
 				form.select("[title=language filter] > option"),
@@ -159,9 +190,9 @@ public class Parser {
 				form.select("[title=character 2 filter] > option"),
 				form.select("[title=character 3 filter] > option"),
 				form.select("[title=character 4 filter] > option"),
-				form2.select("[name=s] > option"),
-				form2.select("[title=Filter by Category] > option"),
-				form2.select("[name=l] > option"),};
+				form.select("[name=s]:not([title]) > option"),
+				form.select("[title=Filter by Category] > option"),
+				form.select("[name=l] > option"),};
 		
 		ArrayList<LinkedHashMap<String, Integer>> list = new ArrayList<LinkedHashMap<String,Integer>>();		
 		LinkedHashMap<String, Integer> TempMap = new LinkedHashMap<String, Integer>();
@@ -182,17 +213,21 @@ public class Parser {
 	 * @param url The url of the fanfiction page.
 	 * @param document The document representing the page.
 	 * @return The total number of pages.
-	 */
-	public static int Pages(String url, Document document){
+	 */	
+	public static int Pages(Document document){
 		try {
-			Elements number = document.select("div#content > center > a:contains(last)");
+			Elements number = document.select("div#content center a:contains(last)");
 			if (number.size() < 1) {
-				return 1; //For searches with only one page.
+				if (document.select("div#content center a:contains(next)").isEmpty()) {
+					return 1; //For searches with only one page.
+				}else{
+					return 2;
+				}
 			}
 			String text = number.first().attr("href");
-			return Integer.valueOf(text.replaceAll(".+&p=", ""));
+			return Integer.valueOf(text.replaceAll("\\A(/[^/]*){5}/(?=\\d+)|(?<=\\d{1,4})/(\\d+/)*|.+&p=", ""));
 		} catch (NumberFormatException e) {
-			Log.e("Parser - Number of pages", Log.getStackTraceString(e));
+			Log.e("Parser - PagesCommunity", Log.getStackTraceString(e));
 			return 1;		
 		}
 	}

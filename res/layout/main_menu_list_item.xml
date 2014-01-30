@@ -3,6 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/top_bottom_padding"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/top_bottom_padding" >
 
     <ImageView
@@ -16,7 +18,6 @@
         android:maxWidth="@dimen/main_menu_icon_size"
         android:minHeight="@dimen/main_menu_icon_size"
         android:minWidth="@dimen/main_menu_icon_size"
-        android:paddingLeft="@dimen/main_menu_icon_padding"
         android:paddingRight="@dimen/main_menu_icon_padding"
         android:src="@android:drawable/ic_menu_manage" />
 

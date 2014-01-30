@@ -57,6 +57,12 @@
                 android:text="&lt;" />
 
             <Button
+                android:id="@+id/read_story_page_counter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="" />
+
+            <Button
                 android:id="@+id/read_story_next"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

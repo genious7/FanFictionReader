@@ -2,6 +2,7 @@ package com.gmail.michaelchentejada.fanfictionreader;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -50,7 +51,7 @@ public class SubCategoryMenu extends Activity {
 		public void onItemClick(AdapterView<?> arg0, View arg1, int position, long id) {
 			Intent i = new Intent(context,StoryMenu.class);
 			i.putExtra("URL", list.get((int)id).get(Parser.URL));
-			startActivityForResult(i, 1);					
+			startActivity(i);					
 		}
 	};
 	private final OnItemSelectedListener filterListener = new OnItemSelectedListener() {
@@ -98,8 +99,7 @@ public class SubCategoryMenu extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.activity_list_view);
-		setResult(RESULT_OK);
-		
+
 		context = this;
 		listView = (ListView) findViewById(R.id.menuListView);
 		View header = (View)getLayoutInflater().inflate(R.layout.sub_category_menu_header, null);
@@ -110,15 +110,7 @@ public class SubCategoryMenu extends Activity {
 		Spinner spinner = (Spinner)header.findViewById(R.id.category_menu_header_filter);
 		List<String> filterList = new ArrayList<String>();
 		filterList.add(getString(R.string.category_button_all));
-		filterList.add(getString(R.string.category_button_anime));
-		filterList.add(getString(R.string.category_button_books));
-		filterList.add(getString(R.string.category_button_cartoons));
-		filterList.add(getString(R.string.category_button_comics));
-		filterList.add(getString(R.string.category_button_games));
-		filterList.add(getString(R.string.category_button_misc));
-		filterList.add(getString(R.string.category_button_movies));
-		filterList.add(getString(R.string.category_button_plays));
-		filterList.add(getString(R.string.category_button_tv));
+		filterList.addAll(Arrays.asList(getResources().getStringArray(R.array.category_button)));
 		
 		position2 = (savedInstanceState == null)? 0 : savedInstanceState.getInt("Positon");
 		ArrayAdapter<String> filterAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, filterList);
@@ -155,20 +147,7 @@ public class SubCategoryMenu extends Activity {
 		outState.putBoolean("Sort", sort);
 		super.onSaveInstanceState(outState);
 	}
-	
-	
-	/**
-	 * Ends the current intent. Only called when an error occurs. Passes a string containing the error message
-	 * to be displayed as a toast on the previous activity.
-	 * @param error The error message to display.
-	 */
-	private void end(String error){
-		Intent end = new Intent();
-		end.putExtra("Error", error);
-		setResult(RESULT_CANCELED, end);
-		finish();
-	}
-	
+		
 	/**
 	 * The asynchronous class which obtains the list of categories from fanfiction.net. 
 	 * @author Michael Chen
@@ -200,7 +179,7 @@ public class SubCategoryMenu extends Activity {
 				if (crossoverUrl == null) {
 					crossoverUrl  = Parser.crossoverUrl(document);
 				}
-				return Parser.Categories(url,document);				
+				return Parser.Categories(getString(R.string.Parser_Stories),document);				
 			} catch (IOException e) {
 				return null;
 			}
@@ -216,7 +195,9 @@ public class SubCategoryMenu extends Activity {
 				SimpleAdapter adapter = new SimpleAdapter(context, list, R.layout.category_menu_list_item, new String[] {Parser.TITLE,Parser.VIEWS}, new int[] {R.id.category_menu_title,R.id.category_menu_views});
 				listView.setAdapter(adapter);				
 			}else{
-				end(getResources().getString(R.string.dialog_internet));	
+				Toast toast = Toast.makeText(context, getString(R.string.dialog_internet), Toast.LENGTH_SHORT);
+				toast.show();
+				finish();
 			}
 			super.onPostExecute(result);
 		}
@@ -248,16 +229,5 @@ public class SubCategoryMenu extends Activity {
 			}else{
 				return "208";
 			}
-	}
-	
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == 1 && resultCode == RESULT_CANCELED){
-			int duration = Toast.LENGTH_SHORT;
-
-			Toast toast = Toast.makeText(context, data.getStringExtra("Error"), duration);
-			toast.show();
-		}
-		super.onActivityResult(requestCode, resultCode, data);	
 	}
 }

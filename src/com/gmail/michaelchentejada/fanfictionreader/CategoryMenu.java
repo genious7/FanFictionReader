@@ -37,10 +37,19 @@ import android.widget.ToggleButton;
  * @author Michael Chen
  */
 public class CategoryMenu extends Activity {
+	
+	private enum classState{
+		NORMAL,
+		CROSSOVER,
+		COMMUNITIES
+	}
+	
 	/*
 	 * Variables representing current state
 	 */
-	private boolean crossover;
+	protected final static String COMMUNITY = "Community";
+	
+	private classState appState;
 	private boolean sort; //true = a-z ; false = views
 	private int position2=0;
 	
@@ -51,16 +60,22 @@ public class CategoryMenu extends Activity {
 	private final OnItemClickListener listener = new OnItemClickListener() {
 		@Override
 		public void onItemClick(AdapterView<?> arg0, View arg1, int position, long id) {
-			if (crossover){
-				Intent i = new Intent(context,SubCategoryMenu.class);
+			Intent i;
+			switch (appState) {
+			case CROSSOVER:
+				i = new Intent(context,SubCategoryMenu.class);
+				i.putExtra("URL", list.get((int)id).get(Parser.URL));	
+				break;
+			case NORMAL:
+				i = new Intent(context,StoryMenu.class);
 				i.putExtra("URL", list.get((int)id).get(Parser.URL));
-				startActivityForResult(i, 1);	
-			}else{
-				Intent i = new Intent(context,StoryMenu.class);
-				i.putExtra("URL", list.get((int)id).get(Parser.URL));
-				startActivityForResult(i, 1);	
+				break;
+			case COMMUNITIES: default:
+				i = new Intent(context,CommunityMenu.class);
+				i.putExtra(CommunityMenu.URL, list.get((int)id).get(Parser.URL));
+				break;
 			}
-				
+			startActivity(i);
 		}
 	};
 	private final OnItemSelectedListener filterListener = new OnItemSelectedListener() {
@@ -79,7 +94,6 @@ public class CategoryMenu extends Activity {
 		public void onNothingSelected(AdapterView<?> arg0) {		
 		}
 	};
-
 	private final OnCheckedChangeListener sortListener = new OnCheckedChangeListener() {
 		
 		@Override
@@ -91,7 +105,8 @@ public class CategoryMenu extends Activity {
 		}
 	};
 	
-	private static final String[] FANFIC_URLS = {"/anime/",
+	private static final String[] FANFIC_URLS = {
+		"anime/",
 		"book/",
 		"cartoon/",
 		"comic/",
@@ -108,7 +123,6 @@ public class CategoryMenu extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.activity_list_view);
-		setResult(RESULT_OK);
 		
 		context = this;
 		listView = (ListView) findViewById(R.id.menuListView);
@@ -132,7 +146,14 @@ public class CategoryMenu extends Activity {
 		spinner.setSelection(position2);
 		spinner.setOnItemSelectedListener(filterListener);
 		
-		crossover = getIntent().getBooleanExtra("Crossover", false);
+		if (getIntent().getBooleanExtra("Crossover", false)) {
+			appState = classState.CROSSOVER;
+		} else if (getIntent().getBooleanExtra(COMMUNITY, false)){
+			appState = classState.COMMUNITIES;
+		}else {
+			appState = classState.NORMAL;
+		}
+
 		
 		sort = (savedInstanceState==null)? false : savedInstanceState.getBoolean("Sort");
 		ToggleButton sortButton = (ToggleButton)findViewById(R.id.category_menu_sort);
@@ -142,7 +163,9 @@ public class CategoryMenu extends Activity {
 		if (savedInstanceState == null){
 			id = getIntent().getIntExtra("Id", 0);	
 			if (id >FANFIC_URLS.length){
-				end(getResources().getString(R.string.dialog_unspecified));
+				Toast toast = Toast.makeText(context, getString(R.string.dialog_unspecified), Toast.LENGTH_SHORT);
+				toast.show();
+				finish();
 			}else{
 				asynctask.execute();
 			}
@@ -161,24 +184,10 @@ public class CategoryMenu extends Activity {
 	protected void onSaveInstanceState(Bundle outState) {
 		outState.putSerializable("List", list);
 		outState.putInt("Positon", position2);
-		outState.putBoolean("Crossover", crossover);
 		outState.putBoolean("Sort", sort);
 		super.onSaveInstanceState(outState);
 	}
-	
-	
-	/**
-	 * Ends the current intent. Only called when an error occurs. Passes a string containing the error message
-	 * to be displayed as a toast on the previous activity.
-	 * @param error The error message to display.
-	 */
-	private void end(String error){
-		Intent end = new Intent();
-		end.putExtra("Error", error);
-		setResult(RESULT_CANCELED, end);
-		finish();
-	}
-	
+		
 	/**
 	 * The asynchronous class which obtains the list of categories from fanfiction.net. 
 	 * @author Michael Chen
@@ -204,10 +213,23 @@ public class CategoryMenu extends Activity {
 		
 		@Override
 		protected ArrayList<HashMap<String, String>> doInBackground(Void... params) {
-			String url = "https://m.fanfiction.net/"+(crossover ?"crossovers/":"")+FANFIC_URLS[id] + "?l=" + sortKey();
+			String url = "";
+			switch (appState) {
+			case COMMUNITIES:
+				url = "https://m.fanfiction.net/communities/" +FANFIC_URLS[id] + "?l=" + sortKey();
+				break;
+			case CROSSOVER:
+				url = "https://m.fanfiction.net/crossovers/" +FANFIC_URLS[id] + "?l=" + sortKey();
+				break;
+			case NORMAL:
+				url = "https://m.fanfiction.net/"+FANFIC_URLS[id] + "?l=" + sortKey(); 
+				break;
+			}
+			
+			
 			try {
 				org.jsoup.nodes.Document document = Jsoup.connect(url).get();
-				return Parser.Categories(url,document);				
+				return Parser.Categories(getString(R.string.Parser_Stories),document);				
 			} catch (IOException e) {
 				return null;
 			}
@@ -223,7 +245,9 @@ public class CategoryMenu extends Activity {
 				SimpleAdapter adapter = new SimpleAdapter(context, list, R.layout.category_menu_list_item, new String[] {Parser.TITLE,Parser.VIEWS}, new int[] {R.id.category_menu_title,R.id.category_menu_views});
 				listView.setAdapter(adapter);				
 			}else{
-				end(getResources().getString(R.string.dialog_internet));	
+				Toast toast = Toast.makeText(context, getString(R.string.dialog_internet), Toast.LENGTH_SHORT);
+				toast.show();
+				finish();
 			}
 			super.onPostExecute(result);
 		}
@@ -251,15 +275,4 @@ public class CategoryMenu extends Activity {
 			return Character.toString(selector);
 	}
 	
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == 1 && resultCode == RESULT_CANCELED){
-			int duration = Toast.LENGTH_SHORT;
-
-			Toast toast = Toast.makeText(context, data.getStringExtra("Error"), duration);
-			toast.show();
-		}
-		super.onActivityResult(requestCode, resultCode, data);
-		
-	}
 }

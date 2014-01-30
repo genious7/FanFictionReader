@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/top_bottom_padding"
-    android:paddingLeft="@dimen/main_menu_icon_padding"
-    android:paddingRight="@dimen/main_menu_icon_padding"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/top_bottom_padding" >
 
     <TextView
@@ -14,6 +14,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:text="Title"
+        android:textColor="?android:attr/textColorPrimary"
         android:textSize="@dimen/menu_title_text_size"
         android:textStyle="bold" />
 
@@ -23,7 +24,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/story_menu_list_item_title"
-        android:text="Summary" />
+        android:text="Summary"
+        android:textColor="?android:attr/textColorSecondary" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -56,7 +58,7 @@
             android:text="890" />
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/community_author"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
