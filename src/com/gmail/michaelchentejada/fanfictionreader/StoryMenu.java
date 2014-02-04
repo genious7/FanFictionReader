@@ -38,7 +38,7 @@ public class StoryMenu extends Activity {
 	private Context context; //Current context
 
 	private classState appState;
-	private int[] filter = {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0};//Selected filter, default values applied.
+	private int[] filter = {1,0,0,0,10,0,0,0,0,0,0,0,0,0};//Selected filter, default values applied.
 	private int[] selectedPositions = null; //Variable used to restore current filter.
 	private int numberOfPages = 1;//Total number of pages
 	private int currentPage = 0;//Currently loaded page
@@ -46,6 +46,7 @@ public class StoryMenu extends Activity {
 	protected final static String URL = "URL";
 	protected final static String JUST_IN = "JustIn";
 	protected final static String COMMUNITY = "Community";
+	private final static String CURRENT_FILTER = "CurrentFilter";
 	
 	private ArrayList<LinkedHashMap<String, Integer>> filterList; //Filter elements
 	private ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String,String>>(); //List of stories
@@ -116,6 +117,7 @@ public class StoryMenu extends Activity {
 	protected void onSaveInstanceState(Bundle outState) {
  		outState.putSerializable("List", list);
 		outState.putSerializable(FilterMenu.FILTER_LIST, filterList);
+		outState.putIntArray(CURRENT_FILTER, filter);
 		outState.putInt("Pages", numberOfPages);
 		outState.putInt("Current Page",currentPage);
 		super.onSaveInstanceState(outState);
@@ -169,11 +171,14 @@ public class StoryMenu extends Activity {
 		}
 	
 		if (savedInstanceState == null) {
+			if (appState == classState.COMMUNITIES)	
+					filter = new int[]{1,0,0,0,0,0,0,0,0,0,0,0,0,0};
 			asyncTask.execute();
 		} else {
 			filterList = (ArrayList<LinkedHashMap<String, Integer>>) savedInstanceState.getSerializable(FilterMenu.FILTER_LIST);
 			numberOfPages = savedInstanceState.getInt("Pages");
 			currentPage = savedInstanceState.getInt("Current Page");
+			filter = savedInstanceState.getIntArray(CURRENT_FILTER);
 			
 			list.addAll((ArrayList<HashMap<String, String>>) savedInstanceState.getSerializable("List"));
 			
@@ -212,7 +217,7 @@ public class StoryMenu extends Activity {
 			
 			switch (appState) {
 			case JUSTIN:
-				url = url + "?s=" + filter[12] + "&cid=" + filter[13] + "&l="+ filter[14];
+				url = url + "?s=" + filter[12] + "&cid=" + filter[13] + "&l="+ filter[5];
 				break;
 			case NORMAL:
 				url = url + "?srt=" + filter[0] + "&t=" + filter[1] + "&g1="

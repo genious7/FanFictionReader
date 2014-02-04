@@ -87,7 +87,6 @@ public class FilterMenu extends Activity {
 				(Spinner)findViewById(R.id.filter_character_d),
 				(Spinner)findViewById(R.id.filter_type),
 				(Spinner)findViewById(R.id.filter_category),
-				(Spinner)findViewById(R.id.filter_languague_just_in)
 		};
 		
 		View[] tableRows = new View[]{
@@ -105,7 +104,6 @@ public class FilterMenu extends Activity {
 				findViewById(R.id.tableRow8),
 				findViewById(R.id.tableRow9),
 				findViewById(R.id.tableRow10),
-				findViewById(R.id.tableRow11)
 		};
 		
 		for (View view : tableRows) {

@@ -82,5 +82,10 @@
 		<item >Sort by create date</item>
 		<item >Random</item>
 	</string-array>
+	<string-array name="search_menu">
+		<item >Search stories</item>
+		<item >Search authors</item>
+		<item >Search communities</item>
+	</string-array>
 	
 </resources>

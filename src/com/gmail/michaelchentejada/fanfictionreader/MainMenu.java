@@ -27,7 +27,11 @@ public class MainMenu extends Activity {
 				i.putExtra(StoryMenu.JUST_IN, true);
 				startActivity(i);
 				break;
-			case 4:
+			case 3:
+				i = new Intent(getApplicationContext(), SearchMenu.class);
+				startActivity(i);
+				break;
+			case 4://Communities
 				i = new Intent(getApplicationContext(), BrowseMenu.class);
 				i.putExtra(BrowseMenu.COMMUNITIES, true);
 				startActivity(i);

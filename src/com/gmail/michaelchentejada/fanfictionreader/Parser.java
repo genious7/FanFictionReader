@@ -183,7 +183,7 @@ public class Parser {
 				form.select("[title=genre 1 filter] > option,[title=genre filter] > option"),
 				form.select("[title=genre 2 filter] > option"),
 				form.select("[title=rating filter] > option"),
-				form.select("[title=language filter] > option"),
+				form.select("[title=language filter] > option,[name=l] > option"),
 				form.select("[title=length in words filter] > option"),
 				form.select("[title=story status] > option"),
 				form.select("[title=character 1 filter] > option"),
@@ -191,7 +191,40 @@ public class Parser {
 				form.select("[title=character 3 filter] > option"),
 				form.select("[title=character 4 filter] > option"),
 				form.select("[name=s]:not([title]) > option"),
-				form.select("[title=Filter by Category] > option"),
+				form.select("[title=Filter by Category] > option")
+				};
+		
+		ArrayList<LinkedHashMap<String, Integer>> list = new ArrayList<LinkedHashMap<String,Integer>>();		
+		LinkedHashMap<String, Integer> TempMap = new LinkedHashMap<String, Integer>();
+		
+		for (Elements j : filter) {
+			for (Element k : j) {
+				TempMap.put(k.ownText(), Integer.valueOf(k.attr("value")));
+			}
+			list.add(TempMap);
+			TempMap = new LinkedHashMap<String,Integer>();
+		}
+		return list;
+	}
+	
+	public static ArrayList<LinkedHashMap<String, Integer>> SearchFilter(Document document){
+		Elements form = document.select("div#content form > div#drop_m > select");
+		
+		Elements[] filter = {
+				form.select("[title=sort options] > option"),
+				form.select("[title=time range options] > option"),
+				form.select("[name=genreid] > option"),
+				form.select("[title=genre 2 filter] > option"),
+				form.select("[name=censorid] > option"),
+				form.select("[title=language filter] > option"),
+				form.select("[name=words] > option"),
+				form.select("[name=statusid] > option"),
+				form.select("[title=character 1 filter] > option"),
+				form.select("[title=character 2 filter] > option"),
+				form.select("[title=character 3 filter] > option"),
+				form.select("[title=character 4 filter] > option"),
+				form.select("[name=s]:not([title]) > option"),
+				form.select("[name=categoryid] > option"),
 				form.select("[name=l] > option"),};
 		
 		ArrayList<LinkedHashMap<String, Integer>> list = new ArrayList<LinkedHashMap<String,Integer>>();		
@@ -204,7 +237,6 @@ public class Parser {
 			list.add(TempMap);
 			TempMap = new LinkedHashMap<String,Integer>();
 		}
-
 		return list;
 	}
 	
@@ -226,6 +258,24 @@ public class Parser {
 			}
 			String text = number.first().attr("href");
 			return Integer.valueOf(text.replaceAll("\\A(/[^/]*){5}/(?=\\d+)|(?<=\\d{1,4})/(\\d+/)*|.+&p=", ""));
+		} catch (NumberFormatException e) {
+			Log.e("Parser - PagesCommunity", Log.getStackTraceString(e));
+			return 1;		
+		}
+	}
+	
+	public static int PagesSearch(Document document){
+		try {
+			Elements number = document.select("div#content form div a:contains(last)");
+			if (number.size() < 1) {
+				if (document.select("div#content form div a:contains(next)").isEmpty()) {
+					return 1; //For searches with only one page.
+				}else{
+					return 2;
+				}
+			}
+			String text = number.first().attr("href");
+			return Integer.valueOf(text.replaceAll(".+&ppage=|(?<=\\d{0,4})&.*", ""));
 		} catch (NumberFormatException e) {
 			Log.e("Parser - PagesCommunity", Log.getStackTraceString(e));
 			return 1;		

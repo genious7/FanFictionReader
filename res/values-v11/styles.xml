@@ -8,6 +8,10 @@
         <!-- API 11 theme customizations can go here. -->
     </style>
     
+    <style name="AppActionBar" parent="android:Theme.Holo">
+        <!-- API 11 theme customizations can go here. -->
+    </style>
+    
     <style name="Dialog" parent="android:Theme.Holo.Dialog">
         
     </style>

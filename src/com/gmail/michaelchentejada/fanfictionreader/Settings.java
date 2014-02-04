@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
+
 public class Settings extends PreferenceActivity {
 	
 	@SuppressWarnings("deprecation")
