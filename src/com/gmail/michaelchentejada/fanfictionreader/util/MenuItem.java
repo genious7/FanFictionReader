@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.gmail.michaelchentejada.fanfictionreader;
+package com.gmail.michaelchentejada.fanfictionreader.util;
 
 /**
  * Represents a single menu item

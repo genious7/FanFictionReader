@@ -1,4 +1,4 @@
-package com.gmail.michaelchentejada.fanfictionreader;
+package com.gmail.michaelchentejada.fanfictionreader.util;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -14,13 +14,7 @@ public class ListComparator implements Comparator<HashMap<String,String>> {
 		if (sortBy){
 			return arg0.get(Parser.TITLE).compareTo(arg1.get(Parser.TITLE));
 		}else{
-			if (Integer.parseInt(arg0.get(Parser.VIEWS_INT))>Integer.parseInt(arg1.get(Parser.VIEWS_INT))){
-					return -1;
-				}else if(Integer.parseInt(arg0.get(Parser.VIEWS_INT))<Integer.parseInt(arg1.get(Parser.VIEWS_INT))){
-					return 1;
-				}else{
-					return 0;
-				}	
+			return -((Integer)Integer.parseInt(arg0.get(Parser.VIEWS_INT))).compareTo(Integer.parseInt(arg1.get(Parser.VIEWS_INT)));
 		}	
 	}
 }

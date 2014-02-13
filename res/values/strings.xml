@@ -87,5 +87,6 @@
 		<item >Search authors</item>
 		<item >Search communities</item>
 	</string-array>
+	<string name="library_success">Story successfully added</string>
 	
 </resources>

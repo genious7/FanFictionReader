@@ -1,11 +1,11 @@
-package com.gmail.michaelchentejada.fanfictionreader;
+package com.gmail.michaelchentejada.fanfictionreader.util;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -97,84 +97,49 @@ public class Parser {
 
 	}
 	
-	public static ArrayList<HashMap<String, String>> Stories(String url, Document document, boolean justIn){	
+	
+	private static final  Pattern pattern = Pattern.compile(
+			"/s/([\\d]++)/");
+	
+	public static ArrayList<Story> Stories(Document document) {
+
 		Elements summaries = document.select("div#content div.bs");
 		Elements titles = summaries.select("a[href~=(?i)/s/\\d+/1/.*]");
 		Elements authors = summaries.select("a[href^=/u/]");
-		
-		Elements attribs = summaries.select("div.gray");
-		
-		ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String,String>>();
-		
-		for (int i = 0; i < titles.size(); i++) {
-			HashMap<String, String> TempMap = new HashMap<String, String>();
-			
-			TempMap.put(TITLE, titles.get(i).ownText());
-			
-			TempMap.put(URL, titles.get(i).attr("href").replaceAll("(?<=/s/\\d{1,10}/).+", ""));
-			
-			TempMap.put(AUTHOR, authors.get(i).ownText());
-			
-			TempMap.put(AUTHOR_URL, authors.get(i).attr("href"));
-			
-			TempMap.put(SUMMARY, summaries.get(i).ownText().replaceFirst("(?i)by\\s*", ""));
 
-			String attrib[] = attribs.get(i).text().split("\\s*,\\s*");
-			
-			int j = 0;
-			
-			if (attrib[j].contains("&")) {
-				TempMap.put(CROSSOVER,attrib[j++]);
-				TempMap.put(CATEGORY,"0");
-			}else{
-				TempMap.put(CROSSOVER,"0");
-				if (justIn) {
-					TempMap.put(CATEGORY,attrib[j++]);
-				}else{
-					TempMap.put(CATEGORY,"0");
-				}		
+		Elements attribs = summaries.select("div.gray");
+
+		ArrayList<Story> list = new ArrayList<Story>();
+		Matcher matcher = pattern.matcher("");
+
+		for (int i = 0; i < titles.size(); i++) {
+			matcher.reset(titles.get(i).attr("href"));
+			matcher.find();
+
+			Elements dates = summaries.get(i).select("span[data-xutime]");
+			long updateDate = 0;
+			long publishDate = 0;
+
+			if (dates.size() == 1) {
+				updateDate = Long.parseLong(dates.first().attr("data-xutime")) * 1000;
+				publishDate = updateDate;
+			} else if (dates.size() == 2) {
+				updateDate = Long.parseLong(dates.first().attr("data-xutime")) * 1000;
+				publishDate = Long.parseLong(dates.last().attr("data-xutime")) * 1000;
 			}
-			TempMap.put(RATING, attrib[j++]);
-			TempMap.put(LANGUAGUE,attrib[j++]);
-			
-			if (!(attrib[j].contains("chapter")||attrib[j].contains("words"))) {
-				TempMap.put(GENRE,attrib[j++]);
-			}else{
-				TempMap.put(GENRE,"0");
-			}
-			
-			if (attrib[j].contains("chapter")) {
-				TempMap.put(CHAPTER,attrib[j++].replaceFirst("(?i)chapters:\\s*", ""));
-			}else{
-				TempMap.put(CHAPTER,"1");
-			}
-			
-			TempMap.put(LENGHT,attrib[j++].replaceFirst("(?i)words:\\s*", ""));
-			
-			if (attrib[j].contains("favs")) {
-				TempMap.put(FAVORITES,attrib[j++].replaceFirst("(?i)favs:\\s*", ""));
-			}else{
-				TempMap.put(FAVORITES,"0");
-			}
-			if (attrib[j].contains("follows")) {
-				TempMap.put(FOLLOWS,attrib[j++].replaceFirst("(?i)follows:\\s*", ""));
-			}else{
-				TempMap.put(FOLLOWS,"0");
-			}
-			if (attrib[j].contains("updated")) {
-				attrib = attrib[j].replaceFirst("(?i)updated:\\s*", "").split("(?i)published:\\s*");
-				TempMap.put(UPDATED,attrib[0]);
-				TempMap.put(PUBLISHED,attrib[1]);
-			}else{
-				TempMap.put(UPDATED,attrib[j].replaceFirst("\\s*", ""));
-				TempMap.put(PUBLISHED,attrib[j].replaceFirst("\\s*", ""));
-			}
-			list.add(TempMap);
+
+			Story TempStory = new Story(Integer.parseInt(matcher.group(1)),
+					titles.get(i).ownText(), authors.get(i).ownText(), 0,
+					summaries.get(i).ownText().replaceFirst("(?i)by\\s*", ""),
+					attribs.get(i).text(), updateDate, publishDate);
+
+			list.add(TempStory);
 		}
 		return list;
 	}
+		
 	
-	public static ArrayList<LinkedHashMap<String, Integer>> Filter(String url, Document document){
+	public static ArrayList<LinkedHashMap<String, Integer>> Filter(Document document){
 		Elements form = document.select("div#content div#d_menu form > select");
 		
 		Elements[] filter = {
@@ -280,12 +245,6 @@ public class Parser {
 			Log.e("Parser - PagesCommunity", Log.getStackTraceString(e));
 			return 1;		
 		}
-	}
-	
-	public static String storyHTML(String url) throws IOException{
-		org.jsoup.nodes.Document document = Jsoup.connect(url).get();
-		Elements titles = document.select("div#storycontent");
-		return titles.html();
 	}
 	
 	public static String crossoverUrl (Document document){

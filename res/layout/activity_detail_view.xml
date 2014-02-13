@@ -171,17 +171,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_below="@+id/detail_crossover_label"
+            android:layout_below="@+id/detail_category_label"
             android:text="@string/detail_rating"
             android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/detail_crossover"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/detail_rating"
-            android:layout_toRightOf="@+id/detail_crossover_label"
-            android:text="" />
 
         <TextView
             android:id="@+id/detail_author_label"
@@ -208,21 +200,11 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/detail_crossover_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/detail_category_label"
-            android:layout_below="@+id/detail_category_label"
-            android:text="@string/detail_crossover"
-            android:textStyle="bold" />
-
-        <TextView
             android:id="@+id/detail_category"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/detail_crossover"
+            android:layout_above="@+id/detail_rating"
             android:layout_toRightOf="@+id/detail_category_label" />
-
     </RelativeLayout>
 
 </ScrollView>

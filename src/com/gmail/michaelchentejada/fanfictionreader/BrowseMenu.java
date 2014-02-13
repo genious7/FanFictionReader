@@ -3,9 +3,12 @@
  */
 package com.gmail.michaelchentejada.fanfictionreader;
 
+import com.gmail.michaelchentejada.fanfictionreader.util.currentState;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -20,6 +23,18 @@ import android.widget.ToggleButton;
  */
 public class BrowseMenu extends Activity {
 	
+	
+	private static final String[] FANFIC_URLS = {
+	"anime/",
+	"book/",
+	"cartoon/",
+	"comic/",
+	"game/",
+	"misc/",
+	"movie/",
+	"play/",
+	"tv/"};
+	
 	private Context context;
 	protected static final String COMMUNITIES = "Community";
 	
@@ -30,8 +45,14 @@ public class BrowseMenu extends Activity {
 
 				ToggleButton crossover = (ToggleButton)findViewById(R.id.xoverSelector);
 				Intent i = new Intent(getApplicationContext(), CategoryMenu.class);
-				i.putExtra("Id", (int)id);
-				i.putExtra("Crossover", crossover.isChecked());
+				
+				if (crossover.isChecked()) {
+					i.putExtra(Menu.EXTRA_ACTIVITY_STATE, currentState.CROSSOVER);
+					i.setData(Uri.parse("https://m.fanfiction.net/crossovers/" +FANFIC_URLS[(int) id]));
+				} else {
+					i.putExtra(Menu.EXTRA_ACTIVITY_STATE, currentState.NORMAL);
+					i.setData(Uri.parse("https://m.fanfiction.net/" +FANFIC_URLS[(int) id]));
+				}
 				startActivity(i);
 			
 		}
@@ -43,13 +64,14 @@ public class BrowseMenu extends Activity {
 		public void onItemClick(AdapterView<?> arg0, View arg1, int position, long id) {
 			if (id == 0) {
 				Intent i = new Intent(context,CommunityMenu.class);
+				
 				i.putExtra(CommunityMenu.URL, "/communities/general/");
 				startActivity(i);
 			}else{
 				Intent i = new Intent(getApplicationContext(),
 						CategoryMenu.class);
-				i.putExtra("Id", (int) id - 1);
-				i.putExtra(CategoryMenu.COMMUNITY, true);
+				i.setData(Uri.parse("https://m.fanfiction.net/communities/" +FANFIC_URLS[(int) (id-1)]));
+				i.putExtra(Menu.EXTRA_ACTIVITY_STATE, currentState.COMMUNITIES);
 				startActivity(i);
 			}		
 		}

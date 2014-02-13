@@ -1,8 +1,13 @@
 package com.gmail.michaelchentejada.fanfictionreader;
 
+import com.gmail.michaelchentejada.fanfictionreader.util.MainMenuAdapter;
+import com.gmail.michaelchentejada.fanfictionreader.util.MenuItem;
+import com.gmail.michaelchentejada.fanfictionreader.util.currentState;
+
 import android.R.drawable;
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
@@ -17,14 +22,18 @@ public class MainMenu extends Activity {
 		public void onItemClick(AdapterView<?> arg0, View arg1, int id,	long arg3) {
 			Intent i;
 			switch (id) {
+			case 0:
+				i = new Intent(getApplicationContext(), LibraryMenu.class);
+				startActivity(i);
+				break;
 			case 1://Case Browse Stories
 				i = new Intent(getApplicationContext(), BrowseMenu.class);
 				startActivity(i);
 				break;
 			case 2://Case Just In
 				i = new Intent(getApplicationContext(), StoryMenu.class);
-				i.putExtra(StoryMenu.URL, "/j/");
-				i.putExtra(StoryMenu.JUST_IN, true);
+				i.setData(Uri.parse("https://m.fanfiction.net/j/"));
+				i.putExtra(Menu.EXTRA_ACTIVITY_STATE, currentState.JUSTIN);
 				startActivity(i);
 				break;
 			case 3:

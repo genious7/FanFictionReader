@@ -7,12 +7,16 @@ import java.util.HashMap;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import com.gmail.michaelchentejada.fanfictionreader.util.Parser;
+import com.gmail.michaelchentejada.fanfictionreader.util.currentState;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnCancelListener;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -56,8 +60,8 @@ public class CommunityMenu extends Activity {
 		public void onItemClick(AdapterView<?> arg0, View arg1, int position,
 				long id) {
 			Intent i = new Intent(context,StoryMenu.class);
-			i.putExtra(StoryMenu.URL, list.get((int)id).get(Parser.URL));
-			i.putExtra(StoryMenu.COMMUNITY, true);
+			i.setData(Uri.parse("https://m.fanfiction.net" + list.get((int)id).get(Parser.URL)));
+			i.putExtra(Menu.EXTRA_ACTIVITY_STATE, currentState.COMMUNITIES);
 			startActivity(i);
 		}
 	};

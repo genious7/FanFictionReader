@@ -1,6 +1,8 @@
 package com.gmail.michaelchentejada.fanfictionreader;
 
-import java.util.HashMap;
+import java.text.DateFormat;
+
+import com.gmail.michaelchentejada.fanfictionreader.util.Story;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -17,7 +19,6 @@ public class DetailDisplay extends Activity {
 	
 	private final static int[] textviews = {
 				R.id.detail_author,
-				R.id.detail_crossover,
 				R.id.detail_category,
 				R.id.detail_rating,
 				R.id.detail_languague,
@@ -32,7 +33,6 @@ public class DetailDisplay extends Activity {
 	
 	private final static int[] labels = {
 				R.id.detail_author_label,
-				R.id.detail_crossover_label,
 				R.id.detail_category_label,
 				R.id.detail_rating_label,
 				R.id.detail_languague_label,
@@ -45,37 +45,37 @@ public class DetailDisplay extends Activity {
 				R.id.detail_published_label
 		};
 	
-	private final static String[] hashMapKeys = {
-			Parser.AUTHOR,
-			Parser.CROSSOVER,
-			Parser.CATEGORY,
-			Parser.RATING,
-			Parser.LANGUAGUE,
-			Parser.GENRE,
-			Parser.CHAPTER,
-			Parser.LENGHT,
-			Parser.FAVORITES,
-			Parser.FOLLOWS,
-			Parser.UPDATED,
-			Parser.PUBLISHED
-		};
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_detail_view);
 		setResult(RESULT_OK);
 		
-		@SuppressWarnings("unchecked")
-		HashMap<String, String> values = (HashMap<String, String>) getIntent().getSerializableExtra(MAP);
-		this.setTitle(values.get(Parser.TITLE));
+		Story values = (Story) getIntent().getParcelableExtra(MAP);
+		this.setTitle(values.getName());
+		
+		
+		
+		String[] stringValues = {
+				values.getAuthor(),
+				values.getCategory(),
+				values.getRating(),
+				values.getlanguage(),
+				values.getGenre(),
+				String.valueOf(values.getChapterLenght()),
+				values.getWordLenght(),
+				values.getFavorites(),
+				values.getFollows(),
+				DateFormat.getDateInstance().format(values.getUpdated()),
+				DateFormat.getDateInstance().format(values.getPublished())
+			};
 		
 		for (int i = 0; i < textviews.length; i++) {	
-			if (values.get(hashMapKeys[i]).equals("0")) {
+			if (stringValues[i].equals("")) {
 				((TextView)findViewById(textviews[i])).setVisibility(View.GONE);
 				((TextView)findViewById(labels[i])).setVisibility(View.GONE);
 			}else{
-				((TextView)findViewById(textviews[i])).setText(values.get(hashMapKeys[i]));
+				((TextView)findViewById(textviews[i])).setText(stringValues[i]);
 			}
 		}	
 	}	

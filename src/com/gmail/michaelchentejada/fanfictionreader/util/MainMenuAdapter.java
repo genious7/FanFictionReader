@@ -2,8 +2,9 @@
  * Based on http://www.ezzylearning.com/tutorial.aspx?tid=1763429&q=customizing-android-listview-items-with-custom-arrayadapter
  * @author Michael Chen
  */
-package com.gmail.michaelchentejada.fanfictionreader;
+package com.gmail.michaelchentejada.fanfictionreader.util;
 
+import com.gmail.michaelchentejada.fanfictionreader.R;
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
