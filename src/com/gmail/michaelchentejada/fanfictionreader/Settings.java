@@ -16,7 +16,7 @@ public class Settings extends PreferenceActivity {
 		addPreferencesFromResource(R.xml.preferences);
 	}
 	
-	protected static int fontSize(Context context){
+	public static int fontSize(Context context){
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
 		String textSize = sharedPref.getString(context.getResources().getString(R.string.pref_text_size), "");
 		if (textSize.equals("S")) {

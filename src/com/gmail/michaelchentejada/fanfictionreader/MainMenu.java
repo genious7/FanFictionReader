@@ -1,5 +1,6 @@
 package com.gmail.michaelchentejada.fanfictionreader;
 
+import com.gmail.michaelchentejada.fanfictionreader.activity.LibraryMenuActivity;
 import com.gmail.michaelchentejada.fanfictionreader.util.MainMenuAdapter;
 import com.gmail.michaelchentejada.fanfictionreader.util.MenuItem;
 import com.gmail.michaelchentejada.fanfictionreader.util.currentState;
@@ -15,46 +16,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-public class MainMenu extends Activity {
-
-	private final OnItemClickListener Listener = new OnItemClickListener() {
-		@Override
-		public void onItemClick(AdapterView<?> arg0, View arg1, int id,	long arg3) {
-			Intent i;
-			switch (id) {
-			case 0:
-				i = new Intent(getApplicationContext(), LibraryMenu.class);
-				startActivity(i);
-				break;
-			case 1://Case Browse Stories
-				i = new Intent(getApplicationContext(), BrowseMenu.class);
-				startActivity(i);
-				break;
-			case 2://Case Just In
-				i = new Intent(getApplicationContext(), StoryMenu.class);
-				i.setData(Uri.parse("https://m.fanfiction.net/j/"));
-				i.putExtra(Menu.EXTRA_ACTIVITY_STATE, currentState.JUSTIN);
-				startActivity(i);
-				break;
-			case 3:
-				i = new Intent(getApplicationContext(), SearchMenu.class);
-				startActivity(i);
-				break;
-			case 4://Communities
-				i = new Intent(getApplicationContext(), BrowseMenu.class);
-				i.putExtra(BrowseMenu.COMMUNITIES, true);
-				startActivity(i);
-				break;
-			case 5: //Case Settings
-				i = new Intent(getApplicationContext(), Settings.class);
-				startActivity(i);
-				break;
-			default:
-				break;
-			}
-			
-		}
-	};
+public class MainMenu extends Activity implements OnItemClickListener{
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -73,10 +35,48 @@ public class MainMenu extends Activity {
 		};
 		
 		MainMenuAdapter Adapter = new MainMenuAdapter(this, R.layout.main_menu_list_item, menuItems);
-		ListView listView = (ListView) findViewById(R.id.menuListView);
+		ListView listView = (ListView) findViewById(R.id.list);
 		listView.setAdapter(Adapter);
 		
-		listView.setOnItemClickListener(Listener);
+		listView.setOnItemClickListener(this);
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position,
+			long id) {
+		Intent i;
+		switch (position) {
+		case 0:
+			i = new Intent(this, LibraryMenuActivity.class);	
+			startActivity(i);
+			break;
+		case 1://Case Browse Stories
+			i = new Intent(this, BrowseMenu.class);
+			startActivity(i);
+			break;
+		case 2://Case Just In
+			i = new Intent(this, StoryMenu.class);
+			i.setData(Uri.parse("https://m.fanfiction.net/j/"));
+			i.putExtra(Menu.EXTRA_ACTIVITY_STATE, currentState.JUSTIN);
+			startActivity(i);
+			break;
+		case 3:
+			i = new Intent(this, SearchMenu.class);
+			startActivity(i);
+			break;
+		case 4://Communities
+			i = new Intent(this, BrowseMenu.class);
+			i.putExtra(BrowseMenu.COMMUNITIES, true);
+			startActivity(i);
+			break;
+		case 5: //Case Settings
+			i = new Intent(this, Settings.class);
+			startActivity(i);
+			break;
+		case 6:
+		default:
+			break;
+		}		
 	}
 }
 

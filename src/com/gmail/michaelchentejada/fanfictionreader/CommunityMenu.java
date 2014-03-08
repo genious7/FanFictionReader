@@ -96,7 +96,7 @@ public class CommunityMenu extends Activity {
 		
 		
 		
-		ListView listview = (ListView)findViewById(R.id.menuListView);
+		ListView listview = (ListView)findViewById(R.id.list);
 		listview.setOnItemClickListener(listener);
 		adapter = new SimpleAdapter(context, list, R.layout.community_menu_list_item, 
 				new String[]{Parser.TITLE,Parser.SUMMARY,Parser.VIEWS,Parser.AUTHOR}, 

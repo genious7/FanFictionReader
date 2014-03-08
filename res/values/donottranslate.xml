@@ -7,4 +7,8 @@
     </string-array>
     <string name="pref_text_size_default">M</string>
     
+    <string name="read_story_first">&lt;&lt;</string><string name="read_story_prev">&lt;</string>
+    <string name="read_story_next">&gt;</string>
+    <string name="read_story_last">&gt;&gt;</string>
+    
 </resources>

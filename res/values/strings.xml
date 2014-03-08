@@ -66,7 +66,7 @@
 	<string name="detail_crossover">Crossover:\u0020</string>
 	<string name="detail_category">Category:\u0020</string>
 	<string name="detail_author">Author:\u0020</string>
-	<string name="read_story_chapter">Chapter\u0020</string>
+	
 	<string name="story_add_page_button">Page %1$d of %2$d</string>
 	<string name="pref_text_size">Text size</string>
 	<string-array name="pref_text_size_entries">
@@ -88,5 +88,19 @@
 		<item >Search communities</item>
 	</string-array>
 	<string name="library_success">Story successfully added</string>
+	
+	<!-- Library Menu Activity -->
+	<string name="menu_library_title">My Library</string>
+	<string name="menu_library_sync_all">Sync All</string>
+	<string name="menu_library_sync_all_condensed">Sync</string>
+	<string name="menu_library_context_detail">Details</string>
+	<string name="menu_library_context_delete">Delete Story</string>
+	
+	<!-- Story Displayer Activity -->
+	<string name="read_story_update">Update story</string>
+	<string name="read_story_update_condensed">Update</string>
+	<string name="read_story_add">Add to library</string>
+	<string name="read_story_add_condensed">Add</string>
+	<string name="read_story_chapter">Chapter\u0020</string>
 	
 </resources>

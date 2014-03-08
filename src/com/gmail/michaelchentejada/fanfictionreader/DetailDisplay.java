@@ -15,7 +15,7 @@ import android.widget.TextView;
  *
  */
 public class DetailDisplay extends Activity {
-	protected final static String MAP = "Map";
+	public final static String MAP = "Map";
 	
 	private final static int[] textviews = {
 				R.id.detail_author,

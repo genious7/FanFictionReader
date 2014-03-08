@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--
         Base application theme for API 11+. This theme completely replaces
@@ -8,8 +8,9 @@
         <!-- API 11 theme customizations can go here. -->
     </style>
     
-    <style name="AppActionBar" parent="android:Theme.Holo">
-        <!-- API 11 theme customizations can go here. -->
+    <style name="AppActionBar" parent="@style/Theme.AppCompat">
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="windowActionBarOverlay">true</item>
     </style>
     
     <style name="Dialog" parent="android:Theme.Holo.Dialog">

@@ -4,6 +4,8 @@
     </style>
     
     <style name="AppActionBar" parent="@style/Theme.AppCompat">
+        <!-- Support library compatibility -->
+        <item name="windowActionBarOverlay">true</item>
     </style>
 
     <style name="AppTheme" parent="AppBaseTheme">

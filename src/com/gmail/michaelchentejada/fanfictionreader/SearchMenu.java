@@ -7,6 +7,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.gmail.michaelchentejada.fanfictionreader.activity.StoryDisplayActivity;
 import com.gmail.michaelchentejada.fanfictionreader.util.Parser;
 import com.gmail.michaelchentejada.fanfictionreader.util.Story;
 import com.gmail.michaelchentejada.fanfictionreader.util.StoryMenuAdapter;
@@ -66,7 +67,7 @@ public class SearchMenu extends Menu<Story> {
 
 	@Override
 	protected void listListener(int id) {
-		Intent i = new Intent(context,StoryDisplay.class);
+		Intent i = new Intent(context,StoryDisplayActivity.class);
 		i.setData(Uri.parse("https://m.fanfiction.net/s/" + list.get(id).getId() + "/1/"));
 		startActivity(i);		
 	}

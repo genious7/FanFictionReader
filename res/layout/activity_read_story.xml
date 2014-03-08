@@ -2,36 +2,14 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/read_story_scrollview"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" 
-    android:keepScreenOn="true">
+    android:layout_height="match_parent"
+    android:layout_marginTop="@dimen/abc_action_bar_default_height"
+    android:keepScreenOn="true" >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-
-            <Button
-                android:id="@+id/read_story_add"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                android:text="+" />
-
-            <TextView
-                android:id="@+id/read_story_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBaseline="@+id/read_story_add"
-                android:layout_alignBottom="@+id/read_story_add"
-                android:layout_alignParentLeft="true"
-                android:text="" />
-
-        </RelativeLayout>
 
         <TextView
             android:id="@+id/read_story_text"
@@ -49,14 +27,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="changePage"
-                android:text="&lt;&lt;" />
+                android:text="@string/read_story_first" />
 
             <Button
                 android:id="@+id/read_story_prev"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="changePage"
-                android:text="&lt;" />
+                android:text="@string/read_story_prev" />
 
             <Button
                 android:id="@+id/read_story_page_counter"
@@ -69,14 +47,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="changePage"
-                android:text=">" />
+                android:text="@string/read_story_next" />
 
             <Button
                 android:id="@+id/read_story_last"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="changePage"
-                android:text=">>" />
+                android:text="@string/read_story_last" />
 
         </LinearLayout>
 

@@ -25,31 +25,63 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="BrowseMenu"></activity>
-        <activity android:name="CategoryMenu"></activity>
-        <activity android:name="StoryMenu"></activity>
-        <activity android:name="FilterMenu" android:theme="@style/Dialog" android:label="@string/story_menu_filter"></activity>
-        <activity android:name="StoryDisplay">
+        <activity android:name="BrowseMenu" >
+        </activity>
+        <activity android:name="CategoryMenu" >
+        </activity>
+        <activity android:name="StoryMenu" >
+        </activity>
+        <activity
+            android:name="FilterMenu"
+            android:label="@string/story_menu_filter"
+            android:theme="@style/Dialog" >
+        </activity>
+        <activity android:name="SubCategoryMenu" >
+        </activity>
+        <activity
+            android:name="DetailDisplay"
+            android:theme="@style/Dialog" >
+        </activity>
+        <activity android:name="Settings" >
+        </activity>
+        <activity android:name="CommunityMenu" >
+        </activity>
+        <activity android:name="SearchMenu" >
+        </activity>
+
+        <service android:name="LibraryDownloader" >
+        </service>
+
+        <activity android:name="LibraryMenu" >
+        </activity>
+        <activity
+            android:name=".activity.StoryDisplayActivity"
+            android:theme="@style/AppActionBar" >
             <intent-filter>
-                 <action android:name="android.intent.action.VIEW" />
-                 <data android:scheme="http"/>
-                 <data android:scheme="https"/>
-                 <data android:host="m.fanfiction.net"/>
-                 <data android:host="www.fanfiction.net"/>
-                 <data android:pathPrefix="/s/"/>
-                 <category android:name="android.intent.category.DEFAULT" />
-       			<!-- The BROWSABLE category is required to get links from web pages. -->
-       			 <category android:name="android.intent.category.BROWSABLE" />   
+                <action android:name="android.intent.action.VIEW" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="m.fanfiction.net" />
+                <data android:host="www.fanfiction.net" />
+                <data android:pathPrefix="/s/" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <!-- The BROWSABLE category is required to get links from web pages. -->
+                <category android:name="android.intent.category.BROWSABLE" />
             </intent-filter>
         </activity>
-        <activity android:name="SubCategoryMenu"></activity>
-        <activity android:name="DetailDisplay" android:theme="@style/Dialog"></activity>
-        <activity android:name="Settings"></activity>
-        <activity android:name="CommunityMenu"></activity>
-        <activity android:name="SearchMenu"></activity>
-        <service android:name="LibraryDownloader"></service>
-        <activity android:name="LibraryMenu"></activity>
-        <activity android:name="LibraryDisplay"></activity>
-    </application>
+        <activity
+            android:name=".activity.LibraryMenuActivity"
+            android:label="@string/menu_library_title"
+            android:theme="@style/AppActionBar" >
 
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+        </activity>
+		<provider
+            android:name=".util.StoryProvider"
+            android:authorities="com.gmail.michaelchentejada.fanfictionreader.provider"
+            android:exported="false" >
+        </provider>
+    </application>
 </manifest>

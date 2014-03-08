@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:michaelchentejada="http://schemas.android.com/apk/res-auto" >
+
+    <item
+        android:id="@+id/library_menu_sync_all"
+        android:enabled="false"
+        android:icon="@drawable/ic_action_refresh"
+        android:title="@string/menu_library_sync_all"
+        android:titleCondensed="@string/menu_library_sync_all_condensed"
+        michaelchentejada:showAsAction="ifRoom"/>
+
+</menu>

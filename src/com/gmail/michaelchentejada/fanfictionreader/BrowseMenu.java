@@ -83,7 +83,7 @@ public class BrowseMenu extends Activity {
 		this.setContentView(R.layout.activity_list_view);
 		context = this;	
 		
-		ListView category_menu= (ListView)findViewById(R.id.menuListView);
+		ListView category_menu= (ListView)findViewById(R.id.list);
 		
 		String[] categories;
 		
