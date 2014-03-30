@@ -160,11 +160,11 @@ public class CommunityMenu extends Activity {
 		protected ArrayList<HashMap<String, String>> doInBackground(
 				Void... params) {
 			try {
-				Document document = Jsoup.connect("https://m.fanfiction.net/"  + getIntent().getStringExtra(URL)+ "0/" + FILTERVALUES[filterPos] + "/" + currentPage + "/").get();
+				Document document = Jsoup.connect(getIntent().getData().toString() + "0/" + FILTERVALUES[filterPos] + "/" + currentPage + "/").get();
 				if (totalPages == 0) {
 					totalPages = Parser.Pages(document);
 				}
-				return Parser.Communities(getString(R.string.Parser_Stories),document);
+				return Parser.Communities(getString(R.string.menu_navigation_count_story),document);
 			} catch (IOException e) {
 				return null;
 			}	

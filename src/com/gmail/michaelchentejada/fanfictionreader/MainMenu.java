@@ -1,6 +1,7 @@
 package com.gmail.michaelchentejada.fanfictionreader;
 
 import com.gmail.michaelchentejada.fanfictionreader.activity.LibraryMenuActivity;
+import com.gmail.michaelchentejada.fanfictionreader.activity.NavigationMenuActivity;
 import com.gmail.michaelchentejada.fanfictionreader.util.MainMenuAdapter;
 import com.gmail.michaelchentejada.fanfictionreader.util.MenuItem;
 import com.gmail.michaelchentejada.fanfictionreader.util.currentState;
@@ -74,6 +75,9 @@ public class MainMenu extends Activity implements OnItemClickListener{
 			startActivity(i);
 			break;
 		case 6:
+			i = new Intent(this, NavigationMenuActivity.class);
+			i.setData(Uri.parse("https://m.fanfiction.net/anime/"));
+			startActivity(i);
 		default:
 			break;
 		}		

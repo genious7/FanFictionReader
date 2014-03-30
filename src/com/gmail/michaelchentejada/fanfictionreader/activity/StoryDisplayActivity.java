@@ -234,6 +234,10 @@ public class StoryDisplayActivity extends ActionBarActivity implements OnClickLi
 			return;
 		}
 		
+		if (savedInstanceState != null) {
+			mCurrentPage = savedInstanceState.getInt(STATE_CURRENT_PAGE);
+		}
+		
 		mLoader = (StoryLoader)getLastCustomNonConfigurationInstance();
 		if (mLoader == null) {
 			mLoader = new StoryLoader(this);
@@ -251,12 +255,6 @@ public class StoryDisplayActivity extends ActionBarActivity implements OnClickLi
 	protected void onDestroy() {
 		mLoader.mActivity.clear();
 		super.onDestroy();
-	}
-
-	@Override
-	protected void onRestoreInstanceState(Bundle savedInstanceState) {
-		mCurrentPage = savedInstanceState.getInt(STATE_CURRENT_PAGE);
-		super.onRestoreInstanceState(savedInstanceState);
 	}
 	
 	@Override

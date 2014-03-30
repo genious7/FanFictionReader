@@ -18,10 +18,13 @@ public final class R {
     }
     public static final class array {
         public static final int category_button=0x7f0d0001;
-        public static final int pref_text_size_entries=0x7f0d0002;
+        /**  Navigation Menu Activity  
+         */
+        public static final int menu_navigation_filter_crossover=0x7f0d0002;
+        public static final int pref_text_size_entries=0x7f0d0003;
         public static final int pref_text_size_values=0x7f0d0000;
-        public static final int search_menu=0x7f0d0004;
-        public static final int sort_communities=0x7f0d0003;
+        public static final int search_menu=0x7f0d0005;
+        public static final int sort_communities=0x7f0d0004;
     }
     public static final class attr {
         /**  Custom divider drawable to use for elements in the action bar. 
@@ -998,15 +1001,17 @@ containing a value of this type.
         public static final int ic_action_new=0x7f02005a;
         public static final int ic_action_refresh=0x7f02005b;
         public static final int ic_action_settings=0x7f02005c;
-        public static final int ic_launcher=0x7f02005d;
-        public static final int sort=0x7f02005e;
-        public static final int sort_button=0x7f02005f;
-        public static final int sort_button_bg_selector=0x7f020060;
-        public static final int sort_selected=0x7f020061;
-        public static final int sort_toggle=0x7f020062;
+        public static final int ic_action_sort_by_size=0x7f02005d;
+        public static final int ic_filter=0x7f02005e;
+        public static final int ic_launcher=0x7f02005f;
+        public static final int sort=0x7f020060;
+        public static final int sort_button=0x7f020061;
+        public static final int sort_button_bg_selector=0x7f020062;
+        public static final int sort_selected=0x7f020063;
+        public static final int sort_toggle=0x7f020064;
     }
     public static final class id {
-        public static final int LinearLayout1=0x7f060087;
+        public static final int LinearLayout1=0x7f060089;
         public static final int RelativeLayout1=0x7f06003d;
         public static final int action_bar=0x7f06001c;
         public static final int action_bar_activity_content=0x7f060015;
@@ -1022,19 +1027,19 @@ containing a value of this type.
         public static final int activity_chooser_view_content=0x7f060025;
         public static final int always=0x7f06000b;
         public static final int beginning=0x7f060011;
-        public static final int browse_menu_label=0x7f060084;
-        public static final int button1=0x7f060092;
-        public static final int category_menu_header_filter=0x7f060086;
-        public static final int category_menu_sort=0x7f060085;
-        public static final int category_menu_title=0x7f060088;
-        public static final int category_menu_views=0x7f060089;
+        public static final int browse_menu_label=0x7f060086;
+        public static final int button1=0x7f060094;
+        public static final int category_menu_header_filter=0x7f060088;
+        public static final int category_menu_sort=0x7f060087;
+        public static final int category_menu_title=0x7f06008a;
+        public static final int category_menu_views=0x7f06008b;
         public static final int checkbox=0x7f06002d;
         public static final int collapseActionView=0x7f06000d;
-        public static final int community_author=0x7f06008d;
-        public static final int community_spinner=0x7f06008a;
-        public static final int community_stories=0x7f06008e;
-        public static final int community_summary=0x7f06008c;
-        public static final int community_title=0x7f06008b;
+        public static final int community_author=0x7f06008f;
+        public static final int community_spinner=0x7f06008c;
+        public static final int community_stories=0x7f060090;
+        public static final int community_summary=0x7f06008e;
+        public static final int community_title=0x7f06008d;
         public static final int default_activity_button=0x7f060028;
         public static final int detail_author=0x7f060052;
         public static final int detail_author_label=0x7f060051;
@@ -1054,7 +1059,7 @@ containing a value of this type.
         public static final int detail_published_label=0x7f06004e;
         public static final int detail_rating=0x7f06003e;
         public static final int detail_rating_label=0x7f06003f;
-        public static final int detail_title=0x7f06009b;
+        public static final int detail_title=0x7f06009d;
         public static final int detail_updated=0x7f06004d;
         public static final int detail_updated_label=0x7f06004c;
         public static final int detail_view_scroll_view=0x7f06003c;
@@ -1067,7 +1072,7 @@ containing a value of this type.
         public static final int end=0x7f060013;
         public static final int expand_activities_button=0x7f060026;
         public static final int expanded_menu=0x7f06002c;
-        public static final int filter=0x7f060093;
+        public static final int filter=0x7f060095;
         public static final int filter_category=0x7f060056;
         public static final int filter_character_a=0x7f060072;
         public static final int filter_character_b=0x7f060073;
@@ -1089,35 +1094,42 @@ containing a value of this type.
         public static final int ifRoom=0x7f06000a;
         public static final int image=0x7f060027;
         public static final int layout_characters_row_2=0x7f060074;
-        public static final int library_menu_sync_all=0x7f06009e;
+        public static final int library_menu_sync_all=0x7f0600a2;
         public static final int linearLayout1=0x7f06005f;
         public static final int linearLayout2=0x7f060071;
         public static final int linear_layout4=0x7f060070;
-        public static final int list=0x7f06007b;
+        public static final int linear_layout_main=0x7f06007b;
+        public static final int list=0x7f06007d;
         public static final int listMode=0x7f060001;
         public static final int list_item=0x7f060029;
-        public static final int list_item_icon=0x7f06008f;
-        public static final int list_item_title=0x7f060090;
-        public static final int menu_library_context_delete=0x7f0600a0;
-        public static final int menu_library_context_details=0x7f06009f;
+        public static final int list_item_icon=0x7f060091;
+        public static final int list_item_title=0x7f060092;
+        public static final int menu1=0x7f0600a5;
+        public static final int menu_library_context_delete=0x7f0600a1;
+        public static final int menu_library_context_details=0x7f0600a0;
+        public static final int menu_navigation_sort_by=0x7f0600a4;
         public static final int middle=0x7f060012;
+        public static final int navigation_library_sort_by_name=0x7f0600a6;
+        public static final int navigation_library_sort_by_size=0x7f0600a7;
+        public static final int navigation_menu_filter_by=0x7f0600a3;
         public static final int never=0x7f060009;
         public static final int none=0x7f060010;
         public static final int normal=0x7f060000;
+        public static final int progressBar1=0x7f06007c;
         public static final int progress_circular=0x7f060018;
         public static final int progress_horizontal=0x7f060019;
         public static final int radio=0x7f06002f;
-        public static final int read_story_first=0x7f06007e;
-        public static final int read_story_last=0x7f060082;
-        public static final int read_story_menu_add=0x7f0600a2;
-        public static final int read_story_menu_update=0x7f0600a1;
-        public static final int read_story_next=0x7f060081;
-        public static final int read_story_page_counter=0x7f060080;
-        public static final int read_story_prev=0x7f06007f;
-        public static final int read_story_scrollview=0x7f06007c;
-        public static final int read_story_text=0x7f06007d;
+        public static final int read_story_first=0x7f060080;
+        public static final int read_story_last=0x7f060084;
+        public static final int read_story_menu_add=0x7f0600a9;
+        public static final int read_story_menu_update=0x7f0600a8;
+        public static final int read_story_next=0x7f060083;
+        public static final int read_story_page_counter=0x7f060082;
+        public static final int read_story_prev=0x7f060081;
+        public static final int read_story_scrollview=0x7f06007e;
+        public static final int read_story_text=0x7f06007f;
         public static final int regularFilter=0x7f060054;
-        public static final int searchText=0x7f060091;
+        public static final int searchText=0x7f060093;
         public static final int search_badge=0x7f060032;
         public static final int search_bar=0x7f060031;
         public static final int search_button=0x7f060033;
@@ -1133,15 +1145,15 @@ containing a value of this type.
         public static final int showHome=0x7f060004;
         public static final int showTitle=0x7f060006;
         public static final int split_action_bar=0x7f06001e;
-        public static final int story_load_pages=0x7f060094;
-        public static final int story_menu_filter=0x7f060095;
-        public static final int story_menu_list_item_author=0x7f060098;
-        public static final int story_menu_list_item_chapters=0x7f06009a;
-        public static final int story_menu_list_item_follows=0x7f06009c;
-        public static final int story_menu_list_item_summary=0x7f060097;
-        public static final int story_menu_list_item_title=0x7f060096;
-        public static final int story_menu_list_item_words=0x7f060099;
-        public static final int sub_category_menu_all_crossovers=0x7f06009d;
+        public static final int story_load_pages=0x7f060096;
+        public static final int story_menu_filter=0x7f060097;
+        public static final int story_menu_list_item_author=0x7f06009a;
+        public static final int story_menu_list_item_chapters=0x7f06009c;
+        public static final int story_menu_list_item_follows=0x7f06009e;
+        public static final int story_menu_list_item_summary=0x7f060099;
+        public static final int story_menu_list_item_title=0x7f060098;
+        public static final int story_menu_list_item_words=0x7f06009b;
+        public static final int sub_category_menu_all_crossovers=0x7f06009f;
         public static final int submit_area=0x7f060039;
         public static final int tabMode=0x7f060002;
         public static final int tableRow1=0x7f060057;
@@ -1168,7 +1180,7 @@ containing a value of this type.
         public static final int up=0x7f060021;
         public static final int useLogo=0x7f060003;
         public static final int withText=0x7f06000c;
-        public static final int xoverSelector=0x7f060083;
+        public static final int xoverSelector=0x7f060085;
     }
     public static final class integer {
         /**  The maximum number of action buttons that should be permitted within
@@ -1230,20 +1242,21 @@ containing a value of this type.
         public static final int community_menu_header=0x7f03001f;
         public static final int community_menu_list_item=0x7f030020;
         public static final int main_menu_list_item=0x7f030021;
-        public static final int search_menu_header=0x7f030022;
-        public static final int story_menu_footer=0x7f030023;
-        public static final int story_menu_header=0x7f030024;
-        public static final int story_menu_list_item=0x7f030025;
-        public static final int sub_category_menu_header=0x7f030026;
-        public static final int support_simple_spinner_dropdown_item=0x7f030027;
+        public static final int progress_bar=0x7f030022;
+        public static final int search_menu_header=0x7f030023;
+        public static final int story_menu_footer=0x7f030024;
+        public static final int story_menu_header=0x7f030025;
+        public static final int story_menu_list_item=0x7f030026;
+        public static final int sub_category_menu_header=0x7f030027;
+        public static final int support_simple_spinner_dropdown_item=0x7f030028;
     }
     public static final class menu {
-        public static final int library_menu_menu=0x7f0e0000;
-        public static final int read_story_context_menu=0x7f0e0001;
-        public static final int read_story_menu=0x7f0e0002;
+        public static final int library_context_menu=0x7f0e0000;
+        public static final int library_menu=0x7f0e0001;
+        public static final int navigation_menu=0x7f0e0002;
+        public static final int read_story_menu=0x7f0e0003;
     }
     public static final class string {
-        public static final int Parser_Stories=0x7f0b0044;
         /**  Content description for the action bar "home" affordance. [CHAR LIMIT=NONE] 
          */
         public static final int abc_action_bar_home_description=0x7f0b0001;
@@ -1285,37 +1298,47 @@ containing a value of this type.
          */
         public static final int abc_shareactionprovider_share_with_application=0x7f0b000b;
         public static final int app_name=0x7f0b0012;
-        public static final int category_button_all=0x7f0b001b;
-        public static final int communities_button=0x7f0b001c;
-        public static final int crossover_menu_all_crossovers=0x7f0b0035;
-        public static final int detail_author=0x7f0b0041;
-        public static final int detail_category=0x7f0b0040;
-        public static final int detail_chapters=0x7f0b0039;
-        public static final int detail_crossover=0x7f0b003f;
-        public static final int detail_favorites=0x7f0b003b;
-        public static final int detail_follows=0x7f0b003c;
-        public static final int detail_genre=0x7f0b0038;
-        public static final int detail_languague=0x7f0b0037;
-        public static final int detail_published=0x7f0b003e;
-        public static final int detail_rating=0x7f0b0036;
-        public static final int detail_updated=0x7f0b003d;
-        public static final int detail_words=0x7f0b003a;
-        public static final int dialog_cancelled=0x7f0b002e;
-        public static final int dialog_internet=0x7f0b001f;
-        public static final int dialog_loading=0x7f0b0020;
-        public static final int dialog_unspecified=0x7f0b0021;
-        public static final int filter_category=0x7f0b0030;
-        public static final int filter_character=0x7f0b002b;
-        public static final int filter_date=0x7f0b0027;
-        public static final int filter_execute=0x7f0b002d;
-        public static final int filter_genre=0x7f0b0028;
-        public static final int filter_languague=0x7f0b002a;
-        public static final int filter_lenght=0x7f0b002f;
-        public static final int filter_rating=0x7f0b0029;
-        public static final int filter_sort=0x7f0b0026;
-        public static final int filter_status=0x7f0b002c;
-        public static final int filter_type=0x7f0b0031;
-        public static final int library_success=0x7f0b0045;
+        public static final int communities_button=0x7f0b001b;
+        public static final int crossover_menu_all_crossovers=0x7f0b0033;
+        public static final int detail_author=0x7f0b003f;
+        public static final int detail_category=0x7f0b003e;
+        public static final int detail_chapters=0x7f0b0037;
+        public static final int detail_crossover=0x7f0b003d;
+        public static final int detail_favorites=0x7f0b0039;
+        public static final int detail_follows=0x7f0b003a;
+        public static final int detail_genre=0x7f0b0036;
+        public static final int detail_languague=0x7f0b0035;
+        public static final int detail_published=0x7f0b003c;
+        public static final int detail_rating=0x7f0b0034;
+        public static final int detail_updated=0x7f0b003b;
+        public static final int detail_words=0x7f0b0038;
+        public static final int dialog_cancelled=0x7f0b002c;
+        public static final int dialog_internet=0x7f0b001e;
+        public static final int dialog_loading=0x7f0b001f;
+        public static final int dialog_unspecified=0x7f0b0020;
+        public static final int filter_category=0x7f0b002e;
+        public static final int filter_character=0x7f0b0029;
+        public static final int filter_date=0x7f0b0025;
+        public static final int filter_execute=0x7f0b002b;
+        public static final int filter_genre=0x7f0b0026;
+        public static final int filter_languague=0x7f0b0028;
+        public static final int filter_lenght=0x7f0b002d;
+        public static final int filter_rating=0x7f0b0027;
+        public static final int filter_sort=0x7f0b0024;
+        public static final int filter_status=0x7f0b002a;
+        public static final int filter_type=0x7f0b002f;
+        /**  General Items and Strings 
+         */
+        public static final int general_anime=0x7f0b0059;
+        public static final int general_books=0x7f0b005a;
+        public static final int general_cartoons=0x7f0b005b;
+        public static final int general_comics=0x7f0b005c;
+        public static final int general_games=0x7f0b005d;
+        public static final int general_misc=0x7f0b005e;
+        public static final int general_movies=0x7f0b005f;
+        public static final int general_plays=0x7f0b0060;
+        public static final int general_tv=0x7f0b0061;
+        public static final int library_success=0x7f0b0042;
         public static final int menu_button_about=0x7f0b001a;
         public static final int menu_button_browse_stories=0x7f0b0015;
         public static final int menu_button_communities=0x7f0b0018;
@@ -1324,36 +1347,51 @@ containing a value of this type.
         public static final int menu_button_my_library=0x7f0b0014;
         public static final int menu_button_search=0x7f0b0017;
         public static final int menu_button_settings=0x7f0b0019;
-        public static final int menu_library_context_delete=0x7f0b004a;
-        public static final int menu_library_context_detail=0x7f0b0049;
-        public static final int menu_library_sync_all=0x7f0b0047;
-        public static final int menu_library_sync_all_condensed=0x7f0b0048;
+        public static final int menu_library_context_delete=0x7f0b0053;
+        public static final int menu_library_context_detail=0x7f0b0052;
+        public static final int menu_library_sync_all=0x7f0b0050;
+        public static final int menu_library_sync_all_condensed=0x7f0b0051;
         /**  Library Menu Activity 
          */
-        public static final int menu_library_title=0x7f0b0046;
-        public static final int pref_text_size=0x7f0b0043;
+        public static final int menu_library_title=0x7f0b004f;
+        public static final int menu_navigation_count_community=0x7f0b0049;
+        public static final int menu_navigation_count_story=0x7f0b0048;
+        public static final int menu_navigation_filter_by=0x7f0b0047;
+        public static final int menu_navigation_filter_crossover_all=0x7f0b004e;
+        public static final int menu_navigation_filter_top_200=0x7f0b004d;
+        /**  Navigation Menu Activity 
+         */
+        public static final int menu_navigation_sort_by=0x7f0b0043;
+        public static final int menu_navigation_sort_by_condensed=0x7f0b0044;
+        public static final int menu_navigation_sort_by_name=0x7f0b0045;
+        public static final int menu_navigation_sort_by_size=0x7f0b0046;
+        public static final int menu_navigation_title_community=0x7f0b004c;
+        public static final int menu_navigation_title_crossover=0x7f0b004b;
+        public static final int menu_navigation_title_regular=0x7f0b004a;
+        public static final int pref_text_size=0x7f0b0041;
+        /**  Story Displayer Activity 
+         */
         public static final int pref_text_size_default=0x7f0b000d;
-        public static final int read_story_add=0x7f0b004d;
-        public static final int read_story_add_condensed=0x7f0b004e;
-        public static final int read_story_chapter=0x7f0b004f;
+        public static final int read_story_add=0x7f0b0056;
+        public static final int read_story_add_condensed=0x7f0b0057;
+        public static final int read_story_chapter=0x7f0b0058;
         public static final int read_story_first=0x7f0b000e;
         public static final int read_story_last=0x7f0b0011;
         public static final int read_story_next=0x7f0b0010;
         public static final int read_story_prev=0x7f0b000f;
         /**  Story Displayer Activity 
          */
-        public static final int read_story_update=0x7f0b004b;
-        public static final int read_story_update_condensed=0x7f0b004c;
-        public static final int sort_alphabetical=0x7f0b0023;
-        public static final int sort_numerical=0x7f0b0024;
-        public static final int story_add_page_button=0x7f0b0042;
-        public static final int story_menu_chapters=0x7f0b0034;
-        public static final int story_menu_filter=0x7f0b0025;
-        public static final int story_menu_follows=0x7f0b0032;
-        public static final int story_menu_words=0x7f0b0033;
-        public static final int toggle_crossover=0x7f0b001e;
-        public static final int toggle_regular=0x7f0b001d;
-        public static final int top_200=0x7f0b0022;
+        public static final int read_story_update=0x7f0b0054;
+        public static final int read_story_update_condensed=0x7f0b0055;
+        public static final int sort_alphabetical=0x7f0b0021;
+        public static final int sort_numerical=0x7f0b0022;
+        public static final int story_add_page_button=0x7f0b0040;
+        public static final int story_menu_chapters=0x7f0b0032;
+        public static final int story_menu_filter=0x7f0b0023;
+        public static final int story_menu_follows=0x7f0b0030;
+        public static final int story_menu_words=0x7f0b0031;
+        public static final int toggle_crossover=0x7f0b001d;
+        public static final int toggle_regular=0x7f0b001c;
     }
     public static final class style {
         public static final int AppActionBar=0x7f0c0084;

@@ -9,8 +9,6 @@
     </style>
     
     <style name="AppActionBar" parent="@style/Theme.AppCompat">
-        <item name="android:windowActionBarOverlay">true</item>
-        <item name="windowActionBarOverlay">true</item>
     </style>
     
     <style name="Dialog" parent="android:Theme.Holo.Dialog">

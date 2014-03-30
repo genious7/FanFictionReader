@@ -3,8 +3,7 @@
  */
 package com.gmail.michaelchentejada.fanfictionreader;
 
-import com.gmail.michaelchentejada.fanfictionreader.util.currentState;
-
+import com.gmail.michaelchentejada.fanfictionreader.activity.NavigationMenuActivity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -44,13 +43,11 @@ public class BrowseMenu extends Activity {
 		public void onItemClick(AdapterView<?> arg0, View arg1, int position, long id) {
 
 				ToggleButton crossover = (ToggleButton)findViewById(R.id.xoverSelector);
-				Intent i = new Intent(getApplicationContext(), CategoryMenu.class);
+				Intent i = new Intent(getApplicationContext(), NavigationMenuActivity.class);
 				
 				if (crossover.isChecked()) {
-					i.putExtra(Menu.EXTRA_ACTIVITY_STATE, currentState.CROSSOVER);
 					i.setData(Uri.parse("https://m.fanfiction.net/crossovers/" +FANFIC_URLS[(int) id]));
 				} else {
-					i.putExtra(Menu.EXTRA_ACTIVITY_STATE, currentState.NORMAL);
 					i.setData(Uri.parse("https://m.fanfiction.net/" +FANFIC_URLS[(int) id]));
 				}
 				startActivity(i);
@@ -64,14 +61,12 @@ public class BrowseMenu extends Activity {
 		public void onItemClick(AdapterView<?> arg0, View arg1, int position, long id) {
 			if (id == 0) {
 				Intent i = new Intent(context,CommunityMenu.class);
-				
-				i.putExtra(CommunityMenu.URL, "/communities/general/");
+				i.setData(Uri.parse("https://m.fanfiction.net/communities/general/0/"));
 				startActivity(i);
 			}else{
 				Intent i = new Intent(getApplicationContext(),
-						CategoryMenu.class);
+						NavigationMenuActivity.class);
 				i.setData(Uri.parse("https://m.fanfiction.net/communities/" +FANFIC_URLS[(int) (id-1)]));
-				i.putExtra(Menu.EXTRA_ACTIVITY_STATE, currentState.COMMUNITIES);
 				startActivity(i);
 			}		
 		}

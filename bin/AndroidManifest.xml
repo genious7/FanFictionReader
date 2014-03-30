@@ -83,5 +83,6 @@
             android:authorities="com.gmail.michaelchentejada.fanfictionreader.provider"
             android:exported="false" >
         </provider>
+		<activity android:name=".activity.NavigationMenuActivity" android:theme="@style/AppActionBar"></activity>
     </application>
 </manifest>

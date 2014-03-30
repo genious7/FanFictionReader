@@ -110,7 +110,7 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
-		getMenuInflater().inflate(R.menu.read_story_context_menu, menu);
+		getMenuInflater().inflate(R.menu.library_context_menu, menu);
 	}
 
 	@Override
@@ -143,7 +143,7 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.library_menu_menu, menu);
+		getMenuInflater().inflate(R.menu.library_menu, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 

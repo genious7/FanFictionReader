@@ -1,13 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string-array name="pref_text_size_values">
-        <item >S</item>
-        <item >M</item>
-        <item >L</item>
+        <item>S</item>
+        <item>M</item>
+        <item>L</item>
     </string-array>
-    <string name="pref_text_size_default">M</string>
+
+    <string-array name="category_button">
+		<item >@string/general_anime</item>
+		<item >@string/general_books</item>
+		<item >@string/general_cartoons</item>
+		<item >@string/general_comics</item>
+		<item >@string/general_games</item>
+		<item >@string/general_misc</item>
+		<item >@string/general_movies</item>
+		<item >@string/general_plays</item>
+		<item >@string/general_tv</item>      
+	</string-array>
+
+    <!-- Navigation Menu Activity  -->
+    <string-array name="menu_navigation_filter_crossover">
+        <item >@string/menu_navigation_filter_crossover_all</item>
+        <item >@string/general_anime</item>
+		<item >@string/general_books</item>
+		<item >@string/general_cartoons</item>
+		<item >@string/general_comics</item>
+		<item >@string/general_games</item>
+		<item >@string/general_misc</item>
+		<item >@string/general_movies</item>
+		<item >@string/general_plays</item>
+		<item >@string/general_tv</item>        
+    </string-array>
     
-    <string name="read_story_first">&lt;&lt;</string><string name="read_story_prev">&lt;</string>
+    <!-- Story Displayer Activity -->
+	<string name="pref_text_size_default">M</string>
+    <string name="read_story_first">&lt;&lt;</string>
+    <string name="read_story_prev">&lt;</string>
     <string name="read_story_next">&gt;</string>
     <string name="read_story_last">&gt;&gt;</string>
     
