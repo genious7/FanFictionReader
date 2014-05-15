@@ -47,7 +47,7 @@ import com.gmail.michaelchentejada.fanfictionreader.LibraryDownloader;
 import com.gmail.michaelchentejada.fanfictionreader.R;
 import com.gmail.michaelchentejada.fanfictionreader.Settings;
 import com.gmail.michaelchentejada.fanfictionreader.util.Story;
-import com.gmail.michaelchentejada.fanfictionreader.util.databaseHelper;
+import com.gmail.michaelchentejada.fanfictionreader.util.DatabaseHelper;
 
 /**
  * 
@@ -372,7 +372,7 @@ public class StoryDisplayActivity extends ActionBarActivity implements OnClickLi
 		private StoryObject fillFromSql(int storyId) {
 			if (mResult == null) {
 				// Finds the number of pages from the database.
-				databaseHelper db = new databaseHelper(mAppContext);
+				DatabaseHelper db = new DatabaseHelper(mAppContext);
 				Story story = db.getStory(storyId);
 				db.close();
 				if (story == null) {

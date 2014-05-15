@@ -21,9 +21,9 @@ public class FilterMenu extends Activity {
 	private static final String SPINNER_POSITION = "Spinners";
 	
 	//References to data coming from parent activity
-	protected static final String KEYSET = "Keyset";
-	protected static final String FILTER_LIST = "Filter List";
-	protected static final String SELECTED_KEYS = "Selected Keys";
+	public static final String KEYSET = "Keyset";
+	public static final String STATE_FILTER_LIST = "Filter List";
+	public static final String SELECTED_KEYS = "Selected Keys";
 	
 	private OnClickListener runFilter = new OnClickListener() {
 		
@@ -42,7 +42,7 @@ public class FilterMenu extends Activity {
 			
 			//Pass them back to the parent activity
 			Intent results = new Intent();
-			results.putExtra(FILTER_LIST, result);
+			results.putExtra(STATE_FILTER_LIST, result);
 			results.putExtra(SELECTED_KEYS, selectedPositions());
 			setResult(RESULT_OK, results);	
 			finish();
@@ -62,7 +62,7 @@ public class FilterMenu extends Activity {
 		runButton.setOnClickListener(runFilter);
 		
 		//Load the filter list
-		filterList = (ArrayList<HashMap<String, Integer>>) getIntent().getSerializableExtra(FILTER_LIST);
+		filterList = (ArrayList<HashMap<String, Integer>>) getIntent().getSerializableExtra(STATE_FILTER_LIST);
 		ArrayList<ArrayList<String>> keys = (ArrayList<ArrayList<String>>) getIntent().getSerializableExtra(KEYSET);
 		
 		//Error Detection

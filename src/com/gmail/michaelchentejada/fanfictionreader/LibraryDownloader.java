@@ -15,7 +15,7 @@ import org.jsoup.select.Elements;
 
 import com.gmail.michaelchentejada.fanfictionreader.R;
 import com.gmail.michaelchentejada.fanfictionreader.util.Story;
-import com.gmail.michaelchentejada.fanfictionreader.util.databaseHelper;
+import com.gmail.michaelchentejada.fanfictionreader.util.DatabaseHelper;
 
 import android.app.Service;
 import android.content.Context;
@@ -180,7 +180,7 @@ public class LibraryDownloader extends Service {
 			}
 			
 			
-			databaseHelper db = new databaseHelper(context);
+			DatabaseHelper db = new DatabaseHelper(context);
 			
 			db.addStory(story);
 			

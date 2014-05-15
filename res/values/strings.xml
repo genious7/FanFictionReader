@@ -11,17 +11,11 @@
 	<string name="menu_button_communities">Communities</string>
 	<string name="menu_button_settings">Settings</string>
 	<string name="menu_button_about">About</string>
-
-	<string name="communities_button">General Communities</string>
 	
-	<string name="toggle_regular">Regular</string>
-	<string name="toggle_crossover">Crossover</string>
 	<string name="dialog_internet">Internet access is required</string>
 	<string name="dialog_loading">Loading…</string>
 	<string name="dialog_unspecified">Unspecified Error</string>
-	
-	<string name="sort_alphabetical">A\nZ</string>
-	<string name="sort_numerical">9\n1</string>
+
 	<string name="story_menu_filter">Filter</string>
 	
 	<string name="filter_sort">Sort options</string>
@@ -40,7 +34,6 @@
 	<string name="story_menu_follows">Follows:\u0020</string>
 	<string name="story_menu_words">Words:\u0020</string>
 	<string name="story_menu_chapters">Chapters:\u0020</string>
-	<string name="crossover_menu_all_crossovers">All Crossovers</string>
 	<string name="detail_rating">Rating:\u0020</string>
 	<string name="detail_languague">Languague:\u0020</string>
 	<string name="detail_genre">Genre:\u0020</string>
@@ -50,7 +43,6 @@
 	<string name="detail_follows">Follows:\u0020</string>
 	<string name="detail_updated">Updated:\u0020</string>
 	<string name="detail_published">Published:\u0020</string>
-	<string name="detail_crossover">Crossover:\u0020</string>
 	<string name="detail_category">Category:\u0020</string>
 	<string name="detail_author">Author:\u0020</string>
 	
@@ -62,19 +54,28 @@
 		<item >Large</item>
 	</string-array>
 	
-	<string-array name="sort_communities">
-	    <item >Sort by followers</item>
-		<item >Sort by staff</item>
-		<item >Sort by stories</item>
-		<item >Sort by create date</item>
-		<item >Random</item>
-	</string-array>
+	<string name="library_success">Story successfully added</string>
+	
+	<!-- Community Menu Activity -->
+	<string name="menu_community_random">Random</string>
+	<string name="menu_community_follows">Sort by follows</string>
+	<string name="menu_community_date">Sort by create date</string>
+	<string name="menu_community_staff">Sort by staff</string>
+	<string name="menu_community_stories">Sort by stories</string>
+	
+	<!-- Search Menu -->
+	<string name="menu_search_title">Search</string>
 	<string-array name="search_menu">
 		<item >Search stories</item>
 		<item >Search authors</item>
 		<item >Search communities</item>
 	</string-array>
-	<string name="library_success">Story successfully added</string>
+	
+	<!-- Browse Menu Activity -->
+	<string name="menu_browse_general_communities">General Communities</string>
+	<string name="menu_browse_title_stories">Stories</string>
+	<string name="toggle_regular">Regular</string>
+	<string name="toggle_crossover">Crossover</string>
 	
 	<!-- Navigation Menu Activity -->
 	<string name="menu_navigation_sort_by">Sort By</string>
@@ -89,6 +90,13 @@
 	<string name="menu_navigation_title_community">Communities</string>
 	<string name="menu_navigation_filter_top_200">Top 200</string>
 	<string name="menu_navigation_filter_crossover_all">All</string>
+	<string name="menu_navigation_no_connection">Failed to connect to server</string>
+	<string name="menu_navigation_retry_connection">Retry</string>
+	
+	<!-- Story Menu Activity -->
+	<string name="menu_story_page_button">Load page %1$d of %2$d</string>
+	<string name="menu_story_title_just_in">Just In</string>
+	<string name="menu_story_filter_by">Filter</string>
 	
 	<!-- Library Menu Activity -->
 	<string name="menu_library_title">My Library</string>
@@ -103,6 +111,7 @@
 	<string name="read_story_add">Add to library</string>
 	<string name="read_story_add_condensed">Add</string>
 	<string name="read_story_chapter">Chapter\u0020</string>
+	<string name="read_story_filter">@string/menu_story_filter_by</string>
 	
 	<!-- General Items and Strings -->
 	<string name="general_anime">Anime</string>

@@ -7,7 +7,21 @@
         <item>L</item>
     </string-array>
 
-    <string-array name="category_button">
+    <!-- Browse Meny Activity -->
+    <string-array name="category_button_normal">
+		<item >@string/general_anime</item>
+		<item >@string/general_books</item>
+		<item >@string/general_cartoons</item>
+		<item >@string/general_comics</item>
+		<item >@string/general_games</item>
+		<item >@string/general_misc</item>
+		<item >@string/general_movies</item>
+		<item >@string/general_plays</item>
+		<item >@string/general_tv</item>      
+	</string-array>
+	
+    <string-array name="category_button_community">
+        <item >@string/menu_browse_general_communities</item>
 		<item >@string/general_anime</item>
 		<item >@string/general_books</item>
 		<item >@string/general_cartoons</item>
@@ -39,5 +53,8 @@
     <string name="read_story_prev">&lt;</string>
     <string name="read_story_next">&gt;</string>
     <string name="read_story_last">&gt;&gt;</string>
-    
+        
+    <!-- Url's -->
+    <string name="fanfiction_scheme">https</string>
+    <string name="fanfiction_authority">m.fanfiction.net</string>    
 </resources>

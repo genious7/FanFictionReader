@@ -104,6 +104,8 @@ public class Parser {
 	public static ArrayList<Story> Stories(Document document) {
 
 		Elements summaries = document.select("div#content div.bs");
+		summaries.select("b").unwrap();
+		
 		Elements titles = summaries.select("a[href~=(?i)/s/\\d+/1/.*]");
 		Elements authors = summaries.select("a[href^=/u/]");
 
@@ -127,11 +129,13 @@ public class Parser {
 				updateDate = Long.parseLong(dates.first().attr("data-xutime")) * 1000;
 				publishDate = Long.parseLong(dates.last().attr("data-xutime")) * 1000;
 			}
+			
+			
 
 			Story TempStory = new Story(Integer.parseInt(matcher.group(1)),
-					titles.get(i).ownText(), authors.get(i).ownText(), 0,
+					titles.get(i).ownText(), authors.get(i).text(), 0,
 					summaries.get(i).ownText().replaceFirst("(?i)by\\s*", ""),
-					attribs.get(i).text(), updateDate, publishDate);
+					attribs.get(i).ownText(), updateDate, publishDate);
 
 			list.add(TempStory);
 		}
@@ -170,6 +174,7 @@ public class Parser {
 			TempMap = new LinkedHashMap<String,Integer>();
 		}
 		return list;
+		
 	}
 	
 	public static ArrayList<LinkedHashMap<String, Integer>> SearchFilter(Document document){
@@ -207,7 +212,7 @@ public class Parser {
 	
 	/**
 	 * Total number of pages in the story.
-	 * @param url The url of the fanfiction page.
+	 * @param url The Url of the fanfiction page.
 	 * @param document The document representing the page.
 	 * @return The total number of pages.
 	 */	
@@ -222,7 +227,7 @@ public class Parser {
 				}
 			}
 			String text = number.first().attr("href");
-			return Integer.valueOf(text.replaceAll("\\A(/[^/]*){5}/(?=\\d+)|(?<=\\d{1,4})/(\\d+/)*|.+&p=", ""));
+			return Integer.valueOf(text.replaceAll("\\A(/[^/]*){4}/(?=\\d+)|/", ""));
 		} catch (NumberFormatException e) {
 			Log.e("Parser - PagesCommunity", Log.getStackTraceString(e));
 			return 1;		
@@ -247,8 +252,4 @@ public class Parser {
 		}
 	}
 	
-	public static String crossoverUrl (Document document){
-		Elements url = document.select("div#content > center > a");
-		return url.first().attr("href");
-	}
 }

@@ -9,7 +9,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class databaseHelper extends SQLiteOpenHelper  implements SqlConstants{
+public class DatabaseHelper extends SQLiteOpenHelper  implements SqlConstants{
 	
 	private static final int DATABASE_VERSION = 2; //Database ver. 2
 	protected static final String DATABASE_NAME = "library.db";
@@ -17,7 +17,7 @@ public class databaseHelper extends SQLiteOpenHelper  implements SqlConstants{
 	//The name of the table
 	protected static final String TABLE_LIBRARY = "library";
 	
-	public databaseHelper(Context context) {
+	public DatabaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
 

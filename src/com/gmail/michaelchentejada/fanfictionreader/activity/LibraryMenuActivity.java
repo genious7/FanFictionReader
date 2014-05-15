@@ -7,7 +7,7 @@ import com.gmail.michaelchentejada.fanfictionreader.R;
 import com.gmail.michaelchentejada.fanfictionreader.util.SqlConstants;
 import com.gmail.michaelchentejada.fanfictionreader.util.Story;
 import com.gmail.michaelchentejada.fanfictionreader.util.StoryProvider;
-import com.gmail.michaelchentejada.fanfictionreader.util.databaseHelper;
+import com.gmail.michaelchentejada.fanfictionreader.util.DatabaseHelper;
 
 import android.content.Context;
 import android.content.Intent;
@@ -76,7 +76,7 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 		long id = info.id;
 		
-		databaseHelper db = new databaseHelper(context);
+		DatabaseHelper db = new DatabaseHelper(context);
 		Story story = db.getStory(id);
 		db.close();
 		

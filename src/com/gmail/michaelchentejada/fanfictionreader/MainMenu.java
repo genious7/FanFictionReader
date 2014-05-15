@@ -1,10 +1,10 @@
 package com.gmail.michaelchentejada.fanfictionreader;
 
 import com.gmail.michaelchentejada.fanfictionreader.activity.LibraryMenuActivity;
-import com.gmail.michaelchentejada.fanfictionreader.activity.NavigationMenuActivity;
+import com.gmail.michaelchentejada.fanfictionreader.activity.SearchActivity;
+import com.gmail.michaelchentejada.fanfictionreader.activity.StoryMenuActivity;
 import com.gmail.michaelchentejada.fanfictionreader.util.MainMenuAdapter;
 import com.gmail.michaelchentejada.fanfictionreader.util.MenuItem;
-import com.gmail.michaelchentejada.fanfictionreader.util.currentState;
 
 import android.R.drawable;
 import android.app.Activity;
@@ -56,13 +56,12 @@ public class MainMenu extends Activity implements OnItemClickListener{
 			startActivity(i);
 			break;
 		case 2://Case Just In
-			i = new Intent(this, StoryMenu.class);
+			i = new Intent(this, StoryMenuActivity.class);
 			i.setData(Uri.parse("https://m.fanfiction.net/j/"));
-			i.putExtra(Menu.EXTRA_ACTIVITY_STATE, currentState.JUSTIN);
 			startActivity(i);
 			break;
 		case 3:
-			i = new Intent(this, SearchMenu.class);
+			i = new Intent(this, SearchActivity.class);
 			startActivity(i);
 			break;
 		case 4://Communities
@@ -75,8 +74,8 @@ public class MainMenu extends Activity implements OnItemClickListener{
 			startActivity(i);
 			break;
 		case 6:
-			i = new Intent(this, NavigationMenuActivity.class);
-			i.setData(Uri.parse("https://m.fanfiction.net/anime/"));
+			i = new Intent(this, StoryMenuActivity.class);
+			i.setData(Uri.parse("https://m.fanfiction.net/anime/Inuyasha/"));
 			startActivity(i);
 		default:
 			break;

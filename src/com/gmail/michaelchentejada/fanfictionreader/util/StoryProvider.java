@@ -34,7 +34,7 @@ public class StoryProvider extends ContentProvider implements SqlConstants {
 		return matcher;
 	}
 
-	private databaseHelper db;
+	private DatabaseHelper db;
 
 	/*
 	 * (non-Javadoc)
@@ -49,16 +49,16 @@ public class StoryProvider extends ContentProvider implements SqlConstants {
 		int rowsDeleted = 0;
 		switch (uriType) {
 		case GET_ALL:
-			rowsDeleted = sqlDB.delete(databaseHelper.TABLE_LIBRARY, selection,
+			rowsDeleted = sqlDB.delete(DatabaseHelper.TABLE_LIBRARY, selection,
 					selectionArgs);
 			break;
 		case GET_ONE:
 			String id = uri.getLastPathSegment();
 			if (TextUtils.isEmpty(selection)) {
-				rowsDeleted = sqlDB.delete(databaseHelper.TABLE_LIBRARY,
+				rowsDeleted = sqlDB.delete(DatabaseHelper.TABLE_LIBRARY,
 						KEY_STORY_ID + "=" + id, null);
 			} else {
-				rowsDeleted = sqlDB.delete(databaseHelper.TABLE_LIBRARY,
+				rowsDeleted = sqlDB.delete(DatabaseHelper.TABLE_LIBRARY,
 						KEY_STORY_ID + "=" + id + " and " + selection,
 						selectionArgs);
 			}
@@ -101,7 +101,7 @@ public class StoryProvider extends ContentProvider implements SqlConstants {
 		long id = 0;
 		switch (uriType) {
 		case GET_ALL:
-			id = sqlDB.insert(databaseHelper.TABLE_LIBRARY, null, values);
+			id = sqlDB.insert(DatabaseHelper.TABLE_LIBRARY, null, values);
 			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);
@@ -117,7 +117,7 @@ public class StoryProvider extends ContentProvider implements SqlConstants {
 	 */
 	@Override
 	public boolean onCreate() {
-		db = new databaseHelper(getContext());
+		db = new DatabaseHelper(getContext());
 		return false;
 	}
 
@@ -134,7 +134,7 @@ public class StoryProvider extends ContentProvider implements SqlConstants {
 
 		Cursor c;
 		SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-		queryBuilder.setTables(databaseHelper.TABLE_LIBRARY);
+		queryBuilder.setTables(DatabaseHelper.TABLE_LIBRARY);
 
 		switch (uriMatcher.match(uri)) {
 		case GET_ALL:
@@ -167,16 +167,16 @@ public class StoryProvider extends ContentProvider implements SqlConstants {
 		int rowsUpdated = 0;
 		switch (uriType) {
 		case GET_ALL:
-			rowsUpdated = sqlDB.update(databaseHelper.TABLE_LIBRARY, values,
+			rowsUpdated = sqlDB.update(DatabaseHelper.TABLE_LIBRARY, values,
 					selection, selectionArgs);
 			break;
 		case GET_ONE:
 			String id = uri.getLastPathSegment();
 			if (TextUtils.isEmpty(selection)) {
-				rowsUpdated = sqlDB.update(databaseHelper.TABLE_LIBRARY,
+				rowsUpdated = sqlDB.update(DatabaseHelper.TABLE_LIBRARY,
 						values, KEY_STORY_ID + "=" + id, null);
 			} else {
-				rowsUpdated = sqlDB.update(databaseHelper.TABLE_LIBRARY,
+				rowsUpdated = sqlDB.update(DatabaseHelper.TABLE_LIBRARY,
 						values, KEY_STORY_ID + "=" + id + " and " + selection,
 						selectionArgs);
 			}
