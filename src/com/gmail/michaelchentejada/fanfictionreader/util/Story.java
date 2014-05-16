@@ -4,16 +4,17 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Story implements Parcelable{
+public class Story implements Parcelable, SqlConstants{
 	
 	private long id; //Story id, 7 digit number
 	private String name; //The name of the story
 	private String author; //The author's name
-	private int author_id; //The author's id
+	private long author_id; //The author's id
 	private String summary; //The story's summary
 	private String category; //The story's category
 	private String rating; //The story's rating
@@ -46,12 +47,32 @@ public class Story implements Parcelable{
 	}
 	
 	public Story(Cursor cursor){
-		this(cursor.getInt(0), cursor.getString(1),
-			cursor.getString(2), cursor.getInt(3), cursor.getString(14),
+		this(cursor.getLong(0), cursor.getString(1),
+			cursor.getString(2), cursor.getLong(3), cursor.getString(14),
 			cursor.getString(7), cursor.getString(4), cursor.getString(6),
 			cursor.getString(5), cursor.getInt(8), cursor.getString(9),
 			cursor.getString(10), cursor.getString(11), cursor.getLong(13),
 			cursor.getLong(12));
+	}
+	
+	public ContentValues toContentValues (int lastPage){
+		ContentValues v = new ContentValues();
+		v.put(KEY_STORY_ID, id);
+		v.put(KEY_TITLE, name);
+		v.put(KEY_AUTHOR_ID, author_id);
+		v.put(KEY_SUMMARY, summary);
+		v.put(KEY_CATEGORY, category);
+		v.put(KEY_RATING, rating);
+		v.put(KEY_LANGUAGUE, language);
+		v.put(KEY_GENRE, genre);
+		v.put(KEY_CHAPTER, chapterLenght);
+		v.put(KEY_LENGHT, wordLenght);
+		v.put(KEY_FAVORITES, favorites);
+		v.put(KEY_FOLLOWERS, follows);
+		v.put(KEY_UPDATED, updated.getTime());
+		v.put(KEY_PUBLISHED, published.getTime());
+		v.put(KEY_LAST, lastPage);
+		return v;
 	}
 	
 	/**
@@ -72,7 +93,7 @@ public class Story implements Parcelable{
 	 * @param updated The date it was updated
 	 * @param published The date it was published.
 	 */
-	public Story(int id, String name, String author, int authorId,
+	public Story(long id, String name, String author, long authorId,
 			String summary, String category, String rating, String language,
 			String genre, int chapterLenght, String wordLenght, String favorites,
 			String follows, Date updated, Date published) {
@@ -111,7 +132,7 @@ public class Story implements Parcelable{
 	 * @param updated The date it was updated
 	 * @param published The date it was published.
 	 */
-	public Story(int id, String name, String author, int authorId,
+	public Story(long id, String name, String author, long authorId,
 			String summary, String category, String rating, String language,
 			String genre, int chapterLenght, String wordLenght, String favorites,
 			String follows, long updated, long published) {
@@ -130,7 +151,7 @@ public class Story implements Parcelable{
 	 * @param summary The story's summary
 	 * @param attribs The attributes element
 	 */
-	public Story(int id, String name, String author, int authorId, String summary, String attribs, long updated, long published){
+	public Story(long id, String name, String author, long authorId, String summary, String attribs, long updated, long published){
 		
 		this(id,name,author,authorId,summary,"","","","",1,"","0","0",updated,published);
 		Matcher match = ATTRIBUTE_PATTERN.matcher(attribs);
@@ -163,7 +184,7 @@ public class Story implements Parcelable{
 		this.id = in.readLong();
 		this.name = in.readString();
 		this.author = in.readString();
-		this.author_id = in.readInt();
+		this.author_id = in.readLong();
 		this.summary = in.readString();
 		this.category = in.readString();
 		this.rating = in.readString();
@@ -187,7 +208,7 @@ public class Story implements Parcelable{
 		dest.writeLong(id);
 		dest.writeString(name);
 		dest.writeString(author);
-		dest.writeInt(author_id);
+		dest.writeLong(author_id);
 		dest.writeString(summary);
 		dest.writeString(category);
 		dest.writeString(rating);
@@ -242,7 +263,7 @@ public class Story implements Parcelable{
 	/**
 	 * @return the author_id
 	 */
-	public int getAuthor_id() {
+	public long getAuthor_id() {
 		return author_id;
 	}
 

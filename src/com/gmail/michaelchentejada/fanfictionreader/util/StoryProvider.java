@@ -5,6 +5,7 @@ package com.gmail.michaelchentejada.fanfictionreader.util;
 
 import android.content.ContentProvider;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
@@ -20,14 +21,28 @@ import android.text.TextUtils;
 public class StoryProvider extends ContentProvider implements SqlConstants {
 	public static final String AUTHORITY = "com.gmail.michaelchentejada.fanfictionreader.provider";
 	private static final String BASE_PATH = "library";
+	
+	/**
+	 * {@link Uri} for the content provider
+	 * <p>
+	 * <i>content://com.gmail.michaelchentejada.fanfictionreader.provider/
+	 * library</i>
+	 */
 	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
 			+ "/" + BASE_PATH);
 	public static final String STORIES_MIME_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.com.gmail.michaelchentejada.fanfictionreader.stories";
 	public static final String STORY_MIME_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.com.gmail.michaelchentejada.fanfictionreader.story";
+	
 	private static final int GET_ALL = 0;
 	private static final int GET_ONE = 1;
+	
 	private static final UriMatcher uriMatcher = getUriMatcher();
-	private static UriMatcher getUriMatcher() {
+	
+	/**
+	 * Gets a UriMatcher for the provider
+	 * @return
+	 */
+	private final static UriMatcher getUriMatcher() {
 		UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
 		matcher.addURI(AUTHORITY, BASE_PATH, GET_ALL);
 		matcher.addURI(AUTHORITY, BASE_PATH + "/#", GET_ONE);
@@ -44,10 +59,9 @@ public class StoryProvider extends ContentProvider implements SqlConstants {
 	 */
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
-		int uriType = uriMatcher.match(uri);
 		SQLiteDatabase sqlDB = db.getWritableDatabase();
 		int rowsDeleted = 0;
-		switch (uriType) {
+		switch (uriMatcher.match(uri)) {
 		case GET_ALL:
 			rowsDeleted = sqlDB.delete(DatabaseHelper.TABLE_LIBRARY, selection,
 					selectionArgs);
@@ -66,7 +80,10 @@ public class StoryProvider extends ContentProvider implements SqlConstants {
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);
 		}
-		getContext().getContentResolver().notifyChange(uri, null);
+		if (rowsDeleted > 0) {
+			getContext().getContentResolver().notifyChange(uri, null);
+		}
+
 		return rowsDeleted;
 	}
 
@@ -106,8 +123,10 @@ public class StoryProvider extends ContentProvider implements SqlConstants {
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);
 		}
-		getContext().getContentResolver().notifyChange(uri, null);
-		return Uri.parse(BASE_PATH + "/" + id);
+		
+		Uri itemUri = ContentUris.withAppendedId(uri, id);
+		getContext().getContentResolver().notifyChange(itemUri, null);
+		return itemUri;
 	}
 
 	/*
@@ -118,7 +137,7 @@ public class StoryProvider extends ContentProvider implements SqlConstants {
 	@Override
 	public boolean onCreate() {
 		db = new DatabaseHelper(getContext());
-		return false;
+		return true;
 	}
 
 	/*
@@ -133,11 +152,15 @@ public class StoryProvider extends ContentProvider implements SqlConstants {
 			String[] selectionArgs, String sortOrder) {
 
 		Cursor c;
+		SQLiteDatabase data = db.getReadableDatabase();
 		SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
 		queryBuilder.setTables(DatabaseHelper.TABLE_LIBRARY);
 
 		switch (uriMatcher.match(uri)) {
 		case GET_ALL:
+			if (TextUtils.isEmpty(sortOrder)) {
+				sortOrder = KEY_TITLE + "NO CASE";
+			}
 			break;
 		case GET_ONE:
 			queryBuilder.appendWhere(KEY_STORY_ID + "="
@@ -146,8 +169,8 @@ public class StoryProvider extends ContentProvider implements SqlConstants {
 		default:
 			throw new IllegalArgumentException("Unknown URI" + uri);
 		}
-		c = queryBuilder.query(db.getReadableDatabase(), projection, selection,
-				selectionArgs, null, null, sortOrder);
+		c = queryBuilder.query(data, projection, selection, selectionArgs,
+				null, null, sortOrder);
 		c.setNotificationUri(getContext().getContentResolver(), uri);
 		return c;
 	}
@@ -162,10 +185,10 @@ public class StoryProvider extends ContentProvider implements SqlConstants {
 	public int update(Uri uri, ContentValues values, String selection,
 			String[] selectionArgs) {
 
-		int uriType = uriMatcher.match(uri);
 		SQLiteDatabase sqlDB = db.getWritableDatabase();
 		int rowsUpdated = 0;
-		switch (uriType) {
+
+		switch (uriMatcher.match(uri)) {
 		case GET_ALL:
 			rowsUpdated = sqlDB.update(DatabaseHelper.TABLE_LIBRARY, values,
 					selection, selectionArgs);
@@ -177,14 +200,17 @@ public class StoryProvider extends ContentProvider implements SqlConstants {
 						values, KEY_STORY_ID + "=" + id, null);
 			} else {
 				rowsUpdated = sqlDB.update(DatabaseHelper.TABLE_LIBRARY,
-						values, KEY_STORY_ID + "=" + id + " and " + selection,
+						values, KEY_STORY_ID + "=" + id + " AND " + selection,
 						selectionArgs);
 			}
 			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);
 		}
-		getContext().getContentResolver().notifyChange(uri, null);
+		if (rowsUpdated > 0) {
+			getContext().getContentResolver().notifyChange(uri, null);
+		}
+
 		return rowsUpdated;
 	}
 }

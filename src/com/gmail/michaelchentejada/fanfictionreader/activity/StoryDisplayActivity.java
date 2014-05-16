@@ -69,7 +69,7 @@ public class StoryDisplayActivity extends ActionBarActivity implements OnClickLi
 	/**The AsyncTask used to load the story*/
 	private StoryLoader mLoader;
 	/**The id of the current story*/
-	private int mStoryId;
+	private long mStoryId;
 	private int mTotalPages;
 	private ScrollView scrollview;
 	private TextView textViewStory;
@@ -136,6 +136,7 @@ public class StoryDisplayActivity extends ActionBarActivity implements OnClickLi
 		case R.id.read_story_menu_update:
 		case R.id.read_story_menu_add:
 			Intent i = new Intent(this, LibraryDownloader.class);
+			i.putExtra(LibraryDownloader.EXTRA_LAST_PAGE, mCurrentPage);
             i.putExtra(LibraryDownloader.EXTRA_STORY_ID, mStoryId);
             startService(i);   
 			return true;
@@ -207,12 +208,12 @@ public class StoryDisplayActivity extends ActionBarActivity implements OnClickLi
 		return false;
 	}
 	
-	private void refreshList(int pageNumber){
+	private void refreshList(int pageNumber) {
 		StoryObject tmp = mLoader.mResult;
 		mLoader = new StoryLoader(this, tmp);
-		mLoader.execute(mStoryId,pageNumber);
+		mLoader.execute(mStoryId, (long) pageNumber);
 	}
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);//Super() constructor first
@@ -241,7 +242,7 @@ public class StoryDisplayActivity extends ActionBarActivity implements OnClickLi
 		mLoader = (StoryLoader)getLastCustomNonConfigurationInstance();
 		if (mLoader == null) {
 			mLoader = new StoryLoader(this);
-			mLoader.execute(mStoryId,mCurrentPage);
+			mLoader.execute(mStoryId,(long)mCurrentPage);
 		} else{
 			mLoader.mActivity = new WeakReference<StoryDisplayActivity>(this);
 			if (mLoader.isFinished()) {
@@ -268,7 +269,7 @@ public class StoryDisplayActivity extends ActionBarActivity implements OnClickLi
 	 * @author Michael Chen
 	 */
 	private static class StoryLoader extends
-			AsyncTask<Integer, Void, StoryObject> {
+			AsyncTask<Long, Void, StoryObject> {
 		private Context mAppContext;
 		private boolean mIsFinished;
 		private boolean mResetScrollBar = false;
@@ -369,7 +370,7 @@ public class StoryDisplayActivity extends ActionBarActivity implements OnClickLi
 		 * @param storyId
 		 *            The numerical Id of the story
 		 */
-		private StoryObject fillFromSql(int storyId) {
+		private StoryObject fillFromSql(long storyId) {
 			if (mResult == null) {
 				// Finds the number of pages from the database.
 				DatabaseHelper db = new DatabaseHelper(mAppContext);
@@ -396,7 +397,7 @@ public class StoryDisplayActivity extends ActionBarActivity implements OnClickLi
 		 *            The page number that should be loaded
 		 * @return The story as a Spanned element
 		 */
-		private Spanned getStoryFromFile(int storyId, int pageNumber) {
+		private Spanned getStoryFromFile(long storyId, int pageNumber) {
 			try {
 				File file = new File(mAppContext.getFilesDir(), storyId + "_"
 						+ pageNumber + ".txt");
@@ -422,7 +423,7 @@ public class StoryDisplayActivity extends ActionBarActivity implements OnClickLi
 		 * @param tmpObj
 		 * @return The story text as a Spanned Object
 		 */
-		private Spanned getStoryFromSite(int storyId, int pageNumber,
+		private Spanned getStoryFromSite(long storyId, int pageNumber,
 				StoryObject tmpObj) {
 			try {
 				org.jsoup.nodes.Document document = Jsoup.connect(
@@ -499,9 +500,9 @@ public class StoryDisplayActivity extends ActionBarActivity implements OnClickLi
 		}
 
 		@Override
-		protected StoryObject doInBackground(Integer... params) {
-			int storyId = params[0];
-			int currentPage = params[1];
+		protected StoryObject doInBackground(Long... params) {
+			long storyId = params[0];
+			int currentPage = (int) (long) params[1];
 			StoryObject tmpObj = fillFromSql(storyId);// Fills data from SQLite
 														// if this is the first
 														// instance.
