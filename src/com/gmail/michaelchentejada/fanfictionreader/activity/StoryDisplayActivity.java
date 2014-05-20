@@ -16,6 +16,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.AsyncQueryHandler;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -46,8 +49,10 @@ import android.widget.Toast;
 import com.gmail.michaelchentejada.fanfictionreader.LibraryDownloader;
 import com.gmail.michaelchentejada.fanfictionreader.R;
 import com.gmail.michaelchentejada.fanfictionreader.Settings;
+import com.gmail.michaelchentejada.fanfictionreader.util.SqlConstants;
 import com.gmail.michaelchentejada.fanfictionreader.util.Story;
 import com.gmail.michaelchentejada.fanfictionreader.util.DatabaseHelper;
+import com.gmail.michaelchentejada.fanfictionreader.util.StoryProvider;
 
 /**
  * 
@@ -55,6 +60,7 @@ import com.gmail.michaelchentejada.fanfictionreader.util.DatabaseHelper;
  */
 public class StoryDisplayActivity extends ActionBarActivity implements OnClickListener {
 	private final static String STATE_CURRENT_PAGE = "com.gmail.michaelchentejada.fanfictionreader.activity.StoryDisplayActivity.currentPage";
+	private final static String STATE_DOWNLOAD = "com.gmail.michaelchentejada.fanfictionrader.activity.StoryDisplayActivity.download";
 	
 	private Button btnFirst;
 	private Button btnLast;
@@ -64,7 +70,7 @@ public class StoryDisplayActivity extends ActionBarActivity implements OnClickLi
 	
 	private Button btnPrev;
 	/**The currently loaded page*/
-	private int mCurrentPage;
+	private int mCurrentPage = 1;
 	private boolean mInLibrary = false;
 	/**The AsyncTask used to load the story*/
 	private StoryLoader mLoader;
@@ -73,6 +79,7 @@ public class StoryDisplayActivity extends ActionBarActivity implements OnClickLi
 	private int mTotalPages;
 	private ScrollView scrollview;
 	private TextView textViewStory;
+	private boolean downloadClicked = false;
 	
 	/**
 	 * Handles the Buttons that change pages.
@@ -133,7 +140,6 @@ public class StoryDisplayActivity extends ActionBarActivity implements OnClickLi
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.read_story_menu_update:
 		case R.id.read_story_menu_add:
 			Intent i = new Intent(this, LibraryDownloader.class);
 			i.putExtra(LibraryDownloader.EXTRA_LAST_PAGE, mCurrentPage);
@@ -154,12 +160,20 @@ public class StoryDisplayActivity extends ActionBarActivity implements OnClickLi
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		if (menu != null) {
+			MenuItem item = menu.findItem(R.id.read_story_menu_add);
 			if (mInLibrary) {
-				menu.findItem(R.id.read_story_menu_add).setVisible(false);
-				menu.findItem(R.id.read_story_menu_update).setVisible(true);
+				item.setIcon(R.drawable.ic_action_refresh);
+				item.setTitle(R.string.read_story_update);
+				item.setTitleCondensed(getString(R.string.read_story_update_condensed));
 			} else {
-				menu.findItem(R.id.read_story_menu_add).setVisible(true);
-				menu.findItem(R.id.read_story_menu_update).setVisible(false);
+				item.setIcon(R.drawable.ic_action_download);
+				item.setTitle(R.string.read_story_add);
+				item.setTitleCondensed(getString(R.string.read_story_add_condensed));
+			}
+			
+			if (downloadClicked) {
+				item.setEnabled(false);
+				item.getIcon().setAlpha(64);	
 			}
 		}
 		if (mLoader != null && mLoader.isFinished()) {
@@ -219,6 +233,7 @@ public class StoryDisplayActivity extends ActionBarActivity implements OnClickLi
 		super.onCreate(savedInstanceState);//Super() constructor first
 		setContentView(R.layout.activity_read_story);//Set the layout
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		Settings.setOrientation(this);
 		
 		textViewStory = (TextView)findViewById(R.id.read_story_text);
 		textViewStory.setTextSize(TypedValue.COMPLEX_UNIT_SP, Settings.fontSize(this));
@@ -237,6 +252,7 @@ public class StoryDisplayActivity extends ActionBarActivity implements OnClickLi
 		
 		if (savedInstanceState != null) {
 			mCurrentPage = savedInstanceState.getInt(STATE_CURRENT_PAGE);
+			downloadClicked = savedInstanceState.getBoolean(STATE_DOWNLOAD);
 		}
 		
 		mLoader = (StoryLoader)getLastCustomNonConfigurationInstance();
@@ -253,6 +269,20 @@ public class StoryDisplayActivity extends ActionBarActivity implements OnClickLi
 	}
 	
 	@Override
+	protected void onStop() {
+		if (mInLibrary) {
+			ContentResolver resolver = getContentResolver();
+			AsyncQueryHandler handler = new AsyncQueryHandler(resolver){};
+			ContentValues values = new ContentValues(1);
+			values.put(SqlConstants.KEY_LAST, mCurrentPage);
+			handler.startUpdate(0, null, StoryProvider.CONTENT_URI, values,
+					SqlConstants.KEY_STORY_ID + " = ?",
+					new String[] { String.valueOf(mStoryId) });
+		}
+		super.onStop();
+	}
+	
+	@Override
 	protected void onDestroy() {
 		mLoader.mActivity.clear();
 		super.onDestroy();
@@ -261,6 +291,7 @@ public class StoryDisplayActivity extends ActionBarActivity implements OnClickLi
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		outState.putInt(STATE_CURRENT_PAGE, mCurrentPage);
+		outState.putBoolean(STATE_CURRENT_PAGE, downloadClicked);
 		super.onSaveInstanceState(outState);
 	}
 

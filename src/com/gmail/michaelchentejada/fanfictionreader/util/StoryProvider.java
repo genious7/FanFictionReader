@@ -159,7 +159,7 @@ public class StoryProvider extends ContentProvider implements SqlConstants {
 		switch (uriMatcher.match(uri)) {
 		case GET_ALL:
 			if (TextUtils.isEmpty(sortOrder)) {
-				sortOrder = KEY_TITLE + "NO CASE";
+				sortOrder = KEY_TITLE + " COLLATE NOCASE ASC";
 			}
 			break;
 		case GET_ONE:

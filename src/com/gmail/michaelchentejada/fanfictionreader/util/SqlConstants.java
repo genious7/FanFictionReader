@@ -20,5 +20,5 @@ public interface SqlConstants {
 	public static final String KEY_UPDATED = "updated";
 	public static final String KEY_PUBLISHED = "published";
 	public static final String KEY_SUMMARY = "summary";
-	public static final String KEY_LAST = "last chapter";
+	public static final String KEY_LAST = "lastChapter";
 }

@@ -1,18 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:michaelchentejada="http://schemas.android.com/apk/res-auto" >
-
-    <item
-        android:id="@+id/read_story_menu_update"
-        android:icon="@drawable/ic_action_refresh"
-        android:title="@string/read_story_update"
-        android:titleCondensed="@string/read_story_update_condensed"
-        android:visible="false"
-        michaelchentejada:showAsAction="ifRoom"/>
     <item
         android:id="@+id/read_story_menu_add"
         android:enabled="true"
-        android:icon="@drawable/ic_action_new"
+        android:icon="@drawable/ic_action_download"
         android:title="@string/read_story_add"
         android:titleCondensed="@string/read_story_add_condensed"
         michaelchentejada:showAsAction="ifRoom"/>

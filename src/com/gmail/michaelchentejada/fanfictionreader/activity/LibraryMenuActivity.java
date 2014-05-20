@@ -3,13 +3,14 @@ package com.gmail.michaelchentejada.fanfictionreader.activity;
 import java.io.File;
 
 import com.gmail.michaelchentejada.fanfictionreader.DetailDisplay;
+import com.gmail.michaelchentejada.fanfictionreader.LibraryDownloader;
 import com.gmail.michaelchentejada.fanfictionreader.R;
+import com.gmail.michaelchentejada.fanfictionreader.Settings;
 import com.gmail.michaelchentejada.fanfictionreader.util.SqlConstants;
 import com.gmail.michaelchentejada.fanfictionreader.util.Story;
 import com.gmail.michaelchentejada.fanfictionreader.util.StoryProvider;
 import com.gmail.michaelchentejada.fanfictionreader.util.DatabaseHelper;
 
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -35,7 +36,7 @@ import android.widget.ListView;
  */
 public class LibraryMenuActivity extends ActionBarActivity implements LoaderCallbacks<Cursor>, SqlConstants, OnItemClickListener{
 	private static final int LOADER_LIBRARY = 0;
-	private static final String[] GET_PROJECTION = {KEY_STORY_ID,KEY_TITLE,KEY_SUMMARY,KEY_AUTHOR,KEY_CHAPTER, KEY_LENGHT,KEY_FOLLOWERS};
+	private static final String[] GET_PROJECTION = {KEY_STORY_ID,KEY_TITLE,KEY_SUMMARY,KEY_AUTHOR,KEY_CHAPTER, KEY_LENGHT,KEY_FOLLOWERS, KEY_LAST};
 	private static final String[] TO_PROJECTION = {KEY_TITLE,KEY_SUMMARY,KEY_AUTHOR,KEY_CHAPTER, KEY_LENGHT,KEY_FOLLOWERS};
 	private static final int[] DEST_PROJECTION = {
 			R.id.story_menu_list_item_title,
@@ -47,7 +48,6 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 	
 	private SimpleCursorAdapter mAdapter;
 	private ListView mListView;
-	private Context context;
 	
 	/* (non-Javadoc)
 	 * @see android.support.v7.app.ActionBarActivity#onCreate(android.os.Bundle)
@@ -58,7 +58,7 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 		setContentView(R.layout.activity_list_view);
 		getSupportLoaderManager().initLoader(LOADER_LIBRARY, null, this);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		context = this;
+		Settings.setOrientation(this);
 			
 		mListView = (ListView)findViewById(R.id.list);
 		mListView.setOnItemClickListener(this);
@@ -76,14 +76,14 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 		long id = info.id;
 		
-		DatabaseHelper db = new DatabaseHelper(context);
+		DatabaseHelper db = new DatabaseHelper(this);
 		Story story = db.getStory(id);
 		db.close();
 		
 		switch (item.getItemId()) {
 		
 		case R.id.menu_library_context_details:
-			Intent i = new Intent(context,DetailDisplay.class);
+			Intent i = new Intent(this ,DetailDisplay.class);
 			i.putExtra(DetailDisplay.MAP,story);
 			startActivity(i);
 			return true;
@@ -132,6 +132,19 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 		case android.R.id.home:
 			onBackPressed();
 			return true;
+		case R.id.library_menu_sync_all:
+			Cursor c = mAdapter.getCursor();
+			int columnId = c.getColumnIndex(KEY_STORY_ID);
+			int columnLast = c.getColumnIndex(KEY_LAST);
+			if (c.moveToFirst()) {
+			    do {
+			    	Intent i = new Intent(this, LibraryDownloader.class);
+					i.putExtra(LibraryDownloader.EXTRA_STORY_ID, c.getFloat(columnId));
+					i.putExtra(LibraryDownloader.EXTRA_LAST_PAGE, c.getInt(columnLast));
+					startService(i);
+			    } while (c.moveToNext());
+			}
+			return true;
 		default:
 			break;
 		}
@@ -170,8 +183,13 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 	
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int position, long id) {
+		DatabaseHelper db = new DatabaseHelper(this);
+		int lastPageRead = db.getLastChapterRead(id);
+		if (lastPageRead == -1) {
+			lastPageRead = 1;
+		}
 		Intent i = new Intent (this, StoryDisplayActivity.class);
-		i.setData(Uri.fromFile(new File(getFilesDir(), id + "_" + 1 + ".txt")));
+		i.setData(Uri.fromFile(new File(getFilesDir(), id + "_" + lastPageRead + ".txt")));
 		startActivity(i);
 	}
 

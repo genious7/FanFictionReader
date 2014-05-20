@@ -78,11 +78,7 @@ public class DatabaseHelper extends SQLiteOpenHelper  implements SqlConstants{
 	    db.close();
 	}
 	
-	@Deprecated
-	public void addStory(Story story){
-		addStory(story, 1);
-	}
-
+	
 	/**
 	 * Obtains the last chapter read in the selected story
 	 * 
@@ -92,7 +88,7 @@ public class DatabaseHelper extends SQLiteOpenHelper  implements SqlConstants{
 	 */
 	public int getLastChapterRead(long id){
 		SQLiteDatabase db = this.getReadableDatabase();
-		Cursor cursor = db.query(TABLE_LIBRARY, new String[] { KEY_STORY_ID },
+		Cursor cursor = db.query(TABLE_LIBRARY, new String[] { KEY_LAST },
 				KEY_STORY_ID + "=?", new String[] { String.valueOf(id) }, null,
 				null, null);
 		if (cursor == null || !cursor.moveToFirst()){

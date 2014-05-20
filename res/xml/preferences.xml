@@ -7,4 +7,5 @@
 		android:entryValues="@array/pref_text_size_values"
 		android:dialogTitle="@string/pref_text_size" 
 		android:defaultValue="@string/pref_text_size_default"/>
+	<ListPreference android:entries="@array/pref_orientation_entries" android:entryValues="@array/pref_orientation_values" android:dialogTitle="@string/pref_orientation" android:title="@string/pref_orientation" android:key="@string/pref_orientation" android:defaultValue="@string/pref_orientation_default"/>
 </PreferenceScreen>

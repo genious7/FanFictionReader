@@ -15,12 +15,10 @@
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:label="@string/app_name" android:theme="@style/AppActionBar">
         <activity
             android:name="MainMenu"
-            android:label="@string/app_name"
-            android:theme="@style/AppActionBar" >
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,8 +27,7 @@
         </activity>
         <activity
             android:name="BrowseMenu"
-            android:label="@string/app_name"
-            android:theme="@style/AppActionBar" >
+            android:label="@string/app_name">
         </activity>
         <activity
             android:name="FilterMenu"
@@ -43,15 +40,12 @@
         </activity>
         <activity android:name="Settings" >
         </activity>
-        <activity android:name="CommunityMenu" >
-        </activity>
-
+        
         <service android:name="LibraryDownloader" >
         </service>
 
         <activity
-            android:name=".activity.StoryDisplayActivity"
-            android:theme="@style/AppActionBar" >
+            android:name=".activity.StoryDisplayActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -69,7 +63,7 @@
         <activity
             android:name=".activity.LibraryMenuActivity"
             android:label="@string/menu_library_title"
-            android:theme="@style/AppActionBar" >
+            android:parentActivityName="MainMenu">
         </activity>
 
         <provider
@@ -79,20 +73,21 @@
         </provider>
 
         <activity
-            android:name=".activity.NavigationMenuActivity"
-            android:theme="@style/AppActionBar" >
+            android:name=".activity.NavigationMenuActivity">
         </activity>
         <activity
             android:name=".activity.StoryMenuActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppActionBar" >
+            android:label="@string/app_name">
         </activity>
         <activity
             android:name=".activity.SearchActivity"
-            android:label="@string/menu_search_title"
-            android:theme="@style/AppActionBar" >
+            android:label="@string/menu_search_title">
         </activity>
-        <activity android:theme="@style/AppActionBar" android:name=".activity.CommunityMenuActivity" android:label="@string/menu_navigation_title_community"></activity>
+        <activity
+            android:name=".activity.CommunityMenuActivity"
+            android:label="@string/menu_navigation_title_community">
+        </activity>
+        <activity android:name=".activity.AboutActivity" android:label="@string/menu_button_about"></activity>
     </application>
 
 </manifest>

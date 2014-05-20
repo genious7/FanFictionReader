@@ -46,7 +46,7 @@
 	<string name="detail_category">Category:\u0020</string>
 	<string name="detail_author">Author:\u0020</string>
 	
-	<string name="story_add_page_button">Page %1$d of %2$d</string>
+	<!-- Settings -->
 	<string name="pref_text_size">Text size</string>
 	<string-array name="pref_text_size_entries">
 		<item >Small</item>
@@ -54,8 +54,21 @@
 		<item >Large</item>
 	</string-array>
 	
-	<string name="library_success">Story successfully added</string>
+	<string name="pref_orientation">Application Orientation</string>
+	<string-array name="pref_orientation_entries">
+	    <item >Auto</item>
+	    <item >Landscape</item>
+	    <item >Portrait</item>  
+	</string-array>
 	
+	<!-- Story Downloader -->
+	<string name="downloader_downloading">Downloading Story</string>
+	<string name="downloader_error">Error downloading story</string>
+    <plurals name="downloader_notification">
+        <item quantity="one"> One story successfully added</item>
+        <item quantity="other">%d stories successfully added</item>
+    </plurals>
+    
 	<!-- Community Menu Activity -->
 	<string name="menu_community_random">Random</string>
 	<string name="menu_community_follows">Sort by follows</string>
@@ -65,11 +78,6 @@
 	
 	<!-- Search Menu -->
 	<string name="menu_search_title">Search</string>
-	<string-array name="search_menu">
-		<item >Search stories</item>
-		<item >Search authors</item>
-		<item >Search communities</item>
-	</string-array>
 	
 	<!-- Browse Menu Activity -->
 	<string name="menu_browse_general_communities">General Communities</string>
@@ -112,6 +120,9 @@
 	<string name="read_story_add_condensed">Add</string>
 	<string name="read_story_chapter">Chapter\u0020</string>
 	<string name="read_story_filter">@string/menu_story_filter_by</string>
+	
+	<!-- About Page -->
+	<string name="about">This application was developed by Michael Chen. The author is not affiliated in anyway with Fanfiction.net nor its staff.</string>
 	
 	<!-- General Items and Strings -->
 	<string name="general_anime">Anime</string>

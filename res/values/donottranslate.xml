@@ -6,6 +6,14 @@
         <item>M</item>
         <item>L</item>
     </string-array>
+    <string name="pref_text_size_default">M</string>
+    
+    <string-array name="pref_orientation_values">
+        <item >A</item>
+        <item >H</item>
+        <item >V</item>
+    </string-array>
+    <string name="pref_orientation_default">A</string>
 
     <!-- Browse Meny Activity -->
     <string-array name="category_button_normal">
@@ -48,7 +56,6 @@
     </string-array>
     
     <!-- Story Displayer Activity -->
-	<string name="pref_text_size_default">M</string>
     <string name="read_story_first">&lt;&lt;</string>
     <string name="read_story_prev">&lt;</string>
     <string name="read_story_next">&gt;</string>

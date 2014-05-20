@@ -59,6 +59,7 @@ public class Story implements Parcelable, SqlConstants{
 		ContentValues v = new ContentValues();
 		v.put(KEY_STORY_ID, id);
 		v.put(KEY_TITLE, name);
+		v.put(KEY_AUTHOR, author);
 		v.put(KEY_AUTHOR_ID, author_id);
 		v.put(KEY_SUMMARY, summary);
 		v.put(KEY_CATEGORY, category);
