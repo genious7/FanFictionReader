@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:michaelchentejada="http://schemas.android.com/apk/res-auto" >
+    xmlns:crazymango="http://schemas.android.com/apk/res-auto" >
     <item
         android:id="@+id/toggle_switch"
         android:title="@string/toggle_crossover"
-        michaelchentejada:actionLayout="@layout/browse_menu_header"
-        michaelchentejada:showAsAction="always">
+        crazymango:actionLayout="@layout/browse_menu_header"
+        crazymango:showAsAction="always">
     </item>
 </menu>

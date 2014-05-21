@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.gmail.michaelchentejada.fanfictionreader"
+    package="com.crazymango.fanfictionreader"
     android:installLocation="preferExternal"
     android:versionCode="1"
     android:versionName="1.0" >
@@ -68,7 +68,7 @@
 
         <provider
             android:name=".util.StoryProvider"
-            android:authorities="com.gmail.michaelchentejada.fanfictionreader.provider"
+            android:authorities="com.crazymango.fanfictionreader.provider"
             android:exported="false" >
         </provider>
 

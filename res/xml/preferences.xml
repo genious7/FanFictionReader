@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-	<ListPreference 
-	    android:title="@string/pref_text_size"
-		android:key="@string/pref_text_size" 
-		android:entries="@array/pref_text_size_entries"
-		android:entryValues="@array/pref_text_size_values"
-		android:dialogTitle="@string/pref_text_size" 
-		android:defaultValue="@string/pref_text_size_default"/>
-	<ListPreference android:entries="@array/pref_orientation_entries" android:entryValues="@array/pref_orientation_values" android:dialogTitle="@string/pref_orientation" android:title="@string/pref_orientation" android:key="@string/pref_orientation" android:defaultValue="@string/pref_orientation_default"/>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <ListPreference
+        android:defaultValue="@string/pref_text_size_default"
+        android:dialogTitle="@string/pref_text_size"
+        android:entries="@array/pref_text_size_entries"
+        android:entryValues="@array/pref_text_size_values"
+        android:key="@string/pref_text_size"
+        android:title="@string/pref_text_size" />
+    <ListPreference
+        android:defaultValue="@string/pref_orientation_default"
+        android:dialogTitle="@string/pref_orientation"
+        android:entries="@array/pref_orientation_entries"
+        android:entryValues="@array/pref_orientation_values"
+        android:key="@string/pref_orientation"
+        android:title="@string/pref_orientation" />
+
 </PreferenceScreen>

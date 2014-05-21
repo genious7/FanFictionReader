@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:michaelchentejada="http://schemas.android.com/apk/res-auto" >
+    xmlns:crazymango="http://schemas.android.com/apk/res-auto" >
 
     <item
         android:id="@+id/filter"
         android:icon="@drawable/ic_filter"
         android:title="@string/menu_navigation_filter_by"
         android:titleCondensed="@string/menu_navigation_filter_by"
-        michaelchentejada:showAsAction="ifRoom">
+        crazymango:showAsAction="ifRoom">
     </item>
     <item
         android:id="@+id/menu_navigation_sort_by"
         android:icon="@drawable/ic_action_sort_by_size"
         android:title="@string/menu_navigation_sort_by"
         android:titleCondensed="@string/menu_navigation_sort_by_condensed"
-        michaelchentejada:showAsAction="ifRoom">
+        crazymango:showAsAction="ifRoom">
         <menu
             android:id="@+id/menu1"
             android:layout_width="wrap_content"
