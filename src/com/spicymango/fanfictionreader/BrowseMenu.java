@@ -2,10 +2,10 @@
  * Michael Chen
  * April 22, 2014 
  */
-package com.crazymango.fanfictionreader;
+package com.spicymango.fanfictionreader;
 
-import com.crazymango.fanfictionreader.activity.CommunityMenuActivity;
-import com.crazymango.fanfictionreader.activity.NavigationMenuActivity;
+import com.spicymango.fanfictionreader.activity.CommunityMenuActivity;
+import com.spicymango.fanfictionreader.activity.NavigationMenuActivity;
 
 import android.content.Intent;
 import android.net.Uri;

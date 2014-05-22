@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.crazymango.fanfictionreader.util;
+package com.spicymango.fanfictionreader.util;
 
 import android.content.ContentProvider;
 import android.content.ContentResolver;
@@ -19,19 +19,19 @@ import android.text.TextUtils;
  * 
  */
 public class StoryProvider extends ContentProvider implements SqlConstants {
-	public static final String AUTHORITY = "com.crazymango.provider";
+	public static final String AUTHORITY = "com.spicymango.fanfictionreader.provider";
 	private static final String BASE_PATH = "library";
 	
 	/**
 	 * {@link Uri} for the content provider
 	 * <p>
-	 * <i>content://com.crazymango.fanfictionreader.provider/
+	 * <i>content://com.spicymango.fanfictionreader.provider/
 	 * library</i>
 	 */
 	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
 			+ "/" + BASE_PATH);
-	public static final String STORIES_MIME_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.com.crazymango.fanfictionreader.stories";
-	public static final String STORY_MIME_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.com.crazymango.fanfictionreader.story";
+	public static final String STORIES_MIME_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.com.spicymango.fanfictionreader.stories";
+	public static final String STORY_MIME_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.com.spicymango.fanfictionreader.story";
 	
 	private static final int GET_ALL = 0;
 	private static final int GET_ONE = 1;

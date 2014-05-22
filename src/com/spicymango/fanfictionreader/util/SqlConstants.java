@@ -1,4 +1,4 @@
-package com.crazymango.fanfictionreader.util;
+package com.spicymango.fanfictionreader.util;
 
 import android.provider.BaseColumns;
 

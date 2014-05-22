@@ -1,4 +1,4 @@
-package com.crazymango.fanfictionreader.activity;
+package com.spicymango.fanfictionreader.activity;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -13,9 +13,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-import com.crazymango.fanfictionreader.R;
-import com.crazymango.fanfictionreader.Settings;
-import com.crazymango.fanfictionreader.util.Parser;
+import com.spicymango.fanfictionreader.R;
+import com.spicymango.fanfictionreader.Settings;
+import com.spicymango.fanfictionreader.util.Parser;
 
 import android.app.Activity;
 import android.content.Context;

@@ -1,4 +1,4 @@
-package com.crazymango.fanfictionreader;
+package com.spicymango.fanfictionreader;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -25,10 +25,10 @@ import android.support.v4.app.TaskStackBuilder;
 import android.text.Html;
 import android.text.Spanned;
 
-import com.crazymango.fanfictionreader.activity.LibraryMenuActivity;
-import com.crazymango.fanfictionreader.util.SqlConstants;
-import com.crazymango.fanfictionreader.util.Story;
-import com.crazymango.fanfictionreader.util.StoryProvider;
+import com.spicymango.fanfictionreader.activity.LibraryMenuActivity;
+import com.spicymango.fanfictionreader.util.SqlConstants;
+import com.spicymango.fanfictionreader.util.Story;
+import com.spicymango.fanfictionreader.util.StoryProvider;
 
 /**
  * Downloads a story into the library. Must pass the story id inside the intent.

@@ -1,11 +1,11 @@
-package com.crazymango.fanfictionreader;
+package com.spicymango.fanfictionreader;
 
-import com.crazymango.fanfictionreader.activity.AboutActivity;
-import com.crazymango.fanfictionreader.activity.LibraryMenuActivity;
-import com.crazymango.fanfictionreader.activity.SearchActivity;
-import com.crazymango.fanfictionreader.activity.StoryMenuActivity;
-import com.crazymango.fanfictionreader.util.MainMenuAdapter;
-import com.crazymango.fanfictionreader.util.MenuItem;
+import com.spicymango.fanfictionreader.activity.AboutActivity;
+import com.spicymango.fanfictionreader.activity.LibraryMenuActivity;
+import com.spicymango.fanfictionreader.activity.SearchActivity;
+import com.spicymango.fanfictionreader.activity.StoryMenuActivity;
+import com.spicymango.fanfictionreader.util.MainMenuAdapter;
+import com.spicymango.fanfictionreader.util.MenuItem;
 
 import android.R.drawable;
 import android.app.Activity;

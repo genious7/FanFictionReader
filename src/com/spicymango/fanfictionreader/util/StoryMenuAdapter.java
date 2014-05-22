@@ -1,8 +1,8 @@
-package com.crazymango.fanfictionreader.util;
+package com.spicymango.fanfictionreader.util;
 
 import java.util.List;
 
-import com.crazymango.fanfictionreader.R;
+import com.spicymango.fanfictionreader.R;
 
 import android.app.Activity;
 import android.content.Context;

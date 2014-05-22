@@ -2,9 +2,9 @@
  * Based on http://www.ezzylearning.com/tutorial.aspx?tid=1763429&q=customizing-android-listview-items-with-custom-arrayadapter
  * @author Michael Chen
  */
-package com.crazymango.fanfictionreader.util;
+package com.spicymango.fanfictionreader.util;
 
-import com.crazymango.fanfictionreader.R;
+import com.spicymango.fanfictionreader.R;
 
 import android.app.Activity;
 import android.content.Context;

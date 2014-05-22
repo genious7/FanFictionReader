@@ -1,4 +1,4 @@
-package com.crazymango.fanfictionreader;
+package com.spicymango.fanfictionreader;
 
 import android.app.Activity;
 import android.content.Context;
@@ -45,7 +45,7 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(activity);
 		String orientation = sharedPref.getString(activity.getResources().getString(R.string.pref_orientation), "A");
 		if (orientation.equals("A")) {
-			activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+			activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
 		}else if (orientation.equals("H")) {
 			activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 		} else {

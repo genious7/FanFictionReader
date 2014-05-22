@@ -1,10 +1,10 @@
 /**
  * 
  */
-package com.crazymango.fanfictionreader.activity;
+package com.spicymango.fanfictionreader.activity;
 
-import com.crazymango.fanfictionreader.R;
-import com.crazymango.fanfictionreader.Settings;
+import com.spicymango.fanfictionreader.R;
+import com.spicymango.fanfictionreader.Settings;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;

@@ -1,4 +1,4 @@
-package com.crazymango.fanfictionreader.activity;
+package com.spicymango.fanfictionreader.activity;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -46,21 +46,21 @@ import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import android.widget.Toast;
 
-import com.crazymango.fanfictionreader.LibraryDownloader;
-import com.crazymango.fanfictionreader.R;
-import com.crazymango.fanfictionreader.Settings;
-import com.crazymango.fanfictionreader.util.DatabaseHelper;
-import com.crazymango.fanfictionreader.util.SqlConstants;
-import com.crazymango.fanfictionreader.util.Story;
-import com.crazymango.fanfictionreader.util.StoryProvider;
+import com.spicymango.fanfictionreader.LibraryDownloader;
+import com.spicymango.fanfictionreader.R;
+import com.spicymango.fanfictionreader.Settings;
+import com.spicymango.fanfictionreader.util.DatabaseHelper;
+import com.spicymango.fanfictionreader.util.SqlConstants;
+import com.spicymango.fanfictionreader.util.Story;
+import com.spicymango.fanfictionreader.util.StoryProvider;
 
 /**
  * 
  * @author Michael Chen
  */
 public class StoryDisplayActivity extends ActionBarActivity implements OnClickListener {
-	private final static String STATE_CURRENT_PAGE = "com.crazymango.fanfictionreader.activity.StoryDisplayActivity.currentPage";
-	private final static String STATE_DOWNLOAD = "com.crazymango.fanfictionrader.activity.StoryDisplayActivity.download";
+	private final static String STATE_CURRENT_PAGE = "com.spicymango.fanfictionreader.activity.StoryDisplayActivity.currentPage";
+	private final static String STATE_DOWNLOAD = "com.spicymango.fanfictionrader.activity.StoryDisplayActivity.download";
 	
 	private Button btnFirst;
 	private Button btnLast;

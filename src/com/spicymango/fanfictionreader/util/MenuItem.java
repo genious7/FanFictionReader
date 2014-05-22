@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.crazymango.fanfictionreader.util;
+package com.spicymango.fanfictionreader.util;
 
 /**
  * Represents a single menu item

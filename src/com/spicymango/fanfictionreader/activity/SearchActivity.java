@@ -1,4 +1,4 @@
-package com.crazymango.fanfictionreader.activity;
+package com.spicymango.fanfictionreader.activity;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,13 +12,13 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.crazymango.fanfictionreader.DetailDisplay;
-import com.crazymango.fanfictionreader.FilterMenu;
-import com.crazymango.fanfictionreader.R;
-import com.crazymango.fanfictionreader.Settings;
-import com.crazymango.fanfictionreader.util.Parser;
-import com.crazymango.fanfictionreader.util.Story;
-import com.crazymango.fanfictionreader.util.StoryMenuAdapter;
+import com.spicymango.fanfictionreader.DetailDisplay;
+import com.spicymango.fanfictionreader.FilterMenu;
+import com.spicymango.fanfictionreader.R;
+import com.spicymango.fanfictionreader.Settings;
+import com.spicymango.fanfictionreader.util.Parser;
+import com.spicymango.fanfictionreader.util.Story;
+import com.spicymango.fanfictionreader.util.StoryMenuAdapter;
 
 import android.content.Context;
 import android.content.Intent;

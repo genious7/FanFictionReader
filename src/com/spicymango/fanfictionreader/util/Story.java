@@ -1,4 +1,4 @@
-package com.crazymango.fanfictionreader.util;
+package com.spicymango.fanfictionreader.util;
 
 import java.util.Date;
 import java.util.regex.Matcher;

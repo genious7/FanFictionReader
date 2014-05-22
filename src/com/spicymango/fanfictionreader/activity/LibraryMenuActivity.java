@@ -1,15 +1,15 @@
-package com.crazymango.fanfictionreader.activity;
+package com.spicymango.fanfictionreader.activity;
 
 import java.io.File;
 
-import com.crazymango.fanfictionreader.DetailDisplay;
-import com.crazymango.fanfictionreader.LibraryDownloader;
-import com.crazymango.fanfictionreader.R;
-import com.crazymango.fanfictionreader.Settings;
-import com.crazymango.fanfictionreader.util.DatabaseHelper;
-import com.crazymango.fanfictionreader.util.SqlConstants;
-import com.crazymango.fanfictionreader.util.Story;
-import com.crazymango.fanfictionreader.util.StoryProvider;
+import com.spicymango.fanfictionreader.DetailDisplay;
+import com.spicymango.fanfictionreader.LibraryDownloader;
+import com.spicymango.fanfictionreader.R;
+import com.spicymango.fanfictionreader.Settings;
+import com.spicymango.fanfictionreader.util.DatabaseHelper;
+import com.spicymango.fanfictionreader.util.SqlConstants;
+import com.spicymango.fanfictionreader.util.Story;
+import com.spicymango.fanfictionreader.util.StoryProvider;
 
 import android.content.Intent;
 import android.database.Cursor;

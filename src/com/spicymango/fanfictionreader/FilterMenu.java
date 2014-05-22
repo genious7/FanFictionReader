@@ -1,4 +1,4 @@
-package com.crazymango.fanfictionreader;
+package com.spicymango.fanfictionreader;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,8 +1,8 @@
-package com.crazymango.fanfictionreader;
+package com.spicymango.fanfictionreader;
 
 import java.text.DateFormat;
 
-import com.crazymango.fanfictionreader.util.Story;
+import com.spicymango.fanfictionreader.util.Story;
 
 import android.app.Activity;
 import android.os.Bundle;
