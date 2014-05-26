@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="96"
+   height="96"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="main_icon.svg"
+   inkscape:export-filename="C:\Users\cultura\git\fanfiction-reader\release\launcher_icon.png"
+   inkscape:export-xdpi="478.75323"
+   inkscape:export-ydpi="478.75323">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="3.959798"
+     inkscape:cx="53.87815"
+     inkscape:cy="58.390016"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1600"
+     inkscape:window-height="838"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:snap-page="true"
+     inkscape:snap-global="false" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Capa 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-956.36218)">
+    <rect
+       style="fill:#d5d5ff;stroke:#000080;stroke-width:3"
+       id="rect3050"
+       width="93.222076"
+       height="93.222084"
+       x="1.5152289"
+       y="1.5152289"
+       transform="translate(0,956.36218)"
+       ry="15.404826" />
+    <rect
+       style="fill:#d5d5ff;stroke:#000080;stroke-width:2.99562311"
+       id="rect3052"
+       width="80.311531"
+       height="79.806816"
+       x="7.8264933"
+       y="964.47675"
+       ry="8.3337584" />
+    <g
+       id="g3032"
+       transform="matrix(1.120911,0,0,1.1101715,-5.6902054,-108.38986)">
+      <text
+         sodipodi:linespacing="125%"
+         id="text2982-1-4"
+         y="1022.6102"
+         x="36.591583"
+         style="font-size:48px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000055;fill-opacity:1;stroke:none;font-family:Lucida Calligraphy;-inkscape-font-specification:Lucida Calligraphy"
+         xml:space="preserve"><tspan
+           y="1022.6102"
+           x="36.591583"
+           id="tspan2984-7-0"
+           sodipodi:role="line">F</tspan></text>
+      <text
+         sodipodi:linespacing="125%"
+         id="text2986"
+         y="1022.0052"
+         x="35.714287"
+         style="font-size:48px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#0000aa;fill-opacity:1;stroke:none;font-family:Lucida Calligraphy;-inkscape-font-specification:Lucida Calligraphy"
+         xml:space="preserve"><tspan
+           y="1022.0052"
+           x="35.714287"
+           id="tspan2988"
+           sodipodi:role="line">F</tspan></text>
+    </g>
+    <g
+       id="g3038"
+       transform="matrix(1.120911,0,0,1.1101715,-5.6902054,-108.38986)">
+      <text
+         sodipodi:linespacing="125%"
+         id="text2982-1"
+         y="1009.8255"
+         x="17.896273"
+         style="font-size:48px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000055;fill-opacity:1;stroke:none;font-family:Lucida Calligraphy;-inkscape-font-specification:Lucida Calligraphy"
+         xml:space="preserve"><tspan
+           y="1009.8255"
+           x="17.896273"
+           id="tspan2984-7"
+           sodipodi:role="line">F</tspan></text>
+      <text
+         sodipodi:linespacing="125%"
+         id="text2982"
+         y="1008.7909"
+         x="17.5"
+         style="font-size:48px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#0000d4;fill-opacity:1;stroke:none;font-family:Lucida Calligraphy;-inkscape-font-specification:Lucida Calligraphy"
+         xml:space="preserve"><tspan
+           y="1008.7909"
+           x="17.5"
+           id="tspan2984"
+           sodipodi:role="line">F</tspan></text>
+    </g>
+  </g>
+</svg>

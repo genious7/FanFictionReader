@@ -11,6 +11,7 @@ import com.spicymango.fanfictionreader.provider.SqlConstants;
 import com.spicymango.fanfictionreader.provider.StoryProvider;
 import com.spicymango.fanfictionreader.util.Story;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -26,6 +27,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
@@ -62,7 +64,7 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 			
 		mListView = (ListView)findViewById(R.id.list);
 		mListView.setOnItemClickListener(this);
-		mAdapter = new SimpleCursorAdapter(this, R.layout.story_menu_list_item, null, TO_PROJECTION, DEST_PROJECTION, 0);
+		mAdapter = new LibraryAdapter(this, R.layout.story_menu_list_item, null, TO_PROJECTION, DEST_PROJECTION, 0);
 		mListView.setAdapter(mAdapter);
 		registerForContextMenu(mListView);
 	}
@@ -193,4 +195,39 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 		startActivity(i);
 	}
 
+	private static class LibraryAdapter extends SimpleCursorAdapter{
+		/**
+		 * Contains the templates for the stories' additional details
+		 */
+		private final String words, chapters, follows;
+		
+		public LibraryAdapter(Context context, int layout, Cursor c,
+				String[] from, int[] to, int flags) {
+			super(context, layout, c, from, to, flags);
+			words = context.getString(R.string.story_menu_words);
+			chapters = context.getString(R.string.story_menu_chapters);
+			follows = context.getString(R.string.story_menu_follows);
+		}
+		
+		@Override
+		public void setViewText(TextView v, String text) {
+			String text2;
+			switch (v.getId()) {
+			case R.id.story_menu_list_item_words:
+				text2 = String.format(words, text);
+				break;
+			case R.id.story_menu_list_item_chapters:
+				text2 = String.format(chapters, Integer.parseInt(text));
+				break;
+			case R.id.story_menu_list_item_follows:
+				text2 = String.format(follows, text);
+				break;
+			default:
+				text2 = text;
+				break;
+			}
+			super.setViewText(v, text2);
+		}
+		
+	}
 }
