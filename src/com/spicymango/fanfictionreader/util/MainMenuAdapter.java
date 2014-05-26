@@ -20,9 +20,8 @@ import android.widget.TextView;
  * @author Michael Chen
  */
 public class MainMenuAdapter extends ArrayAdapter<MenuItem> {
-	Context context;
-	int layoutResourceId;
-	MenuItem data[]=null;
+	private int layoutResourceId;
+	private MenuItem data[]=null;
 	
 	/**
 	 * Initializes the adapter
@@ -32,8 +31,6 @@ public class MainMenuAdapter extends ArrayAdapter<MenuItem> {
 	 */
 	public MainMenuAdapter(Context context, int layoutResourceId, MenuItem[] data) {
 		super(context, layoutResourceId, data);
-		
-		this.context=context;
 		this.layoutResourceId=layoutResourceId;
 		this.data=data;
 	}
@@ -44,7 +41,7 @@ public class MainMenuAdapter extends ArrayAdapter<MenuItem> {
 		MenuItemHolder holder = null;
 		if(row == null)
         {
-            LayoutInflater inflater = ((Activity)context).getLayoutInflater();
+            LayoutInflater inflater = ((Activity)getContext()).getLayoutInflater();
             row = inflater.inflate(layoutResourceId, parent, false);
            
             holder = new MenuItemHolder();
@@ -69,9 +66,9 @@ public class MainMenuAdapter extends ArrayAdapter<MenuItem> {
 	 * A cache of the ImageView and the TextView. Provides a speed improvement.
 	 * @author Michael Chen
 	 */
-	static class MenuItemHolder
+	private static class MenuItemHolder
     {
-        ImageView imgIcon;
-        TextView txtTitle;
+        private ImageView imgIcon;
+        private TextView txtTitle;
     }
 }

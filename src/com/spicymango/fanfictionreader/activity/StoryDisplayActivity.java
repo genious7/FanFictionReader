@@ -186,7 +186,7 @@ public class StoryDisplayActivity extends ActionBarActivity implements OnClickLi
 		return mLoader;
 	}
 	
-	public void toast(String text){
+	private void toast(String text){
 		Toast toast = Toast.makeText(this, text, Toast.LENGTH_SHORT);
 		toast.show();
 	}

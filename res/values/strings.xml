@@ -122,7 +122,10 @@
 	<string name="read_story_filter">@string/menu_story_filter_by</string>
 	
 	<!-- About Page -->
-	<string name="about">This application was developed by Michael Chen. The author is not affiliated in anyway with Fanfiction.net nor its staff.</string>
+	<string name="about">This application was developed by Michael Chen. 
+		The author is not affiliated in anyway with Fanfiction.net.\n\n
+		Please report any bugs or request any features using the button below.</string>
+	<string name="about_feature">Contact the developer</string>
 	
 	<!-- General Items and Strings -->
 	<string name="general_anime">Anime</string>

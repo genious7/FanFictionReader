@@ -44,7 +44,7 @@ public class LibraryDownloader extends IntentService{
 	/**
 	 * Used for clearing the notification counter
 	 */
-	public final static String EXTRA_UPDATE_NOT = "Notification";
+	private final static String EXTRA_UPDATE_NOT = "Notification";
 	
 	/**
 	 * Key for the story id

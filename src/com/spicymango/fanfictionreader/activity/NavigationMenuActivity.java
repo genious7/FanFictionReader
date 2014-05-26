@@ -67,7 +67,7 @@ public class NavigationMenuActivity extends ActionBarActivity implements LoaderC
 	
 	private static final UriMatcher URIMATCHER = getUriMatcher();
 	
-	public static final String capitalizeString(String string) {
+	private static final String capitalizeString(String string) {
 		  char[] chars = string.toCharArray();
 		  boolean found = false;
 		  for (int i = 0; i < chars.length; i++) {

@@ -72,7 +72,7 @@ public class StoryMenuActivity extends ActionBarActivity implements LoaderCallba
 	 * @param string
 	 * @return
 	 */
-	public static final String capitalizeString(String string) {
+	private static final String capitalizeString(String string) {
 		  char[] chars = string.toCharArray();
 		  boolean found = false;
 		  for (int i = 0; i < chars.length; i++) {

@@ -30,7 +30,7 @@ public class MenuObject implements Parcelable {
 	 * Creates a new menu object
 	 * @param in The parcel to employ
 	 */
-	public MenuObject(Parcel in) {
+	private MenuObject(Parcel in) {
 		mTitle = in.readString();
 		mViews = in.readString();
 		mUri = in.readString();
@@ -81,11 +81,6 @@ public class MenuObject implements Parcelable {
 	 */
 	public String getViews() {
 		return mViews;
-	}
-	
-	
-	public boolean hasViewsField(){
-		return !(mViews == "");
 	}
 
 	@Override

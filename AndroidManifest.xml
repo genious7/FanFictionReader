@@ -87,7 +87,7 @@
         </activity>
         <activity
             android:name=".activity.AboutActivity"
-            android:label="@string/menu_button_about" >
+            android:label="@string/menu_button_about" android:theme="@style/Dialog">
         </activity>
     </application>
 

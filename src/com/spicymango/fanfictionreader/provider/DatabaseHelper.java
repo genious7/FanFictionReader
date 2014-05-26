@@ -14,7 +14,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DatabaseHelper extends SQLiteOpenHelper  implements SqlConstants{
 	
 	private static final int DATABASE_VERSION = 3; //Database version 3
-	protected static final String DATABASE_NAME = "library.db";
+	private static final String DATABASE_NAME = "library.db";
 	
 	//The name of the table
 	protected static final String TABLE_LIBRARY = "library";

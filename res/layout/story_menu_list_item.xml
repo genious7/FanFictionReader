@@ -48,7 +48,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center_horizontal"
+            android:gravity="left"
             android:text="@string/story_menu_words" />
 
         <TextView
@@ -64,7 +64,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center_horizontal"
+            android:gravity="right"
             android:text="@string/story_menu_follows" />
     </LinearLayout>
 

@@ -466,15 +466,15 @@ public class CommunityMenuActivity extends ActionBarActivity implements LoaderCa
  * @author Michael Chen
  */
 final class CommunityItem implements Parcelable {
-	String title;
-	String uri;
-	String author;
-	String summary;
-	String stories;
-	String languague;
-	int staff;
-	int follows;
-	Date published;
+	protected String title;
+	protected String uri;
+	protected String author;
+	protected String summary;
+	protected String stories;
+	private String languague;
+	private int staff;
+	private int follows;
+	private Date published;
 
 	public static final Parcelable.Creator<CommunityItem> CREATOR = new Creator<CommunityItem>() {
 
@@ -494,7 +494,7 @@ final class CommunityItem implements Parcelable {
 	 * 
 	 * @param in
 	 */
-	public CommunityItem(Parcel in) {
+	private CommunityItem(Parcel in) {
 		title = in.readString();
 		uri = in.readString();
 		author = in.readString();
