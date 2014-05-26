@@ -246,7 +246,7 @@ public class SearchActivity extends ActionBarActivity implements
 		//Initialize variables
 		ListView listView = (ListView)findViewById(R.id.list);
 		mList = new ArrayList<Story>();
-		mAdapter = new StoryMenuAdapter(this, R.layout.story_menu_list_item, mList);
+		mAdapter = new StoryMenuAdapter(this, mList);
 		View footer = getLayoutInflater().inflate(R.layout.progress_bar, null);
 		listView.addFooterView(footer,null,false);
 		listView.setOnItemClickListener(this);

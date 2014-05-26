@@ -16,7 +16,7 @@
 	<string name="dialog_loading">Loading…</string>
 	<string name="dialog_unspecified">Unspecified Error</string>
 
-	<string name="story_menu_filter">Filter</string>
+	
 	
 	<string name="filter_sort">Sort options</string>
 	<string name="filter_date">Time Range</string>
@@ -31,9 +31,6 @@
 	<string name="filter_category">Category</string>
 	<string name="filter_type">Type</string>
 	
-	<string name="story_menu_follows">Follows:\u0020</string>
-	<string name="story_menu_words">Words:\u0020</string>
-	<string name="story_menu_chapters">Chapters:\u0020</string>
 	<string name="detail_rating">Rating:\u0020</string>
 	<string name="detail_languague">Languague:\u0020</string>
 	<string name="detail_genre">Genre:\u0020</string>
@@ -105,6 +102,9 @@
 	<string name="menu_story_page_button">Load page %1$d of %2$d</string>
 	<string name="menu_story_title_just_in">Just In</string>
 	<string name="menu_story_filter_by">Filter</string>
+	<string name="story_menu_follows">Follows: %s</string>
+	<string name="story_menu_words">Words: %s</string>
+	<string name="story_menu_chapters">Chapters: %d</string>
 	
 	<!-- Library Menu Activity -->
 	<string name="menu_library_title">My Library</string>

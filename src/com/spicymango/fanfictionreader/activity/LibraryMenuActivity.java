@@ -6,10 +6,10 @@ import com.spicymango.fanfictionreader.DetailDisplay;
 import com.spicymango.fanfictionreader.LibraryDownloader;
 import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.Settings;
-import com.spicymango.fanfictionreader.util.DatabaseHelper;
-import com.spicymango.fanfictionreader.util.SqlConstants;
+import com.spicymango.fanfictionreader.provider.DatabaseHelper;
+import com.spicymango.fanfictionreader.provider.SqlConstants;
+import com.spicymango.fanfictionreader.provider.StoryProvider;
 import com.spicymango.fanfictionreader.util.Story;
-import com.spicymango.fanfictionreader.util.StoryProvider;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -189,7 +189,7 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 			lastPageRead = 1;
 		}
 		Intent i = new Intent (this, StoryDisplayActivity.class);
-		i.setData(Uri.fromFile(new File(getFilesDir(), id + "_" + lastPageRead + ".txt")));
+		i.setData(Uri.parse("https://m.fanfiction.net/s/" + id + "/" + lastPageRead + "/"));
 		startActivity(i);
 	}
 

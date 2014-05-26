@@ -281,7 +281,7 @@ public class StoryMenuActivity extends ActionBarActivity implements LoaderCallba
 			}else if (resultCode == RESULT_OK) {
 				filter = data.getIntArrayExtra(FilterMenu.STATE_FILTER_LIST);
 				selectedPositions = data.getIntArrayExtra(FilterMenu.SELECTED_KEYS);
-				if (!filter.equals(mLoader.filter)) {
+				if (filter != mLoader.filter) {
 					mLoader.filter = filter;
 					mLoader.mData = new ArrayList<Story>();
 					mLoader.setUri(mUri);
@@ -301,7 +301,7 @@ public class StoryMenuActivity extends ActionBarActivity implements LoaderCallba
 		
 		mUri = getIntent().getData();
 		mList = new ArrayList<Story>();
-		mAdapter = new StoryMenuAdapter(this, R.layout.story_menu_list_item, mList);
+		mAdapter = new StoryMenuAdapter(this, mList);
 		
 		ListView listView = (ListView)findViewById(R.id.list);
 		listView.addFooterView(getLayoutInflater().inflate(R.layout.progress_bar, null),null,false);
@@ -606,11 +606,11 @@ public class StoryMenuActivity extends ActionBarActivity implements LoaderCallba
 				 		.appendQueryParameter("p", mCurrentPage + "");	//Current Page
 				break;
 			case URI_COMMUNITY_MENU:
-				builder.appendEncodedPath(filter[4] + "")
-						.appendEncodedPath(mCurrentPage + "")
+				builder.appendEncodedPath(filter[4] + "")				//Rating
+						.appendEncodedPath(mCurrentPage + "")			//Current Page
 						.appendEncodedPath(filter[2] + "")
-						.appendEncodedPath(filter[6] + "")
-						.appendEncodedPath(filter[7] + "")
+						.appendEncodedPath(filter[6] + "")				//Length
+						.appendEncodedPath(filter[7] + "")				//Status
 						.appendEncodedPath(filter[1] + "")
 						.appendEncodedPath("");
 			default:

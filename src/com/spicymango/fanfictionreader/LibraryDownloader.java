@@ -26,9 +26,9 @@ import android.text.Html;
 import android.text.Spanned;
 
 import com.spicymango.fanfictionreader.activity.LibraryMenuActivity;
-import com.spicymango.fanfictionreader.util.SqlConstants;
+import com.spicymango.fanfictionreader.provider.SqlConstants;
+import com.spicymango.fanfictionreader.provider.StoryProvider;
 import com.spicymango.fanfictionreader.util.Story;
-import com.spicymango.fanfictionreader.util.StoryProvider;
 
 /**
  * Downloads a story into the library. Must pass the story id inside the intent.

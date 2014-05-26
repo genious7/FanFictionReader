@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.spicymango.fanfictionreader.util;
+package com.spicymango.fanfictionreader.provider;
 
 import android.content.ContentProvider;
 import android.content.ContentResolver;

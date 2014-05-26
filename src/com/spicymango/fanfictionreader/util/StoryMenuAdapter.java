@@ -19,13 +19,19 @@ import android.widget.TextView;
 public class StoryMenuAdapter extends ArrayAdapter<Story> {
 	
 	/**
+	 * Contains the templates for the stories' additional details
+	 */
+	private final String words, chapters, follows;
+	/**
 	 * Creates a new StoryMenuAdapter
 	 * @param context The current context
-	 * @param resource The id of the view representing a row
 	 * @param objects The list of stories
 	 */
-	public StoryMenuAdapter(Context context, int resource, List<Story> objects) {
-		super(context, resource, objects);
+	public StoryMenuAdapter(Context context, List<Story> objects) {
+		super(context, R.layout.story_menu_list_item, objects);
+		words = context.getString(R.string.story_menu_words);
+		chapters = context.getString(R.string.story_menu_chapters);
+		follows = context.getString(R.string.story_menu_follows);
 	}
 	
 	/**
@@ -62,9 +68,9 @@ public class StoryMenuAdapter extends ArrayAdapter<Story> {
 			holder.title.setText(getItem(position).getName());
 			holder.summary.setText(getItem(position).getSummary());
 			holder.author.setText(getItem(position).getAuthor());
-			holder.words.setText(String.valueOf(getItem(position).getWordLenght()));
-			holder.follows.setText(String.valueOf(getItem(position).getFollows()));
-			holder.chapters.setText(String.valueOf(getItem(position).getChapterLenght()));
+			holder.words.setText(String.format(words, getItem(position).getWordLenght()));
+			holder.follows.setText(String.format(follows, getItem(position).getFollows()));
+			holder.chapters.setText(String.format(chapters, getItem(position).getChapterLenght()));
 
 		    return convertView;
 	}

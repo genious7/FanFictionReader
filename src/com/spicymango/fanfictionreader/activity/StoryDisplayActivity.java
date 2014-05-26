@@ -33,7 +33,6 @@ import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.SpannedString;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -49,10 +48,10 @@ import android.widget.Toast;
 import com.spicymango.fanfictionreader.LibraryDownloader;
 import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.Settings;
-import com.spicymango.fanfictionreader.util.DatabaseHelper;
-import com.spicymango.fanfictionreader.util.SqlConstants;
+import com.spicymango.fanfictionreader.provider.DatabaseHelper;
+import com.spicymango.fanfictionreader.provider.SqlConstants;
+import com.spicymango.fanfictionreader.provider.StoryProvider;
 import com.spicymango.fanfictionreader.util.Story;
-import com.spicymango.fanfictionreader.util.StoryProvider;
 
 /**
  * 
@@ -176,7 +175,7 @@ public class StoryDisplayActivity extends ActionBarActivity implements OnClickLi
 				item.getIcon().setAlpha(64);	
 			}
 		}
-		if (mLoader != null && mLoader.isFinished()) {
+		if (mLoader != null && mLoader.isFinished() && mLoader.mResult.getStoryTitle() != null) {
 			getSupportActionBar().setSubtitle(mLoader.mResult.getStoryTitle());
 		}
 		return super.onPrepareOptionsMenu(menu);
@@ -218,7 +217,6 @@ public class StoryDisplayActivity extends ActionBarActivity implements OnClickLi
 			}
 		}
 		toast(getString(R.string.dialog_unspecified));
-		Log.e("parseUri", "The URI " + uri.toString() + " is invalid.");
 		return false;
 	}
 	
@@ -439,7 +437,6 @@ public class StoryDisplayActivity extends ActionBarActivity implements OnClickLi
 				fin.close();
 				return new SpannedString(new String(buffer));
 			} catch (IOException e) {
-				Log.e("loadFromFile", "Story #" + storyId + " not found.", e);
 				return null;
 			}
 		}
@@ -583,7 +580,7 @@ public class StoryDisplayActivity extends ActionBarActivity implements OnClickLi
 			
 			@Override
 			public void onCancel(DialogInterface dialog) {
-				if (mActivity != null) {
+				if (mActivity.get() != null) {
 					mActivity.get().mLoader.cancel(false);
 					if (mActivity.get().mLoader.mResult == null) {
 						mActivity.get().finish();

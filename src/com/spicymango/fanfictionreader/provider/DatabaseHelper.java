@@ -1,7 +1,9 @@
-package com.spicymango.fanfictionreader.util;
+package com.spicymango.fanfictionreader.provider;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.spicymango.fanfictionreader.util.Story;
 
 import android.content.ContentValues;
 import android.content.Context;

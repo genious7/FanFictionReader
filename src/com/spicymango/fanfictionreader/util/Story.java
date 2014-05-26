@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.spicymango.fanfictionreader.provider.SqlConstants;
+
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Parcel;
