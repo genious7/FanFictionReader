@@ -1,0 +1,5 @@
+ -keeppackagenames org.jsoup.nodes
+ 
+ # Preserve Android support libraries` classes and interfaces
+-keep class android.support.** { *; }
+-keep interface android.support.** { *; }

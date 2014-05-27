@@ -607,11 +607,12 @@ public class StoryMenuActivity extends ActionBarActivity implements LoaderCallba
 				break;
 			case URI_COMMUNITY_MENU:
 				builder.appendEncodedPath(filter[4] + "")				//Rating
+						.appendEncodedPath(filter[0] + "")				//Sort Options
 						.appendEncodedPath(mCurrentPage + "")			//Current Page
-						.appendEncodedPath(filter[2] + "")
+						.appendEncodedPath(filter[2] + "")				//Genre
 						.appendEncodedPath(filter[6] + "")				//Length
 						.appendEncodedPath(filter[7] + "")				//Status
-						.appendEncodedPath(filter[1] + "")
+						.appendEncodedPath(filter[1] + "")				//Time Range
 						.appendEncodedPath("");
 			default:
 				break;
