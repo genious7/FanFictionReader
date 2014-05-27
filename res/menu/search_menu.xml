@@ -12,10 +12,11 @@
     </item>
     <item
         android:id="@+id/filter"
+        android:enabled="false"
         android:icon="@drawable/ic_filter"
         android:title="@string/menu_navigation_filter_by"
         android:titleCondensed="@string/menu_navigation_filter_by"
-        spicymango:showAsAction="ifRoom" android:enabled="false">
+        spicymango:showAsAction="ifRoom">
     </item>
 
 </menu>

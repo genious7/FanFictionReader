@@ -93,7 +93,6 @@ android.support.v4.app.Fragment:
     511:511:public final int getId()
     518:518:public final java.lang.String getTag()
     529:533:public void setArguments(android.os.Bundle)
-    540:540:public final android.os.Bundle getArguments()
     552:557:public void setInitialSavedState(android.support.v4.app.Fragment$SavedState)
     571:573:public void setTargetFragment(android.support.v4.app.Fragment,int)
     579:579:public final android.support.v4.app.Fragment getTargetFragment()
@@ -117,7 +116,6 @@ android.support.v4.app.Fragment:
     818:824:public void setMenuVisibility(boolean)
     840:845:public void setUserVisibleHint(boolean)
     852:852:public boolean getUserVisibleHint()
-    859:867:public android.support.v4.app.LoaderManager getLoaderManager()
     875:879:public void startActivity(android.content.Intent)
     886:890:public void startActivityForResult(android.content.Intent,int)
     1328:1329:public void registerForContextMenu(android.view.View)
@@ -223,9 +221,18 @@ android.support.v4.app.FragmentTransaction:
     public abstract android.support.v4.app.FragmentTransaction setBreadCrumbTitle(java.lang.CharSequence)
     public abstract android.support.v4.app.FragmentTransaction setBreadCrumbShortTitle(int)
     public abstract android.support.v4.app.FragmentTransaction setBreadCrumbShortTitle(java.lang.CharSequence)
-android.support.v4.app.ListFragment
-android.support.v4.app.ListFragment$1
-android.support.v4.app.ListFragment$2
+android.support.v4.app.ListFragment:
+    static final int INTERNAL_EMPTY_ID
+    static final int INTERNAL_PROGRESS_CONTAINER_ID
+    static final int INTERNAL_LIST_CONTAINER_ID
+    198:200:public void setSelection(int)
+    206:207:public int getSelectedItemPosition()
+    214:215:public long getSelectedItemId()
+    222:223:public android.widget.ListView getListView()
+    232:241:public void setEmptyText(java.lang.CharSequence)
+    258:259:public void setListShown(boolean)
+    266:267:public void setListShownNoAnimation(boolean)
+    319:319:public android.widget.ListAdapter getListAdapter()
 android.support.v4.app.LoaderManager:
     public abstract android.support.v4.content.Loader restartLoader(int,android.os.Bundle,android.support.v4.app.LoaderManager$LoaderCallbacks)
     public abstract void destroyLoader(int)
@@ -364,9 +371,19 @@ android.support.v4.content.CursorLoader:
     183:184:public void setSelectionArgs(java.lang.String[])
     187:187:public java.lang.String getSortOrder()
     191:192:public void setSortOrder(java.lang.String)
-android.support.v4.content.FileProvider
-android.support.v4.content.FileProvider$PathStrategy
-android.support.v4.content.FileProvider$SimplePathStrategy
+android.support.v4.content.FileProvider:
+    private static final java.lang.String META_DATA_FILE_PROVIDER_PATHS
+    private static final java.lang.String TAG_ROOT_PATH
+    private static final java.lang.String TAG_FILES_PATH
+    private static final java.lang.String TAG_CACHE_PATH
+    private static final java.lang.String TAG_EXTERNAL
+    private static final java.lang.String ATTR_NAME
+    private static final java.lang.String ATTR_PATH
+    376:377:public static android.net.Uri getUriForFile(android.content.Context,java.lang.String,java.io.File)
+android.support.v4.content.FileProvider$PathStrategy:
+    public abstract android.net.Uri getUriForFile(java.io.File)
+android.support.v4.content.FileProvider$SimplePathStrategy:
+    662:692:public android.net.Uri getUriForFile(java.io.File)
 android.support.v4.content.IntentCompat:
     public static final java.lang.String ACTION_EXTERNAL_APPLICATIONS_AVAILABLE
     public static final java.lang.String ACTION_EXTERNAL_APPLICATIONS_UNAVAILABLE
@@ -415,7 +432,10 @@ android.support.v4.content.ModernAsyncTask:
     371:371:public final varargs android.support.v4.content.ModernAsyncTask execute(java.lang.Object[])
     433:434:public static void execute(java.lang.Runnable)
     451:455:protected final varargs void publishProgress(java.lang.Object[])
-android.support.v4.content.WakefulBroadcastReceiver
+android.support.v4.content.WakefulBroadcastReceiver:
+    private static final java.lang.String EXTRA_WAKE_LOCK_ID
+    81:101:public static android.content.ComponentName startWakefulService(android.content.Context,android.content.Intent)
+    113:132:public static boolean completeWakefulIntent(android.content.Intent)
 android.support.v4.content.pm.ActivityInfoCompat
 android.support.v4.database.DatabaseUtilsCompat
 android.support.v4.graphics.drawable.DrawableCompat
@@ -1132,7 +1152,6 @@ android.support.v4.widget.SearchViewCompatIcs$MySearchView
 android.support.v4.widget.SimpleCursorAdapter:
     63:67:public SimpleCursorAdapter(android.content.Context,int,android.database.Cursor,java.lang.String[],int[])
     162:162:public android.support.v4.widget.SimpleCursorAdapter$ViewBinder getViewBinder()
-    175:176:public void setViewBinder(android.support.v4.widget.SimpleCursorAdapter$ViewBinder)
     228:228:public int getStringConversionColumn()
     246:247:public void setStringConversionColumn(int)
     262:262:public android.support.v4.widget.SimpleCursorAdapter$CursorToStringConverter getCursorToStringConverter()
@@ -2023,8 +2042,8 @@ com.spicymango.fanfictionreader.activity.NavigationMenuActivity:
     private static final int SUB_CATEGORY_MENU
 com.spicymango.fanfictionreader.activity.SearchActivity:
     private static final int LOADER_ID
-    211:211:public boolean onQueryTextChange(java.lang.String)
-    216:217:public boolean onQueryTextSubmit(java.lang.String)
+    225:225:public boolean onQueryTextChange(java.lang.String)
+    230:231:public boolean onQueryTextSubmit(java.lang.String)
 com.spicymango.fanfictionreader.activity.StoryDisplayActivity:
     private static final java.lang.String STATE_CURRENT_PAGE
     private static final java.lang.String STATE_DOWNLOAD
@@ -2037,8 +2056,11 @@ com.spicymango.fanfictionreader.activity.StoryMenuActivity:
     private static final int URI_CROSSOVER_MENU
     private static final int URI_JUST_IN_MENU
     private static final int URI_NORMAL_MENU
-com.spicymango.fanfictionreader.fragments.StoryDisplayFragment
-com.spicymango.fanfictionreader.fragments.StoryDisplayFragment$StoryLoader
+com.spicymango.fanfictionreader.fragments.StoryDisplayFragment:
+    private static final int LOADER_ID
+    private static final java.lang.String EXTRA_URI
+    private static final java.lang.String SAVED_ID
+    private static final java.lang.String SAVED_CURRENT
 com.spicymango.fanfictionreader.provider.DatabaseHelper:
     private static final int DATABASE_VERSION
     private static final java.lang.String DATABASE_NAME
