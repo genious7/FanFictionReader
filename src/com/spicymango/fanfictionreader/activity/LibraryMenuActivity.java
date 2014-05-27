@@ -64,7 +64,8 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 			
 		mListView = (ListView)findViewById(R.id.list);
 		mListView.setOnItemClickListener(this);
-		mAdapter = new LibraryAdapter(this, R.layout.story_menu_list_item, null, TO_PROJECTION, DEST_PROJECTION, 0);
+		mAdapter = new SimpleCursorAdapter(this, R.layout.story_menu_list_item, null, TO_PROJECTION, DEST_PROJECTION, 0);
+		mAdapter.setViewBinder(new LibraryBinder(this));
 		mListView.setAdapter(mAdapter);
 		registerForContextMenu(mListView);
 	}
@@ -194,39 +195,46 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 		i.setData(Uri.parse("https://m.fanfiction.net/s/" + id + "/" + lastPageRead + "/"));
 		startActivity(i);
 	}
-
-	private static class LibraryAdapter extends SimpleCursorAdapter{
+	
+	/**
+	 * A ViewBinder that adds the prefixes to the stories' details.
+	 * @author Michael Chen
+	 *
+	 */
+	private static class LibraryBinder implements SimpleCursorAdapter.ViewBinder{
 		/**
 		 * Contains the templates for the stories' additional details
 		 */
 		private final String words, chapters, follows;
 		
-		public LibraryAdapter(Context context, int layout, Cursor c,
-				String[] from, int[] to, int flags) {
-			super(context, layout, c, from, to, flags);
+		/**
+		 * Creates a new Library Binder using the current context. 
+		 * @param context
+		 */
+		public LibraryBinder(Context context) {
 			words = context.getString(R.string.story_menu_words);
 			chapters = context.getString(R.string.story_menu_chapters);
-			follows = context.getString(R.string.story_menu_follows);
+			follows = context.getString(R.string.story_menu_follows);		
 		}
 		
 		@Override
-		public void setViewText(TextView v, String text) {
+		public boolean setViewValue(View v, Cursor c, int column) {
 			String text2;
 			switch (v.getId()) {
 			case R.id.story_menu_list_item_words:
-				text2 = String.format(words, text);
+				text2 = String.format(words, c.getString(column));
 				break;
 			case R.id.story_menu_list_item_chapters:
-				text2 = String.format(chapters, Integer.parseInt(text));
+				text2 = String.format(chapters, c.getInt(column));
 				break;
 			case R.id.story_menu_list_item_follows:
-				text2 = String.format(follows, text);
+				text2 = String.format(follows, c.getString(column));
 				break;
 			default:
-				text2 = text;
-				break;
+				return false;
 			}
-			super.setViewText(v, text2);
+			((TextView)v).setText(text2);
+			return true;
 		}
 		
 	}

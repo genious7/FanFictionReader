@@ -15,7 +15,7 @@
         android:icon="@drawable/ic_filter"
         android:title="@string/menu_navigation_filter_by"
         android:titleCondensed="@string/menu_navigation_filter_by"
-        spicymango:showAsAction="ifRoom">
+        spicymango:showAsAction="ifRoom" android:enabled="false">
     </item>
 
 </menu>

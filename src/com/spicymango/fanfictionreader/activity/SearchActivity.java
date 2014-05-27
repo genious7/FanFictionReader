@@ -113,6 +113,19 @@ public class SearchActivity extends ActionBarActivity implements
 		sView.setOnQueryTextListener(this);
 		return super.onCreateOptionsMenu(menu);
 	}
+	
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		MenuItem filter = menu.findItem(R.id.filter);
+		if (filterList == null) {
+			filter.setEnabled(false);
+			filter.getIcon().setAlpha(64);
+		}else{
+			filter.setEnabled(true);
+			filter.getIcon().setAlpha(255);
+		}
+		return super.onPrepareOptionsMenu(menu);
+	}
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
@@ -150,6 +163,7 @@ public class SearchActivity extends ActionBarActivity implements
 		mList.clear();
 		mList.addAll(arg1);
 		mAdapter.notifyDataSetChanged();
+		supportInvalidateOptionsMenu();
 		filterList = mLoader.mFilterList;
 		
 		if (mLoader.isRunning()) {
