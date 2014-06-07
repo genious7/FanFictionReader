@@ -4,17 +4,20 @@ import com.spicymango.fanfictionreader.activity.AboutActivity;
 import com.spicymango.fanfictionreader.activity.LibraryMenuActivity;
 import com.spicymango.fanfictionreader.activity.SearchActivity;
 import com.spicymango.fanfictionreader.activity.StoryMenuActivity;
-import com.spicymango.fanfictionreader.util.MainMenuAdapter;
-import com.spicymango.fanfictionreader.util.MenuItem;
-
 import android.R.drawable;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
@@ -89,6 +92,28 @@ public class MainMenu extends Activity implements OnItemClickListener {
 			break;
 		}
 	}
+	
+	
+	/**
+	 * Represents a single menu item
+	 * @author Michael Chen
+	 */
+	private static class MenuItem {
+		public int icon;
+		public String title;
+		
+		/**
+		 * Initializes a new menu item.
+		 * @param Icon The Id of the image to be used as the icon
+		 * @param Title The text to be used as the label
+		 * @author Michael Chen
+		 */
+		public MenuItem(int Icon, String Title){
+			icon = Icon;
+			title = Title;
+		}
+	}
+
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -101,5 +126,64 @@ public class MainMenu extends Activity implements OnItemClickListener {
 			break;
 		}
 		super.onActivityResult(requestCode, resultCode, data);
+	}
+	
+	
+	/**
+	 * The custom menu adapter for the main menu. Contains only an image and a single text.
+	 * @author Michael Chen
+	 */
+	private static class MainMenuAdapter extends ArrayAdapter<MenuItem> {
+		private int layoutResourceId;
+		private MenuItem data[]=null;
+		
+		/**
+		 * Initializes the adapter
+		 * @param context The current context
+		 * @param layoutResourceId The resource ID for a layout file
+		 * @param data The objects to represent in the list view
+		 */
+		public MainMenuAdapter(Context context, int layoutResourceId, MenuItem[] data) {
+			super(context, layoutResourceId, data);
+			this.layoutResourceId=layoutResourceId;
+			this.data=data;
+		}
+		
+		@Override 
+		public View getView(int position, View convertView, ViewGroup parent){
+			View row = convertView;
+			MenuItemHolder holder = null;
+			if(row == null)
+	        {
+	            LayoutInflater inflater = ((Activity)getContext()).getLayoutInflater();
+	            row = inflater.inflate(layoutResourceId, parent, false);
+	           
+	            holder = new MenuItemHolder();
+	            holder.imgIcon = (ImageView)row.findViewById(R.id.list_item_icon);
+	            holder.txtTitle = (TextView)row.findViewById(R.id.list_item_title);
+	           
+	            row.setTag(holder);
+	        }
+	        else
+	        {
+	            holder = (MenuItemHolder)row.getTag();
+	        }
+	       
+	        MenuItem menuRow = data[position];
+	        holder.txtTitle.setText(menuRow.title);
+	        holder.imgIcon.setImageResource(menuRow.icon);
+	       
+	        return row;
+	    }
+	   
+		/**
+		 * A cache of the ImageView and the TextView. Provides a speed improvement.
+		 * @author Michael Chen
+		 */
+		private static class MenuItemHolder
+	    {
+	        private ImageView imgIcon;
+	        private TextView txtTitle;
+	    }
 	}
 }

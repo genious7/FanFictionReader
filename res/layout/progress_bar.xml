@@ -7,10 +7,12 @@
 
     <ProgressBar
         android:id="@+id/progress_bar"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/main_menu_icon_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:paddingBottom="@dimen/top_bottom_padding"
         android:paddingTop="@dimen/top_bottom_padding" >
+
     </ProgressBar>
 
     <LinearLayout
@@ -43,6 +45,7 @@
     <Button
         android:id="@+id/story_load_pages"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/main_menu_icon_size" />
+        android:layout_height="@dimen/main_menu_icon_size"
+        android:text="@string/menu_story_page_button" />
 
 </LinearLayout>

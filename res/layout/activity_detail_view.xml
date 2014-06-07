@@ -205,6 +205,15 @@
             android:layout_height="wrap_content"
             android:layout_above="@+id/detail_rating"
             android:layout_toRightOf="@+id/detail_category_label" />
+
+        <Button
+            android:id="@+id/btn_author"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/detail_published_label"
+            android:layout_below="@+id/detail_published"
+            android:text="@string/menu_navigation_browse_by_author" />
+
     </RelativeLayout>
 
 </ScrollView>

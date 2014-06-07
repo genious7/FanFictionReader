@@ -3,7 +3,6 @@ package com.spicymango.fanfictionreader.util;
 import java.util.List;
 
 import com.spicymango.fanfictionreader.R;
-
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -47,27 +46,29 @@ public class StoryMenuAdapter extends ArrayAdapter<Story> {
 	 */
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
+			
+			ViewHolder holder;
+		
 			if (convertView == null) {
 				LayoutInflater inflater = ((Activity)getContext()).getLayoutInflater();
-				
 				convertView = inflater.inflate(R.layout.story_menu_list_item, parent, false);
 				
-				ViewHolder viewHolder = new ViewHolder();
-				viewHolder.title = (TextView) convertView.findViewById(R.id.story_menu_list_item_title);
-				viewHolder.summary = (TextView) convertView.findViewById(R.id.story_menu_list_item_summary);
-				viewHolder.author = (TextView) convertView.findViewById(R.id.story_menu_list_item_author);
-				viewHolder.words = (TextView) convertView.findViewById(R.id.story_menu_list_item_words);
-				viewHolder.follows = (TextView) convertView.findViewById(R.id.story_menu_list_item_follows);
-				viewHolder.chapters = (TextView) convertView.findViewById(R.id.story_menu_list_item_chapters);
-				convertView.setTag(viewHolder);				
-			} 
-			
-			ViewHolder holder = (ViewHolder) convertView.getTag();
-			
+				holder = new ViewHolder();
+				holder.title = (TextView) convertView.findViewById(R.id.story_menu_list_item_title);
+				holder.summary = (TextView) convertView.findViewById(R.id.story_menu_list_item_summary);
+				holder.author = (TextView) convertView.findViewById(R.id.story_menu_list_item_author);
+				holder.words = (TextView) convertView.findViewById(R.id.story_menu_list_item_words);
+				holder.follows = (TextView) convertView.findViewById(R.id.story_menu_list_item_follows);
+				holder.chapters = (TextView) convertView.findViewById(R.id.story_menu_list_item_chapters);
+				convertView.setTag(holder);				
+			} else{
+				holder = (ViewHolder) convertView.getTag();
+			}
 		    
 			holder.title.setText(getItem(position).getName());
 			holder.summary.setText(getItem(position).getSummary());
 			holder.author.setText(getItem(position).getAuthor());
+			holder.author.setTag(getItem(position).getAuthor_id());
 			holder.words.setText(String.format(words, getItem(position).getWordLenght()));
 			holder.follows.setText(String.format(follows, getItem(position).getFollows()));
 			holder.chapters.setText(String.format(chapters, getItem(position).getChapterLenght()));

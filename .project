@@ -3,6 +3,8 @@
 	<name>FanfictionReader</name>
 	<comment></comment>
 	<projects>
+		<project>android-support-v7-appcompat</project>
+		<project>jsoup</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

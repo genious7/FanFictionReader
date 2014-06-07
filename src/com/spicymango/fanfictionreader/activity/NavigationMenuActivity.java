@@ -353,9 +353,7 @@ public class NavigationMenuActivity extends ActionBarActivity implements LoaderC
 		retryButton.setOnClickListener(this);
 		View addPageButton = findViewById(R.id.story_load_pages);
 		addPageButton.setVisibility(View.GONE);
-		
-		
-		
+
 		getSupportLoaderManager().initLoader(LOADER_MENU, null, this);
 	}
 

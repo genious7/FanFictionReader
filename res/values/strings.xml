@@ -97,6 +97,7 @@
 	<string name="menu_navigation_filter_crossover_all">All</string>
 	<string name="menu_navigation_no_connection">Failed to connect to server</string>
 	<string name="menu_navigation_retry_connection">Retry</string>
+	<string name="menu_navigation_browse_by_author">Browse by author</string>
 	
 	<!-- Story Menu Activity -->
 	<string name="menu_story_page_button">Load page %1$d of %2$d</string>

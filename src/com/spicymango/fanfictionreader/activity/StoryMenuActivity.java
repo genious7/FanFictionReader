@@ -4,12 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 
 import com.spicymango.fanfictionreader.DetailDisplay;
 import com.spicymango.fanfictionreader.FilterMenu;
@@ -186,16 +183,19 @@ public class StoryMenuActivity extends ActionBarActivity implements LoaderCallba
 		startActivity(i);	
 		
 	}
+
 	
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, View view,
 			int position, long id) {
-		Intent i = new Intent(this,DetailDisplay.class);
-		i.putExtra(DetailDisplay.MAP,mList.get(position));
+		
+		Intent i= new Intent(this, DetailDisplay.class);
+		i.putExtra(DetailDisplay.MAP, mList.get(position));
 		startActivity(i);
+		
 		return true;
 	}
-
+	
 	@Override
 	public void onLoaderReset(Loader<List<Story>> loader) {
 		mList = null;
@@ -314,6 +314,9 @@ public class StoryMenuActivity extends ActionBarActivity implements LoaderCallba
 		mProgressBar = findViewById(R.id.progress_bar); 
 		mNoConnectionBar = findViewById(R.id.row_no_connection);
 		
+		Button retryButton = (Button) findViewById(R.id.retry_internet_connection);
+		retryButton.setOnClickListener(this);
+		
 		setTitle();
 		
 		if (savedInstanceState != null){
@@ -361,45 +364,7 @@ public class StoryMenuActivity extends ActionBarActivity implements LoaderCallba
 	}
 
 	private static class StoryLoader extends AsyncTaskLoader<List<Story>>{
-		private static final  Pattern pattern = Pattern.compile(
-				"/s/([\\d]++)/");
-		
-		private static final  Pattern pattern2 = Pattern.compile(
-				"(?:&p=)(\\d{1,4}+)"//Normal
-				+ "|(?:communit[^/]*+/(?:[^/]*+/){4})(\\d{1,4}+)"//Communities
-				+ "|(?:&ppage=)(\\d{1,4}+)");//Search
-		
-		/**
-		 * Gets the number of pages in the document
-		 * @param document The parsed document
-		 * @return The number of pages in the document
-		 */
-		public final static int getpageNumber(Document document){
-			Elements elements = document.select("div#content a:matchesOwn(\\A(?i)last\\Z)");
-			if (elements.isEmpty()){
-				if (document.select("div#content a:matchesOwn(\\A(?i)next\\Z)").isEmpty())
-					return 1;
-				return 2;
-			}
-			return getpageNumber(elements.first().attr("href"));
-			
-		}
-		
-		/**
-		 * Gets the page number in the url
-		 * @param url The url to parse
-		 * @return The current page
-		 */
-		private final static int getpageNumber(String url){
-			Matcher matcher = pattern2.matcher(url);
-			matcher.find();
-			for (int i = 1; i < matcher.groupCount(); i++) {
-				if (matcher.group(i) != null)
-					return Integer.valueOf(matcher.group(i));
-			}
-			return 1;
-		}
-		
+				
 		private int[] filter;
 		
 		private ArrayList<LinkedHashMap<String, Integer>> filterList; //Filter elements
@@ -477,7 +442,7 @@ public class StoryMenuActivity extends ActionBarActivity implements LoaderCallba
 				Document document = Jsoup.connect(formatUri().toString()).get();
 				
 				if (mTotalPages == 0) {
-					mTotalPages = Math.max(getpageNumber(document),mCurrentPage);
+					mTotalPages = Math.max(Parser.getpageNumber(document),mCurrentPage);
 				}
 				
 				if (filterList==null) { //Load the filters if they aren't already loaded.
@@ -533,36 +498,7 @@ public class StoryMenuActivity extends ActionBarActivity implements LoaderCallba
 				list = new ArrayList<Story>(mData);
 			}
 			
-			Elements summaries = document.select("div#content div.bs");
-			Elements titles = summaries.select("a[href~=(?i)/s/\\d+/1/.*]");
-			Elements authors = summaries.select("a[href^=/u/]");
-			Elements attribs = summaries.select("div.gray");
-
-			Matcher matcher = pattern.matcher("");
-
-			for (int i = 0; i < titles.size(); i++) {
-				matcher.reset(titles.get(i).attr("href"));
-				matcher.find();
-
-				Elements dates = summaries.get(i).select("span[data-xutime]");
-				long updateDate = 0;
-				long publishDate = 0;
-
-				if (dates.size() == 1) {
-					updateDate = Long.parseLong(dates.first().attr("data-xutime")) * 1000;
-					publishDate = updateDate;
-				} else if (dates.size() == 2) {
-					updateDate = Long.parseLong(dates.first().attr("data-xutime")) * 1000;
-					publishDate = Long.parseLong(dates.last().attr("data-xutime")) * 1000;
-				}
-
-				Story TempStory = new Story(Integer.parseInt(matcher.group(1)),
-						titles.get(i).ownText(), authors.get(i).ownText(), 0,
-						summaries.get(i).ownText().replaceFirst("(?i)by\\s*", ""),
-						attribs.get(i).text(), updateDate, publishDate);
-
-				list.add(TempStory);
-			}
+			list.addAll(Parser.Stories(document));
 			return list;
 		}
 		

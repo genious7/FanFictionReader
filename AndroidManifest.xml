@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.spicymango.fanfictionreader"
     android:installLocation="preferExternal"
-    android:versionCode="6"
-    android:versionName="1.05" >
+    android:versionCode="7"
+    android:versionName="1.06" >
 
     <uses-sdk
         android:minSdkVersion="7"
@@ -15,7 +15,7 @@
         android:allowBackup="true"
         android:icon="@drawable/launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppActionBar">
+        android:theme="@style/AppActionBar" >
         <activity
             android:name="MainMenu"
             android:label="@string/app_name" >
@@ -70,6 +70,7 @@
             android:authorities="com.spicymango.fanfictionreader.provider"
             android:exported="false" >
         </provider>
+
         <activity android:name=".activity.NavigationMenuActivity" >
         </activity>
         <activity
@@ -86,7 +87,12 @@
         </activity>
         <activity
             android:name=".activity.AboutActivity"
-            android:label="@string/menu_button_about" android:theme="@style/Dialog">
+            android:label="@string/menu_button_about"
+            android:theme="@style/Dialog" >
+        </activity>
+        <activity
+            android:name=".activity.AuthorMenuActivity"
+            android:label="@string/app_name" android:launchMode="singleTop">
         </activity>
     </application>
 

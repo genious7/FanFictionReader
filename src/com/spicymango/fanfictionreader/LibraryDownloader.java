@@ -255,6 +255,9 @@ public class LibraryDownloader extends IntentService{
 		notBuilder.setSmallIcon(R.drawable.ic_action_download);
 		notBuilder.setAutoCancel(false);
 		
+		PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, new Intent(), PendingIntent.FLAG_UPDATE_CURRENT);
+		notBuilder.setContentIntent(pendingIntent);
+		
 		NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		manager.notify(NOTIFICATION_ID, notBuilder.build());
 	}
@@ -264,6 +267,9 @@ public class LibraryDownloader extends IntentService{
 		notBuilder.setContentTitle(getResources().getString(R.string.downloader_error));
 		notBuilder.setSmallIcon(R.drawable.ic_action_cancel);
 		notBuilder.setAutoCancel(false);
+		
+		PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, new Intent(), PendingIntent.FLAG_UPDATE_CURRENT);
+		notBuilder.setContentIntent(pendingIntent);
 		
 		NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		manager.notify(NOTIFICATION_ID, notBuilder.build());

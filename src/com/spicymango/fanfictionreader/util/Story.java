@@ -31,7 +31,7 @@ public class Story implements Parcelable, SqlConstants{
 	
 	private final static Pattern ATTRIBUTE_PATTERN = Pattern.compile(
 			"(?i)\\A"//At the beginning of the line
-			+ "(?:([^,]+), )?" //Category or crossover
+			+ "(?:([^,]++)(?:,[^,]++)*?, )?" //Category or crossover
 			+ "([KTM]\\+?), "//Rating
 			+ "([^,]++), " //Language
 			+ "(?:(?!(?>chapter|words))([^,]++), )?" //Genre

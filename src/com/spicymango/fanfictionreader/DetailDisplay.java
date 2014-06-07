@@ -2,11 +2,16 @@ package com.spicymango.fanfictionreader;
 
 import java.text.DateFormat;
 
+import com.spicymango.fanfictionreader.activity.AuthorMenuActivity;
 import com.spicymango.fanfictionreader.util.Story;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
+import android.net.Uri.Builder;
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.TextView;
 
 /**
@@ -14,8 +19,11 @@ import android.widget.TextView;
  * @author Michael Chen
  *
  */
-public class DetailDisplay extends Activity {
+public class DetailDisplay extends Activity implements OnClickListener {
 	public final static String MAP = "Map";
+	public final static String EXTRA_AUTHOR = "AUTHOR";
+	
+	private Story mStory;
 	
 	private final static int[] textviews = {
 				R.id.detail_author,
@@ -51,23 +59,28 @@ public class DetailDisplay extends Activity {
 		setContentView(R.layout.activity_detail_view);
 		setResult(RESULT_OK);
 		
-		Story values = (Story) getIntent().getParcelableExtra(MAP);
-		this.setTitle(values.getName());
+		mStory = (Story) getIntent().getParcelableExtra(MAP);
+		this.setTitle(mStory.getName());
 		
-		
+		View btnAuthor = findViewById(R.id.btn_author);
+		if (getIntent().getBooleanExtra(EXTRA_AUTHOR, false)) {
+			btnAuthor.setVisibility(View.GONE);
+		}else{
+			btnAuthor.setOnClickListener(this);
+		}
 		
 		String[] stringValues = {
-				values.getAuthor(),
-				values.getCategory(),
-				values.getRating(),
-				values.getlanguage(),
-				values.getGenre(),
-				String.valueOf(values.getChapterLenght()),
-				values.getWordLenght(),
-				values.getFavorites(),
-				values.getFollows(),
-				DateFormat.getDateInstance().format(values.getUpdated()),
-				DateFormat.getDateInstance().format(values.getPublished())
+				mStory.getAuthor(),
+				mStory.getCategory(),
+				mStory.getRating(),
+				mStory.getlanguage(),
+				mStory.getGenre(),
+				String.valueOf(mStory.getChapterLenght()),
+				mStory.getWordLenght(),
+				mStory.getFavorites(),
+				mStory.getFollows(),
+				DateFormat.getDateInstance().format(mStory.getUpdated()),
+				DateFormat.getDateInstance().format(mStory.getPublished())
 			};
 		
 		for (int i = 0; i < textviews.length; i++) {	
@@ -78,5 +91,20 @@ public class DetailDisplay extends Activity {
 				((TextView)findViewById(textviews[i])).setText(stringValues[i]);
 			}
 		}	
+	}
+
+	@Override
+	public void onClick(View v) {
+		Uri.Builder builder = new Builder();
+		
+		builder.scheme(getString(R.string.fanfiction_scheme))
+		.authority(getString(R.string.fanfiction_authority))
+		.appendEncodedPath("u")
+		.appendEncodedPath(mStory.getAuthor_id() + "")
+		.appendEncodedPath("");
+		
+		Intent i = new Intent(this,AuthorMenuActivity.class);
+		i.setData(builder.build());
+		startActivity(i);
 	}	
 }

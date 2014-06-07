@@ -1,0 +1,6 @@
+[submodule "textViewFix"]
+	path = textViewFix
+	url = https://gist.github.com/3424004.git
+[submodule "info/piwai/android"]
+	path = info/piwai/android
+	url = https://gist.github.com/3424004.git

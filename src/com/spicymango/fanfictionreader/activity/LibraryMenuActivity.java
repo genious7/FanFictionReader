@@ -84,11 +84,11 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 		db.close();
 		
 		switch (item.getItemId()) {
-		
 		case R.id.menu_library_context_details:
-			Intent i = new Intent(this ,DetailDisplay.class);
-			i.putExtra(DetailDisplay.MAP,story);
-			startActivity(i);
+			
+			Intent e = new Intent(this ,DetailDisplay.class);
+			e.putExtra(DetailDisplay.MAP,story);
+			startActivity(e);
 			return true;
 			
 		case R.id.menu_library_context_delete:

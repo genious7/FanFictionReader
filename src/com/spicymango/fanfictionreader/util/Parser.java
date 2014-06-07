@@ -2,6 +2,7 @@ package com.spicymango.fanfictionreader.util;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,25 +16,31 @@ import android.util.Log;
 
 public class Parser {
 	
-	private static final  Pattern pattern = Pattern.compile(
-			"/s/([\\d]++)/");
+	private static final  Pattern pattern = Pattern.compile("/[su]/([\\d]++)/");
 	
-	public static ArrayList<Story> Stories(Document document) {
+	
+	/**
+	 * Parses the stories into a list
+	 * @param document The web page to parse
+	 * @return The list of stories
+	 */
+	public static List<Story> Stories(Document document) {
 
 		Elements summaries = document.select("div#content div.bs");
-		summaries.select("b").unwrap();
-		
 		Elements titles = summaries.select("a[href~=(?i)/s/\\d+/1/.*]");
 		Elements authors = summaries.select("a[href^=/u/]");
-
 		Elements attribs = summaries.select("div.gray");
+		summaries.select("b").unwrap();
 
-		ArrayList<Story> list = new ArrayList<Story>();
-		Matcher matcher = pattern.matcher("");
+		List<Story> list = new ArrayList<Story>(summaries.size());
+		Matcher storyIdMatcher = pattern.matcher("");
+		Matcher authorIdMatcher = pattern.matcher("");
 
-		for (int i = 0; i < titles.size(); i++) {
-			matcher.reset(titles.get(i).attr("href"));
-			matcher.find();
+		for (int i = 0; i < summaries.size(); i++) {
+			storyIdMatcher.reset(titles.get(i).attr("href"));
+			authorIdMatcher.reset(authors.get(i).attr("href"));
+			storyIdMatcher.find();
+			authorIdMatcher.find();
 
 			Elements dates = summaries.get(i).select("span[data-xutime]");
 			long updateDate = 0;
@@ -46,13 +53,13 @@ public class Parser {
 				updateDate = Long.parseLong(dates.first().attr("data-xutime")) * 1000;
 				publishDate = Long.parseLong(dates.last().attr("data-xutime")) * 1000;
 			}
-			
-			
 
-			Story TempStory = new Story(Integer.parseInt(matcher.group(1)),
-					titles.get(i).ownText(), authors.get(i).text(), 0,
-					summaries.get(i).ownText().replaceFirst("(?i)by\\s*", ""),
-					attribs.get(i).ownText(), updateDate, publishDate);
+			Story TempStory = new Story(
+					Long.parseLong(storyIdMatcher.group(1)), titles.get(i)
+							.ownText(), authors.get(i).text(),
+					Long.parseLong(authorIdMatcher.group(1)), summaries.get(i)
+							.ownText().replaceFirst("(?i)by\\s*", ""), attribs
+							.get(i).ownText(), updateDate, publishDate);
 
 			list.add(TempStory);
 		}
@@ -93,9 +100,7 @@ public class Parser {
 		return list;
 		
 	}
-	
-	
-	
+		
 	/**
 	 * Total number of pages in the story.
 	 * @param url The Url of the fanfiction page.
@@ -120,6 +125,41 @@ public class Parser {
 		}
 	}
 	
+	private static final  Pattern pattern2 = Pattern.compile(
+			"(?:&p=)(\\d{1,4}+)"//Normal
+			+ "|(?:communit[^/]*+/(?:[^/]*+/){4})(\\d{1,4}+)"//Communities
+			+ "|(?:&ppage=)(\\d{1,4}+)");//Search
 	
+	/**
+	 * Gets the number of pages in the document
+	 * @param document The parsed document
+	 * @return The number of pages in the document
+	 */
+	public final static int getpageNumber(Document document){
+		Elements elements = document.select("div#content a:matchesOwn(\\A(?i)last\\Z)");
+		if (elements.isEmpty()){
+			if (document.select("div#content a:matchesOwn(\\A(?i)next)").isEmpty())
+				return 1;
+			return 2;
+		}
+		return getpageNumber(elements.first().attr("href"));
+		
+	}
+	
+	/**
+	 * Gets the page number in the url
+	 * @param url The url to parse
+	 * @return The current page
+	 */
+	private final static int getpageNumber(String url){
+		Matcher matcher = pattern2.matcher(url);
+		matcher.find();
+		for (int i = 1; i < matcher.groupCount(); i++) {
+			if (matcher.group(i) != null)
+				return Integer.valueOf(matcher.group(i));
+		}
+		return 1;
+	}
+
 	
 }
