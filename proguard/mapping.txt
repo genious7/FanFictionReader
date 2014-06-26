@@ -9347,6 +9347,18 @@ org.jsoup.helper.HttpConnection$Request -> a.a.a.f:
     boolean ignoreContentType() -> i
     java.util.Collection data() -> j
     org.jsoup.parser.Parser parser() -> k
+    java.util.Map cookies() -> d
+    org.jsoup.Connection$Base method(org.jsoup.Connection$Method) -> a
+    org.jsoup.Connection$Method method() -> b
+    boolean hasCookie(java.lang.String) -> d
+    java.util.Map headers() -> c
+    org.jsoup.Connection$Base header(java.lang.String,java.lang.String) -> b
+    java.lang.String header(java.lang.String) -> a
+    org.jsoup.Connection$Base cookie(java.lang.String,java.lang.String) -> a
+    org.jsoup.Connection$Base url(java.net.URL) -> a
+    java.net.URL url() -> a
+    org.jsoup.Connection$Base removeHeader(java.lang.String) -> c
+    boolean hasHeader(java.lang.String) -> b
 org.jsoup.helper.HttpConnection$Response -> a.a.a.g:
     int statusCode -> e
     java.lang.String statusMessage -> f
@@ -9366,6 +9378,18 @@ org.jsoup.helper.HttpConnection$Response -> a.a.a.g:
     void writePost(java.util.Collection,java.io.OutputStream) -> a
     java.lang.String getRequestCookieString(org.jsoup.Connection$Request) -> c
     void serialiseRequestUrl(org.jsoup.Connection$Request) -> d
+    java.util.Map cookies() -> d
+    org.jsoup.Connection$Base method(org.jsoup.Connection$Method) -> a
+    org.jsoup.Connection$Method method() -> b
+    boolean hasCookie(java.lang.String) -> d
+    java.util.Map headers() -> c
+    org.jsoup.Connection$Base header(java.lang.String,java.lang.String) -> b
+    java.lang.String header(java.lang.String) -> a
+    org.jsoup.Connection$Base cookie(java.lang.String,java.lang.String) -> a
+    org.jsoup.Connection$Base url(java.net.URL) -> a
+    java.net.URL url() -> a
+    org.jsoup.Connection$Base removeHeader(java.lang.String) -> c
+    boolean hasHeader(java.lang.String) -> b
 org.jsoup.helper.StringUtil -> a.a.a.h:
     java.lang.String[] padding -> a
     java.lang.String join(java.util.Collection,java.lang.String) -> a

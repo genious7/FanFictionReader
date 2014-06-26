@@ -218,7 +218,9 @@ org.jsoup.helper.HttpConnection$Request:
     380:382:public org.jsoup.helper.HttpConnection$Request data(org.jsoup.Connection$KeyVal)
     390:391:public org.jsoup.helper.HttpConnection$Request parser(org.jsoup.parser.Parser)
     1:1:public bridge synthetic org.jsoup.Connection$Request data(org.jsoup.Connection$KeyVal)
+    1:1:public bridge synthetic org.jsoup.Connection$Base removeCookie(java.lang.String)
     1:1:public bridge synthetic org.jsoup.Connection$Request timeout(int)
+    1:1:public bridge synthetic java.lang.String cookie(java.lang.String)
     1:1:public bridge synthetic org.jsoup.Connection$Request parser(org.jsoup.parser.Parser)
 org.jsoup.helper.HttpConnection$Response:
     private static final int MAX_REDIRECTS
@@ -227,6 +229,8 @@ org.jsoup.helper.HttpConnection$Response:
     508:508:public java.lang.String charset()
     524:532:public java.lang.String body()
     536:537:public byte[] bodyAsBytes()
+    1:1:public bridge synthetic org.jsoup.Connection$Base removeCookie(java.lang.String)
+    1:1:public bridge synthetic java.lang.String cookie(java.lang.String)
 org.jsoup.helper.StringUtil:
     9:9:public StringUtil()
     113:115:public static java.lang.String normaliseWhitespace(java.lang.String)

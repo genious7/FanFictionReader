@@ -4,3 +4,6 @@
 [submodule "info/piwai/android"]
 	path = info/piwai/android
 	url = https://gist.github.com/3424004.git
+[submodule "Jsoup"]
+	path = Jsoup
+	url = https://github.com/jhy/jsoup.git
