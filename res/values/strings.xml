@@ -58,8 +58,13 @@
 	    <item >Portrait</item>  
 	</string-array>
 	
+	<string name="pref_incremental_updating">Incremental Updating</string>
+    <string name="pref_incremental_summary_off">Updating a story will redownload every chapter</string>
+    <string name="pref_incremental_summary_on">Updating a story will only download new chapters. Revised chapters will not be updated.</string>
+	
 	<!-- Story Downloader -->
 	<string name="downloader_downloading">Downloading Story</string>
+	<string name="downloader_context">%1$s Chapter %2$d/%3$d</string>
 	<string name="downloader_error">Error downloading story</string>
     <plurals name="downloader_notification">
         <item quantity="one"> One story successfully added</item>
@@ -75,6 +80,10 @@
 	
 	<!-- Search Menu -->
 	<string name="menu_search_title">Search</string>
+	<string-array name="menu_search_by">
+	    <item >Search stories</item>
+	    <item >Search authors</item>
+	</string-array>
 	
 	<!-- Browse Menu Activity -->
 	<string name="menu_browse_general_communities">General Communities</string>

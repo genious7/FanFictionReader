@@ -97,36 +97,52 @@ public class LibraryDownloader extends IntentService{
 		Story story = new Story();
 		
 		int totalPages = 1;
+		int incrementalIndex = 1;
+		
 		ArrayList<Spanned> list = new ArrayList<Spanned>();
 		try {
 			for (int currentPage = 1; currentPage <= totalPages; currentPage++) {
 
-				Document document = Jsoup.connect(
-						"https://www.fanfiction.net/s/" + storyId + "/"
-								+ currentPage + "/").get();
+				String url = "https://www.fanfiction.net/s/" + storyId + "/"
+						+ currentPage + "/";
+				Document document = Jsoup.connect(url).get();
 
-				if (totalPages == 1) { // On first run only
+				// Execute on the first run only
+				if (totalPages == 1) { 
+					//Parse the details
 					story = parseDetails(document);
 
-					if (story == null)
-						return false;
+					//If an error occurs while parsing, quit
+					if (story == null) return false;
 					
 					//If no updates have been made to the story, skip
 					if (story.getUpdated().getTime() == lastUpdated()) { 
 						return true;
 					}
+					
+					//If an update exists and incremental updating is enabled, update chapters as needed
+					if (Settings.isIncrementalUpdatingEnabled(this)) {
+						
+						//If there are more chapters, assume that the story has not been revised
+						int lastChapterUpdated = StoryProvider.lastChapterRead(this, storyId);
+						if (story.getChapterLenght() > lastChapterUpdated) {
+							currentPage = lastChapterUpdated;
+							incrementalIndex = currentPage;
+							continue;
+						}
+					}
 
 					totalPages = story.getChapterLenght();
-					showNotification(story.getName());
+					showNotification(story.getName(), currentPage, totalPages);
 				}
-
-				list.add(Html.fromHtml(document.select("div#storytext")
-						.html()));
+				
+				Spanned span = Html.fromHtml(document.select("div#storytext").html());
+				list.add(currentPage - 1, span);
 			}
 		} catch (IOException e) {
 			return false;
 		}
-		for (int currentPage = 0; currentPage < totalPages; currentPage++) {
+		for (int currentPage = incrementalIndex - 1; currentPage < totalPages; currentPage++) {
 			try {
 				File file = new File(getFilesDir(), storyId + "_" + (currentPage + 1) + ".txt");
 				FileOutputStream fos = new FileOutputStream( file);
@@ -152,16 +168,19 @@ public class LibraryDownloader extends IntentService{
 	 *         if the story is not present in the library.
 	 */
 	private long lastUpdated() {
-		ContentResolver resolver = this.getContentResolver();
+		ContentResolver resolver = getContentResolver();
 		Cursor c = resolver.query(StoryProvider.CONTENT_URI,
 				new String[] { SqlConstants.KEY_UPDATED },
 				SqlConstants.KEY_STORY_ID + " = ?",
 				new String[] { String.valueOf(storyId) }, null);
 		if (c == null || !c.moveToFirst()) {
+			c.close();
 			return -1;
 		}
 		int index = c.getColumnIndex(SqlConstants.KEY_UPDATED);
-		return c.getLong(index);
+		long last = c.getLong(index);
+		c.close();	
+		return last;
 	}
 
 	/**
@@ -226,32 +245,49 @@ public class LibraryDownloader extends IntentService{
 				updateDate, publishDate);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void onHandleIntent(Intent intent) {
 		if (intent.getBooleanExtra(EXTRA_UPDATE_NOT, false)) {
 			storiesDownloaded = 0;
 			return;
 		}
-		storiesDownloaded++;
+		
 		storyId = intent.getLongExtra(EXTRA_STORY_ID, -1);
 		lastPage = intent.getIntExtra(EXTRA_LAST_PAGE, 1);
 
-		showNotification("");
+		showNotification("", 0 , 0);
 
 		if (download()){
+			storiesDownloaded++;
 			showCompletetionNotification();
 		}else{
 			showErrorNotification();
 		}
 	}
 	
-	private void showNotification(String storyTitle){
+	/**
+	 * Downloads a story into the library
+	 * @param context The current context
+	 * @param StoryId The id of the story
+	 * @param currentPage The current page
+	 */
+	public static void download(Context context, long StoryId, int currentPage){
+		Intent i = new Intent(context, LibraryDownloader.class);
+		i.putExtra(EXTRA_STORY_ID, StoryId);
+		i.putExtra(EXTRA_LAST_PAGE, currentPage);
+		context.startService(i);
+	}
+	
+	private void showNotification(String storyTitle, int currentPage, int TotalPage){
 		NotificationCompat.Builder notBuilder = new NotificationCompat.Builder(this);
-		notBuilder.setContentTitle(getResources().getString(R.string.downloader_downloading));
-		notBuilder.setContentText(storyTitle);
+		notBuilder.setContentTitle(getString(R.string.downloader_downloading));
+		
+		if (currentPage == 0) {
+			notBuilder.setContentText(storyTitle);
+		}else{
+			notBuilder.setContentText(getString(R.string.downloader_context, storyTitle, currentPage, TotalPage));	
+		}
+			
 		notBuilder.setSmallIcon(R.drawable.ic_action_download);
 		notBuilder.setAutoCancel(false);
 		
@@ -264,7 +300,7 @@ public class LibraryDownloader extends IntentService{
 	
 	private void showErrorNotification(){
 		NotificationCompat.Builder notBuilder = new NotificationCompat.Builder(this);
-		notBuilder.setContentTitle(getResources().getString(R.string.downloader_error));
+		notBuilder.setContentTitle(getString(R.string.downloader_error));
 		notBuilder.setSmallIcon(R.drawable.ic_action_cancel);
 		notBuilder.setAutoCancel(false);
 		

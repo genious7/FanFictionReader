@@ -3,11 +3,7 @@ com.spicymango.fanfictionreader.BrowseMenu:
 com.spicymango.fanfictionreader.BuildConfig
 com.spicymango.fanfictionreader.DetailDisplay:
     public static final java.lang.String MAP
-com.spicymango.fanfictionreader.FilterMenu:
-    private static final java.lang.String SPINNER_POSITION
-    public static final java.lang.String KEYSET
-    public static final java.lang.String STATE_FILTER_LIST
-    public static final java.lang.String SELECTED_KEYS
+    public static final java.lang.String EXTRA_AUTHOR
 com.spicymango.fanfictionreader.LibraryDownloader:
     public static final java.lang.String EXTRA_LAST_PAGE
     private static final java.lang.String EXTRA_UPDATE_NOT
@@ -30,6 +26,8 @@ com.spicymango.fanfictionreader.R$string
 com.spicymango.fanfictionreader.R$style
 com.spicymango.fanfictionreader.R$styleable
 com.spicymango.fanfictionreader.R$xml
+com.spicymango.fanfictionreader.activity.AuthorMenuActivity$AuthorLoader:
+    private static final java.lang.String EXTRA_AUTHOR
 com.spicymango.fanfictionreader.activity.CommunityMenuActivity$communityLoader:
     private static final java.lang.String STATE_DATA
     private static final java.lang.String STATE_TOTAL
@@ -41,51 +39,63 @@ com.spicymango.fanfictionreader.activity.NavigationMenuActivity:
     private static final int COMMUNITY_MENU
     private static final int CROSSOVER_MENU
     private static final java.lang.String FANFIC_AUTHORITY
-    private static final java.lang.String FANFIC_SCHEME
     private static final int LOADER_MENU
     private static final int NORMAL_MENU
     private static final java.lang.String STATE_FILTER
     private static final java.lang.String STATE_LIST
     private static final java.lang.String STATE_SORT
     private static final int SUB_CATEGORY_MENU
-com.spicymango.fanfictionreader.activity.SearchActivity:
-    private static final int LOADER_ID
 com.spicymango.fanfictionreader.activity.StoryDisplayActivity:
     private static final java.lang.String STATE_CURRENT_PAGE
     private static final java.lang.String STATE_DOWNLOAD
 com.spicymango.fanfictionreader.activity.StoryMenuActivity:
     private static final java.lang.String FANFIC_AUTHORITY
-    private static final java.lang.String FANFIC_SCHEME
-    private static final java.lang.String STATE_CURRENT_FILTER
-    private static final int STORY_LOADER
     private static final int URI_COMMUNITY_MENU
     private static final int URI_CROSSOVER_MENU
     private static final int URI_JUST_IN_MENU
     private static final int URI_NORMAL_MENU
+com.spicymango.fanfictionreader.activity.StoryMenuActivity$StoryLoader:
+    private static final java.lang.String STATE_FILTER
+    private static final java.lang.String STATE_FILTER_LIST
+com.spicymango.fanfictionreader.filter.FilterDialog:
+    public static final int RESULT_CODE
+    public static final java.lang.String RESULT
+    9:9:public FilterDialog()
+com.spicymango.fanfictionreader.filter.FilterMenu:
+    private static final java.lang.String STATE_SPINNER
+    protected static final java.lang.String EXTRA_FILTER
+    protected static final java.lang.String EXTRA_KEYSET
+    protected static final java.lang.String EXTRA_VALUES
 com.spicymango.fanfictionreader.fragments.StoryDisplayFragment
 com.spicymango.fanfictionreader.fragments.StoryDisplayFragment$StoryLoader
 com.spicymango.fanfictionreader.provider.DatabaseHelper:
     private static final int DATABASE_VERSION
     private static final java.lang.String DATABASE_NAME
     protected static final java.lang.String TABLE_LIBRARY
-    61:81:public void addStory(com.spicymango.fanfictionreader.util.Story,int)
-    135:139:public boolean hasStory(long)
-    152:170:public java.util.List getAllStories()
-    178:183:public int getStoryCount()
-    191:192:public void deleteStory(com.spicymango.fanfictionreader.util.Story)
-    199:203:public void deleteStory(long)
+    62:76:public int getLastChapterRead(long)
+    115:133:public java.util.List getAllStories()
+    141:147:public int getStoryCount()
 com.spicymango.fanfictionreader.provider.SqlConstants
 com.spicymango.fanfictionreader.provider.StoryProvider:
-    public static final java.lang.String AUTHORITY
+    private static final java.lang.String AUTHORITY
     private static final java.lang.String BASE_PATH
-    public static final java.lang.String STORIES_MIME_TYPE
-    public static final java.lang.String STORY_MIME_TYPE
+    private static final java.lang.String STORIES_MIME_TYPE
+    private static final java.lang.String STORY_MIME_TYPE
     private static final int GET_ALL
     private static final int GET_ONE
+com.spicymango.fanfictionreader.util.BaseLoader:
+    private static final java.lang.String STATE_CURRENT
+    private static final java.lang.String STATE_TOTAL
+    private static final java.lang.String STATE_DATA
+    private static final java.lang.String STATE_CONNECTION
+    private static final java.lang.String STATE_CHANGED
 com.spicymango.fanfictionreader.util.Parser:
-    16:16:public Parser()
-com.spicymango.fanfictionreader.util.Story:
-    270:270:public long getAuthor_id()
+    17:17:public Parser()
+    28:30:public static java.util.List Stories(org.jsoup.nodes.Document)
+com.spicymango.fanfictionreader.util.SearchLoader:
+    private static final java.lang.String STATE_FILTER
+    private static final java.lang.String STATE_FILTER_LIST
+    private static final java.lang.String STATE_QUERY
 org.jsoup.Connection:
     public abstract org.jsoup.Connection url(java.net.URL)
     public abstract org.jsoup.Connection userAgent(java.lang.String)
@@ -159,17 +169,18 @@ org.jsoup.UnsupportedMimeTypeException:
     19:19:public java.lang.String getMimeType()
     23:23:public java.lang.String getUrl()
 org.jsoup.examples.HtmlToPlainText
-org.jsoup.examples.HtmlToPlainText$1
 org.jsoup.examples.HtmlToPlainText$FormattingVisitor
 org.jsoup.examples.ListLinks
+org.jsoup.examples.package-info
 org.jsoup.helper.DataUtil:
     static final java.lang.String defaultCharset
     private static final int bufferSize
     24:24:private DataUtil()
-    35:42:public static org.jsoup.nodes.Document load(java.io.File,java.lang.String,java.lang.String)
-    55:56:public static org.jsoup.nodes.Document load(java.io.InputStream,java.lang.String,java.lang.String)
-    69:70:public static org.jsoup.nodes.Document load(java.io.InputStream,java.lang.String,java.lang.String,org.jsoup.parser.Parser)
-    158:158:static java.nio.ByteBuffer readToByteBuffer(java.io.InputStream)
+    35:36:public static org.jsoup.nodes.Document load(java.io.File,java.lang.String,java.lang.String)
+    48:49:public static org.jsoup.nodes.Document load(java.io.InputStream,java.lang.String,java.lang.String)
+    62:63:public static org.jsoup.nodes.Document load(java.io.InputStream,java.lang.String,java.lang.String,org.jsoup.parser.Parser)
+    153:153:static java.nio.ByteBuffer readToByteBuffer(java.io.InputStream)
+    157:166:static java.nio.ByteBuffer readFileToByteBuffer(java.io.File)
 org.jsoup.helper.HttpConnection:
     32:34:public static org.jsoup.Connection connect(java.net.URL)
     52:53:public org.jsoup.Connection url(java.net.URL)
@@ -206,10 +217,9 @@ org.jsoup.helper.HttpConnection$Request:
     375:376:public org.jsoup.Connection$Request ignoreContentType(boolean)
     380:382:public org.jsoup.helper.HttpConnection$Request data(org.jsoup.Connection$KeyVal)
     390:391:public org.jsoup.helper.HttpConnection$Request parser(org.jsoup.parser.Parser)
-    313:313:public bridge synthetic java.lang.String cookie(java.lang.String)
-    313:313:public bridge synthetic org.jsoup.Connection$Request parser(org.jsoup.parser.Parser)
-    313:313:public bridge synthetic org.jsoup.Connection$Request data(org.jsoup.Connection$KeyVal)
-    313:313:public bridge synthetic org.jsoup.Connection$Request timeout(int)
+    1:1:public bridge synthetic org.jsoup.Connection$Request data(org.jsoup.Connection$KeyVal)
+    1:1:public bridge synthetic org.jsoup.Connection$Request timeout(int)
+    1:1:public bridge synthetic org.jsoup.Connection$Request parser(org.jsoup.parser.Parser)
 org.jsoup.helper.HttpConnection$Response:
     private static final int MAX_REDIRECTS
     500:500:public int statusCode()
@@ -217,24 +227,23 @@ org.jsoup.helper.HttpConnection$Response:
     508:508:public java.lang.String charset()
     524:532:public java.lang.String body()
     536:537:public byte[] bodyAsBytes()
-    399:399:public bridge synthetic java.lang.String cookie(java.lang.String)
 org.jsoup.helper.StringUtil:
     9:9:public StringUtil()
+    113:115:public static java.lang.String normaliseWhitespace(java.lang.String)
 org.jsoup.helper.Validate:
     8:8:private Validate()
 org.jsoup.nodes.Attribute:
-    41:43:public void setKey(java.lang.String)
-    95:96:public static org.jsoup.nodes.Attribute createFromEncoded(java.lang.String,java.lang.String)
-    100:100:protected boolean isDataAttribute()
+    49:51:public void setKey(java.lang.String)
+    106:107:public static org.jsoup.nodes.Attribute createFromEncoded(java.lang.String,java.lang.String)
+    111:111:protected boolean isDataAttribute()
 org.jsoup.nodes.Attributes:
     protected static final java.lang.String dataPrefix
     66:70:public void remove(java.lang.String)
     129:129:public java.util.Map dataset()
     247:247:private static java.lang.String dataKey(java.lang.String)
-    17:17:static synthetic java.util.LinkedHashMap access$100(org.jsoup.nodes.Attributes)
-    17:17:static synthetic java.util.LinkedHashMap access$102(org.jsoup.nodes.Attributes,java.util.LinkedHashMap)
-    17:17:static synthetic java.lang.String access$300(java.lang.String)
-org.jsoup.nodes.Attributes$1
+    20:20:static synthetic java.util.LinkedHashMap access$1(org.jsoup.nodes.Attributes)
+    20:20:static synthetic void access$2(org.jsoup.nodes.Attributes,java.util.LinkedHashMap)
+    246:246:static synthetic java.lang.String access$3(java.lang.String)
 org.jsoup.nodes.Attributes$Dataset
 org.jsoup.nodes.Attributes$Dataset$DatasetIterator
 org.jsoup.nodes.Attributes$Dataset$EntrySet
@@ -257,12 +266,13 @@ org.jsoup.nodes.Document:
     155:173:private void normaliseStructure(java.lang.String,org.jsoup.nodes.Element)
     177:186:private org.jsoup.nodes.Element findFirstElementByTagName(java.lang.String,org.jsoup.nodes.Node)
     201:202:public org.jsoup.nodes.Element text(java.lang.String)
-    376:378:public org.jsoup.nodes.Document outputSettings(org.jsoup.nodes.Document$OutputSettings)
+    402:404:public org.jsoup.nodes.Document outputSettings(org.jsoup.nodes.Document$OutputSettings)
 org.jsoup.nodes.Document$OutputSettings:
-    248:249:public org.jsoup.nodes.Document$OutputSettings escapeMode(org.jsoup.nodes.Entities$EscapeMode)
-    305:306:public org.jsoup.nodes.Document$OutputSettings prettyPrint(boolean)
-    324:325:public org.jsoup.nodes.Document$OutputSettings outline(boolean)
-    342:344:public org.jsoup.nodes.Document$OutputSettings indentAmount(int)
+    255:256:public org.jsoup.nodes.Document$OutputSettings escapeMode(org.jsoup.nodes.Entities$EscapeMode)
+    312:313:public org.jsoup.nodes.Document$OutputSettings syntax(org.jsoup.nodes.Document$OutputSettings$Syntax)
+    331:332:public org.jsoup.nodes.Document$OutputSettings prettyPrint(boolean)
+    350:351:public org.jsoup.nodes.Document$OutputSettings outline(boolean)
+    368:370:public org.jsoup.nodes.Document$OutputSettings indentAmount(int)
 org.jsoup.nodes.Element:
     75:77:public org.jsoup.nodes.Element tagName(java.lang.String)
     134:134:public java.util.Map dataset()
@@ -307,23 +317,24 @@ org.jsoup.nodes.Element:
     766:770:public org.jsoup.select.Elements getElementsMatchingText(java.lang.String)
     780:780:public org.jsoup.select.Elements getElementsMatchingOwnText(java.util.regex.Pattern)
     792:796:public org.jsoup.select.Elements getElementsMatchingOwnText(java.lang.String)
-    899:905:public org.jsoup.nodes.Element text(java.lang.String)
-    913:924:public boolean hasText()
-    934:946:public java.lang.String data()
-    978:980:public org.jsoup.nodes.Element classNames(java.util.Set)
-    1003:1009:public org.jsoup.nodes.Element addClass(java.lang.String)
-    1018:1024:public org.jsoup.nodes.Element removeClass(java.lang.String)
-    1033:1042:public org.jsoup.nodes.Element toggleClass(java.lang.String)
-    1050:1053:public java.lang.String val()
-    1062:1066:public org.jsoup.nodes.Element val(java.lang.String)
-    1118:1120:public org.jsoup.nodes.Element html(java.lang.String)
-    21:21:public bridge synthetic org.jsoup.nodes.Node wrap(java.lang.String)
-    21:21:public bridge synthetic org.jsoup.nodes.Node after(org.jsoup.nodes.Node)
-    21:21:public bridge synthetic org.jsoup.nodes.Node after(java.lang.String)
-    21:21:public bridge synthetic org.jsoup.nodes.Node before(java.lang.String)
+    897:903:public org.jsoup.nodes.Element text(java.lang.String)
+    911:922:public boolean hasText()
+    932:944:public java.lang.String data()
+    976:978:public org.jsoup.nodes.Element classNames(java.util.Set)
+    1001:1007:public org.jsoup.nodes.Element addClass(java.lang.String)
+    1016:1022:public org.jsoup.nodes.Element removeClass(java.lang.String)
+    1031:1040:public org.jsoup.nodes.Element toggleClass(java.lang.String)
+    1048:1051:public java.lang.String val()
+    1060:1064:public org.jsoup.nodes.Element val(java.lang.String)
+    1121:1123:public org.jsoup.nodes.Element html(java.lang.String)
+    1:1:public bridge synthetic org.jsoup.nodes.Node after(org.jsoup.nodes.Node)
+    1:1:public bridge synthetic org.jsoup.nodes.Node after(java.lang.String)
+    1:1:public bridge synthetic org.jsoup.nodes.Node wrap(java.lang.String)
+    1:1:public bridge synthetic org.jsoup.nodes.Node before(java.lang.String)
 org.jsoup.nodes.Entities:
-    111:111:static java.lang.String unescape(java.lang.String)
-    121:121:static java.lang.String unescape(java.lang.String,boolean)
+    75:77:static java.lang.String escape(java.lang.String,org.jsoup.nodes.Document$OutputSettings)
+    158:158:static java.lang.String unescape(java.lang.String)
+    168:168:static java.lang.String unescape(java.lang.String,boolean)
 org.jsoup.nodes.FormElement:
     36:36:public org.jsoup.select.Elements elements()
     57:66:public org.jsoup.Connection submit()
@@ -346,19 +357,23 @@ org.jsoup.nodes.TextNode:
     41:41:public java.lang.String text()
     50:53:public org.jsoup.nodes.TextNode text(java.lang.String)
     79:89:public org.jsoup.nodes.TextNode splitText(int)
-    115:116:public static org.jsoup.nodes.TextNode createFromEncoded(java.lang.String,java.lang.String)
-    166:167:public org.jsoup.nodes.Node removeAttr(java.lang.String)
+    113:114:public static org.jsoup.nodes.TextNode createFromEncoded(java.lang.String,java.lang.String)
+    118:119:static java.lang.String normaliseWhitespace(java.lang.String)
+    123:123:static java.lang.String stripLeadingWhitespace(java.lang.String)
+    164:165:public org.jsoup.nodes.Node removeAttr(java.lang.String)
 org.jsoup.nodes.XmlDeclaration:
     private static final java.lang.String DECL_KEY
     18:21:public XmlDeclaration(java.lang.String,java.lang.String,boolean)
+org.jsoup.nodes.package-info
+org.jsoup.package-info
 org.jsoup.parser.CharacterReader:
     static final char EOF
     59:59:java.lang.String consumeAsString()
 org.jsoup.parser.HtmlTreeBuilder:
     59:105:java.util.List parseFragment(java.lang.String,org.jsoup.nodes.Element,java.lang.String,org.jsoup.parser.ParseErrorList)
-    545:546:void setPendingTableCharacters(java.util.List)
+    546:547:void setPendingTableCharacters(java.util.List)
 org.jsoup.parser.HtmlTreeBuilderState$Constants:
-    1480:1480:private HtmlTreeBuilderState$Constants()
+    1481:1481:private HtmlTreeBuilderState$Constants()
 org.jsoup.parser.ParseError:
     25:25:public java.lang.String getErrorMessage()
     33:33:public int getPosition()
@@ -382,7 +397,6 @@ org.jsoup.parser.Tag:
     91:91:public boolean canContainBlock()
     100:100:public boolean isInline()
     109:109:public boolean isData()
-    118:118:public boolean isEmpty()
     146:146:public static boolean isKnownTag(java.lang.String)
     171:171:public boolean isFormSubmittable()
 org.jsoup.parser.TokenQueue:
@@ -410,9 +424,8 @@ org.jsoup.parser.TokeniserState:
 org.jsoup.parser.TreeBuilder:
     36:36:org.jsoup.nodes.Document parse(java.lang.String,java.lang.String)
 org.jsoup.parser.XmlTreeBuilder
-org.jsoup.parser.XmlTreeBuilder$1
+org.jsoup.parser.package-info
 org.jsoup.safety.Cleaner
-org.jsoup.safety.Cleaner$1
 org.jsoup.safety.Cleaner$CleaningVisitor
 org.jsoup.safety.Cleaner$ElementMeta
 org.jsoup.safety.Whitelist
@@ -421,6 +434,7 @@ org.jsoup.safety.Whitelist$AttributeValue
 org.jsoup.safety.Whitelist$Protocol
 org.jsoup.safety.Whitelist$TagName
 org.jsoup.safety.Whitelist$TypedValue
+org.jsoup.safety.package-info
 org.jsoup.select.Collector:
     13:14:private Collector()
 org.jsoup.select.CombiningEvaluator$Or:
@@ -458,3 +472,4 @@ org.jsoup.select.Evaluator$CssNthEvaluator:
     406:407:public Evaluator$CssNthEvaluator(int)
 org.jsoup.select.Selector:
     120:132:static org.jsoup.select.Elements filterOut(java.util.Collection,java.util.Collection)
+org.jsoup.select.package-info

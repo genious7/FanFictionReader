@@ -7,6 +7,7 @@ import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -19,7 +20,7 @@ import android.text.TextUtils;
  * 
  */
 public class StoryProvider extends ContentProvider implements SqlConstants {
-	public static final String AUTHORITY = "com.spicymango.fanfictionreader.provider";
+	private static final String AUTHORITY = "com.spicymango.fanfictionreader.provider";
 	private static final String BASE_PATH = "library";
 	
 	/**
@@ -30,8 +31,9 @@ public class StoryProvider extends ContentProvider implements SqlConstants {
 	 */
 	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
 			+ "/" + BASE_PATH);
-	public static final String STORIES_MIME_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.com.spicymango.fanfictionreader.stories";
-	public static final String STORY_MIME_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.com.spicymango.fanfictionreader.story";
+	
+	private static final String STORIES_MIME_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.com.spicymango.fanfictionreader.stories";
+	private static final String STORY_MIME_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.com.spicymango.fanfictionreader.story";
 	
 	private static final int GET_ALL = 0;
 	private static final int GET_ONE = 1;
@@ -210,7 +212,29 @@ public class StoryProvider extends ContentProvider implements SqlConstants {
 		if (rowsUpdated > 0) {
 			getContext().getContentResolver().notifyChange(uri, null);
 		}
-
 		return rowsUpdated;
+	}
+	
+	/**
+	 * Obtains the last chapter read by the user
+	 * @param context The current context
+	 * @param storyId The id of the story
+	 * @return The last chapter read, or -1 if the story doesn't exist.
+	 */
+	public static int lastChapterRead(Context context, long storyId) {
+		ContentResolver resolver = context.getContentResolver();
+		Cursor c = resolver.query(StoryProvider.CONTENT_URI,
+				new String[] { SqlConstants.KEY_LAST },
+				SqlConstants.KEY_STORY_ID + " = ?",
+				new String[] { String.valueOf(storyId) }, null);
+		int last;
+		if (c == null || !c.moveToFirst()) {
+			last = 1;
+		} else {
+			int index = c.getColumnIndex(SqlConstants.KEY_LAST);
+			last = c.getInt(index);
+		}
+		c.close();
+		return last;
 	}
 }

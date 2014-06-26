@@ -67,7 +67,7 @@ public class CommunityMenuActivity extends ActionBarActivity implements LoaderCa
 			mLoader.startLoading();
 			break;
 		case R.id.story_load_pages:
-			mLoader.loadNewPage();
+			mLoader.loadNextPage();
 			break;
 		default:
 			break;
@@ -310,7 +310,7 @@ public class CommunityMenuActivity extends ActionBarActivity implements LoaderCa
 		 * @param document The document to parse
 		 * @return The list of communities
 		 */
-		public List<CommunityItem> getCommunities( Document document){	
+		private List<CommunityItem> getCommunities( Document document){	
 
 			Elements base = document.select("div#content > div.bs");
 			Elements title = base.select("a");
@@ -395,7 +395,7 @@ public class CommunityMenuActivity extends ActionBarActivity implements LoaderCa
 			}
 		}
 		
-		public void loadNewPage(){
+		public void loadNextPage(){
 			mCurrentPage++;
 			dataHasChanged = true;
 			startLoading();
@@ -476,7 +476,7 @@ final class CommunityItem implements Parcelable {
 	private int follows;
 	private Date published;
 
-	public static final Parcelable.Creator<CommunityItem> CREATOR = new Creator<CommunityItem>() {
+	public static final Parcelable.Creator<CommunityItem> CREATOR = new Creator<CommunityItem>() { // NO_UCD (unused code)
 
 		@Override
 		public CommunityItem createFromParcel(Parcel source) {

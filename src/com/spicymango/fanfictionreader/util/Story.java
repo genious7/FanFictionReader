@@ -10,6 +10,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 public class Story implements Parcelable, SqlConstants{
 	
@@ -172,6 +173,8 @@ public class Story implements Parcelable, SqlConstants{
 				favorites = match.group(7);
 			if (match.group(8) != null)
 				follows = match.group(8);
+		}else{
+			Log.d("Story - Parse", attribs);
 		}
 	}
 	
@@ -183,7 +186,7 @@ public class Story implements Parcelable, SqlConstants{
 	 * Generates a new Story object from the parcel.
 	 * @param in The parcel containing the object.
 	 */
-	public Story(Parcel in){
+	public Story(Parcel in){ // NO_UCD (use private)
 		this.id = in.readLong();
 		this.name = in.readString();
 		this.author = in.readString();
@@ -228,7 +231,7 @@ public class Story implements Parcelable, SqlConstants{
 	/**
 	 * Used for parceling.
 	 */
-	public static final Parcelable.Creator<Story> CREATOR = new Parcelable.Creator<Story>() {
+	public static final Parcelable.Creator<Story> CREATOR = new Parcelable.Creator<Story>() { // NO_UCD (unused code)
 		
 		@Override
 		public Story createFromParcel(Parcel source) {

@@ -57,7 +57,6 @@ public class NavigationMenuActivity extends ActionBarActivity implements LoaderC
 	 * <b>Value:</b> {@value}
 	 */
 	private static final String FANFIC_AUTHORITY = "m.fanfiction.net";
-	private static final String FANFIC_SCHEME = "https";
 	private static final int LOADER_MENU = 1;
 	private static final int NORMAL_MENU = 0;
 	private static final String STATE_FILTER = "Filter";
@@ -141,11 +140,7 @@ public class NavigationMenuActivity extends ActionBarActivity implements LoaderC
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long id) {
 		Intent i = null;
 		
-		Uri.Builder builder = new Uri.Builder();
-		builder.scheme(FANFIC_SCHEME)
-			.authority(FANFIC_AUTHORITY)
-			.encodedPath(mList.get(arg2).getUri());	
-		Uri uri = builder.build();
+		Uri uri = Uri.parse(mList.get(arg2).getUri());
 		
 		switch (URIMATCHER.match(mUri)) {
 		case NORMAL_MENU:
@@ -247,6 +242,7 @@ public class NavigationMenuActivity extends ActionBarActivity implements LoaderC
 						}
 						
 						mUri = builder.build();
+						mSort = true;
 						mLoader.setUri(mUri);
 					}
 		       }
@@ -490,7 +486,7 @@ public class NavigationMenuActivity extends ActionBarActivity implements LoaderC
 					MenuObject tmpObject = new MenuObject(
 							element.ownText(),
 							String.format(formatString, count),
-							element.attr("href"), 
+							element.attr("abs:href"), 
 							parseCount(count));
 					tmpList.add(tmpObject);
 				}
@@ -544,7 +540,7 @@ public class NavigationMenuActivity extends ActionBarActivity implements LoaderC
 			if (url == null || url.first() == null) {
 				return null;
 			}
-			return url.first().attr("href");
+			return url.first().attr("abs:href");
 		}
 		
 		/**

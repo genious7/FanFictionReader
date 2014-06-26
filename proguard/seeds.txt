@@ -9449,8 +9449,7 @@ com.spicymango.fanfictionreader.BrowseMenu
 com.spicymango.fanfictionreader.BrowseMenu: BrowseMenu()
 com.spicymango.fanfictionreader.DetailDisplay
 com.spicymango.fanfictionreader.DetailDisplay: DetailDisplay()
-com.spicymango.fanfictionreader.FilterMenu
-com.spicymango.fanfictionreader.FilterMenu: FilterMenu()
+com.spicymango.fanfictionreader.DetailDisplay: void onClick(android.view.View)
 com.spicymango.fanfictionreader.LibraryDownloader
 com.spicymango.fanfictionreader.LibraryDownloader: LibraryDownloader()
 com.spicymango.fanfictionreader.MainMenu
@@ -9464,6 +9463,7 @@ com.spicymango.fanfictionreader.R$anim: int abc_slide_out_top
 com.spicymango.fanfictionreader.R$array: int category_button_community
 com.spicymango.fanfictionreader.R$array: int category_button_normal
 com.spicymango.fanfictionreader.R$array: int menu_navigation_filter_crossover
+com.spicymango.fanfictionreader.R$array: int menu_search_by
 com.spicymango.fanfictionreader.R$array: int pref_orientation_entries
 com.spicymango.fanfictionreader.R$array: int pref_orientation_values
 com.spicymango.fanfictionreader.R$array: int pref_text_size_entries
@@ -9726,6 +9726,7 @@ com.spicymango.fanfictionreader.R$id: int activity_chooser_view_content
 com.spicymango.fanfictionreader.R$id: int always
 com.spicymango.fanfictionreader.R$id: int beginning
 com.spicymango.fanfictionreader.R$id: int browse_menu_label
+com.spicymango.fanfictionreader.R$id: int btn_author
 com.spicymango.fanfictionreader.R$id: int category_menu_title
 com.spicymango.fanfictionreader.R$id: int category_menu_views
 com.spicymango.fanfictionreader.R$id: int checkbox
@@ -9794,10 +9795,8 @@ com.spicymango.fanfictionreader.R$id: int image
 com.spicymango.fanfictionreader.R$id: int layout
 com.spicymango.fanfictionreader.R$id: int layout_characters_row_2
 com.spicymango.fanfictionreader.R$id: int library_menu_sync_all
-com.spicymango.fanfictionreader.R$id: int linearLayout1
 com.spicymango.fanfictionreader.R$id: int linearLayout2
 com.spicymango.fanfictionreader.R$id: int linear_layout
-com.spicymango.fanfictionreader.R$id: int linear_layout4
 com.spicymango.fanfictionreader.R$id: int list
 com.spicymango.fanfictionreader.R$id: int listMode
 com.spicymango.fanfictionreader.R$id: int list_item
@@ -9857,6 +9856,7 @@ com.spicymango.fanfictionreader.R$id: int submit_area
 com.spicymango.fanfictionreader.R$id: int tabMode
 com.spicymango.fanfictionreader.R$id: int tableRow1
 com.spicymango.fanfictionreader.R$id: int tableRow10
+com.spicymango.fanfictionreader.R$id: int tableRow11
 com.spicymango.fanfictionreader.R$id: int tableRow2
 com.spicymango.fanfictionreader.R$id: int tableRow3
 com.spicymango.fanfictionreader.R$id: int tableRow4
@@ -9959,6 +9959,7 @@ com.spicymango.fanfictionreader.R$string: int dialog_cancelled
 com.spicymango.fanfictionreader.R$string: int dialog_internet
 com.spicymango.fanfictionreader.R$string: int dialog_loading
 com.spicymango.fanfictionreader.R$string: int dialog_unspecified
+com.spicymango.fanfictionreader.R$string: int downloader_context
 com.spicymango.fanfictionreader.R$string: int downloader_downloading
 com.spicymango.fanfictionreader.R$string: int downloader_error
 com.spicymango.fanfictionreader.R$string: int fanfiction_authority
@@ -10003,6 +10004,7 @@ com.spicymango.fanfictionreader.R$string: int menu_library_context_detail
 com.spicymango.fanfictionreader.R$string: int menu_library_sync_all
 com.spicymango.fanfictionreader.R$string: int menu_library_sync_all_condensed
 com.spicymango.fanfictionreader.R$string: int menu_library_title
+com.spicymango.fanfictionreader.R$string: int menu_navigation_browse_by_author
 com.spicymango.fanfictionreader.R$string: int menu_navigation_count_community
 com.spicymango.fanfictionreader.R$string: int menu_navigation_count_story
 com.spicymango.fanfictionreader.R$string: int menu_navigation_filter_by
@@ -10021,6 +10023,9 @@ com.spicymango.fanfictionreader.R$string: int menu_search_title
 com.spicymango.fanfictionreader.R$string: int menu_story_filter_by
 com.spicymango.fanfictionreader.R$string: int menu_story_page_button
 com.spicymango.fanfictionreader.R$string: int menu_story_title_just_in
+com.spicymango.fanfictionreader.R$string: int pref_incremental_summary_off
+com.spicymango.fanfictionreader.R$string: int pref_incremental_summary_on
+com.spicymango.fanfictionreader.R$string: int pref_incremental_updating
 com.spicymango.fanfictionreader.R$string: int pref_orientation
 com.spicymango.fanfictionreader.R$string: int pref_orientation_default
 com.spicymango.fanfictionreader.R$string: int pref_text_size
@@ -10287,6 +10292,8 @@ com.spicymango.fanfictionreader.Settings: Settings()
 com.spicymango.fanfictionreader.activity.AboutActivity
 com.spicymango.fanfictionreader.activity.AboutActivity: AboutActivity()
 com.spicymango.fanfictionreader.activity.AboutActivity: void onClick(android.view.View)
+com.spicymango.fanfictionreader.activity.AuthorMenuActivity
+com.spicymango.fanfictionreader.activity.AuthorMenuActivity: AuthorMenuActivity()
 com.spicymango.fanfictionreader.activity.CommunityItem
 com.spicymango.fanfictionreader.activity.CommunityItem: android.os.Parcelable$Creator CREATOR
 com.spicymango.fanfictionreader.activity.CommunityMenuActivity
@@ -10299,24 +10306,34 @@ com.spicymango.fanfictionreader.activity.LibraryMenuActivity: LibraryMenuActivit
 com.spicymango.fanfictionreader.activity.NavigationMenuActivity
 com.spicymango.fanfictionreader.activity.NavigationMenuActivity: NavigationMenuActivity()
 com.spicymango.fanfictionreader.activity.NavigationMenuActivity: void onClick(android.view.View)
-com.spicymango.fanfictionreader.activity.SearchActivity
-com.spicymango.fanfictionreader.activity.SearchActivity: SearchActivity()
-com.spicymango.fanfictionreader.activity.SearchActivity: void onClick(android.view.View)
+com.spicymango.fanfictionreader.activity.SearchAuthorActivity
+com.spicymango.fanfictionreader.activity.SearchAuthorActivity: SearchAuthorActivity()
+com.spicymango.fanfictionreader.activity.SearchStoryActivity
+com.spicymango.fanfictionreader.activity.SearchStoryActivity: SearchStoryActivity()
 com.spicymango.fanfictionreader.activity.StoryDisplayActivity
 com.spicymango.fanfictionreader.activity.StoryDisplayActivity: StoryDisplayActivity()
 com.spicymango.fanfictionreader.activity.StoryDisplayActivity: void changePage(android.view.View)
 com.spicymango.fanfictionreader.activity.StoryDisplayActivity: void onClick(android.view.View)
 com.spicymango.fanfictionreader.activity.StoryMenuActivity
 com.spicymango.fanfictionreader.activity.StoryMenuActivity: StoryMenuActivity()
-com.spicymango.fanfictionreader.activity.StoryMenuActivity: void onClick(android.view.View)
+com.spicymango.fanfictionreader.filter.FilterMenu
+com.spicymango.fanfictionreader.filter.FilterMenu: FilterMenu()
 com.spicymango.fanfictionreader.provider.StoryProvider
 com.spicymango.fanfictionreader.provider.StoryProvider: StoryProvider()
+com.spicymango.fanfictionreader.util.BaseActivity: BaseActivity()
+com.spicymango.fanfictionreader.util.BaseActivity: void onClick(android.view.View)
 com.spicymango.fanfictionreader.util.MenuObject
 com.spicymango.fanfictionreader.util.MenuObject: android.os.Parcelable$Creator CREATOR
 com.spicymango.fanfictionreader.util.Story
 com.spicymango.fanfictionreader.util.Story: android.os.Parcelable$Creator CREATOR
+info.piwai.android.JellyBeanSpanFixTextView
+info.piwai.android.JellyBeanSpanFixTextView: JellyBeanSpanFixTextView(android.content.Context,android.util.AttributeSet,int)
+info.piwai.android.JellyBeanSpanFixTextView: JellyBeanSpanFixTextView(android.content.Context,android.util.AttributeSet)
+info.piwai.android.JellyBeanSpanFixTextView: JellyBeanSpanFixTextView(android.content.Context)
 org.jsoup.Connection$Method: org.jsoup.Connection$Method[] values()
 org.jsoup.Connection$Method: org.jsoup.Connection$Method valueOf(java.lang.String)
+org.jsoup.nodes.Document$OutputSettings$Syntax: org.jsoup.nodes.Document$OutputSettings$Syntax[] values()
+org.jsoup.nodes.Document$OutputSettings$Syntax: org.jsoup.nodes.Document$OutputSettings$Syntax valueOf(java.lang.String)
 org.jsoup.nodes.Document$QuirksMode: org.jsoup.nodes.Document$QuirksMode[] values()
 org.jsoup.nodes.Document$QuirksMode: org.jsoup.nodes.Document$QuirksMode valueOf(java.lang.String)
 org.jsoup.nodes.Entities$EscapeMode: org.jsoup.nodes.Entities$EscapeMode[] values()

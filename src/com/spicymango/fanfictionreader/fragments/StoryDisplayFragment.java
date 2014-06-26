@@ -276,9 +276,12 @@ public class StoryDisplayFragment extends Fragment implements
 			if (c != null && c.moveToFirst()) {
 				isInLibrary = true;
 				mTitle = c.getString(c.getColumnIndex(SqlConstants.KEY_TITLE));
-				mTotalPages = c.getInt(c.getColumnIndex(SqlConstants.KEY_LENGHT));		
+				mTotalPages = c.getInt(c.getColumnIndex(SqlConstants.KEY_LENGHT));
 			}else{
 				isInLibrary = false;
+			}
+			if (c != null) {
+				c.close();
 			}
 		}
 

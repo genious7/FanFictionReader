@@ -21,7 +21,6 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -57,7 +56,7 @@ import com.spicymango.fanfictionreader.util.Story;
  * 
  * @author Michael Chen
  */
-public class StoryDisplayActivity extends ActionBarActivity implements OnClickListener {
+public class StoryDisplayActivity extends ActionBarActivity implements OnClickListener { // NO_UCD (use default)
 	private final static String STATE_CURRENT_PAGE = "com.spicymango.fanfictionreader.activity.StoryDisplayActivity.currentPage";
 	private final static String STATE_DOWNLOAD = "com.spicymango.fanfictionrader.activity.StoryDisplayActivity.download";
 	
@@ -140,10 +139,7 @@ public class StoryDisplayActivity extends ActionBarActivity implements OnClickLi
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.read_story_menu_add:
-			Intent i = new Intent(this, LibraryDownloader.class);
-			i.putExtra(LibraryDownloader.EXTRA_LAST_PAGE, mCurrentPage);
-            i.putExtra(LibraryDownloader.EXTRA_STORY_ID, mStoryId);
-            startService(i);   
+			LibraryDownloader.download(this, mStoryId, mCurrentPage);  
 			return true;
 		case android.R.id.home:
 			onBackPressed();

@@ -16,4 +16,11 @@
         android:key="@string/pref_orientation"
         android:title="@string/pref_orientation" />
 
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="@string/pref_incremental_updating"
+        android:summaryOff="@string/pref_incremental_summary_off"
+        android:summaryOn="@string/pref_incremental_summary_on"
+        android:title="@string/pref_incremental_updating" />
+
 </PreferenceScreen>

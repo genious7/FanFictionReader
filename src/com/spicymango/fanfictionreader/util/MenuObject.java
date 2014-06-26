@@ -8,7 +8,7 @@ public class MenuObject implements Parcelable {
 	/**
 	 * Used for parceling.
 	 */
-	public static final Parcelable.Creator<MenuObject> CREATOR = new Parcelable.Creator<MenuObject>() {
+	public static final Parcelable.Creator<MenuObject> CREATOR = new Parcelable.Creator<MenuObject>() { // NO_UCD (unused code)
 		
 		@Override
 		public MenuObject createFromParcel(Parcel source) {
@@ -43,10 +43,10 @@ public class MenuObject implements Parcelable {
 	 * @param mUri
 	 * @param mSortInt
 	 */
-	public MenuObject(String title, String views, String string, int sortInt) {
+	public MenuObject(String title, String views, String uri, int sortInt) {
 		this.mTitle = title;
 		this.mViews = views;
-		this.mUri = string;
+		this.mUri = uri;
 		this.mSortInt = sortInt;
 	}
 	

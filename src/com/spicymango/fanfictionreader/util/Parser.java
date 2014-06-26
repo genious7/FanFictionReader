@@ -18,21 +18,32 @@ public class Parser {
 	
 	private static final  Pattern pattern = Pattern.compile("/[su]/([\\d]++)/");
 	
-	
+	@Deprecated
 	/**
 	 * Parses the stories into a list
 	 * @param document The web page to parse
 	 * @return The list of stories
 	 */
 	public static List<Story> Stories(Document document) {
-
+		List<Story> list = new ArrayList<Story>();
+		Stories(document, list);
+		return list;
+	}
+	
+	/**
+	 * Parses the stories into a list
+	 * @param document The web page to parse
+	 * @param list The list to add the stories to
+	 * @return True if the operation succeeded, false otherwise
+	 */
+	public static boolean Stories(Document document, List<Story>list){
+		
 		Elements summaries = document.select("div#content div.bs");
 		Elements titles = summaries.select("a[href~=(?i)/s/\\d+/1/.*]");
 		Elements authors = summaries.select("a[href^=/u/]");
 		Elements attribs = summaries.select("div.gray");
 		summaries.select("b").unwrap();
-
-		List<Story> list = new ArrayList<Story>(summaries.size());
+		
 		Matcher storyIdMatcher = pattern.matcher("");
 		Matcher authorIdMatcher = pattern.matcher("");
 
@@ -59,11 +70,11 @@ public class Parser {
 							.ownText(), authors.get(i).text(),
 					Long.parseLong(authorIdMatcher.group(1)), summaries.get(i)
 							.ownText().replaceFirst("(?i)by\\s*", ""), attribs
-							.get(i).ownText(), updateDate, publishDate);
+							.get(i).text(), updateDate, publishDate);
 
 			list.add(TempStory);
 		}
-		return list;
+		return true;
 	}
 		
 	

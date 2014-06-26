@@ -6,7 +6,6 @@ import com.spicymango.fanfictionreader.DetailDisplay;
 import com.spicymango.fanfictionreader.LibraryDownloader;
 import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.Settings;
-import com.spicymango.fanfictionreader.provider.DatabaseHelper;
 import com.spicymango.fanfictionreader.provider.SqlConstants;
 import com.spicymango.fanfictionreader.provider.StoryProvider;
 import com.spicymango.fanfictionreader.util.Story;
@@ -79,9 +78,12 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 		long id = info.id;
 		
-		DatabaseHelper db = new DatabaseHelper(this);
-		Story story = db.getStory(id);
-		db.close();
+		Uri databaseUri = Uri.withAppendedPath(StoryProvider.CONTENT_URI, String.valueOf(id));
+		
+		Cursor c = getContentResolver().query(databaseUri, null, null, null, null);
+		c.moveToFirst();
+		Story story = new Story(c);
+		c.close();
 		
 		switch (item.getItemId()) {
 		case R.id.menu_library_context_details:
@@ -98,7 +100,7 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 				file.delete();
 			}
 			
-			getContentResolver().delete(Uri.withAppendedPath(StoryProvider.CONTENT_URI, String.valueOf(id)), null, null);
+			getContentResolver().delete(databaseUri, null, null);
 			
 			return true;
 		default:
@@ -141,10 +143,7 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 			int columnLast = c.getColumnIndex(KEY_LAST);
 			if (c.moveToFirst()) {
 			    do {
-			    	Intent i = new Intent(this, LibraryDownloader.class);
-					i.putExtra(LibraryDownloader.EXTRA_STORY_ID, c.getFloat(columnId));
-					i.putExtra(LibraryDownloader.EXTRA_LAST_PAGE, c.getInt(columnLast));
-					startService(i);
+			    	LibraryDownloader.download(this, c.getLong(columnId), c.getInt(columnLast));
 			    } while (c.moveToNext());
 			}
 			return true;
@@ -175,22 +174,20 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		mAdapter.changeCursor(data);
+		mAdapter.swapCursor(data);
 		supportInvalidateOptionsMenu();
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		mAdapter.changeCursor(null);
+		mAdapter.swapCursor(null);
 	}
 	
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int position, long id) {
-		DatabaseHelper db = new DatabaseHelper(this);
-		int lastPageRead = db.getLastChapterRead(id);
-		if (lastPageRead == -1) {
-			lastPageRead = 1;
-		}
+		
+		int lastPageRead = StoryProvider.lastChapterRead(this, id);
+		
 		Intent i = new Intent (this, StoryDisplayActivity.class);
 		i.setData(Uri.parse("https://m.fanfiction.net/s/" + id + "/" + lastPageRead + "/"));
 		startActivity(i);

@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.spicymango.fanfictionreader.util.Story;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -51,35 +50,6 @@ public class DatabaseHelper extends SQLiteOpenHelper  implements SqlConstants{
 		arg0.execSQL("DROP TABLE IF EXISTS " + TABLE_LIBRARY);
 		onCreate(arg0);
 	}
-
-	/**
-	 * Adds a new story to the database
-	 * @param story The story to add
-	 * @param lastChapterRead The last chapter read by user
-	 */
-	public void addStory(Story story, int lastChapterRead){
-		SQLiteDatabase db = this.getWritableDatabase();
-		ContentValues values = new ContentValues();
-		values.put(KEY_STORY_ID, story.getId());
-		values.put(KEY_TITLE, story.getName());
-		values.put(KEY_AUTHOR, story.getAuthor());
-		values.put(KEY_AUTHOR_ID, story.getAuthor_id());
-		values.put(KEY_RATING, story.getRating());
-		values.put(KEY_GENRE, story.getGenre());
-		values.put(KEY_LANGUAGUE, story.getlanguage());
-		values.put(KEY_CATEGORY, story.getCategory());
-		values.put(KEY_CHAPTER, story.getChapterLenght());
-		values.put(KEY_LENGHT, story.getWordLenght());
-		values.put(KEY_FAVORITES, story.getFavorites());
-		values.put(KEY_FOLLOWERS, story.getFollows());
-		values.put(KEY_PUBLISHED, story.getPublished().getTime());
-		values.put(KEY_UPDATED, story.getUpdated().getTime());
-		values.put(KEY_SUMMARY, story.getSummary());
-		values.put(KEY_LAST, lastChapterRead);
-		db.insert(TABLE_LIBRARY, null, values);
-	    db.close();
-	}
-	
 	
 	/**
 	 * Obtains the last chapter read in the selected story
@@ -93,13 +63,17 @@ public class DatabaseHelper extends SQLiteOpenHelper  implements SqlConstants{
 		Cursor cursor = db.query(TABLE_LIBRARY, new String[] { KEY_LAST },
 				KEY_STORY_ID + "=?", new String[] { String.valueOf(id) }, null,
 				null, null);
+		
+		int last;
+		
 		if (cursor == null || !cursor.moveToFirst()){
-	    	return -1;
+	    	last = -1;
 		}else{
 			int columnIndex = cursor.getColumnIndex(KEY_LAST);
-			return cursor.getInt(columnIndex);
+			last = cursor.getInt(columnIndex);
 		}
-			
+		cursor.close();
+		return last;
 	}
 	
 	/**
@@ -116,27 +90,16 @@ public class DatabaseHelper extends SQLiteOpenHelper  implements SqlConstants{
 	    		KEY_FOLLOWERS, KEY_PUBLISHED, KEY_UPDATED, KEY_SUMMARY}, KEY_STORY_ID + "=?",
 	            new String[] { String.valueOf(id) }, null, null, null);
 	    
-	    if (cursor == null || !cursor.moveToFirst())
+	    if (cursor == null || !cursor.moveToFirst()){
+	    	cursor.close();
 	    	return null;
+	    }
 	 
 		Story story = new Story(cursor);
 		
 		cursor.close();
 		
 	    return story;
-	}
-	
-	/**
-	 * Finds if a story is already in the library
-	 * @param id The id of the story
-	 * @return True if it exists, false otherwise
-	 */
-	public boolean hasStory(long id) {
-		SQLiteDatabase db = this.getReadableDatabase();
-		Cursor cursor = db.query(TABLE_LIBRARY, new String[] { KEY_STORY_ID },
-				KEY_STORY_ID + "=?", new String[] { String.valueOf(id) }, null,
-				null, null);
-		return cursor.moveToFirst();
 	}
 
 	/**
@@ -155,7 +118,7 @@ public class DatabaseHelper extends SQLiteOpenHelper  implements SqlConstants{
 				KEY_LANGUAGUE, KEY_CATEGORY, KEY_CHAPTER, KEY_LENGHT,
 				KEY_FAVORITES, KEY_FOLLOWERS, KEY_PUBLISHED, KEY_UPDATED,
 				KEY_SUMMARY }, null, null, null, null, null);
-
+		
 		List<Story> storyList = new ArrayList<Story>(cursor.getCount());
 		
 		// looping through all rows and adding to list
@@ -178,27 +141,9 @@ public class DatabaseHelper extends SQLiteOpenHelper  implements SqlConstants{
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.query(TABLE_LIBRARY, new String[] { KEY_STORY_ID },
 				null, null, null, null, null);
+		int count = cursor.getCount();
 		cursor.close();
 		// return count
-		return cursor.getCount();
-	}
-
-	/**
-	 * Deletes a story from the database
-	 * @param story The story to delete
-	 */
-	public void deleteStory(Story story) {
-		    deleteStory(story.getId());
-	}
-	 
-	/**
-	 * Deletes a story from the database
-	 * @param id The id of the story to delete
-	 */
-	public void deleteStory(long id) {
-		SQLiteDatabase db = this.getWritableDatabase();
-		db.delete(TABLE_LIBRARY, KEY_STORY_ID + " = ?",
-		            new String[] { String.valueOf(id) });
-	    db.close();
+		return count;
 	}
 }

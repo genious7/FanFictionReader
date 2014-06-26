@@ -37,6 +37,11 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
 		}
 	}
 	
+	public static boolean isIncrementalUpdatingEnabled(Context context){
+		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+		return sharedPref.getBoolean(context.getResources().getString(R.string.pref_incremental_updating), true);
+	}
+	
 	/**
 	 * Sets the orientation of the activity based on current settings
 	 * @param activity The activity to set
