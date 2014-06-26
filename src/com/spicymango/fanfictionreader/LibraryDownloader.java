@@ -120,6 +120,8 @@ public class LibraryDownloader extends IntentService{
 						return true;
 					}
 					
+					list.ensureCapacity(story.getChapterLenght());
+					
 					//If an update exists and incremental updating is enabled, update chapters as needed
 					if (Settings.isIncrementalUpdatingEnabled(this)) {
 						
@@ -132,6 +134,7 @@ public class LibraryDownloader extends IntentService{
 						}
 					}
 
+					
 					totalPages = story.getChapterLenght();
 					showNotification(story.getName(), currentPage, totalPages);
 				}
