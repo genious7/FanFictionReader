@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,6 +23,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.text.Html;
 import android.text.Spanned;
+import android.util.SparseArray;
 
 import com.spicymango.fanfictionreader.activity.LibraryMenuActivity;
 import com.spicymango.fanfictionreader.provider.SqlConstants;
@@ -97,9 +97,9 @@ public class LibraryDownloader extends IntentService{
 		Story story = new Story();
 		
 		int totalPages = 1;
-		int incrementalIndex = 1;
-		
-		ArrayList<Spanned> list = new ArrayList<Spanned>();
+		int incrementalIndex = 0;
+
+		SparseArray<Spanned> array = new SparseArray<Spanned>();
 		try {
 			for (int currentPage = 1; currentPage <= totalPages; currentPage++) {
 
@@ -120,36 +120,33 @@ public class LibraryDownloader extends IntentService{
 						return true;
 					}
 					
-					list.ensureCapacity(story.getChapterLenght());
-					
+					totalPages = story.getChapterLenght();
+				
 					//If an update exists and incremental updating is enabled, update chapters as needed
 					if (Settings.isIncrementalUpdatingEnabled(this)) {
 						
 						//If there are more chapters, assume that the story has not been revised
 						int lastChapterUpdated = StoryProvider.lastChapterRead(this, storyId);
-						if (story.getChapterLenght() > lastChapterUpdated) {
+						if (lastChapterUpdated > 1 && totalPages > lastChapterUpdated) {
 							currentPage = lastChapterUpdated;
 							incrementalIndex = currentPage;
 							continue;
 						}
 					}
-
 					
-					totalPages = story.getChapterLenght();
-					showNotification(story.getName(), currentPage, totalPages);
 				}
-				
+				showNotification(story.getName(), currentPage, totalPages);
 				Spanned span = Html.fromHtml(document.select("div#storytext").html());
-				list.add(currentPage - 1, span);
+				array.append(currentPage - 1, span);
 			}
 		} catch (IOException e) {
 			return false;
 		}
-		for (int currentPage = incrementalIndex - 1; currentPage < totalPages; currentPage++) {
+		for (int currentPage = incrementalIndex; currentPage < totalPages; currentPage++) {
 			try {
 				File file = new File(getFilesDir(), storyId + "_" + (currentPage + 1) + ".txt");
 				FileOutputStream fos = new FileOutputStream( file);
-				fos.write(list.get(currentPage).toString().getBytes());
+				fos.write(array.get(currentPage).toString().getBytes());
 				fos.close();
 			} catch (FileNotFoundException e) {
 			} catch (IOException e) {

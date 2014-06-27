@@ -219,7 +219,7 @@ public class StoryProvider extends ContentProvider implements SqlConstants {
 	 * Obtains the last chapter read by the user
 	 * @param context The current context
 	 * @param storyId The id of the story
-	 * @return The last chapter read, or -1 if the story doesn't exist.
+	 * @return The last chapter read, or 1 if the story doesn't exist.
 	 */
 	public static int lastChapterRead(Context context, long storyId) {
 		ContentResolver resolver = context.getContentResolver();
