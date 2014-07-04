@@ -24,9 +24,9 @@ public class Story implements Parcelable, SqlConstants{
 	private String language;
 	private String genre; //Both genres combined
 	private int chapterLenght;
-	private String wordLenght;
-	private String favorites;
-	private String follows;
+	private int wordLenght;
+	private int favorites;
+	private int follows;
 	private Date updated;
 	private Date published;
 	
@@ -45,7 +45,7 @@ public class Story implements Parcelable, SqlConstants{
 	 * Default constructor
 	 */
 	public Story() {
-		this(0, "", "", 0, "", "", "", "", "", 1, "", "0", "0", new Date(),
+		this(0, "", "", 0, "", "", "", "", "", 1, 0, 0, 0, new Date(),
 				new Date());
 	}
 	
@@ -53,8 +53,8 @@ public class Story implements Parcelable, SqlConstants{
 		this(cursor.getLong(0), cursor.getString(1),
 			cursor.getString(2), cursor.getLong(3), cursor.getString(14),
 			cursor.getString(7), cursor.getString(4), cursor.getString(6),
-			cursor.getString(5), cursor.getInt(8), cursor.getString(9),
-			cursor.getString(10), cursor.getString(11), cursor.getLong(13),
+			cursor.getString(5), cursor.getInt(8), cursor.getInt(9),
+			cursor.getInt(10), cursor.getInt(11), cursor.getLong(13),
 			cursor.getLong(12));
 	}
 	
@@ -97,10 +97,10 @@ public class Story implements Parcelable, SqlConstants{
 	 * @param updated The date it was updated
 	 * @param published The date it was published.
 	 */
-	public Story(long id, String name, String author, long authorId,
+	private Story(long id, String name, String author, long authorId,
 			String summary, String category, String rating, String language,
-			String genre, int chapterLenght, String wordLenght, String favorites,
-			String follows, Date updated, Date published) {
+			String genre, int chapterLenght, int wordLenght, int favorites,
+			int follows, Date updated, Date published) {
 		this.id = id;
 		this.name = name;
 		this.author = author;
@@ -138,8 +138,8 @@ public class Story implements Parcelable, SqlConstants{
 	 */
 	public Story(long id, String name, String author, long authorId,
 			String summary, String category, String rating, String language,
-			String genre, int chapterLenght, String wordLenght, String favorites,
-			String follows, long updated, long published) {
+			String genre, int chapterLenght, int wordLenght, int favorites,
+			int follows, long updated, long published) {
 		
 		this(id, name, author, authorId, summary, category, rating, language,
 				genre, chapterLenght, wordLenght, favorites, follows, new Date(
@@ -157,7 +157,7 @@ public class Story implements Parcelable, SqlConstants{
 	 */
 	public Story(long id, String name, String author, long authorId, String summary, String attribs, long updated, long published){
 		
-		this(id,name,author,authorId,summary,"","","","",1,"","0","0",updated,published);
+		this(id,name,author,authorId,summary,"","","","",1,0,0,0,updated,published);
 		Matcher match = ATTRIBUTE_PATTERN.matcher(attribs);
 		if (match.find()) {
 			if (match.group(1) != null)
@@ -168,11 +168,11 @@ public class Story implements Parcelable, SqlConstants{
 				genre = match.group(4);
 			if (match.group(5) != null)
 				chapterLenght = Integer.valueOf(match.group(5));
-			wordLenght = match.group(6);
+			wordLenght = Parser.parseInt(match.group(6));
 			if (match.group(7) != null)
-				favorites = match.group(7);
+				favorites = Parser.parseInt(match.group(7));
 			if (match.group(8) != null)
-				follows = match.group(8);
+				follows = Parser.parseInt(match.group(8));
 		}else{
 			Log.d("Story - Parse", attribs);
 		}
@@ -197,9 +197,9 @@ public class Story implements Parcelable, SqlConstants{
 		this.language = in.readString();
 		this.genre = in.readString();
 		this.chapterLenght = in.readInt();
-		this.wordLenght = in.readString();
-		this.favorites = in.readString();
-		this.follows = in.readString();
+		this.wordLenght = in.readInt();
+		this.favorites = in.readInt();
+		this.follows = in.readInt();
 		this.updated = new Date(in.readLong());
 		this.published = new Date(in.readLong());
 	}
@@ -221,9 +221,9 @@ public class Story implements Parcelable, SqlConstants{
 		dest.writeString(language);
 		dest.writeString(genre);
 		dest.writeInt(chapterLenght);
-		dest.writeString(wordLenght);
-		dest.writeString(favorites);
-		dest.writeString(follows);
+		dest.writeInt(wordLenght);
+		dest.writeInt(favorites);
+		dest.writeInt(follows);
 		dest.writeLong(updated.getTime());
 		dest.writeLong(published.getTime());
 	}
@@ -319,21 +319,21 @@ public class Story implements Parcelable, SqlConstants{
 	 * @return the wordLenght
 	 */
 	public String getWordLenght() {
-		return wordLenght;
+		return  Parser.withSuffix(wordLenght);
 	}
 
 	/**
 	 * @return the favorites
 	 */
 	public String getFavorites() {
-		return favorites;
+		return Parser.withSuffix(favorites);
 	}
 
 	/**
 	 * @return the follows
 	 */
 	public String getFollows() {
-		return follows;
+		return Parser.withSuffix(follows);
 	}
 
 	/**

@@ -9,5 +9,19 @@
         android:title="@string/menu_library_sync_all"
         android:titleCondensed="@string/menu_library_sync_all_condensed"
         spicymango:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/filter"
+        android:enabled="false"
+        android:icon="@drawable/ic_filter"
+        android:title="@string/menu_navigation_filter_by"
+        android:titleCondensed="@string/menu_navigation_filter_by"
+        spicymango:showAsAction="ifRoom">
+    </item>
+    <item
+        android:id="@+id/library_menu_add_by_id"
+        android:title="@string/menu_library_by_id"
+        android:titleCondensed="@string/menu_library_by_id_condensed"
+        spicymango:showAsAction="never">
+    </item>
 
 </menu>

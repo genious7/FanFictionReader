@@ -1,7 +1,7 @@
 package com.spicymango.fanfictionreader.filter;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.Map;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -17,8 +17,8 @@ public class FilterDialog {
 	 * @param filter The list containing filter and key pairs
 	 * @param keys The last selected keys, or null if none exist
 	 */
-	public static void show(Activity activity,
-			ArrayList<LinkedHashMap<String, Integer>> filter, int[] keys) {
+	public static <T extends Map<String, Integer>> void show(Activity activity,
+			ArrayList<T> filter, int[] keys) {
 		
 		Intent i = new Intent(activity, FilterMenu.class);
 		i.putExtra(FilterMenu.EXTRA_FILTER, filter);

@@ -72,9 +72,9 @@ com.spicymango.fanfictionreader.provider.DatabaseHelper:
     private static final int DATABASE_VERSION
     private static final java.lang.String DATABASE_NAME
     protected static final java.lang.String TABLE_LIBRARY
-    62:76:public int getLastChapterRead(long)
-    115:133:public java.util.List getAllStories()
-    141:147:public int getStoryCount()
+    96:110:public int getLastChapterRead(long)
+    149:167:public java.util.List getAllStories()
+    175:181:public int getStoryCount()
 com.spicymango.fanfictionreader.provider.SqlConstants
 com.spicymango.fanfictionreader.provider.StoryProvider:
     private static final java.lang.String AUTHORITY
@@ -91,7 +91,6 @@ com.spicymango.fanfictionreader.util.BaseLoader:
     private static final java.lang.String STATE_CHANGED
 com.spicymango.fanfictionreader.util.Parser:
     17:17:public Parser()
-    28:30:public static java.util.List Stories(org.jsoup.nodes.Document)
 com.spicymango.fanfictionreader.util.SearchLoader:
     private static final java.lang.String STATE_FILTER
     private static final java.lang.String STATE_FILTER_LIST
@@ -218,9 +217,7 @@ org.jsoup.helper.HttpConnection$Request:
     380:382:public org.jsoup.helper.HttpConnection$Request data(org.jsoup.Connection$KeyVal)
     390:391:public org.jsoup.helper.HttpConnection$Request parser(org.jsoup.parser.Parser)
     1:1:public bridge synthetic org.jsoup.Connection$Request data(org.jsoup.Connection$KeyVal)
-    1:1:public bridge synthetic org.jsoup.Connection$Base removeCookie(java.lang.String)
     1:1:public bridge synthetic org.jsoup.Connection$Request timeout(int)
-    1:1:public bridge synthetic java.lang.String cookie(java.lang.String)
     1:1:public bridge synthetic org.jsoup.Connection$Request parser(org.jsoup.parser.Parser)
 org.jsoup.helper.HttpConnection$Response:
     private static final int MAX_REDIRECTS
@@ -229,8 +226,6 @@ org.jsoup.helper.HttpConnection$Response:
     508:508:public java.lang.String charset()
     524:532:public java.lang.String body()
     536:537:public byte[] bodyAsBytes()
-    1:1:public bridge synthetic org.jsoup.Connection$Base removeCookie(java.lang.String)
-    1:1:public bridge synthetic java.lang.String cookie(java.lang.String)
 org.jsoup.helper.StringUtil:
     9:9:public StringUtil()
     113:115:public static java.lang.String normaliseWhitespace(java.lang.String)

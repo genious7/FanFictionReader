@@ -17,19 +17,7 @@ import android.util.Log;
 public class Parser {
 	
 	private static final  Pattern pattern = Pattern.compile("/[su]/([\\d]++)/");
-	
-	@Deprecated
-	/**
-	 * Parses the stories into a list
-	 * @param document The web page to parse
-	 * @return The list of stories
-	 */
-	public static List<Story> Stories(Document document) {
-		List<Story> list = new ArrayList<Story>();
-		Stories(document, list);
-		return list;
-	}
-	
+		
 	/**
 	 * Parses the stories into a list
 	 * @param document The web page to parse
@@ -171,6 +159,21 @@ public class Parser {
 		}
 		return 1;
 	}
-
 	
+	public final static int parseInt(String string){
+		if (string.length() == 0) {
+			return 0;
+		} else {
+			double digits = Double.parseDouble(string.replaceAll("[^\\d.]", ""));
+			if (string.contains("k") || string.contains("K")) {
+				digits = digits * 1000;
+			}
+			return (int) digits;
+		}
+	}
+	
+	public static final String withSuffix(int count) {
+	    if (count < 1000) return "" + count;
+	    return count/1000 + "k+";
+	}
 }

@@ -12,7 +12,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHelper extends SQLiteOpenHelper  implements SqlConstants{
 	
-	private static final int DATABASE_VERSION = 3; //Database version 3
+	private static final int DATABASE_VERSION = 4; //Database version 3
 	private static final String DATABASE_NAME = "library.db";
 	
 	//The name of the table
@@ -34,9 +34,9 @@ public class DatabaseHelper extends SQLiteOpenHelper  implements SqlConstants{
 	                + KEY_LANGUAGUE + " TEXT," 
 	                + KEY_CATEGORY + " TEXT,"
 	                + KEY_CHAPTER + " INTEGER,"
-	                + KEY_LENGHT + " TEXT,"
-	                + KEY_FAVORITES + " TEXT,"
-	                + KEY_FOLLOWERS + " TEXT,"
+	                + KEY_LENGHT + " INTEGER,"
+	                + KEY_FAVORITES + " INTEGER,"
+	                + KEY_FOLLOWERS + " INTEGER,"
 	                + KEY_PUBLISHED + " INTEGER,"
 	                + KEY_UPDATED + " INTEGER,"
 	                + KEY_SUMMARY + " TEXT NOT NULL,"
@@ -46,9 +46,43 @@ public class DatabaseHelper extends SQLiteOpenHelper  implements SqlConstants{
 	}
 
 	@Override
-	public void onUpgrade(SQLiteDatabase arg0, int arg1, int arg2) {
-		arg0.execSQL("DROP TABLE IF EXISTS " + TABLE_LIBRARY);
-		onCreate(arg0);
+	public void onUpgrade(SQLiteDatabase db, int oldVersion, int arg2) {
+		if (oldVersion < 3) {
+			db.execSQL("DROP TABLE IF EXISTS " + TABLE_LIBRARY);
+			onCreate(db);
+		}
+		if (oldVersion < 4) {
+			db.execSQL("UPDATE " + TABLE_LIBRARY + " SET " + KEY_LENGHT + " = REPLACE(" + KEY_LENGHT+ ",',','')");
+			db.execSQL("UPDATE " + TABLE_LIBRARY + " SET " + KEY_FAVORITES + " = REPLACE(" + KEY_FAVORITES+ ",',','')");
+			db.execSQL("UPDATE " + TABLE_LIBRARY + " SET " + KEY_FOLLOWERS + " = REPLACE(" + KEY_FOLLOWERS+ ",',','')");
+			
+			db.execSQL("CREATE TABLE IF NOT EXISTS " +"tmp" + "("
+	                + KEY_STORY_ID + " INTEGER PRIMARY KEY ON CONFLICT REPLACE,"
+	                + KEY_TITLE + " TEXT NOT NULL,"
+	                + KEY_AUTHOR + " TEXT NOT NULL,"
+	                + KEY_AUTHOR_ID + " TEXT,"
+	                + KEY_RATING + " TEXT,"
+	                + KEY_GENRE + " TEXT,"
+	                + KEY_LANGUAGUE + " TEXT," 
+	                + KEY_CATEGORY + " TEXT,"
+	                + KEY_CHAPTER + " INTEGER,"
+	                + KEY_LENGHT + " INTEGER,"
+	                + KEY_FAVORITES + " INTEGER,"
+	                + KEY_FOLLOWERS + " INTEGER,"
+	                + KEY_PUBLISHED + " INTEGER,"
+	                + KEY_UPDATED + " INTEGER,"
+	                + KEY_SUMMARY + " TEXT NOT NULL,"
+	                + KEY_LAST + " INTEGER"
+	                + ")");
+			db.execSQL("INSERT INTO tmp SELECT * FROM " + TABLE_LIBRARY);
+			db.execSQL("DROP TABLE " + TABLE_LIBRARY);
+			db.execSQL("ALTER TABLE tmp RENAME TO " + TABLE_LIBRARY);
+		}
+		
+	}
+	
+	@Override
+	public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 	}
 	
 	/**

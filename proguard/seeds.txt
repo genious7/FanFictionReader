@@ -9462,6 +9462,8 @@ com.spicymango.fanfictionreader.R$anim: int abc_slide_out_bottom
 com.spicymango.fanfictionreader.R$anim: int abc_slide_out_top
 com.spicymango.fanfictionreader.R$array: int category_button_community
 com.spicymango.fanfictionreader.R$array: int category_button_normal
+com.spicymango.fanfictionreader.R$array: int menu_library_filter_words
+com.spicymango.fanfictionreader.R$array: int menu_library_sort_by
 com.spicymango.fanfictionreader.R$array: int menu_navigation_filter_crossover
 com.spicymango.fanfictionreader.R$array: int menu_search_by
 com.spicymango.fanfictionreader.R$array: int pref_orientation_entries
@@ -9794,6 +9796,7 @@ com.spicymango.fanfictionreader.R$id: int ifRoom
 com.spicymango.fanfictionreader.R$id: int image
 com.spicymango.fanfictionreader.R$id: int layout
 com.spicymango.fanfictionreader.R$id: int layout_characters_row_2
+com.spicymango.fanfictionreader.R$id: int library_menu_add_by_id
 com.spicymango.fanfictionreader.R$id: int library_menu_sync_all
 com.spicymango.fanfictionreader.R$id: int linearLayout2
 com.spicymango.fanfictionreader.R$id: int linear_layout
@@ -9955,6 +9958,9 @@ com.spicymango.fanfictionreader.R$string: int detail_published
 com.spicymango.fanfictionreader.R$string: int detail_rating
 com.spicymango.fanfictionreader.R$string: int detail_updated
 com.spicymango.fanfictionreader.R$string: int detail_words
+com.spicymango.fanfictionreader.R$string: int diag_btn_neg
+com.spicymango.fanfictionreader.R$string: int diag_btn_pos
+com.spicymango.fanfictionreader.R$string: int diag_by_id_title
 com.spicymango.fanfictionreader.R$string: int dialog_cancelled
 com.spicymango.fanfictionreader.R$string: int dialog_internet
 com.spicymango.fanfictionreader.R$string: int dialog_loading
@@ -9999,11 +10005,16 @@ com.spicymango.fanfictionreader.R$string: int menu_community_follows
 com.spicymango.fanfictionreader.R$string: int menu_community_random
 com.spicymango.fanfictionreader.R$string: int menu_community_staff
 com.spicymango.fanfictionreader.R$string: int menu_community_stories
+com.spicymango.fanfictionreader.R$string: int menu_library_by_id
+com.spicymango.fanfictionreader.R$string: int menu_library_by_id_condensed
+com.spicymango.fanfictionreader.R$string: int menu_library_chapters
 com.spicymango.fanfictionreader.R$string: int menu_library_context_delete
 com.spicymango.fanfictionreader.R$string: int menu_library_context_detail
+com.spicymango.fanfictionreader.R$string: int menu_library_follows
 com.spicymango.fanfictionreader.R$string: int menu_library_sync_all
 com.spicymango.fanfictionreader.R$string: int menu_library_sync_all_condensed
 com.spicymango.fanfictionreader.R$string: int menu_library_title
+com.spicymango.fanfictionreader.R$string: int menu_library_words
 com.spicymango.fanfictionreader.R$string: int menu_navigation_browse_by_author
 com.spicymango.fanfictionreader.R$string: int menu_navigation_count_community
 com.spicymango.fanfictionreader.R$string: int menu_navigation_count_story

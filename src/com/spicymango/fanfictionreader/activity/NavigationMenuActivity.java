@@ -16,6 +16,7 @@ import org.jsoup.select.Elements;
 import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.Settings;
 import com.spicymango.fanfictionreader.util.MenuObject;
+import com.spicymango.fanfictionreader.util.Parser;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -487,7 +488,7 @@ public class NavigationMenuActivity extends ActionBarActivity implements LoaderC
 							element.ownText(),
 							String.format(formatString, count),
 							element.attr("abs:href"), 
-							parseCount(count));
+							Parser.parseInt(count));
 					tmpList.add(tmpObject);
 				}
 				mHasChanged = false;
@@ -541,19 +542,6 @@ public class NavigationMenuActivity extends ActionBarActivity implements LoaderC
 				return null;
 			}
 			return url.first().attr("abs:href");
-		}
-		
-		/**
-		 * Removes the kilo symbol while preserving magnitude when appropriate.
-		 * @param count
-		 * @return
-		 */
-		private int parseCount(String count){
-			if (count.contains("K") || count.contains("k")) {
-				return (int)(Double.valueOf(count.replaceAll("[^\\d[.]]", "")) * 1000);
-			}else{
-				return Integer.valueOf(count.replaceAll("[^\\d[.]]", ""));
-			}
 		}
 		
 		@Override

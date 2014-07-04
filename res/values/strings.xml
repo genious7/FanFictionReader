@@ -16,8 +16,6 @@
 	<string name="dialog_loading">Loading…</string>
 	<string name="dialog_unspecified">Unspecified Error</string>
 
-	
-	
 	<string name="filter_sort">Sort options</string>
 	<string name="filter_date">Time Range</string>
 	<string name="filter_genre">Genre</string>
@@ -122,6 +120,36 @@
 	<string name="menu_library_sync_all_condensed">Sync</string>
 	<string name="menu_library_context_detail">Details</string>
 	<string name="menu_library_context_delete">Delete Story</string>
+	<string name="menu_library_follows">Follows: %,d</string>
+	<string name="menu_library_words">Words: %,d</string>
+	<string name="menu_library_chapters">Chapters: %d</string>
+	<string-array name="menu_library_sort_by">
+		<item >Update Date</item>
+		<item >Publish Date</item>
+		<item >Title</item>
+		<item >Author</item>
+		<item >Favorites</item>
+		<item >Follows</item>
+	</string-array>
+	<string-array name="menu_library_filter_words">
+	    <item >All</item>
+	    <item >&lt; 1k words</item>
+	    <item >&lt; 5k words</item>
+	    <item >&gt; 1k words</item>
+	    <item >&gt; 5k words</item>
+	    <item >&gt; 10k words</item>
+	    <item >&gt; 20k words</item>
+	    <item >&gt; 40k words</item>
+	    <item >&gt; 60k words</item>
+	    <item >&gt; 100k words</item>
+	</string-array>
+	<string name="menu_library_by_id">Add story by Id</string>
+	<string name="menu_library_by_id_condensed">Add by Id</string>
+	
+	<!-- Download By Id -->
+	<string name="diag_by_id_title">Download by Id</string>
+	<string name="diag_btn_pos">OK</string>
+	<string name="diag_btn_neg">Cancel</string>
 	
 	<!-- Story Displayer Activity -->
 	<string name="read_story_update">Update story</string>

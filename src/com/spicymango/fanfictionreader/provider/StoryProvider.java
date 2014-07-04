@@ -237,4 +237,27 @@ public class StoryProvider extends ContentProvider implements SqlConstants {
 		c.close();
 		return last;
 	}
+	
+	/**
+	 * Obtains the total number of chapters
+	 * @param context The current context
+	 * @param storyId The id of the story
+	 * @return The total number of chapters, or 1 if the story doesn't exist.
+	 */
+	public static int numberOfChapters(Context context, long storyId) {
+		ContentResolver resolver = context.getContentResolver();
+		Cursor c = resolver.query(StoryProvider.CONTENT_URI,
+				new String[] { SqlConstants.KEY_CHAPTER },
+				SqlConstants.KEY_STORY_ID + " = ?",
+				new String[] { String.valueOf(storyId) }, null);
+		int last;
+		if (c == null || !c.moveToFirst()) {
+			last = 1;
+		} else {
+			int index = c.getColumnIndex(SqlConstants.KEY_CHAPTER);
+			last = c.getInt(index);
+		}
+		c.close();
+		return last;
+	}
 }

@@ -8807,18 +8807,33 @@ com.spicymango.fanfictionreader.activity.LibraryMenuActivity -> com.spicymango.f
     int[] DEST_PROJECTION -> c
     android.support.v4.widget.SimpleCursorAdapter mAdapter -> d
     android.widget.ListView mListView -> e
+    int[] filter -> f
+    java.util.ArrayList filterList -> g
+    android.view.View mProgressBar -> h
     void onCreate(android.os.Bundle) -> onCreate
+    void initFilter() -> a
     boolean onContextItemSelected(android.view.MenuItem) -> onContextItemSelected
+    void onActivityResult(int,int,android.content.Intent) -> onActivityResult
     void onCreateContextMenu(android.view.ContextMenu,android.view.View,android.view.ContextMenu$ContextMenuInfo) -> onCreateContextMenu
     boolean onPrepareOptionsMenu(android.view.Menu) -> onPrepareOptionsMenu
     boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
+    void downloadByIdDialog() -> b
     boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
     android.support.v4.content.Loader onCreateLoader(int,android.os.Bundle) -> onCreateLoader
+    java.lang.String filterQuery() -> c
+    java.lang.String sortOrder() -> d
     void onLoadFinished(android.support.v4.content.Loader,android.database.Cursor) -> a
     void onLoaderReset(android.support.v4.content.Loader) -> onLoaderReset
     void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
     void onLoadFinished(android.support.v4.content.Loader,java.lang.Object) -> onLoadFinished
-com.spicymango.fanfictionreader.activity.LibraryMenuActivity$LibraryBinder -> com.spicymango.fanfictionreader.activity.g:
+com.spicymango.fanfictionreader.activity.LibraryMenuActivity$1 -> com.spicymango.fanfictionreader.activity.g:
+    com.spicymango.fanfictionreader.activity.LibraryMenuActivity this$0 -> a
+    android.widget.EditText val$input -> b
+    void onClick(android.content.DialogInterface,int) -> onClick
+com.spicymango.fanfictionreader.activity.LibraryMenuActivity$2 -> com.spicymango.fanfictionreader.activity.h:
+    com.spicymango.fanfictionreader.activity.LibraryMenuActivity this$0 -> a
+    void onClick(android.content.DialogInterface,int) -> onClick
+com.spicymango.fanfictionreader.activity.LibraryMenuActivity$LibraryBinder -> com.spicymango.fanfictionreader.activity.i:
     java.lang.String words -> a
     java.lang.String chapters -> b
     java.lang.String follows -> c
@@ -8857,14 +8872,14 @@ com.spicymango.fanfictionreader.activity.NavigationMenuActivity -> com.spicymang
     void access$6(com.spicymango.fanfictionreader.activity.NavigationMenuActivity,android.net.Uri) -> a
     void access$7(com.spicymango.fanfictionreader.activity.NavigationMenuActivity,boolean) -> a
     com.spicymango.fanfictionreader.activity.NavigationMenuActivity$MenuLoader access$8(com.spicymango.fanfictionreader.activity.NavigationMenuActivity) -> d
-com.spicymango.fanfictionreader.activity.NavigationMenuActivity$1 -> com.spicymango.fanfictionreader.activity.h:
+com.spicymango.fanfictionreader.activity.NavigationMenuActivity$1 -> com.spicymango.fanfictionreader.activity.j:
     com.spicymango.fanfictionreader.activity.NavigationMenuActivity this$0 -> a
     void onClick(android.content.DialogInterface,int) -> onClick
-com.spicymango.fanfictionreader.activity.NavigationMenuActivity$ListComparator -> com.spicymango.fanfictionreader.activity.i:
+com.spicymango.fanfictionreader.activity.NavigationMenuActivity$ListComparator -> com.spicymango.fanfictionreader.activity.k:
     boolean sortBy -> a
     int compare(com.spicymango.fanfictionreader.util.MenuObject,com.spicymango.fanfictionreader.util.MenuObject) -> a
     int compare(java.lang.Object,java.lang.Object) -> compare
-com.spicymango.fanfictionreader.activity.NavigationMenuActivity$MenuLoader -> com.spicymango.fanfictionreader.activity.j:
+com.spicymango.fanfictionreader.activity.NavigationMenuActivity$MenuLoader -> com.spicymango.fanfictionreader.activity.l:
     boolean mConnectionError -> a
     boolean mHasChanged -> b
     java.util.List mList -> c
@@ -8876,16 +8891,15 @@ com.spicymango.fanfictionreader.activity.NavigationMenuActivity$MenuLoader -> co
     void setUri(android.net.Uri) -> a
     java.lang.String getCrossoverName(org.jsoup.nodes.Document) -> a
     java.lang.String getCrossoverUri(org.jsoup.nodes.Document) -> b
-    int parseCount(java.lang.String) -> a
     void onReset() -> onReset
     void onStartLoading() -> onStartLoading
     void deliverResult(java.lang.Object) -> deliverResult
     java.lang.Object loadInBackground() -> loadInBackground
-com.spicymango.fanfictionreader.activity.NavigationMenuActivity$NavigationMenuAdapter -> com.spicymango.fanfictionreader.activity.k:
+com.spicymango.fanfictionreader.activity.NavigationMenuActivity$NavigationMenuAdapter -> com.spicymango.fanfictionreader.activity.m:
     int layoutResourceId -> a
     android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView
     void sort(boolean) -> a
-com.spicymango.fanfictionreader.activity.NavigationMenuActivity$NavigationMenuAdapter$MenuItemHolder -> com.spicymango.fanfictionreader.activity.l:
+com.spicymango.fanfictionreader.activity.NavigationMenuActivity$NavigationMenuAdapter$MenuItemHolder -> com.spicymango.fanfictionreader.activity.n:
     android.widget.TextView txtTitle -> a
     android.widget.TextView txtViews -> b
 com.spicymango.fanfictionreader.activity.SearchAuthorActivity -> com.spicymango.fanfictionreader.activity.SearchAuthorActivity:
@@ -8903,12 +8917,12 @@ com.spicymango.fanfictionreader.activity.SearchAuthorActivity -> com.spicymango.
     boolean onQueryTextSubmit(java.lang.String) -> onQueryTextSubmit
     void onActivityResult(int,int,android.content.Intent) -> onActivityResult
     void onCreate(android.os.Bundle) -> onCreate
-com.spicymango.fanfictionreader.activity.SearchAuthorActivity$AuthorAdapter -> com.spicymango.fanfictionreader.activity.m:
+com.spicymango.fanfictionreader.activity.SearchAuthorActivity$AuthorAdapter -> com.spicymango.fanfictionreader.activity.o:
     android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView
-com.spicymango.fanfictionreader.activity.SearchAuthorActivity$AuthorAdapter$MenuItemHolder -> com.spicymango.fanfictionreader.activity.n:
+com.spicymango.fanfictionreader.activity.SearchAuthorActivity$AuthorAdapter$MenuItemHolder -> com.spicymango.fanfictionreader.activity.p:
     android.widget.TextView txtTitle -> a
     android.widget.TextView txtViews -> b
-com.spicymango.fanfictionreader.activity.SearchAuthorActivity$AuthorLoader -> com.spicymango.fanfictionreader.activity.o:
+com.spicymango.fanfictionreader.activity.SearchAuthorActivity$AuthorLoader -> com.spicymango.fanfictionreader.activity.q:
     java.lang.String formatString -> a
     void resetFilter() -> a
     android.net.Uri formatUri(int) -> a
@@ -8928,7 +8942,7 @@ com.spicymango.fanfictionreader.activity.SearchStoryActivity -> com.spicymango.f
     android.widget.BaseAdapter getAdapter() -> a
     void onActivityResult(int,int,android.content.Intent) -> onActivityResult
     void onCreate(android.os.Bundle) -> onCreate
-com.spicymango.fanfictionreader.activity.SearchStoryActivity$StorySearchLoader -> com.spicymango.fanfictionreader.activity.p:
+com.spicymango.fanfictionreader.activity.SearchStoryActivity$StorySearchLoader -> com.spicymango.fanfictionreader.activity.r:
     android.net.Uri formatUri(int) -> a
     boolean load(org.jsoup.nodes.Document,java.util.List) -> a
     void resetFilter() -> a
@@ -8972,12 +8986,12 @@ com.spicymango.fanfictionreader.activity.StoryDisplayActivity -> com.spicymango.
     android.widget.Button access$10(com.spicymango.fanfictionreader.activity.StoryDisplayActivity) -> h
     int access$11(com.spicymango.fanfictionreader.activity.StoryDisplayActivity) -> i
     void access$12(com.spicymango.fanfictionreader.activity.StoryDisplayActivity,int) -> c
-com.spicymango.fanfictionreader.activity.StoryDisplayActivity$1 -> com.spicymango.fanfictionreader.activity.q:
+com.spicymango.fanfictionreader.activity.StoryDisplayActivity$1 -> com.spicymango.fanfictionreader.activity.s:
     com.spicymango.fanfictionreader.activity.StoryDisplayActivity this$0 -> a
     void onClick(android.content.DialogInterface,int) -> onClick
-com.spicymango.fanfictionreader.activity.StoryDisplayActivity$2 -> com.spicymango.fanfictionreader.activity.r:
+com.spicymango.fanfictionreader.activity.StoryDisplayActivity$2 -> com.spicymango.fanfictionreader.activity.t:
     com.spicymango.fanfictionreader.activity.StoryDisplayActivity this$0 -> a
-com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader -> com.spicymango.fanfictionreader.activity.s:
+com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader -> com.spicymango.fanfictionreader.activity.u:
     android.content.Context mAppContext -> b
     boolean mIsFinished -> c
     boolean mResetScrollBar -> d
@@ -8998,17 +9012,17 @@ com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader -> com
     void onPostExecute(java.lang.Object) -> onPostExecute
     java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
     com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryObject access$2(com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader) -> a
-com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader$1 -> com.spicymango.fanfictionreader.activity.t:
+com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader$1 -> com.spicymango.fanfictionreader.activity.v:
     com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader this$1 -> a
     com.spicymango.fanfictionreader.activity.StoryDisplayActivity val$t -> b
     void run() -> run
-com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader$customProgressDialog -> com.spicymango.fanfictionreader.activity.u:
+com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader$customProgressDialog -> com.spicymango.fanfictionreader.activity.w:
     java.lang.ref.WeakReference mActivity -> a
     void onCancel(android.content.DialogInterface) -> onCancel
     android.app.Dialog onCreateDialog(android.os.Bundle) -> onCreateDialog
     void onAttach(android.app.Activity) -> onAttach
     void onDetach() -> onDetach
-com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryObject -> com.spicymango.fanfictionreader.activity.v:
+com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryObject -> com.spicymango.fanfictionreader.activity.x:
     int currentPage -> a
     boolean inLibrary -> b
     android.text.Spanned storyText -> c
@@ -9042,7 +9056,7 @@ com.spicymango.fanfictionreader.activity.StoryMenuActivity -> com.spicymango.fan
     void onCreate(android.os.Bundle) -> onCreate
     void setTitle() -> d
     android.content.UriMatcher access$0() -> b
-com.spicymango.fanfictionreader.activity.StoryMenuActivity$StoryLoader -> com.spicymango.fanfictionreader.activity.w:
+com.spicymango.fanfictionreader.activity.StoryMenuActivity$StoryLoader -> com.spicymango.fanfictionreader.activity.y:
     int[] filter -> a
     java.util.ArrayList filterList -> d
     android.net.Uri mUri -> e
@@ -9073,6 +9087,7 @@ com.spicymango.fanfictionreader.filter.FilterMenu$1 -> com.spicymango.fanfiction
 com.spicymango.fanfictionreader.provider.DatabaseHelper -> com.spicymango.fanfictionreader.provider.a:
     void onCreate(android.database.sqlite.SQLiteDatabase) -> onCreate
     void onUpgrade(android.database.sqlite.SQLiteDatabase,int,int) -> onUpgrade
+    void onDowngrade(android.database.sqlite.SQLiteDatabase,int,int) -> onDowngrade
     com.spicymango.fanfictionreader.util.Story getStory(long) -> a
 com.spicymango.fanfictionreader.provider.StoryProvider -> com.spicymango.fanfictionreader.provider.StoryProvider:
     android.net.Uri CONTENT_URI -> a
@@ -9086,6 +9101,7 @@ com.spicymango.fanfictionreader.provider.StoryProvider -> com.spicymango.fanfict
     android.database.Cursor query(android.net.Uri,java.lang.String[],java.lang.String,java.lang.String[],java.lang.String) -> query
     int update(android.net.Uri,android.content.ContentValues,java.lang.String,java.lang.String[]) -> update
     int lastChapterRead(android.content.Context,long) -> a
+    int numberOfChapters(android.content.Context,long) -> b
 com.spicymango.fanfictionreader.util.BaseActivity -> com.spicymango.fanfictionreader.util.a:
     android.widget.BaseAdapter mAdapter -> a
     android.widget.Button mAddPageButton -> b
@@ -9153,7 +9169,9 @@ com.spicymango.fanfictionreader.util.Parser -> com.spicymango.fanfictionreader.u
     java.util.ArrayList Filter(org.jsoup.nodes.Document) -> a
     int Pages(org.jsoup.nodes.Document) -> b
     int getpageNumber(org.jsoup.nodes.Document) -> c
-    int getpageNumber(java.lang.String) -> a
+    int getpageNumber(java.lang.String) -> b
+    int parseInt(java.lang.String) -> a
+    java.lang.String withSuffix(int) -> a
 com.spicymango.fanfictionreader.util.SearchLoader -> com.spicymango.fanfictionreader.util.e:
     java.util.regex.Pattern pattern -> a
     int[] filter -> d
@@ -9177,9 +9195,9 @@ com.spicymango.fanfictionreader.util.Story -> com.spicymango.fanfictionreader.ut
     java.lang.String language -> h
     java.lang.String genre -> i
     int chapterLenght -> j
-    java.lang.String wordLenght -> k
-    java.lang.String favorites -> l
-    java.lang.String follows -> m
+    int wordLenght -> k
+    int favorites -> l
+    int follows -> m
     java.util.Date updated -> n
     java.util.Date published -> o
     java.util.regex.Pattern ATTRIBUTE_PATTERN -> p
@@ -9347,18 +9365,6 @@ org.jsoup.helper.HttpConnection$Request -> a.a.a.f:
     boolean ignoreContentType() -> i
     java.util.Collection data() -> j
     org.jsoup.parser.Parser parser() -> k
-    java.util.Map cookies() -> d
-    org.jsoup.Connection$Base method(org.jsoup.Connection$Method) -> a
-    org.jsoup.Connection$Method method() -> b
-    boolean hasCookie(java.lang.String) -> d
-    java.util.Map headers() -> c
-    org.jsoup.Connection$Base header(java.lang.String,java.lang.String) -> b
-    java.lang.String header(java.lang.String) -> a
-    org.jsoup.Connection$Base cookie(java.lang.String,java.lang.String) -> a
-    org.jsoup.Connection$Base url(java.net.URL) -> a
-    java.net.URL url() -> a
-    org.jsoup.Connection$Base removeHeader(java.lang.String) -> c
-    boolean hasHeader(java.lang.String) -> b
 org.jsoup.helper.HttpConnection$Response -> a.a.a.g:
     int statusCode -> e
     java.lang.String statusMessage -> f
@@ -9378,18 +9384,6 @@ org.jsoup.helper.HttpConnection$Response -> a.a.a.g:
     void writePost(java.util.Collection,java.io.OutputStream) -> a
     java.lang.String getRequestCookieString(org.jsoup.Connection$Request) -> c
     void serialiseRequestUrl(org.jsoup.Connection$Request) -> d
-    java.util.Map cookies() -> d
-    org.jsoup.Connection$Base method(org.jsoup.Connection$Method) -> a
-    org.jsoup.Connection$Method method() -> b
-    boolean hasCookie(java.lang.String) -> d
-    java.util.Map headers() -> c
-    org.jsoup.Connection$Base header(java.lang.String,java.lang.String) -> b
-    java.lang.String header(java.lang.String) -> a
-    org.jsoup.Connection$Base cookie(java.lang.String,java.lang.String) -> a
-    org.jsoup.Connection$Base url(java.net.URL) -> a
-    java.net.URL url() -> a
-    org.jsoup.Connection$Base removeHeader(java.lang.String) -> c
-    boolean hasHeader(java.lang.String) -> b
 org.jsoup.helper.StringUtil -> a.a.a.h:
     java.lang.String[] padding -> a
     java.lang.String join(java.util.Collection,java.lang.String) -> a

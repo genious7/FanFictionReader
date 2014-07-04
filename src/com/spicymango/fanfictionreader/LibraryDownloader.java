@@ -28,6 +28,7 @@ import android.util.SparseArray;
 import com.spicymango.fanfictionreader.activity.LibraryMenuActivity;
 import com.spicymango.fanfictionreader.provider.SqlConstants;
 import com.spicymango.fanfictionreader.provider.StoryProvider;
+import com.spicymango.fanfictionreader.util.Parser;
 import com.spicymango.fanfictionreader.util.Story;
 
 /**
@@ -57,7 +58,7 @@ public class LibraryDownloader extends IntentService{
 	private final static Pattern patternAttrib = Pattern.compile(""
 			+ "(?i)\\ARated: Fiction ([KTM]\\+?) - "//Rating
 			+ "([^-]+) - "//language
-			+ "(?:([^-]+) - )?"//Genre
+			+ "(?:([^ ]+) - )?"//Genre
 			+ "(?:(?!(?>Chapters))[^-]+ - )?"//characters (non capturing)
 			+ "(?:Chapters: (\\d++) - )?" //Chapters
 			+ "Words: ([\\d,]++) - " //Words
@@ -126,9 +127,9 @@ public class LibraryDownloader extends IntentService{
 					if (Settings.isIncrementalUpdatingEnabled(this)) {
 						
 						//If there are more chapters, assume that the story has not been revised
-						int lastChapterUpdated = StoryProvider.lastChapterRead(this, storyId);
-						if (lastChapterUpdated > 1 && totalPages > lastChapterUpdated) {
-							currentPage = lastChapterUpdated;
+						int chaptersOnLastUpdate = StoryProvider.numberOfChapters(this, storyId);
+						if (chaptersOnLastUpdate > 1 && totalPages > chaptersOnLastUpdate) {
+							currentPage = chaptersOnLastUpdate;
 							incrementalIndex = currentPage;
 							continue;
 						}
@@ -239,9 +240,9 @@ public class LibraryDownloader extends IntentService{
 				category, matcher.group(1), matcher.group(2),
 				matcher.group(3) == null ? "" : matcher.group(3),
 				matcher.group(4) == null ? 1 : Integer.valueOf(matcher.group(4)), 
-				matcher.group(5),
-				matcher.group(6) == null ? "" : matcher.group(6),
-				matcher.group(7) == null ? "" : matcher.group(7),
+				Parser.parseInt(matcher.group(5)),
+				matcher.group(6) == null ? 0 : Parser.parseInt(matcher.group(6)),
+				matcher.group(7) == null ? 0 : Parser.parseInt(matcher.group(7)),
 				updateDate, publishDate);
 	}
 
@@ -288,7 +289,8 @@ public class LibraryDownloader extends IntentService{
 			notBuilder.setContentText(getString(R.string.downloader_context, storyTitle, currentPage, TotalPage));	
 		}
 			
-		notBuilder.setSmallIcon(R.drawable.ic_action_download);
+		//notBuilder.setSmallIcon(R.drawable.ic_action_download);
+		notBuilder.setSmallIcon(android.R.drawable.stat_sys_download);
 		notBuilder.setAutoCancel(false);
 		
 		PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, new Intent(), PendingIntent.FLAG_UPDATE_CURRENT);
