@@ -29,19 +29,23 @@
 	<string name="filter_category">Category</string>
 	<string name="filter_type">Type</string>
 	
-	<string name="detail_rating">Rating:\u0020</string>
-	<string name="detail_languague">Languague:\u0020</string>
-	<string name="detail_genre">Genre:\u0020</string>
-	<string name="detail_chapters">Chapters:\u0020</string>
-	<string name="detail_words">Words:\u0020</string>
-	<string name="detail_favorites">Favorites:\u0020</string>
-	<string name="detail_follows">Follows:\u0020</string>
-	<string name="detail_updated">Updated:\u0020</string>
-	<string name="detail_published">Published:\u0020</string>
-	<string name="detail_category">Category:\u0020</string>
-	<string name="detail_author">Author:\u0020</string>
+	<string name="detail_rating">&lt;strong&gt;Rating:&lt;/strong&gt; %s</string>
+	<string name="detail_languague">&lt;strong&gt;Languague:&lt;/strong&gt; %s</string>
+	<string name="detail_genre">&lt;strong&gt;Genre:&lt;/strong&gt; %s</string>
+	<string name="detail_chapters">&lt;strong&gt;Chapters:&lt;/strong&gt; %s</string>
+	<string name="detail_words">&lt;strong&gt;Words:&lt;/strong&gt; %s</string>
+	<string name="detail_favorites">&lt;strong&gt;Favorites:&lt;/strong&gt; %s</string>
+	<string name="detail_follows">&lt;strong&gt;Follows:&lt;/strong&gt; %s</string>
+	<string name="detail_updated">&lt;strong&gt;Updated:&lt;/strong&gt; %s</string>
+	<string name="detail_published">&lt;strong&gt;Published:&lt;/strong&gt; %s</string>
+	<string name="detail_category">&lt;strong&gt;Category:&lt;/strong&gt; %s</string>
+	<string name="detail_author">&lt;strong&gt;Author:&lt;/strong&gt; %s</string>
 	
 	<!-- Settings -->
+	<string name="pref_appearance">Appearance</string>
+	<string name="pref_behavior">Behavior</string>
+	<string name="pref_updating">Updating</string>
+	
 	<string name="pref_text_size">Text size</string>
 	<string-array name="pref_text_size_entries">
 		<item >Small</item>
@@ -54,6 +58,12 @@
 	    <item >Auto</item>
 	    <item >Landscape</item>
 	    <item >Portrait</item>  
+	</string-array>
+	
+	<string name="pref_theme">Application theme</string>
+	<string-array name="pref_theme_entries">
+	    <item >Dark</item>
+	    <item >Light</item>
 	</string-array>
 	
 	<string name="pref_incremental_updating">Incremental Updating</string>
@@ -119,8 +129,8 @@
 	<string name="menu_library_sync_all">Sync All</string>
 	<string name="menu_library_sync_all_condensed">Sync</string>
 	<string name="menu_library_context_detail">Details</string>
+	<string name="menu_library_context_author">Browse Author</string>
 	<string name="menu_library_context_delete">Delete Story</string>
-	<string name="menu_library_follows">Follows: %,d</string>
 	<string name="menu_library_words">Words: %,d</string>
 	<string name="menu_library_chapters">Chapters: %d</string>
 	<string-array name="menu_library_sort_by">
@@ -145,6 +155,7 @@
 	</string-array>
 	<string name="menu_library_by_id">Add story by Id</string>
 	<string name="menu_library_by_id_condensed">Add by Id</string>
+	<string name="menu_library_filter_all">All</string>
 	
 	<!-- Download By Id -->
 	<string name="diag_by_id_title">Download by Id</string>
@@ -158,6 +169,8 @@
 	<string name="read_story_add_condensed">Add</string>
 	<string name="read_story_chapter">Chapter\u0020</string>
 	<string name="read_story_filter">@string/menu_story_filter_by</string>
+	<string name="read_story_go_to">Go to page</string>
+	<string name="read_story_go_to_condensed">Go to</string>
 	
 	<!-- About Page -->
 	<string name="about">This application was developed by Michael Chen. 

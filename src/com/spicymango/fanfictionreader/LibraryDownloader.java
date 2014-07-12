@@ -37,6 +37,12 @@ import com.spicymango.fanfictionreader.util.Story;
  */
 public class LibraryDownloader extends IntentService{
 	
+	private enum Result{
+		NO_CHANGE,
+		ERROR,
+		SUCCESS
+	}
+	
 	/**
 	 * Key for the last chapter read.
 	 */
@@ -94,7 +100,7 @@ public class LibraryDownloader extends IntentService{
 	 * Downloads the story if a newer version is available 
 	 * @return True if the operation succeeds, false otherwise
 	 */
-	private boolean download(){
+	private Result download(){
 		Story story = new Story();
 		
 		int totalPages = 1;
@@ -114,11 +120,11 @@ public class LibraryDownloader extends IntentService{
 					story = parseDetails(document);
 
 					//If an error occurs while parsing, quit
-					if (story == null) return false;
+					if (story == null) return Result.ERROR;
 					
 					//If no updates have been made to the story, skip
 					if (story.getUpdated().getTime() == lastUpdated()) { 
-						return true;
+						return Result.NO_CHANGE;
 					}
 					
 					totalPages = story.getChapterLenght();
@@ -141,7 +147,7 @@ public class LibraryDownloader extends IntentService{
 				array.append(currentPage - 1, span);
 			}
 		} catch (IOException e) {
-			return false;
+			return Result.ERROR;
 		}
 		for (int currentPage = incrementalIndex; currentPage < totalPages; currentPage++) {
 			try {
@@ -158,7 +164,7 @@ public class LibraryDownloader extends IntentService{
 		ContentResolver resolver = this.getContentResolver();
 		resolver.insert(StoryProvider.CONTENT_URI, story.toContentValues(lastPage));
 
-		return true;
+		return Result.SUCCESS;
 	}
 	
 	
@@ -258,11 +264,17 @@ public class LibraryDownloader extends IntentService{
 
 		showNotification("", 0 , 0);
 
-		if (download()){
+		switch (download()) {
+		case SUCCESS:
 			storiesDownloaded++;
 			showCompletetionNotification();
-		}else{
+			break;
+		case ERROR:
 			showErrorNotification();
+			break;
+		case NO_CHANGE:
+			removeNoification();
+			break;
 		}
 	}
 	
@@ -311,6 +323,13 @@ public class LibraryDownloader extends IntentService{
 		
 		NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		manager.notify(NOTIFICATION_ID, notBuilder.build());
+	}
+	
+	private void removeNoification(){
+		if (storiesDownloaded == 0) {
+			NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+			manager.cancel(NOTIFICATION_ID);
+		}
 	}
 	
 	private void showCompletetionNotification(){

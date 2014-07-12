@@ -15,31 +15,12 @@
         android:paddingTop="@dimen/activity_vertical_margin" >
 
         <TextView
-            android:id="@+id/detail_rating"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/detail_rating_label"
-            android:layout_alignBottom="@+id/detail_rating_label"
-            android:layout_toRightOf="@+id/detail_rating_label"
-            android:text="" />
-
-        <TextView
             android:id="@+id/detail_languague_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/detail_rating_label"
-            android:text="@string/detail_languague"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/detail_languague"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/detail_languague_label"
-            android:layout_alignBottom="@+id/detail_languague_label"
-            android:layout_toRightOf="@+id/detail_languague_label"
-            android:text="" />
+            android:text="@string/detail_languague" />
 
         <TextView
             android:id="@+id/detail_genre_label"
@@ -47,16 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/detail_languague_label"
-            android:text="@string/detail_genre"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/detail_genre"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/detail_languague_label"
-            android:layout_toRightOf="@+id/detail_genre_label"
-            android:text="" />
+            android:text="@string/detail_genre"/>
 
         <TextView
             android:id="@+id/detail_chapters_label"
@@ -64,17 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/detail_genre_label"
-            android:text="@string/detail_chapters"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/detail_chapters"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/detail_chapters_label"
-            android:layout_alignBottom="@+id/detail_chapters_label"
-            android:layout_toRightOf="@+id/detail_chapters_label"
-            android:text="" />
+            android:text="@string/detail_chapters"/>
 
         <TextView
             android:id="@+id/detail_words_label"
@@ -82,17 +44,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/detail_chapters_label"
-            android:text="@string/detail_words"
-            android:textStyle="bold" />
+            android:text="@string/detail_words"/>
 
-        <TextView
-            android:id="@+id/detail_words"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/detail_words_label"
-            android:layout_alignBottom="@+id/detail_words_label"
-            android:layout_toRightOf="@+id/detail_words_label"
-            android:text="" />
 
         <TextView
             android:id="@+id/detail_favorites_label"
@@ -100,17 +53,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/detail_words_label"
-            android:text="@string/detail_favorites"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/detail_favorites"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/detail_favorites_label"
-            android:layout_alignBottom="@+id/detail_favorites_label"
-            android:layout_toRightOf="@+id/detail_favorites_label"
-            android:text="" />
+            android:text="@string/detail_favorites"/>
 
         <TextView
             android:id="@+id/detail_follows_label"
@@ -118,17 +61,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/detail_favorites_label"
-            android:text="@string/detail_follows"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/detail_follows"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/detail_follows_label"
-            android:layout_alignBottom="@+id/detail_follows_label"
-            android:layout_toRightOf="@+id/detail_follows_label"
-            android:text="" />
+            android:text="@string/detail_follows"/>
 
         <TextView
             android:id="@+id/detail_updated_label"
@@ -136,17 +69,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/detail_follows_label"
-            android:text="@string/detail_updated"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/detail_updated"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/detail_updated_label"
-            android:layout_alignBottom="@+id/detail_updated_label"
-            android:layout_toRightOf="@+id/detail_updated_label"
-            android:text="" />
+            android:text="@string/detail_updated"/>
 
         <TextView
             android:id="@+id/detail_published_label"
@@ -154,17 +77,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/detail_updated_label"
-            android:text="@string/detail_published"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/detail_published"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/detail_published_label"
-            android:layout_alignBottom="@+id/detail_published_label"
-            android:layout_toRightOf="@+id/detail_published_label"
-            android:text="" />
+            android:text="@string/detail_published"/>
 
         <TextView
             android:id="@+id/detail_rating_label"
@@ -172,46 +85,28 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/detail_category_label"
-            android:text="@string/detail_rating"
-            android:textStyle="bold" />
+            android:text="@string/detail_rating" />
 
         <TextView
             android:id="@+id/detail_author_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:text="@string/detail_author"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/detail_author"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/detail_category_label"
-            android:layout_toRightOf="@+id/detail_author_label"
-            android:text="" />
+            android:text="@string/detail_author"/>
 
         <TextView
             android:id="@+id/detail_category_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/detail_author_label"
-            android:text="@string/detail_category"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/detail_category"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/detail_rating"
-            android:layout_toRightOf="@+id/detail_category_label" />
+            android:text="@string/detail_category"/>
 
         <Button
             android:id="@+id/btn_author"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignLeft="@+id/detail_published_label"
-            android:layout_below="@+id/detail_published"
+            android:layout_below="@+id/detail_published_label"
             android:text="@string/menu_navigation_browse_by_author" />
 
     </RelativeLayout>

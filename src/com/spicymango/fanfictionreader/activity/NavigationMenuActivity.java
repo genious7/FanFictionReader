@@ -321,10 +321,10 @@ public class NavigationMenuActivity extends ActionBarActivity implements LoaderC
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		Settings.setOrientationAndTheme(this);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list_view);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		Settings.setOrientation(this);
 		
 		if (savedInstanceState != null) {
 			mList = savedInstanceState.getParcelableArrayList(STATE_LIST);
@@ -334,7 +334,7 @@ public class NavigationMenuActivity extends ActionBarActivity implements LoaderC
 			mList = new ArrayList<MenuObject>();
 		}
 		
-		View footer = getLayoutInflater().inflate(R.layout.progress_bar, null);
+		View footer = getLayoutInflater().inflate(R.layout.footer_list, null);
 		mAdapter = new NavigationMenuAdapter(this, R.layout.category_menu_list_item, mList);
 		mUri = getIntent().getData();
 		setTitle();

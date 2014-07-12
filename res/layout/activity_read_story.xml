@@ -16,7 +16,46 @@
             android:layout_height="wrap_content"
             android:text="" />
 
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingBottom="@dimen/top_bottom_padding"
+            android:paddingTop="@dimen/top_bottom_padding" >
+        </ProgressBar>
+
         <LinearLayout
+            android:id="@+id/row_no_connection"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/main_menu_icon_size"
+            android:gravity="center_horizontal"
+            android:paddingBottom="@dimen/top_bottom_padding"
+            android:paddingLeft="@dimen/main_menu_icon_padding"
+            android:paddingTop="@dimen/top_bottom_padding" >
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/dimension_typ"
+                android:text="@string/menu_navigation_no_connection"
+                android:textAppearance="?android:attr/textAppearance"
+                android:textColorHint="?android:attr/textColorPrimary"
+                android:textSize="@dimen/menu_title_text_size" />
+
+            <Button
+                android:id="@+id/retry_internet_connection"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/dimension_typ"
+                android:onClick="onClick"
+                android:text="@string/menu_navigation_retry_connection" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/buttonBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal" >
@@ -25,14 +64,14 @@
                 android:id="@+id/read_story_first"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="changePage"
+                android:onClick="onClick"
                 android:text="@string/read_story_first" />
 
             <Button
                 android:id="@+id/read_story_prev"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="changePage"
+                android:onClick="onClick"
                 android:text="@string/read_story_prev" />
 
             <Button
@@ -45,19 +84,16 @@
                 android:id="@+id/read_story_next"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="changePage"
+                android:onClick="onClick"
                 android:text="@string/read_story_next" />
 
             <Button
                 android:id="@+id/read_story_last"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="changePage"
+                android:onClick="onClick"
                 android:text="@string/read_story_last" />
-
         </LinearLayout>
-
     </LinearLayout>
-    
 
 </ScrollView>

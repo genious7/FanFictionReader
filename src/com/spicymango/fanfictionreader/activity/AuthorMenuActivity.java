@@ -10,8 +10,8 @@ import java.util.regex.Pattern;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-import com.spicymango.fanfictionreader.DetailDisplay;
 import com.spicymango.fanfictionreader.R;
+import com.spicymango.fanfictionreader.dialogs.DetailDialog;
 import com.spicymango.fanfictionreader.util.BaseActivity;
 import com.spicymango.fanfictionreader.util.BaseLoader;
 import com.spicymango.fanfictionreader.util.Parser;
@@ -58,10 +58,7 @@ public class AuthorMenuActivity extends BaseActivity<Story>{
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, View view,
 			int position, long id) {
-		Intent i= new Intent(this, DetailDisplay.class);
-		i.putExtra(DetailDisplay.MAP, mList.get(position));
-		i.putExtra(DetailDisplay.EXTRA_AUTHOR, true);
-		startActivity(i);
+		DetailDialog.show(this, mList.get(position));
 		return true;
 	}
 

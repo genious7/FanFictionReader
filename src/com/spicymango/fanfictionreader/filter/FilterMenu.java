@@ -45,7 +45,7 @@ public class FilterMenu extends Activity {
 	 * @param value The value whose key is desired
 	 * @return The key
 	 */
-	private static <T, E> T getKeyByValue(Map<T, E> map, E value) {
+	public static <T, E> T getKeyByValue(Map<T, E> map, E value) {
 	    for (Entry<T, E> entry : map.entrySet()) {
 	        if (value.equals(entry.getValue())) {
 	            return entry.getKey();
@@ -116,7 +116,6 @@ public class FilterMenu extends Activity {
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.activity_filter_view);
 		setResult(RESULT_CANCELED);

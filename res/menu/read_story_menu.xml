@@ -8,5 +8,9 @@
         android:title="@string/read_story_add"
         android:titleCondensed="@string/read_story_add_condensed"
         spicymango:showAsAction="ifRoom"/>
-
+    <item
+        android:id="@+id/read_story_go_to"
+        android:title="@string/read_story_go_to"
+        android:titleCondensed="@string/read_story_go_to_condensed"
+        spicymango:showAsAction="never"/>
 </menu>

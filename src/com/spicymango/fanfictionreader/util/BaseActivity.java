@@ -152,10 +152,10 @@ public abstract class BaseActivity<T extends Parcelable> extends
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		Settings.setOrientationAndTheme(this);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list_view);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		Settings.setOrientation(this);
 
 		Uri.Builder builder = new Uri.Builder();
 		builder.scheme(getString(R.string.fanfiction_scheme))
@@ -166,7 +166,7 @@ public abstract class BaseActivity<T extends Parcelable> extends
 		mAdapter = getAdapter();
 		
 		ListView listView = (ListView) findViewById(R.id.list);
-		View footer = getLayoutInflater().inflate(R.layout.progress_bar, null);
+		View footer = getLayoutInflater().inflate(R.layout.footer_list, null);
 		listView.addFooterView(footer, null, false);
 		listView.setOnItemClickListener(this);
 		listView.setOnItemLongClickListener(this);

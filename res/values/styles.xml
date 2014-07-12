@@ -1,16 +1,25 @@
 <resources>
 
-    <style name="AppBaseTheme" parent="android:Theme.Black">
-    </style>
-    
     <style name="AppActionBar" parent="@style/Theme.AppCompat">
+        <item name="ic_action_about">@drawable/ic_action_about_dark</item>
+        <item name="ic_action_group">@drawable/ic_action_group_dark</item>
+        <item name="ic_action_search">@drawable/ic_action_search_dark</item>
+        <item name="ic_action_settings">@drawable/ic_action_settings_dark</item>
+        <item name="ic_action_view_as_list">@drawable/ic_action_view_as_list_dark</item>
+        <item name="ic_folder_open">@drawable/ic_folder_open_dark</item>
+        <item name="ic_storage">@drawable/ic_storage_dark</item>
     </style>
 
-    <style name="AppTheme" parent="AppBaseTheme">
+    <style name="AppActionBarLight" parent="@style/Theme.AppCompat.Light.DarkActionBar">
+        <item name="ic_action_about">@drawable/ic_action_about_light</item>
+        <item name="ic_action_group">@drawable/ic_action_group_light</item>
+        <item name="ic_action_search">@drawable/ic_action_search_light</item>
+        <item name="ic_action_settings">@drawable/ic_action_settings_light</item>
+        <item name="ic_action_view_as_list">@drawable/ic_action_view_as_list_light</item>
+        <item name="ic_folder_open">@drawable/ic_folder_open_light</item>
+        <item name="ic_storage">@drawable/ic_storage_light</item>
     </style>
-    
-    <style name="Dialog" parent="android:Theme.Dialog">
-        
-    </style>
+
+    <style name="Dialog" parent="android:Theme.Dialog"></style>
 
 </resources>

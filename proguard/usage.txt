@@ -1,9 +1,6 @@
 com.spicymango.fanfictionreader.BrowseMenu:
     protected static final java.lang.String COMMUNITIES
 com.spicymango.fanfictionreader.BuildConfig
-com.spicymango.fanfictionreader.DetailDisplay:
-    public static final java.lang.String MAP
-    public static final java.lang.String EXTRA_AUTHOR
 com.spicymango.fanfictionreader.LibraryDownloader:
     public static final java.lang.String EXTRA_LAST_PAGE
     private static final java.lang.String EXTRA_UPDATE_NOT
@@ -28,10 +25,7 @@ com.spicymango.fanfictionreader.R$styleable
 com.spicymango.fanfictionreader.R$xml
 com.spicymango.fanfictionreader.activity.AuthorMenuActivity$AuthorLoader:
     private static final java.lang.String EXTRA_AUTHOR
-com.spicymango.fanfictionreader.activity.CommunityMenuActivity$communityLoader:
-    private static final java.lang.String STATE_DATA
-    private static final java.lang.String STATE_TOTAL
-    private static final java.lang.String STATE_CURRENT
+com.spicymango.fanfictionreader.activity.CommunityMenuActivity$CommunityLoader:
     private static final java.lang.String STATE_SORT_BY
 com.spicymango.fanfictionreader.activity.LibraryMenuActivity:
     private static final int LOADER_LIBRARY
@@ -45,9 +39,9 @@ com.spicymango.fanfictionreader.activity.NavigationMenuActivity:
     private static final java.lang.String STATE_LIST
     private static final java.lang.String STATE_SORT
     private static final int SUB_CATEGORY_MENU
-com.spicymango.fanfictionreader.activity.StoryDisplayActivity:
-    private static final java.lang.String STATE_CURRENT_PAGE
-    private static final java.lang.String STATE_DOWNLOAD
+com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader:
+    private static final java.lang.String EXTRA_DATA
+    private static final java.lang.String EXTRA_UPDATED
 com.spicymango.fanfictionreader.activity.StoryMenuActivity:
     private static final java.lang.String FANFIC_AUTHORITY
     private static final int URI_COMMUNITY_MENU
@@ -57,6 +51,9 @@ com.spicymango.fanfictionreader.activity.StoryMenuActivity:
 com.spicymango.fanfictionreader.activity.StoryMenuActivity$StoryLoader:
     private static final java.lang.String STATE_FILTER
     private static final java.lang.String STATE_FILTER_LIST
+com.spicymango.fanfictionreader.dialogs.DetailDialog:
+    public static final java.lang.String EXTRA_STORY
+    public static final java.lang.String EXTRA_AUTHOR
 com.spicymango.fanfictionreader.filter.FilterDialog:
     public static final int RESULT_CODE
     public static final java.lang.String RESULT
@@ -66,13 +63,12 @@ com.spicymango.fanfictionreader.filter.FilterMenu:
     protected static final java.lang.String EXTRA_FILTER
     protected static final java.lang.String EXTRA_KEYSET
     protected static final java.lang.String EXTRA_VALUES
-com.spicymango.fanfictionreader.fragments.StoryDisplayFragment
-com.spicymango.fanfictionreader.fragments.StoryDisplayFragment$StoryLoader
 com.spicymango.fanfictionreader.provider.DatabaseHelper:
     private static final int DATABASE_VERSION
     private static final java.lang.String DATABASE_NAME
     protected static final java.lang.String TABLE_LIBRARY
     96:110:public int getLastChapterRead(long)
+    119:136:public com.spicymango.fanfictionreader.util.Story getStory(long)
     149:167:public java.util.List getAllStories()
     175:181:public int getStoryCount()
 com.spicymango.fanfictionreader.provider.SqlConstants

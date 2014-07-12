@@ -3,8 +3,9 @@ package com.spicymango.fanfictionreader.activity;
 import java.util.List;
 
 import org.jsoup.nodes.Document;
-import com.spicymango.fanfictionreader.DetailDisplay;
+
 import com.spicymango.fanfictionreader.R;
+import com.spicymango.fanfictionreader.dialogs.DetailDialog;
 import com.spicymango.fanfictionreader.filter.FilterDialog;
 import com.spicymango.fanfictionreader.util.BaseActivity;
 import com.spicymango.fanfictionreader.util.Parser;
@@ -74,9 +75,7 @@ public class SearchStoryActivity extends BaseActivity<Story> implements OnQueryT
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, View view,
 			int position, long id) {
-		Intent i = new Intent(this, DetailDisplay.class);
-		i.putExtra(DetailDisplay.MAP, mList.get(position));
-		startActivity(i);
+		DetailDialog.show(this, mList.get(position));
 		return true;
 	}
 	

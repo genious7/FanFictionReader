@@ -14,6 +14,12 @@
         <item >V</item>
     </string-array>
     <string name="pref_orientation_default">A</string>
+    
+    <string-array name="pref_theme_values">
+    	<item >D</item>
+    	<item >L</item>    
+    </string-array> 
+    <string name="pref_theme_default">D</string>
 
     <!-- Browse Meny Activity -->
     <string-array name="category_button_normal">

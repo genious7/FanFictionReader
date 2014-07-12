@@ -4,7 +4,6 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,22 +11,21 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.database.ContentObserver;
+import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.text.Spanned;
@@ -41,89 +39,58 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.TextView.BufferType;
 import android.widget.Toast;
 
 import com.spicymango.fanfictionreader.LibraryDownloader;
 import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.Settings;
-import com.spicymango.fanfictionreader.provider.DatabaseHelper;
 import com.spicymango.fanfictionreader.provider.SqlConstants;
 import com.spicymango.fanfictionreader.provider.StoryProvider;
-import com.spicymango.fanfictionreader.util.Story;
 
-/**
- * 
- * @author Michael Chen
- */
-public class StoryDisplayActivity extends ActionBarActivity implements OnClickListener { // NO_UCD (use default)
-	private final static String STATE_CURRENT_PAGE = "com.spicymango.fanfictionreader.activity.StoryDisplayActivity.currentPage";
-	private final static String STATE_DOWNLOAD = "com.spicymango.fanfictionrader.activity.StoryDisplayActivity.download";
-	
-	private Button btnFirst;
-	private Button btnLast;
-	private Button btnNext;
-	
-	private Button btnPageSelect;
-	
-	private Button btnPrev;
-	/**The currently loaded page*/
-	private int mCurrentPage = 1;
-	private boolean mInLibrary = false;
-	/**The AsyncTask used to load the story*/
-	private StoryLoader mLoader;
-	/**The id of the current story*/
-	private long mStoryId;
-	private int mTotalPages;
-	private ScrollView scrollview;
-	private TextView textViewStory;
-	private boolean downloadClicked = false;
-	
+public class StoryDisplayActivity extends ActionBarActivity implements LoaderCallbacks<StoryObject>, OnClickListener{
+	private View btnFirst, btnPrev, btnNext, btnLast, progressBar, recconectBar, buttonBar;
 	/**
-	 * Handles the Buttons that change pages.
-	 * @param v The view identifying the button clicked.
+	 * The buttons at to change the current page
 	 */
-	public void changePage(View v) {
-		switch (v.getId()) {
-		case R.id.read_story_first:	
-			refreshList(1);
-			break;
-		case R.id.read_story_prev:
-			refreshList(mCurrentPage - 1);
-			break;
-		case R.id.read_story_next:
-			refreshList(mCurrentPage + 1);
-			break;
-		case R.id.read_story_last:
-			refreshList(mTotalPages);
-			break;
-		}
-	}
+	private TextView btnPage;
+	private StoryObject data;
+	private int mCurrentPage;
+	private StoryLoader mLoader;
+	private long mStoryId;
+	private ScrollView scroll;
+	private int totalPages;
+	private TextView txtStory;
+	boolean fromBrowser = false;
 	
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.read_story_page_counter:
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			String[] Chapters = new String[mTotalPages];
-			for (int i = 0; i < mTotalPages; i++) {
-				Chapters[i] = getResources().getString(R.string.read_story_chapter) + (i+1);
-			}
-			builder.setItems(Chapters, new DialogInterface.OnClickListener() {
-		           @Override
-				public void onClick(DialogInterface dialog, int which) {
-			           if (mCurrentPage != which + 1) {
-						 refreshList(which + 1);
-			           }
-			       }
-			});
-			builder.setInverseBackgroundForced(true);
-			builder.create();
-			builder.show();
+		case R.id.read_story_first:	
+			load(1);
 			break;
-		}
+		case R.id.read_story_prev:
+			load(mCurrentPage - 1);
+			break;
+		case R.id.read_story_next:
+			load(mCurrentPage + 1);
+			break;
+		case R.id.read_story_last:
+			load(totalPages);
+			break;
+		case R.id.read_story_page_counter:
+			chapterPicker();
+			break;
+		case R.id.retry_internet_connection:
+			mLoader.startLoading();
+			break;
+		}	
 	}
-
+	
+	@Override
+	public Loader<StoryObject> onCreateLoader(int id, Bundle args) {
+		return new StoryLoader(this, args, mStoryId);
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu){
 		MenuInflater inflater = getMenuInflater();
@@ -131,15 +98,63 @@ public class StoryDisplayActivity extends ActionBarActivity implements OnClickLi
 		return super.onCreateOptionsMenu(menu);
 	}
 	
+	@Override
+	public void onLoaderReset(Loader<StoryObject> loader) {
+	}
+
+	@Override
+	public void onLoadFinished(Loader<StoryObject> loader, StoryObject data) {
+		
+		mLoader = (StoryLoader) loader;
+		
+		this.data = data;
+		totalPages = data.getTotalPages();
+		mCurrentPage = data.getCurrentPage();
+		getSupportActionBar().setSubtitle(data.getStoryTitle());
+		txtStory.setText(data.getStoryText());	
+		
+		if (mLoader.isRunning()) {
+			recconectBar.setVisibility(View.GONE);
+			progressBar.setVisibility(View.VISIBLE);
+			buttonBar.setVisibility(View.GONE);
+		}else if(mLoader.connectionError){
+			recconectBar.setVisibility(View.VISIBLE);
+			progressBar.setVisibility(View.GONE);
+			buttonBar.setVisibility(View.GONE);
+		}else{
+			recconectBar.setVisibility(View.GONE);
+			progressBar.setVisibility(View.GONE);
+			buttonBar.setVisibility(View.VISIBLE);
+			updatePageButtons(mCurrentPage, totalPages);
+		}
+		
+		if (mLoader.scrollUp) {
+			scroll.post(new Runnable() {
+				@Override
+				public void run() {
+					scroll.scrollTo(0, 0);
+				}
+			});
+			mLoader.scrollUp = false;
+		}
+		
+		if (fromBrowser && data.isInLibrary() && !mLoader.hasUpdated) {
+			mLoader.hasUpdated = true;
+			LibraryDownloader.download(this, mStoryId, mCurrentPage);
+		}
+		supportInvalidateOptionsMenu();
+	}
 	
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
-	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.read_story_menu_add:
+			mLoader.hasUpdated = true;
 			LibraryDownloader.download(this, mStoryId, mCurrentPage);  
+			supportInvalidateOptionsMenu();
+			return true;
+		case R.id.read_story_go_to:
+			chapterPicker();
 			return true;
 		case android.R.id.home:
 			onBackPressed();
@@ -148,43 +163,51 @@ public class StoryDisplayActivity extends ActionBarActivity implements OnClickLi
 			return super.onOptionsItemSelected(item);
 		}
 	}
-
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onPrepareOptionsMenu(android.view.Menu)
-	 */
+	
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		if (menu != null) {
-			MenuItem item = menu.findItem(R.id.read_story_menu_add);
-			if (mInLibrary) {
-				item.setIcon(R.drawable.ic_action_refresh);
-				item.setTitle(R.string.read_story_update);
-				item.setTitleCondensed(getString(R.string.read_story_update_condensed));
-			} else {
-				item.setIcon(R.drawable.ic_action_download);
-				item.setTitle(R.string.read_story_add);
-				item.setTitleCondensed(getString(R.string.read_story_add_condensed));
-			}
-			
-			if (downloadClicked) {
-				item.setEnabled(false);
-				item.getIcon().setAlpha(64);	
-			}
+		MenuItem item = menu.findItem(R.id.read_story_menu_add);
+		if ( mLoader.data != null && mLoader.data.isInLibrary()) {
+			item.setIcon(R.drawable.ic_action_refresh);
+			item.setTitle(R.string.read_story_update);
+			item.setTitleCondensed(getString(R.string.read_story_update_condensed));
+		} else {
+			item.setIcon(R.drawable.ic_action_download);
+			item.setTitle(R.string.read_story_add);
+			item.setTitleCondensed(getString(R.string.read_story_add_condensed));
 		}
-		if (mLoader != null && mLoader.isFinished() && mLoader.mResult.getStoryTitle() != null) {
-			getSupportActionBar().setSubtitle(mLoader.mResult.getStoryTitle());
+
+		if (mLoader.hasUpdated) {
+			item.setEnabled(false);
+			item.getIcon().setAlpha(64);
 		}
 		return super.onPrepareOptionsMenu(menu);
 	}
 	
-	@Override
-	public Object onRetainCustomNonConfigurationInstance() {
-		return mLoader;
+	private void chapterPicker() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		String[] Chapters = new String[totalPages];
+		for (int i = 0; i < totalPages; i++) {
+			Chapters[i] = getResources().getString(R.string.read_story_chapter)
+					+ (i + 1);
+		}
+		builder.setItems(Chapters, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				if (mCurrentPage != which + 1) {
+					load(which + 1);
+				}
+			}
+		});
+		builder.setInverseBackgroundForced(true);
+		builder.create();
+		builder.show();
 	}
 	
-	private void toast(String text){
-		Toast toast = Toast.makeText(this, text, Toast.LENGTH_SHORT);
-		toast.show();
+	private void load(int page){
+		if (mLoader != null) {
+			mLoader.loadPage(page);
+		}
 	}
 	
 	/**
@@ -199,7 +222,8 @@ public class StoryDisplayActivity extends ActionBarActivity implements OnClickLi
 			Matcher matcher = filePattern.matcher(uri.toString());
 			if (matcher.find()) {
 				mStoryId = Integer.valueOf(matcher.group(1));
-				mCurrentPage = Integer.valueOf(matcher.group(2));				
+				mCurrentPage = Integer.valueOf(matcher.group(2));		
+				fromBrowser = true;
 				return true;
 			}
 			
@@ -212,59 +236,71 @@ public class StoryDisplayActivity extends ActionBarActivity implements OnClickLi
 				return true;
 			}
 		}
-		toast(getString(R.string.dialog_unspecified));
+		Toast toast = Toast.makeText(this, R.string.dialog_unspecified, Toast.LENGTH_SHORT);
+		toast.show();
 		return false;
 	}
 	
-	private void refreshList(int pageNumber) {
-		StoryObject tmp = mLoader.mResult;
-		mLoader = new StoryLoader(this, tmp);
-		mLoader.execute(mStoryId, (long) pageNumber);
+	private void updatePageButtons(int currentPage, int totalPages){
+		if (currentPage == totalPages) {
+			btnNext.setEnabled(false);
+			btnLast.setEnabled(false);
+		} else {
+			btnNext.setEnabled(true);
+			btnLast.setEnabled(true);
+		}
+		if (currentPage == 1) {
+			btnPrev.setEnabled(false);
+			btnFirst.setEnabled(false);
+		} else {
+			btnPrev.setEnabled(true);
+			btnFirst.setEnabled(true);
+		}
+		if (totalPages == 1) {
+			btnPage.setEnabled(false);
+		}
+		btnPage.setText(currentPage + "/" + totalPages);
 	}
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		Settings.setOrientationAndTheme(this);
 		super.onCreate(savedInstanceState);//Super() constructor first
 		setContentView(R.layout.activity_read_story);//Set the layout
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		Settings.setOrientation(this);
 		
-		textViewStory = (TextView)findViewById(R.id.read_story_text);
-		textViewStory.setTextSize(TypedValue.COMPLEX_UNIT_SP, Settings.fontSize(this));
-		btnFirst = (Button)findViewById(R.id.read_story_first);
-		btnPrev = (Button)findViewById(R.id.read_story_prev);
-		btnNext = (Button)findViewById(R.id.read_story_next);
-		btnLast = (Button)findViewById(R.id.read_story_last);
-		btnPageSelect = (Button)findViewById(R.id.read_story_page_counter);
-		scrollview = (ScrollView)findViewById(R.id.read_story_scrollview);
-		btnPageSelect.setOnClickListener(this);
+		txtStory = (TextView)findViewById(R.id.read_story_text);
+		txtStory.setTextSize(TypedValue.COMPLEX_UNIT_SP, Settings.fontSize(this));
+		btnFirst = findViewById(R.id.read_story_first);
+		btnPrev = findViewById(R.id.read_story_prev);
+		btnNext = findViewById(R.id.read_story_next);
+		btnLast = findViewById(R.id.read_story_last);
+		btnPage = (Button)findViewById(R.id.read_story_page_counter);
+		scroll = (ScrollView)findViewById(R.id.read_story_scrollview);
+		progressBar = findViewById(R.id.progress_bar);
+		recconectBar = findViewById(R.id.row_no_connection);
+		buttonBar = findViewById(R.id.buttonBar);
+		btnPage.setOnClickListener(this);
 		
+		//Creates a new activity, and sets the initial page and story Id
 		if (!parseUri(getIntent().getData())) {
 			finish();
 			return;
 		}
 		
-		if (savedInstanceState != null) {
-			mCurrentPage = savedInstanceState.getInt(STATE_CURRENT_PAGE);
-			downloadClicked = savedInstanceState.getBoolean(STATE_DOWNLOAD);
-		}
-		
-		mLoader = (StoryLoader)getLastCustomNonConfigurationInstance();
-		if (mLoader == null) {
-			mLoader = new StoryLoader(this);
-			mLoader.execute(mStoryId,(long)mCurrentPage);
-		} else{
-			mLoader.mActivity = new WeakReference<StoryDisplayActivity>(this);
-			if (mLoader.isFinished()) {
-				mLoader.updateUI();
-			}	
-		}
-		
+		getSupportLoaderManager().initLoader(0, savedInstanceState, this);
+
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		mLoader.onSaveInstanceState(outState);
+		super.onSaveInstanceState(outState);
 	}
 	
 	@Override
 	protected void onStop() {
-		if (mInLibrary) {
+		if (data != null && data.isInLibrary()) {
 			ContentResolver resolver = getContentResolver();
 			AsyncQueryHandler handler = new AsyncQueryHandler(resolver){};
 			ContentValues values = new ContentValues(1);
@@ -276,119 +312,83 @@ public class StoryDisplayActivity extends ActionBarActivity implements OnClickLi
 		super.onStop();
 	}
 	
-	@Override
-	protected void onDestroy() {
-		mLoader.mActivity.clear();
-		super.onDestroy();
-	}
-	
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		outState.putInt(STATE_CURRENT_PAGE, mCurrentPage);
-		outState.putBoolean(STATE_CURRENT_PAGE, downloadClicked);
-		super.onSaveInstanceState(outState);
-	}
-
-	/**
-	 * Loads the story.
-	 * @author Michael Chen
-	 */
-	private static class StoryLoader extends
-			AsyncTask<Long, Void, StoryObject> {
-		private Context mAppContext;
-		private boolean mIsFinished;
-		private boolean mResetScrollBar = false;
-		private StoryObject mResult;
-		WeakReference<StoryDisplayActivity> mActivity;
-
-		/**
-		 * Creates a new story loader AsyncTask
-		 * 
-		 * @param activity
-		 *            The current instance of the activity
-		 */
-		public StoryLoader(StoryDisplayActivity activity) {
-			this(activity, null);
-		}
-
-		/**
-		 * Creates a new story recycling the previous results
-		 * 
-		 * @param activity
-		 *            The current activity
-		 * @param object
-		 *            The object from the previous instance
-		 */
-		public StoryLoader(StoryDisplayActivity activity, StoryObject object) {
-			super();
-			mAppContext = activity.getApplicationContext();
-			mActivity = new WeakReference<StoryDisplayActivity>(activity);
-			mResult = object;
-
-		}
-
-		/**
-		 * Determines whether the asyncTask has completed successfully.
-		 * 
-		 * @return True if the asyncTask is finished
-		 */
-		public boolean isFinished() {
-			return mIsFinished;
-		}
-
-		/**
-		 * Updates the UI and the fields
-		 */
-		public void updateUI() {
-			if (mActivity.get() != null) {
-				final StoryDisplayActivity t = mActivity.get();
-				if (mResult == null) {
-					t.finish();
-					return;
-				}
-				int currentPage = mResult.getCurrentPage();
-
-				t.mCurrentPage = currentPage;
-
-				t.mTotalPages = mResult.getTotalPages();
-				t.mInLibrary = mResult.isInLibrary();
-				t.textViewStory.setText(mResult.getStoryText());
-				t.btnPageSelect.setText(
-						currentPage + "/" + mResult.getTotalPages(),
-						BufferType.SPANNABLE);
-
-				if (mResetScrollBar) {
-					t.scrollview.post(new Runnable() {
-						@Override
-						public void run() {
-							t.scrollview.scrollTo(0, 0);
-						}
-					});
-					mResetScrollBar = false;
-				}
-
-				if (mResult.getTotalPages() == currentPage) {
-					t.btnNext.setEnabled(false);
-					t.btnLast.setEnabled(false);
-				} else {
-					t.btnNext.setEnabled(true);
-					t.btnLast.setEnabled(true);
-				}
-				if (currentPage == 1) {
-					t.btnPrev.setEnabled(false);
-					t.btnFirst.setEnabled(false);
-				} else {
-					t.btnPrev.setEnabled(true);
-					t.btnFirst.setEnabled(true);
-				}
-				
-				t.supportInvalidateOptionsMenu();
-
-				hideDialog(t);
+	private static class StoryLoader extends AsyncTaskLoader<StoryObject>{
+		private static final String EXTRA_DATA = "Data extra";
+		private static final String EXTRA_UPDATED = "Updated extra";
+		private boolean connectionError;
+		Cursor cursor;
+		
+		private int currentPage;
+		private StoryObject data;
+		private boolean dataHasChanged;
+		private boolean hasUpdated;
+		private final ContentObserver observer;
+		private boolean scrollUp;
+		
+		private final long storyId;
+		
+		public StoryLoader(Context context, Bundle in, long storyId) {
+			super(context);
+			this.storyId = storyId;
+			observer = new ForceLoadContentObserver();
+			if (in != null && in.containsKey(EXTRA_DATA)) {
+				data = in.getParcelable(EXTRA_DATA);
+				currentPage = data.getCurrentPage();
+				hasUpdated = in.getBoolean(EXTRA_UPDATED);
+				dataHasChanged = false;
+				scrollUp = false;
+			}else{
+				currentPage = 1;
+				dataHasChanged = true;
+				scrollUp = true;
+				hasUpdated = false;
 			}
-			mActivity.clear();
 		}
-
+		
+		@Override
+		public void deliverResult(StoryObject data) {
+			if (this.data == null) {
+				StoryObject tmp = new StoryObject(currentPage, false);
+				tmp.setCurrentPage(currentPage);
+				tmp.setStoryTitle("");
+				tmp.setStoryText(Html.fromHtml(""));
+				super.deliverResult(tmp);
+			}else{
+				super.deliverResult(this.data.clone());
+			}
+		}
+		
+		public boolean isRunning(){
+			return dataHasChanged && !connectionError;
+		}
+		
+		@Override
+		public StoryObject loadInBackground() {
+			// Fills data from SQLite
+			// if this is the first
+			// instance.
+			data = fillFromSql(storyId);
+			Spanned storyText;
+			if (data.isInLibrary()) {
+				storyText = getStoryFromFile(storyId, currentPage);
+			} else {
+				storyText = getStoryFromSite(storyId, currentPage);
+			}
+			if (storyText == null) {
+				connectionError = true;
+				return null;
+			} else {
+				data.setStoryText(storyText);
+				data.setCurrentPage(currentPage);
+				
+				if (dataHasChanged) {
+					scrollUp = true;
+				}
+				dataHasChanged = false;
+				return data;
+			}
+		}
+		
 		/**
 		 * Reads the SQLite database and fills the data into the mResult field.
 		 * 
@@ -396,21 +396,36 @@ public class StoryDisplayActivity extends ActionBarActivity implements OnClickLi
 		 *            The numerical Id of the story
 		 */
 		private StoryObject fillFromSql(long storyId) {
-			if (mResult == null) {
-				// Finds the number of pages from the database.
-				DatabaseHelper db = new DatabaseHelper(mAppContext);
-				Story story = db.getStory(storyId);
-				db.close();
-				if (story == null) {
-					return new StoryObject(0, false);
-				} else {
-					StoryObject tmpObj = new StoryObject(
-							story.getChapterLenght(), true);
-					tmpObj.setStoryTitle(story.getName());
-					return tmpObj;
+			if (data == null) {
+				if (cursor != null && !cursor.isClosed()) {
+					cursor.close();
 				}
+				ContentResolver resolver = getContext().getContentResolver();
+				String[] projection = {SqlConstants.KEY_TITLE, SqlConstants.KEY_CHAPTER, SqlConstants.KEY_LAST}; 
+				cursor = resolver.query(StoryProvider.CONTENT_URI, projection, SqlConstants.KEY_STORY_ID + " = ?", new String[]{storyId + ""}, null);			
+				StoryObject tmpObj;
+				if (cursor.moveToFirst()) {
+					cursor.registerContentObserver(observer);
+					tmpObj = new StoryObject(cursor.getInt(1), true);
+					tmpObj.setStoryTitle(cursor.getString(0));	
+					currentPage = cursor.getInt(2);
+				} else {
+					tmpObj = new StoryObject(0, false);
+				}
+				return tmpObj;
+				
+			}else if(data.isInLibrary() && hasUpdated){
+				if (cursor != null && !cursor.isClosed()) {
+					cursor.close();
+				}
+				ContentResolver resolver = getContext().getContentResolver();
+				String[] projection = {SqlConstants.KEY_CHAPTER}; 
+				cursor = resolver.query(StoryProvider.CONTENT_URI, projection, SqlConstants.KEY_STORY_ID + " = ?", new String[]{storyId + ""}, null);			
+				cursor.moveToFirst();
+				data.setTotalPages(cursor.getInt(0));				
+				cursor.close();
 			}
-			return mResult.clone();
+			return data;
 		}
 
 		/**
@@ -424,8 +439,8 @@ public class StoryDisplayActivity extends ActionBarActivity implements OnClickLi
 		 */
 		private Spanned getStoryFromFile(long storyId, int pageNumber) {
 			try {
-				File file = new File(mAppContext.getFilesDir(), storyId + "_"
-						+ pageNumber + ".txt");
+				String filename = storyId + "_" + pageNumber + ".txt";
+				File file = new File(getContext().getFilesDir(), filename);
 				BufferedInputStream fin = new BufferedInputStream(
 						new FileInputStream(file));
 				byte[] buffer = new byte[(int) file.length()];
@@ -436,7 +451,7 @@ public class StoryDisplayActivity extends ActionBarActivity implements OnClickLi
 				return null;
 			}
 		}
-
+		
 		/**
 		 * Reads the story from the web site
 		 * 
@@ -447,22 +462,19 @@ public class StoryDisplayActivity extends ActionBarActivity implements OnClickLi
 		 * @param tmpObj
 		 * @return The story text as a Spanned Object
 		 */
-		private Spanned getStoryFromSite(long storyId, int pageNumber,
-				StoryObject tmpObj) {
+		private Spanned getStoryFromSite(long storyId, int pageNumber) {
 			try {
-				org.jsoup.nodes.Document document = Jsoup.connect(
-						"https://m.fanfiction.net/s/" + storyId + "/"
-								+ pageNumber + "/").get();
-				if (tmpObj.getTotalPages() == 0) {
-					Element title = document.select("div#content div b")
-							.first();
-					if (title == null) {
-						return null;
-					}
-					tmpObj.setStoryTitle(title.ownText());
+				String url = "https://m.fanfiction.net/s/" + storyId + "/"
+						+ pageNumber + "/";
+				org.jsoup.nodes.Document document = Jsoup.connect(url).get();
+				if (data.getTotalPages() == 0) {
+					
+					Element title = document.select("div#content div b").first();
+					if (title == null) return null;
+					data.setStoryTitle(title.ownText());
+					
 					int totalPages;
-					Element link = document.select(
-							"body#top > div[align=center] > a").first();
+					Element link = document.select("body#top > div[align=center] > a:matches(\\d++)").first();
 					if (link != null)
 						totalPages = Math.max(
 								pageNumberOnline(link.attr("href"), 2),
@@ -470,25 +482,35 @@ public class StoryDisplayActivity extends ActionBarActivity implements OnClickLi
 					else {
 						totalPages = 1;
 					}
-					tmpObj.setTotalPages(totalPages);
+					data.setTotalPages(totalPages);
 				}
+				
 				Elements storyText = document.select("div#storycontent");
-				if (storyText == null) {
-					return null;
-				}
+				if (storyText.isEmpty()) return null;
 				return Html.fromHtml(storyText.html());
+				
 			} catch (IOException e) {
 				return null;
 			}
 		}
-
-		private void hideDialog(FragmentActivity activity) {
-			DialogFragment prev = (DialogFragment) activity
-					.getSupportFragmentManager().findFragmentByTag("progress");
-			if (prev != null) {
-
-				prev.dismiss();
+		
+		private void loadPage(int page){
+			dataHasChanged = true;
+			currentPage = page;
+			startLoading();
+		}
+		
+		private void onSaveInstanceState(Bundle outState){
+			outState.putParcelable(EXTRA_DATA, data);
+			outState.putBoolean(EXTRA_UPDATED, hasUpdated);
+		}
+		
+		@Override
+		protected void onReset() {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
 			}
+			super.onReset();
 		}
 
 		/**
@@ -510,182 +532,150 @@ public class StoryDisplayActivity extends ActionBarActivity implements OnClickLi
 				return 1;
 			}
 		}
-
-		private void showProgressDialog(FragmentActivity activity) {
-			FragmentTransaction ft = activity.getSupportFragmentManager()
-					.beginTransaction();
-			Fragment prev = activity.getSupportFragmentManager()
-					.findFragmentByTag("progress");
-			if (prev != null) {
-				ft.remove(prev);
-			}
-			DialogFragment progressDialog = new customProgressDialog();
-			progressDialog.show(ft, "progress");
-		}
-
-		@Override
-		protected StoryObject doInBackground(Long... params) {
-			long storyId = params[0];
-			int currentPage = (int) (long) params[1];
-			StoryObject tmpObj = fillFromSql(storyId);// Fills data from SQLite
-														// if this is the first
-														// instance.
-			if (tmpObj.isInLibrary()) {
-				tmpObj.setStoryText(getStoryFromFile(storyId, currentPage));
-			} else {
-				tmpObj.setStoryText(getStoryFromSite(storyId, currentPage,
-						tmpObj));
-			}
-			tmpObj.setCurrentPage(currentPage);
-			return tmpObj;
-		}
-
-		@Override
-		protected void onCancelled() {
-			mAppContext = null;
-			mActivity.clear();// Clear the reference to the activity
-			super.onCancelled();
-		}
-
-		@Override
-		protected void onPostExecute(StoryObject result) {
-			super.onPostExecute(result);
-			if (result.getStoryText() == null) {
-				Toast toast = Toast.makeText(mAppContext,
-						mAppContext.getString(R.string.dialog_internet),
-						Toast.LENGTH_SHORT);
-				toast.show();
-			} else {
-				mResult = result;
-				mResetScrollBar = true;
-			}
-			mAppContext = null;
-			mIsFinished = true;
-			updateUI();
-		}
-
-		@Override
-		protected void onPreExecute() {
-			mIsFinished = false;
-			showProgressDialog(mActivity.get());
-			super.onPreExecute();
-		}
-
-		public static class customProgressDialog extends DialogFragment {
-			WeakReference<StoryDisplayActivity> mActivity;
-			
-			@Override
-			public void onCancel(DialogInterface dialog) {
-				if (mActivity.get() != null) {
-					mActivity.get().mLoader.cancel(false);
-					if (mActivity.get().mLoader.mResult == null) {
-						mActivity.get().finish();
-					}
-				}
-				super.onCancel(dialog);
-			}
-
-			@Override
-			public Dialog onCreateDialog(Bundle savedInstanceState) {
-				ProgressDialog progressDialog = new ProgressDialog(
-						getActivity());
-				progressDialog.setTitle("");
-				progressDialog.setMessage(getResources().getString(
-						R.string.dialog_loading));
-				return progressDialog;
-			}
-			
-			@Override
-			public void onAttach(Activity activity) {
-				mActivity = new WeakReference<StoryDisplayActivity>((StoryDisplayActivity) activity);
-				super.onAttach(activity);
-			}
-			
-			@Override
-			public void onDetach() {
-				mActivity.clear();
-				super.onDetach();
-			}
-		}
-	}
-
-	private static class StoryObject{
-		private int currentPage;
-		private final boolean inLibrary;
-		private Spanned storyText;
-		private String storyTitle;
-		private int totalPages;
-		/**
-		 * Creates a new StoryObject representing the story
-		 * @param totalPages The total number of chapters in the story
-		 * @param inLibrary True if the story is in the library
-		 */
-		public StoryObject(int totalPages, boolean inLibrary) {
-			this.totalPages = totalPages;
-			this.inLibrary = inLibrary;
-		}
-		/**
-		 * @return the currentPage
-		 */
-		public int getCurrentPage() {
-			return currentPage;
-		}
-		/**
-		 * @return the storyText
-		 */
-		public Spanned getStoryText() {
-			return storyText;
-		}
-		/**
-		 * @return the storyTitle
-		 */
-		public String getStoryTitle() {
-			return storyTitle;
-		}
-		/**
-		 * @return the totalPages
-		 */
-		public int getTotalPages() {
-			return totalPages;
-		}
-		/**
-		 * @return the inLibrary
-		 */
-		public boolean isInLibrary() {
-			return inLibrary;
-		}
-		/**
-		 * @param currentPage the currentPage to set
-		 */
-		public void setCurrentPage(int currentPage) {
-			this.currentPage = currentPage;
-		}
-		/**
-		 * @param storyText the storyText to set
-		 */
-		public void setStoryText(Spanned storyText) {
-			this.storyText = storyText;
-		}
-		/**
-		 * @param storyTitle the storyTitle to set
-		 */
-		public void setStoryTitle(String storyTitle) {
-			this.storyTitle = storyTitle;
-		}
-		/**
-		 * @param totalPages the totalPages to set
-		 */
-		public void setTotalPages(int totalPages) {
-			this.totalPages = totalPages;
-		}	
 		
 		@Override
-		protected StoryObject clone() {
-			StoryObject tmp = new StoryObject(this.getTotalPages(), this.isInLibrary());
-			tmp.setCurrentPage(this.getCurrentPage());
-			tmp.setStoryTitle(this.getStoryTitle());
-			tmp.setStoryText(this.getStoryText());
-			return tmp;
+		protected void onStartLoading() {
+			connectionError = false;
+			deliverResult(data);
+			if (dataHasChanged || data == null) {
+				forceLoad();
+			}
 		}
+
 	}
+	
+}
+
+class StoryObject implements Parcelable{
+	public final static Parcelable.Creator<StoryObject> CREATOR = new Creator<StoryObject>() {
+
+		@Override
+		public StoryObject createFromParcel(Parcel source) {
+			return new StoryObject(source);
+		}
+
+		@Override
+		public StoryObject[] newArray(int size) {
+			return new StoryObject[size];
+		}
+	};
+	private int currentPage;
+	private final boolean inLibrary;
+	private Spanned storyText;
+	private String storyTitle;
+
+	private int totalPages;
+
+	/**
+	 * Creates a new StoryObject representing the story
+	 * 
+	 * @param totalPages
+	 *            The total number of chapters in the story
+	 * @param inLibrary
+	 *            True if the story is in the library
+	 */
+	public StoryObject(int totalPages, boolean inLibrary) {
+		this.totalPages = totalPages;
+		this.inLibrary = inLibrary;
+	}
+
+	private StoryObject(Parcel in) {
+		inLibrary = in.readByte() != 0;
+		currentPage = in.readInt();
+		totalPages = in.readInt();
+		storyTitle = in.readString();
+		storyText = Html.fromHtml(in.readString());
+	}
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	/**
+	 * @return the currentPage
+	 */
+	public int getCurrentPage() {
+		return currentPage;
+	}
+
+	/**
+	 * @return the storyText
+	 */
+	public Spanned getStoryText() {
+		return storyText;
+	}
+
+	/**
+	 * @return the storyTitle
+	 */
+	public String getStoryTitle() {
+		return storyTitle;
+	}
+
+	/**
+	 * @return the totalPages
+	 */
+	public int getTotalPages() {
+		return totalPages;
+	}
+
+	/**
+	 * @return the inLibrary
+	 */
+	public boolean isInLibrary() {
+		return inLibrary;
+	}
+
+	/**
+	 * @param currentPage
+	 *            the currentPage to set
+	 */
+	public void setCurrentPage(int currentPage) {
+		this.currentPage = currentPage;
+	}
+
+	/**
+	 * @param storyText
+	 *            the storyText to set
+	 */
+	public void setStoryText(Spanned storyText) {
+		this.storyText = storyText;
+	}
+
+	/**
+	 * @param storyTitle
+	 *            the storyTitle to set
+	 */
+	public void setStoryTitle(String storyTitle) {
+		this.storyTitle = storyTitle;
+	}
+
+	/**
+	 * @param totalPages
+	 *            the totalPages to set
+	 */
+	public void setTotalPages(int totalPages) {
+		this.totalPages = totalPages;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeByte((byte) (inLibrary ? 1 : 0));
+		dest.writeInt(currentPage);
+		dest.writeInt(totalPages);
+		dest.writeString(storyTitle);
+		dest.writeString(Html.toHtml(storyText));
+	}
+
+	@Override
+	protected StoryObject clone() {
+		StoryObject tmp = new StoryObject(this.getTotalPages(),
+				this.isInLibrary());
+		tmp.setCurrentPage(this.getCurrentPage());
+		tmp.setStoryTitle(this.getStoryTitle());
+		tmp.setStoryText(this.getStoryText());
+		return tmp;
+	}
+
 }
