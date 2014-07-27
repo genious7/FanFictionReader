@@ -39,7 +39,11 @@
 	<string name="detail_updated">&lt;strong&gt;Updated:&lt;/strong&gt; %s</string>
 	<string name="detail_published">&lt;strong&gt;Published:&lt;/strong&gt; %s</string>
 	<string name="detail_category">&lt;strong&gt;Category:&lt;/strong&gt; %s</string>
+	<string name="detail_complete">&lt;strong&gt;Status:&lt;/strong&gt; %s</string>
 	<string name="detail_author">&lt;strong&gt;Author:&lt;/strong&gt; %s</string>
+	
+	<string name="complete_true">Completed</string>
+	<string name="complete_false">In progress</string>
 	
 	<!-- Settings -->
 	<string name="pref_appearance">Appearance</string>

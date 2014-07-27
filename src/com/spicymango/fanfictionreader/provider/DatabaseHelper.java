@@ -1,18 +1,12 @@
 package com.spicymango.fanfictionreader.provider;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.spicymango.fanfictionreader.util.Story;
-
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHelper extends SQLiteOpenHelper  implements SqlConstants{
 	
-	private static final int DATABASE_VERSION = 4; //Database version 3
+	private static final int DATABASE_VERSION = 5; //Database version 5
 	private static final String DATABASE_NAME = "library.db";
 	
 	//The name of the table
@@ -40,7 +34,8 @@ public class DatabaseHelper extends SQLiteOpenHelper  implements SqlConstants{
 	                + KEY_PUBLISHED + " INTEGER,"
 	                + KEY_UPDATED + " INTEGER,"
 	                + KEY_SUMMARY + " TEXT NOT NULL,"
-	                + KEY_LAST + " INTEGER"
+	                + KEY_LAST + " INTEGER,"
+	                + KEY_COMPLETE + " BOOLEAN"
 	                + ")";
 		 db.execSQL(CREATE_CONTACTS_TABLE);
 	}
@@ -78,106 +73,9 @@ public class DatabaseHelper extends SQLiteOpenHelper  implements SqlConstants{
 			db.execSQL("DROP TABLE " + TABLE_LIBRARY);
 			db.execSQL("ALTER TABLE tmp RENAME TO " + TABLE_LIBRARY);
 		}
-		
-	}
-	
-	@Override
-	public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-	}
-	
-	/**
-	 * Obtains the last chapter read in the selected story
-	 * 
-	 * @param id
-	 *            The id of the story
-	 * @return The last chapter read, or -1 if the story is not in the database.
-	 */
-	public int getLastChapterRead(long id){
-		SQLiteDatabase db = this.getReadableDatabase();
-		Cursor cursor = db.query(TABLE_LIBRARY, new String[] { KEY_LAST },
-				KEY_STORY_ID + "=?", new String[] { String.valueOf(id) }, null,
-				null, null);
-		
-		int last;
-		
-		if (cursor == null || !cursor.moveToFirst()){
-	    	last = -1;
-		}else{
-			int columnIndex = cursor.getColumnIndex(KEY_LAST);
-			last = cursor.getInt(columnIndex);
+		if (oldVersion < 5) {
+			db.execSQL("ALTER TABLE " + TABLE_LIBRARY + " ADD COLUMN " + KEY_COMPLETE + " BOOLEAN DEFAULT 0");
 		}
-		cursor.close();
-		return last;
-	}
-	
-	/**
-	 * Gets the story with the requested id
-	 * @param id The id of the story
-	 * @return The story, or null if it doesn't exist.
-	 */
-	public Story getStory(long id) {
-	    SQLiteDatabase db = this.getReadableDatabase();
-	 
-	    Cursor cursor = db.query(TABLE_LIBRARY, 
-	    		new String[] { KEY_STORY_ID, KEY_TITLE, KEY_AUTHOR, KEY_AUTHOR_ID, KEY_RATING,
-	    		KEY_GENRE, KEY_LANGUAGUE, KEY_CATEGORY, KEY_CHAPTER, KEY_LENGHT, KEY_FAVORITES,
-	    		KEY_FOLLOWERS, KEY_PUBLISHED, KEY_UPDATED, KEY_SUMMARY}, KEY_STORY_ID + "=?",
-	            new String[] { String.valueOf(id) }, null, null, null);
-	    
-	    if (cursor == null || !cursor.moveToFirst()){
-	    	cursor.close();
-	    	return null;
-	    }
-	 
-		Story story = new Story(cursor);
 		
-		cursor.close();
-		
-	    return story;
-	}
-
-	/**
-	 * Obtains all the stories from the library.
-	 * 
-	 * @return A list of all the stories, or an empty list if none are
-	 *         available.
-	 */
-	public List<Story> getAllStories() {		
-		// Select All Query
-		//String selectQuery = "SELECT  * FROM " + TABLE_LIBRARY;
-
-		SQLiteDatabase db = this.getReadableDatabase();
-		Cursor cursor = db.query(TABLE_LIBRARY, new String[] { KEY_STORY_ID,
-				KEY_TITLE, KEY_AUTHOR, KEY_AUTHOR_ID, KEY_RATING, KEY_GENRE,
-				KEY_LANGUAGUE, KEY_CATEGORY, KEY_CHAPTER, KEY_LENGHT,
-				KEY_FAVORITES, KEY_FOLLOWERS, KEY_PUBLISHED, KEY_UPDATED,
-				KEY_SUMMARY }, null, null, null, null, null);
-		
-		List<Story> storyList = new ArrayList<Story>(cursor.getCount());
-		
-		// looping through all rows and adding to list
-		if (cursor.moveToFirst()) {
-			do {
-				Story story = new Story(cursor);
-				storyList.add(story);
-			} while (cursor.moveToNext());
-		}
-		cursor.close();
-		
-		return storyList;
-	}
-	
-	/**
-	 * Obtains the total number of stories present.
-	 * @return The number of stories
-	 */
-	public int getStoryCount() {
-		SQLiteDatabase db = this.getReadableDatabase();
-		Cursor cursor = db.query(TABLE_LIBRARY, new String[] { KEY_STORY_ID },
-				null, null, null, null, null);
-		int count = cursor.getCount();
-		cursor.close();
-		// return count
-		return count;
 	}
 }

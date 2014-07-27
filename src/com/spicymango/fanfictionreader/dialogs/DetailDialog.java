@@ -31,8 +31,8 @@ public class DetailDialog extends DialogFragment implements OnClickListener{
 	public final static String EXTRA_STORY = "Map";
 	public final static String EXTRA_AUTHOR = "AUTHOR";
 	
-	private final Story mStory;
-	private final boolean mShowAuthor;
+	private Story mStory;
+	private boolean mShowAuthor;
 	
 	private final static int[] formats = {
 				R.string.detail_author,
@@ -45,7 +45,8 @@ public class DetailDialog extends DialogFragment implements OnClickListener{
 				R.string.detail_favorites,
 				R.string.detail_follows,
 				R.string.detail_updated,
-				R.string.detail_published
+				R.string.detail_published,
+				R.string.detail_complete
 	};
 	
 	private final static int[] labels = {
@@ -59,17 +60,21 @@ public class DetailDialog extends DialogFragment implements OnClickListener{
 				R.id.detail_favorites_label,
 				R.id.detail_follows_label,
 				R.id.detail_updated_label,
-				R.id.detail_published_label
+				R.id.detail_published_label,
+				R.id.detail_complete_label
 		};
 	
-	public DetailDialog(Story story, boolean showAuthor){
-		mStory = story;
-		mShowAuthor = showAuthor;
+	public DetailDialog(){
 	}
 	
 	@SuppressLint("InflateParams")
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
+		super.onCreateDialog(savedInstanceState);
+		
+		mStory = getArguments().getParcelable(EXTRA_STORY);
+		mShowAuthor = getArguments().getBoolean(EXTRA_AUTHOR);
+
 		LayoutInflater inflater = getActivity().getLayoutInflater();
 		View view = inflater.inflate(R.layout.activity_detail_view, null);
 		
@@ -96,7 +101,8 @@ public class DetailDialog extends DialogFragment implements OnClickListener{
 				mStory.getFavorites(),
 				mStory.getFollows(),
 				DateFormat.getDateInstance().format(mStory.getUpdated()),
-				DateFormat.getDateInstance().format(mStory.getPublished())
+				DateFormat.getDateInstance().format(mStory.getPublished()),
+				mStory.isCompleted() ? getString(R.string.complete_true) : getString(R.string.complete_false)
 		};
 		
 		for (int i = 0; i < labels.length; i++) {
@@ -135,8 +141,11 @@ public class DetailDialog extends DialogFragment implements OnClickListener{
 		if (context instanceof AuthorMenuActivity || context instanceof LibraryMenuActivity) {
 			showAuthor = false;
 		}
-		
-		DialogFragment diag = new DetailDialog(story, showAuthor);
+		DialogFragment diag = new DetailDialog();
+		Bundle bundle = new Bundle();
+		bundle.putParcelable(EXTRA_STORY, story);
+		bundle.putBoolean(EXTRA_AUTHOR, showAuthor);
+		diag.setArguments(bundle);
 		diag.show(context.getSupportFragmentManager(), null);
 	}
 	

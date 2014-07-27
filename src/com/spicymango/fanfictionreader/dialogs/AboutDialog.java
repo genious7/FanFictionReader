@@ -23,6 +23,10 @@ import android.view.View.OnClickListener;
 
 @SuppressLint("InflateParams")
 public class AboutDialog extends DialogFragment implements OnClickListener{
+	
+	public AboutDialog() {
+	}
+	
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		

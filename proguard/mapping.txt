@@ -9105,7 +9105,6 @@ com.spicymango.fanfictionreader.filter.FilterSet$FilterObject -> com.spicymango.
 com.spicymango.fanfictionreader.provider.DatabaseHelper -> com.spicymango.fanfictionreader.provider.a:
     void onCreate(android.database.sqlite.SQLiteDatabase) -> onCreate
     void onUpgrade(android.database.sqlite.SQLiteDatabase,int,int) -> onUpgrade
-    void onDowngrade(android.database.sqlite.SQLiteDatabase,int,int) -> onDowngrade
 com.spicymango.fanfictionreader.provider.StoryProvider -> com.spicymango.fanfictionreader.provider.StoryProvider:
     android.net.Uri CONTENT_URI -> a
     android.content.UriMatcher uriMatcher -> b
@@ -9215,9 +9214,10 @@ com.spicymango.fanfictionreader.util.Story -> com.spicymango.fanfictionreader.ut
     int wordLenght -> k
     int favorites -> l
     int follows -> m
-    java.util.Date updated -> n
-    java.util.Date published -> o
-    java.util.regex.Pattern ATTRIBUTE_PATTERN -> p
+    boolean completed -> n
+    java.util.Date updated -> o
+    java.util.Date published -> p
+    java.util.regex.Pattern ATTRIBUTE_PATTERN -> q
     android.os.Parcelable$Creator CREATOR -> CREATOR
     android.content.ContentValues toContentValues(int) -> a
     int describeContents() -> describeContents
@@ -9237,6 +9237,7 @@ com.spicymango.fanfictionreader.util.Story -> com.spicymango.fanfictionreader.ut
     java.lang.String getFollows() -> m
     java.util.Date getUpdated() -> n
     java.util.Date getPublished() -> o
+    boolean isCompleted() -> p
 com.spicymango.fanfictionreader.util.Story$1 -> com.spicymango.fanfictionreader.util.f:
     com.spicymango.fanfictionreader.util.Story createFromParcel(android.os.Parcel) -> a
     com.spicymango.fanfictionreader.util.Story[] newArray(int) -> a

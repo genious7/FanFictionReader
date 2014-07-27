@@ -474,7 +474,7 @@ public class StoryDisplayActivity extends ActionBarActivity implements LoaderCal
 					data.setStoryTitle(title.ownText());
 					
 					int totalPages;
-					Element link = document.select("body#top > div[align=center] > a:matches(\\d++)").first();
+					Element link = document.select("body#top div[align=center] > a:matches(^\\d++$)").first();
 					if (link != null)
 						totalPages = Math.max(
 								pageNumberOnline(link.attr("href"), 2),
@@ -501,7 +501,9 @@ public class StoryDisplayActivity extends ActionBarActivity implements LoaderCal
 		}
 		
 		private void onSaveInstanceState(Bundle outState){
-			outState.putParcelable(EXTRA_DATA, data);
+			if (data.getStoryText() != null) {
+				outState.putParcelable(EXTRA_DATA, data);
+			}
 			outState.putBoolean(EXTRA_UPDATED, hasUpdated);
 		}
 		

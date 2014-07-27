@@ -24,41 +24,41 @@ public class Parser {
 	 * @param list The list to add the stories to
 	 * @return True if the operation succeeded, false otherwise
 	 */
-	public static boolean Stories(Document document, List<Story>list){
+	public static boolean Stories(Document document, List<Story> list) {
 		
 		Elements summaries = document.select("div#content div.bs");
-		Elements titles = summaries.select("a[href~=(?i)/s/\\d+/1/.*]");
-		Elements authors = summaries.select("a[href^=/u/]");
-		Elements attribs = summaries.select("div.gray");
-		summaries.select("b").unwrap();
 		
 		Matcher storyIdMatcher = pattern.matcher("");
 		Matcher authorIdMatcher = pattern.matcher("");
-
-		for (int i = 0; i < summaries.size(); i++) {
-			storyIdMatcher.reset(titles.get(i).attr("href"));
-			authorIdMatcher.reset(authors.get(i).attr("href"));
+		
+		for (Element element : summaries) {
+			element.select("b").unwrap();
+			Element title = element.select("a[href~=(?i)/s/\\d+/1/.*]").first();
+			Element author = element.select("a[href^=/u/]").first();
+			Element attribs = element.select("div.gray").first();
+			Elements dates = element.select("span[data-xutime]");
+			
+			storyIdMatcher.reset(title.attr("href"));
+			authorIdMatcher.reset(author.attr("href"));
+			
 			storyIdMatcher.find();
 			authorIdMatcher.find();
-
-			Elements dates = summaries.get(i).select("span[data-xutime]");
+				
 			long updateDate = 0;
 			long publishDate = 0;
 
-			if (dates.size() == 1) {
-				updateDate = Long.parseLong(dates.first().attr("data-xutime")) * 1000;
-				publishDate = updateDate;
-			} else if (dates.size() == 2) {
-				updateDate = Long.parseLong(dates.first().attr("data-xutime")) * 1000;
-				publishDate = Long.parseLong(dates.last().attr("data-xutime")) * 1000;
-			}
-
+			updateDate = Long.parseLong(dates.first().attr("data-xutime")) * 1000;
+			publishDate = Long.parseLong(dates.last().attr("data-xutime")) * 1000;
+			
+			boolean complete;	
+			Elements imgs = element.select("img.mm");
+			complete = !imgs.isEmpty();
+			
 			Story TempStory = new Story(
-					Long.parseLong(storyIdMatcher.group(1)), titles.get(i)
-							.ownText(), authors.get(i).text(),
-					Long.parseLong(authorIdMatcher.group(1)), summaries.get(i)
-							.ownText().replaceFirst("(?i)by\\s*", ""), attribs
-							.get(i).text(), updateDate, publishDate);
+					Long.parseLong(storyIdMatcher.group(1)), title.ownText(),
+					author.text(), Long.parseLong(authorIdMatcher.group(1)),
+					element.ownText().replaceFirst("(?i)by\\s*", ""),
+					attribs.text(), updateDate, publishDate, complete);
 
 			list.add(TempStory);
 		}

@@ -100,13 +100,20 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/detail_author_label"
             android:text="@string/detail_category"/>
+        
+        <TextView
+            android:id="@+id/detail_complete_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/detail_published_label"
+            android:text="@string/detail_complete"/>
 
         <Button
             android:id="@+id/btn_author"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignLeft="@+id/detail_published_label"
-            android:layout_below="@+id/detail_published_label"
+            android:layout_below="@+id/detail_complete_label"
             android:text="@string/menu_navigation_browse_by_author" />
 
     </RelativeLayout>

@@ -27,6 +27,8 @@ public class Story implements Parcelable, SqlConstants{
 	private int wordLenght;
 	private int favorites;
 	private int follows;
+	private boolean completed;//Whether the story is complete or not
+
 	private Date updated;
 	private Date published;
 	
@@ -46,7 +48,7 @@ public class Story implements Parcelable, SqlConstants{
 	 */
 	public Story() {
 		this(0, "", "", 0, "", "", "", "", "", 1, 0, 0, 0, new Date(),
-				new Date());
+				new Date(), false);
 	}
 	
 	public Story(Cursor cursor){
@@ -55,7 +57,7 @@ public class Story implements Parcelable, SqlConstants{
 			cursor.getString(7), cursor.getString(4), cursor.getString(6),
 			cursor.getString(5), cursor.getInt(8), cursor.getInt(9),
 			cursor.getInt(10), cursor.getInt(11), cursor.getLong(13),
-			cursor.getLong(12));
+			cursor.getLong(12), cursor.getShort(15) == 1);
 	}
 	
 	public ContentValues toContentValues (int lastPage){
@@ -76,6 +78,7 @@ public class Story implements Parcelable, SqlConstants{
 		v.put(KEY_UPDATED, updated.getTime());
 		v.put(KEY_PUBLISHED, published.getTime());
 		v.put(KEY_LAST, lastPage);
+		v.put(KEY_COMPLETE, completed ? 1 : 0);
 		return v;
 	}
 	
@@ -100,7 +103,7 @@ public class Story implements Parcelable, SqlConstants{
 	private Story(long id, String name, String author, long authorId,
 			String summary, String category, String rating, String language,
 			String genre, int chapterLenght, int wordLenght, int favorites,
-			int follows, Date updated, Date published) {
+			int follows, Date updated, Date published, boolean completed) {
 		this.id = id;
 		this.name = name;
 		this.author = author;
@@ -116,6 +119,7 @@ public class Story implements Parcelable, SqlConstants{
 		this.follows = follows;
 		this.updated = updated;
 		this.published = published;
+		this.completed = completed;
 	}
 	
 	/**
@@ -139,11 +143,11 @@ public class Story implements Parcelable, SqlConstants{
 	public Story(long id, String name, String author, long authorId,
 			String summary, String category, String rating, String language,
 			String genre, int chapterLenght, int wordLenght, int favorites,
-			int follows, long updated, long published) {
+			int follows, long updated, long published, boolean completed) {
 		
 		this(id, name, author, authorId, summary, category, rating, language,
 				genre, chapterLenght, wordLenght, favorites, follows, new Date(
-						updated), new Date(published));
+						updated), new Date(published), completed);
 	}
 	
 	/**
@@ -155,9 +159,9 @@ public class Story implements Parcelable, SqlConstants{
 	 * @param summary The story's summary
 	 * @param attribs The attributes element
 	 */
-	public Story(long id, String name, String author, long authorId, String summary, String attribs, long updated, long published){
+	public Story(long id, String name, String author, long authorId, String summary, String attribs, long updated, long published, boolean complete){
 		
-		this(id,name,author,authorId,summary,"","","","",1,0,0,0,updated,published);
+		this(id,name,author,authorId,summary,"","","","",1,0,0,0,updated,published, complete);
 		Matcher match = ATTRIBUTE_PATTERN.matcher(attribs);
 		if (match.find()) {
 			if (match.group(1) != null)
@@ -202,6 +206,7 @@ public class Story implements Parcelable, SqlConstants{
 		this.follows = in.readInt();
 		this.updated = new Date(in.readLong());
 		this.published = new Date(in.readLong());
+		this.completed = in.readByte() != 0;
 	}
 
 	@Override
@@ -226,6 +231,7 @@ public class Story implements Parcelable, SqlConstants{
 		dest.writeInt(follows);
 		dest.writeLong(updated.getTime());
 		dest.writeLong(published.getTime());
+		dest.writeByte((byte) (completed ? 1 : 0));  
 	}
 	
 	/**
@@ -348,6 +354,10 @@ public class Story implements Parcelable, SqlConstants{
 	 */
 	public Date getPublished() {
 		return published;
+	}
+	
+	public boolean isCompleted() {
+		return completed;
 	}
 		
 }

@@ -67,10 +67,6 @@ com.spicymango.fanfictionreader.provider.DatabaseHelper:
     private static final int DATABASE_VERSION
     private static final java.lang.String DATABASE_NAME
     protected static final java.lang.String TABLE_LIBRARY
-    96:110:public int getLastChapterRead(long)
-    119:136:public com.spicymango.fanfictionreader.util.Story getStory(long)
-    149:167:public java.util.List getAllStories()
-    175:181:public int getStoryCount()
 com.spicymango.fanfictionreader.provider.SqlConstants
 com.spicymango.fanfictionreader.provider.StoryProvider:
     private static final java.lang.String AUTHORITY

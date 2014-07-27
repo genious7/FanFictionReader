@@ -65,7 +65,7 @@ public class LibraryDownloader extends IntentService{
 			+ "(?i)\\ARated: Fiction ([KTM]\\+?) - "//Rating
 			+ "([^-]+) - "//language
 			+ "(?:([^ ]+) - )?"//Genre
-			+ "(?:(?!(?>Chapters))[^-]+ - )?"//characters (non capturing)
+			+ "(?:(?!(?>Chapters))(?:(?! - ).)++ - )?"//characters (non capturing)
 			+ "(?:Chapters: (\\d++) - )?" //Chapters
 			+ "Words: ([\\d,]++) - " //Words
 			+ "(?:Reviews: [\\d,]++ - )?"//Reviews (non capturing)
@@ -249,7 +249,7 @@ public class LibraryDownloader extends IntentService{
 				Parser.parseInt(matcher.group(5)),
 				matcher.group(6) == null ? 0 : Parser.parseInt(matcher.group(6)),
 				matcher.group(7) == null ? 0 : Parser.parseInt(matcher.group(7)),
-				updateDate, publishDate);
+				updateDate, publishDate, attribs.text().contains("Complete"));
 	}
 
 	@Override

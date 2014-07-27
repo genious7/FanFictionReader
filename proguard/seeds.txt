@@ -9764,6 +9764,7 @@ com.spicymango.fanfictionreader.R$id: int default_activity_button
 com.spicymango.fanfictionreader.R$id: int detail_author_label
 com.spicymango.fanfictionreader.R$id: int detail_category_label
 com.spicymango.fanfictionreader.R$id: int detail_chapters_label
+com.spicymango.fanfictionreader.R$id: int detail_complete_label
 com.spicymango.fanfictionreader.R$id: int detail_favorites_label
 com.spicymango.fanfictionreader.R$id: int detail_follows_label
 com.spicymango.fanfictionreader.R$id: int detail_genre_label
@@ -9928,6 +9929,7 @@ com.spicymango.fanfictionreader.R$layout: int browse_menu_list_item
 com.spicymango.fanfictionreader.R$layout: int category_menu_list_item
 com.spicymango.fanfictionreader.R$layout: int community_menu_list_item
 com.spicymango.fanfictionreader.R$layout: int footer_list
+com.spicymango.fanfictionreader.R$layout: int footer_read_story
 com.spicymango.fanfictionreader.R$layout: int main_menu_list_item
 com.spicymango.fanfictionreader.R$layout: int story_menu_list_item
 com.spicymango.fanfictionreader.R$layout: int support_simple_spinner_dropdown_item
@@ -9956,9 +9958,12 @@ com.spicymango.fanfictionreader.R$string: int abc_shareactionprovider_share_with
 com.spicymango.fanfictionreader.R$string: int about
 com.spicymango.fanfictionreader.R$string: int about_feature
 com.spicymango.fanfictionreader.R$string: int app_name
+com.spicymango.fanfictionreader.R$string: int complete_false
+com.spicymango.fanfictionreader.R$string: int complete_true
 com.spicymango.fanfictionreader.R$string: int detail_author
 com.spicymango.fanfictionreader.R$string: int detail_category
 com.spicymango.fanfictionreader.R$string: int detail_chapters
+com.spicymango.fanfictionreader.R$string: int detail_complete
 com.spicymango.fanfictionreader.R$string: int detail_favorites
 com.spicymango.fanfictionreader.R$string: int detail_follows
 com.spicymango.fanfictionreader.R$string: int detail_genre

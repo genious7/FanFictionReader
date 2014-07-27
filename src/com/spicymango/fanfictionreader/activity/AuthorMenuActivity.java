@@ -8,6 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import com.spicymango.fanfictionreader.R;
@@ -129,37 +130,36 @@ public class AuthorMenuActivity extends BaseActivity<Story>{
 		
 		@Override
 		protected boolean load(Document document, List<Story> list) {
+			mAuthor = getAuthor(document);
 			
 			Elements summaries = document.select("div#content div.bs");
-			summaries.select("b").unwrap();
 			
-			Elements titles = summaries.select("a[href~=(?i)/s/\\d+/1/.*]");
-			Elements attribs = summaries.select("div.gray");
+			Matcher storyIdMatcher = pattern.matcher("");
 			
-			mAuthor = getAuthor(document);
-
-			Matcher matcher = pattern.matcher("");
-
-			for (int i = 0; i < titles.size(); i++) {
-				matcher.reset(titles.get(i).attr("href"));
-				matcher.find();
-
-				Elements dates = summaries.get(i).select("span[data-xutime]");
+			for (Element element : summaries) {
+				element.select("b").unwrap();
+				Element title = element.select("a[href~=(?i)/s/\\d+/1/.*]").first();
+				Element attribs = element.select("div.gray").first();
+				Elements dates = element.select("span[data-xutime]");
+				
+				storyIdMatcher.reset(title.attr("href"));
+				
+				storyIdMatcher.find();
+					
 				long updateDate = 0;
 				long publishDate = 0;
 
-				if (dates.size() == 1) {
-					updateDate = Long.parseLong(dates.first().attr("data-xutime")) * 1000;
-					publishDate = updateDate;
-				} else if (dates.size() == 2) {
-					updateDate = Long.parseLong(dates.first().attr("data-xutime")) * 1000;
-					publishDate = Long.parseLong(dates.last().attr("data-xutime")) * 1000;
-				}
+				updateDate = Long.parseLong(dates.first().attr("data-xutime")) * 1000;
+				publishDate = Long.parseLong(dates.last().attr("data-xutime")) * 1000;
 				
-				Story TempStory = new Story(Integer.parseInt(matcher.group(1)),
-						titles.get(i).ownText(), mAuthor, mAuthorId,
-						summaries.get(i).ownText().replaceFirst("(?i)by\\s*", ""),
-						attribs.get(i).ownText(), updateDate, publishDate);
+				boolean complete;	
+				Elements imgs = element.select("img.mm");
+				complete = !imgs.isEmpty();
+
+				Story TempStory = new Story(Long.parseLong(storyIdMatcher
+						.group(1)), title.ownText(), mAuthor, mAuthorId,
+						element.ownText().replaceFirst("(?i)by\\s*", ""),
+						attribs.text(), updateDate, publishDate, complete);
 
 				list.add(TempStory);
 			}
