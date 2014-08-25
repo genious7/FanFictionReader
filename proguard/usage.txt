@@ -6,6 +6,11 @@ com.spicymango.fanfictionreader.LibraryDownloader:
     private static final java.lang.String EXTRA_UPDATE_NOT
     public static final java.lang.String EXTRA_STORY_ID
     private static final int NOTIFICATION_ID
+com.spicymango.fanfictionreader.MainMenu:
+    public static final java.lang.String EXTRA_PREF
+    public static final java.lang.String EXTRA_RESUME_ID
+    public static final java.lang.String EXTRA_RESUME_CHAPTER
+    public static final java.lang.String EXTRA_RESUME_OFFSET
 com.spicymango.fanfictionreader.R
 com.spicymango.fanfictionreader.R$anim
 com.spicymango.fanfictionreader.R$array
@@ -39,9 +44,12 @@ com.spicymango.fanfictionreader.activity.NavigationMenuActivity:
     private static final java.lang.String STATE_LIST
     private static final java.lang.String STATE_SORT
     private static final int SUB_CATEGORY_MENU
+com.spicymango.fanfictionreader.activity.StoryDisplayActivity:
+    public static final java.lang.String EXTRA_OFFSET
 com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader:
-    private static final java.lang.String EXTRA_DATA
-    private static final java.lang.String EXTRA_UPDATED
+    private static final java.lang.String STATE_DATA
+    private static final java.lang.String STATE_UPDATED
+    private static final java.lang.String STATE_SCROLL
 com.spicymango.fanfictionreader.activity.StoryMenuActivity:
     private static final java.lang.String FANFIC_AUTHORITY
     private static final int URI_COMMUNITY_MENU
@@ -75,6 +83,7 @@ com.spicymango.fanfictionreader.provider.StoryProvider:
     private static final java.lang.String STORY_MIME_TYPE
     private static final int GET_ALL
     private static final int GET_ONE
+    225:238:public static int lastChapterRead(android.content.Context,long)
 com.spicymango.fanfictionreader.util.BaseLoader:
     private static final java.lang.String STATE_CURRENT
     private static final java.lang.String STATE_TOTAL

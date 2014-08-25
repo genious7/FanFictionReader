@@ -10,6 +10,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextUtils;
 import android.util.Log;
 
 
@@ -175,5 +178,20 @@ public class Parser {
 	public static final String withSuffix(int count) {
 	    if (count < 1000) return "" + count;
 	    return count/1000 + "k+";
+	}
+	
+	public static final List<Spanned> split(Spanned spanned){
+		String[] list = spanned.toString().split("\n");
+		
+		int i = 0;
+		List<Spanned> result = new ArrayList<Spanned>(list.length);
+		
+		for (int j = 0; j < list.length; j++) {
+			SpannableString line = new SpannableString(list[j]);
+			TextUtils.copySpansFrom(spanned, i, i + list[j].length(), null, line, 0);
+			i += list[j].length() + 1;
+			result.add(line);
+		}
+		return result;
 	}
 }

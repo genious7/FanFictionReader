@@ -3,4 +3,5 @@
     <issue id="MissingTranslation">
         <ignore path="res/values/strings.xml" />
     </issue>
+    <issue id="UnusedAttribute" severity="ignore" />
 </lint>

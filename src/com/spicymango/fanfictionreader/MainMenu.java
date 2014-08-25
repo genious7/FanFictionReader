@@ -4,14 +4,15 @@ import com.spicymango.fanfictionreader.R.attr;
 import com.spicymango.fanfictionreader.activity.LibraryMenuActivity;
 import com.spicymango.fanfictionreader.activity.SearchAuthorActivity;
 import com.spicymango.fanfictionreader.activity.SearchStoryActivity;
+import com.spicymango.fanfictionreader.activity.StoryDisplayActivity;
 import com.spicymango.fanfictionreader.activity.StoryMenuActivity;
 import com.spicymango.fanfictionreader.dialogs.AboutDialog;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.SharedPreferences;
 import android.content.res.Resources.Theme;
 import android.content.Intent;
 import android.net.Uri;
@@ -27,11 +28,16 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 public class MainMenu extends ActionBarActivity implements OnItemClickListener, OnClickListener {
-
+	public static final String EXTRA_PREF = "Resume pref";
+	public static final String EXTRA_RESUME_ID = "Resume Id";
+	public static final String EXTRA_RESUME_CHAPTER = "Resume Chapter";
+	public static final String EXTRA_RESUME_OFFSET = "Resume Offset";
+	
 	@Override
 	public void onClick(DialogInterface dialog, int which) {
 		Intent i;
@@ -52,7 +58,7 @@ public class MainMenu extends ActionBarActivity implements OnItemClickListener, 
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
 		Intent i;
-		switch (position) {
+		switch ((int)id) {
 		case 0:
 			i = new Intent(this, LibraryMenuActivity.class);
 			startActivity(i);
@@ -67,7 +73,6 @@ public class MainMenu extends ActionBarActivity implements OnItemClickListener, 
 			startActivity(i);
 			break;
 		case 3://Search
-			
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			String[] label = getResources().getStringArray(R.array.menu_search_by);
 			builder.setItems( label, this);
@@ -86,6 +91,22 @@ public class MainMenu extends ActionBarActivity implements OnItemClickListener, 
 		case 6:
 			DialogFragment diag = new AboutDialog();
 			diag.show(getSupportFragmentManager(), null);
+			break;
+		case 7:
+			SharedPreferences preference = getSharedPreferences(EXTRA_PREF,MODE_PRIVATE);
+			long resumeId = preference.getLong(EXTRA_RESUME_ID, -1);
+			if (resumeId == -1) {
+				Toast toast = Toast.makeText(this, R.string.menu_toast_resume, Toast.LENGTH_SHORT);
+				toast.show();
+			}else{
+				int resumeChap = preference.getInt(EXTRA_RESUME_CHAPTER, 1);
+				int resumeOff = preference.getInt(EXTRA_RESUME_OFFSET, 0);
+				i = new Intent (this, StoryDisplayActivity.class);
+				i.setData(Uri.parse("file://fanfiction/" + resumeId + "_" + resumeChap + ".txt"));
+				i.putExtra(StoryDisplayActivity.EXTRA_OFFSET, resumeOff);
+				startActivity(i);
+			}
+			break;
 		default:
 			break;
 		}
@@ -113,20 +134,23 @@ public class MainMenu extends ActionBarActivity implements OnItemClickListener, 
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
 		final MenuItem menuItems[] = new MenuItem[] {
-				new MenuItem(attr.ic_storage, getResources().getString(
-						R.string.menu_button_my_library)),
-				new MenuItem(attr.ic_folder_open, getResources()
-						.getString(R.string.menu_button_browse_stories)),
-				new MenuItem(attr.ic_action_view_as_list, getResources()
-						.getString(R.string.menu_button_just_in)),
-				new MenuItem(attr.ic_action_search, getResources().getString(
-						R.string.menu_button_search)),
-				new MenuItem(attr.ic_action_group, getResources()
-						.getString(R.string.menu_button_communities)),
-				new MenuItem(attr.ic_action_settings, getResources()
-						.getString(R.string.menu_button_settings)),
-				new MenuItem(attr.ic_action_about, getResources()
-						.getString(R.string.menu_button_about)) };
+				new MenuItem(attr.ic_storage, 
+						R.string.menu_button_my_library, 0),
+				new MenuItem(attr.ic_action_replay,
+						R.string.menu_button_resume, 7),
+				new MenuItem(attr.ic_folder_open,
+						R.string.menu_button_browse_stories, 1),
+				new MenuItem(attr.ic_action_view_as_list,
+						R.string.menu_button_just_in, 2),
+				new MenuItem(attr.ic_action_search,
+						R.string.menu_button_search, 3),
+				new MenuItem(attr.ic_action_group,
+						R.string.menu_button_communities, 4),
+				new MenuItem(attr.ic_action_settings,
+						R.string.menu_button_settings, 5),
+				new MenuItem(attr.ic_action_about,
+						R.string.menu_button_about,	6),
+				};
 
 		MainMenuAdapter Adapter = new MainMenuAdapter(this,
 				R.layout.main_menu_list_item, menuItems);
@@ -141,7 +165,6 @@ public class MainMenu extends ActionBarActivity implements OnItemClickListener, 
 	 * @author Michael Chen
 	 */
 	private static class MainMenuAdapter extends ArrayAdapter<MenuItem> {
-		private MenuItem data[]=null;
 		private int layoutResourceId;
 		
 		/**
@@ -153,7 +176,11 @@ public class MainMenu extends ActionBarActivity implements OnItemClickListener, 
 		public MainMenuAdapter(Context context, int layoutResourceId, MenuItem[] data) {
 			super(context, layoutResourceId, data);
 			this.layoutResourceId=layoutResourceId;
-			this.data=data;
+		}
+		
+		@Override
+		public long getItemId(int position) {
+			return getItem(position).id;
 		}
 		
 		@Override 
@@ -176,7 +203,7 @@ public class MainMenu extends ActionBarActivity implements OnItemClickListener, 
 	            holder = (MenuItemHolder)row.getTag();
 	        }
 	       
-	        MenuItem menuRow = data[position];
+	        MenuItem menuRow = getItem(position);
 	        holder.txtTitle.setText(menuRow.title);
 	        holder.imgIcon.setImageResource(menuRow.icon);
 	       
@@ -194,7 +221,6 @@ public class MainMenu extends ActionBarActivity implements OnItemClickListener, 
 	    }
 	}
 
-
 	/**
 	 * Represents a single menu item
 	 * @author Michael Chen
@@ -202,6 +228,7 @@ public class MainMenu extends ActionBarActivity implements OnItemClickListener, 
 	private class MenuItem {
 		public int icon;
 		public String title;
+		public final int id;
 		
 		/**
 		 * Initializes a new menu item.
@@ -209,14 +236,15 @@ public class MainMenu extends ActionBarActivity implements OnItemClickListener, 
 		 * @param Title The text to be used as the label
 		 * @author Michael Chen
 		 */
-		public MenuItem(int Icon, String Title){
+		public MenuItem(int Icon, int Title, int id){
 			
 			TypedValue typedValue = new TypedValue(); 
 			Theme theme = MainMenu.this.getTheme();
 			theme.resolveAttribute(Icon, typedValue, false);
 			
 			icon = typedValue.data;
-			title = Title;
+			title = getString(Title);
+			this.id = id;
 		}
 	}
 }

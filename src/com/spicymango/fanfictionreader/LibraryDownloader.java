@@ -1,8 +1,5 @@
 package com.spicymango.fanfictionreader;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,13 +18,12 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.text.Html;
-import android.text.Spanned;
 import android.util.SparseArray;
 
 import com.spicymango.fanfictionreader.activity.LibraryMenuActivity;
 import com.spicymango.fanfictionreader.provider.SqlConstants;
 import com.spicymango.fanfictionreader.provider.StoryProvider;
+import com.spicymango.fanfictionreader.util.FileHandler;
 import com.spicymango.fanfictionreader.util.Parser;
 import com.spicymango.fanfictionreader.util.Story;
 
@@ -39,7 +35,10 @@ public class LibraryDownloader extends IntentService{
 	
 	private enum Result{
 		NO_CHANGE,
-		ERROR,
+		ERROR_CONNECTION,
+		ERROR_SD,
+		ERROR_PARSE,
+		LOADING,
 		SUCCESS
 	}
 	
@@ -106,7 +105,7 @@ public class LibraryDownloader extends IntentService{
 		int totalPages = 1;
 		int incrementalIndex = 0;
 
-		SparseArray<Spanned> array = new SparseArray<Spanned>();
+		SparseArray<String> array = new SparseArray<String>();
 		try {
 			for (int currentPage = 1; currentPage <= totalPages; currentPage++) {
 
@@ -120,10 +119,12 @@ public class LibraryDownloader extends IntentService{
 					story = parseDetails(document);
 
 					//If an error occurs while parsing, quit
-					if (story == null) return Result.ERROR;
+					if (story == null) return Result.ERROR_PARSE;
 					
 					//If no updates have been made to the story, skip
-					if (story.getUpdated().getTime() == lastUpdated()) { 
+					if (story.getUpdated().getTime() == lastUpdated()) {
+						ContentResolver resolver = this.getContentResolver();
+						resolver.insert(StoryProvider.CONTENT_URI, story.toContentValues(lastPage));
 						return Result.NO_CHANGE;
 					}
 					
@@ -143,22 +144,20 @@ public class LibraryDownloader extends IntentService{
 					
 				}
 				showNotification(story.getName(), currentPage, totalPages);
-				Spanned span = Html.fromHtml(document.select("div#storytext").html());
+				String span = document.select("div#storytext").html();
+				
+				if (span == null || span.length() == 0) {
+					return Result.ERROR_PARSE;
+				}
+				
 				array.append(currentPage - 1, span);
 			}
 		} catch (IOException e) {
-			return Result.ERROR;
+			return Result.ERROR_CONNECTION;
 		}
 		for (int currentPage = incrementalIndex; currentPage < totalPages; currentPage++) {
-			try {
-				File file = new File(getFilesDir(), storyId + "_" + (currentPage + 1) + ".txt");
-				FileOutputStream fos = new FileOutputStream( file);
-				fos.write(array.get(currentPage).toString().getBytes());
-				fos.close();
-			} catch (FileNotFoundException e) {
-			} catch (IOException e) {
-				e.printStackTrace();
-			}	
+			if (!FileHandler.writeFile(this, storyId, currentPage + 1, array.get(currentPage)))
+				return Result.ERROR_SD;
 		}
 
 		ContentResolver resolver = this.getContentResolver();
@@ -269,10 +268,16 @@ public class LibraryDownloader extends IntentService{
 			storiesDownloaded++;
 			showCompletetionNotification();
 			break;
-		case ERROR:
-			showErrorNotification();
+		case ERROR_CONNECTION:
+			showErrorNotification(R.string.error_connection);
 			break;
-		case NO_CHANGE:
+		case ERROR_SD:
+			showErrorNotification(R.string.error_sd);
+			break;
+		case ERROR_PARSE:
+			showErrorNotification(R.string.error_parsing);
+			break;
+		case NO_CHANGE: default:
 			removeNoification();
 			break;
 		}
@@ -312,9 +317,10 @@ public class LibraryDownloader extends IntentService{
 		manager.notify(NOTIFICATION_ID, notBuilder.build());
 	}
 	
-	private void showErrorNotification(){
+	private void showErrorNotification(int errorString){
 		NotificationCompat.Builder notBuilder = new NotificationCompat.Builder(this);
 		notBuilder.setContentTitle(getString(R.string.downloader_error));
+		notBuilder.setContentText(getString(errorString));
 		notBuilder.setSmallIcon(R.drawable.ic_action_cancel);
 		notBuilder.setAutoCancel(false);
 		

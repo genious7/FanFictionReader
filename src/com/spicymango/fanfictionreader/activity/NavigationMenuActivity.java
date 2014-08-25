@@ -177,7 +177,7 @@ public class NavigationMenuActivity extends ActionBarActivity implements LoaderC
 		if (mLoader.hasConnectionError()) {
 			mProgressBar.setVisibility(View.GONE);
 			mRetryBar.setVisibility(View.VISIBLE);
-			Toast toast = Toast.makeText(this, R.string.dialog_internet, Toast.LENGTH_SHORT);
+			Toast toast = Toast.makeText(this, R.string.error_connection, Toast.LENGTH_SHORT);
 			toast.show();
 		}else if(mLoader.isRunning()){
 			mProgressBar.setVisibility(View.VISIBLE);
@@ -542,12 +542,6 @@ public class NavigationMenuActivity extends ActionBarActivity implements LoaderC
 				return null;
 			}
 			return url.first().attr("abs:href");
-		}
-		
-		@Override
-		protected void onReset() {
-			mList = null;
-			super.onReset();
 		}
 		
 		@Override

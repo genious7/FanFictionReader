@@ -239,13 +239,6 @@ public abstract class BaseLoader<T extends Parcelable> extends
 	protected abstract boolean load(Document document, List<T> list);
 
 	@Override
-	protected final void onReset() {
-		mData.clear();
-		mDataOld.clear();
-		super.onReset();
-	}
-
-	@Override
 	protected final void onStartLoading() {
 		mHasConnectionError = false;
 		deliverResult(mData);

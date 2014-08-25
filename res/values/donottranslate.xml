@@ -5,6 +5,7 @@
         <item>S</item>
         <item>M</item>
         <item>L</item>
+        <item>XL</item>
     </string-array>
     <string name="pref_text_size_default">M</string>
     
@@ -20,6 +21,13 @@
     	<item >L</item>    
     </string-array> 
     <string name="pref_theme_default">D</string>
+    
+    <string-array name="pref_loc_values">
+    	<item >int</item>
+    	<item >ext</item>    
+    </string-array> 
+    <string name="pref_loc_default">int</string>
+    
 
     <!-- Browse Meny Activity -->
     <string-array name="category_button_normal">

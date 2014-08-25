@@ -8677,8 +8677,8 @@ com.spicymango.fanfictionreader.MainMenu -> com.spicymango.fanfictionreader.Main
     void onActivityResult(int,int,android.content.Intent) -> onActivityResult
     void onCreate(android.os.Bundle) -> onCreate
 com.spicymango.fanfictionreader.MainMenu$MainMenuAdapter -> com.spicymango.fanfictionreader.b:
-    com.spicymango.fanfictionreader.MainMenu$MenuItem[] data -> a
-    int layoutResourceId -> b
+    int layoutResourceId -> a
+    long getItemId(int) -> getItemId
     android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView
 com.spicymango.fanfictionreader.MainMenu$MainMenuAdapter$MenuItemHolder -> com.spicymango.fanfictionreader.c:
     android.widget.ImageView imgIcon -> a
@@ -8690,14 +8690,27 @@ com.spicymango.fanfictionreader.MainMenu$MainMenuAdapter$MenuItemHolder -> com.s
 com.spicymango.fanfictionreader.MainMenu$MenuItem -> com.spicymango.fanfictionreader.d:
     int icon -> a
     java.lang.String title -> b
-    com.spicymango.fanfictionreader.MainMenu this$0 -> c
+    int id -> c
+    com.spicymango.fanfictionreader.MainMenu this$0 -> d
 com.spicymango.fanfictionreader.Settings -> com.spicymango.fanfictionreader.Settings:
     void onCreate(android.os.Bundle) -> onCreate
     boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
     int fontSize(android.content.Context) -> a
     boolean isIncrementalUpdatingEnabled(android.content.Context) -> b
+    boolean isWakeLockEnabled(android.content.Context) -> c
     void setOrientationAndTheme(android.app.Activity) -> a
     boolean onPreferenceChange(android.preference.Preference,java.lang.Object) -> onPreferenceChange
+com.spicymango.fanfictionreader.Settings$TextSize -> com.spicymango.fanfictionreader.e:
+    com.spicymango.fanfictionreader.Settings$TextSize SMALL -> a
+    com.spicymango.fanfictionreader.Settings$TextSize MEDIUM -> b
+    com.spicymango.fanfictionreader.Settings$TextSize LARGE -> c
+    com.spicymango.fanfictionreader.Settings$TextSize XLARGE -> d
+    int size -> e
+    java.lang.String key -> f
+    com.spicymango.fanfictionreader.Settings$TextSize[] ENUM$VALUES -> g
+    int getSize(java.lang.String) -> a
+    com.spicymango.fanfictionreader.Settings$TextSize[] values() -> values
+    com.spicymango.fanfictionreader.Settings$TextSize valueOf(java.lang.String) -> valueOf
 com.spicymango.fanfictionreader.activity.AuthorMenuActivity -> com.spicymango.fanfictionreader.activity.AuthorMenuActivity:
     android.net.Uri mUri -> a
     android.support.v4.content.Loader onCreateLoader(int,android.os.Bundle) -> onCreateLoader
@@ -8879,7 +8892,6 @@ com.spicymango.fanfictionreader.activity.NavigationMenuActivity$MenuLoader -> co
     void setUri(android.net.Uri) -> a
     java.lang.String getCrossoverName(org.jsoup.nodes.Document) -> a
     java.lang.String getCrossoverUri(org.jsoup.nodes.Document) -> b
-    void onReset() -> onReset
     void onStartLoading() -> onStartLoading
     void deliverResult(java.lang.Object) -> deliverResult
     java.lang.Object loadInBackground() -> loadInBackground
@@ -8964,17 +8976,22 @@ com.spicymango.fanfictionreader.activity.StoryDisplayActivity -> com.spicymango.
     void updatePageButtons(int,int) -> a
     void onCreate(android.os.Bundle) -> onCreate
     void onSaveInstanceState(android.os.Bundle) -> onSaveInstanceState
+    void onRestoreInstanceState(android.os.Bundle) -> onRestoreInstanceState
+    int getCharacterOffset() -> b
+    void scrollTo(int) -> b
     void onStop() -> onStop
     void onLoadFinished(android.support.v4.content.Loader,java.lang.Object) -> onLoadFinished
-    android.widget.ScrollView access$1(com.spicymango.fanfictionreader.activity.StoryDisplayActivity) -> a
-    int access$2(com.spicymango.fanfictionreader.activity.StoryDisplayActivity) -> b
-    void access$3(com.spicymango.fanfictionreader.activity.StoryDisplayActivity,int) -> a
+    int access$1(com.spicymango.fanfictionreader.activity.StoryDisplayActivity) -> a
+    void access$2(com.spicymango.fanfictionreader.activity.StoryDisplayActivity,int) -> a
+    android.widget.TextView access$3(com.spicymango.fanfictionreader.activity.StoryDisplayActivity) -> b
+    android.widget.ScrollView access$4(com.spicymango.fanfictionreader.activity.StoryDisplayActivity) -> c
 com.spicymango.fanfictionreader.activity.StoryDisplayActivity$1 -> com.spicymango.fanfictionreader.activity.u:
     com.spicymango.fanfictionreader.activity.StoryDisplayActivity this$0 -> a
-    void run() -> run
+    void onClick(android.content.DialogInterface,int) -> onClick
 com.spicymango.fanfictionreader.activity.StoryDisplayActivity$2 -> com.spicymango.fanfictionreader.activity.v:
     com.spicymango.fanfictionreader.activity.StoryDisplayActivity this$0 -> a
-    void onClick(android.content.DialogInterface,int) -> onClick
+    int val$offset -> b
+    void onGlobalLayout() -> onGlobalLayout
 com.spicymango.fanfictionreader.activity.StoryDisplayActivity$3 -> com.spicymango.fanfictionreader.activity.w:
     com.spicymango.fanfictionreader.activity.StoryDisplayActivity this$0 -> a
 com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader -> com.spicymango.fanfictionreader.activity.x:
@@ -8985,8 +9002,10 @@ com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader -> com
     boolean dataHasChanged -> e
     boolean hasUpdated -> f
     android.database.ContentObserver observer -> g
-    boolean scrollUp -> h
-    long storyId -> i
+    boolean scrollTo -> h
+    boolean firstScroll -> i
+    long storyId -> j
+    int characterOffset -> k
     void deliverResult(com.spicymango.fanfictionreader.activity.StoryObject) -> a
     boolean isRunning() -> a
     com.spicymango.fanfictionreader.activity.StoryObject loadInBackground() -> b
@@ -8994,7 +9013,7 @@ com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader -> com
     android.text.Spanned getStoryFromFile(long,int) -> a
     android.text.Spanned getStoryFromSite(long,int) -> b
     void loadPage(int) -> a
-    void onSaveInstanceState(android.os.Bundle) -> a
+    void onSaveInstanceState(android.os.Bundle,int) -> a
     void onReset() -> onReset
     int pageNumberOnline(java.lang.String,int) -> a
     void onStartLoading() -> onStartLoading
@@ -9002,12 +9021,13 @@ com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader -> com
     java.lang.Object loadInBackground() -> loadInBackground
     boolean access$2(com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader) -> a
     boolean access$3(com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader) -> b
-    void access$4(com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader,boolean) -> a
-    boolean access$5(com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader) -> c
-    void access$6(com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader,boolean) -> b
-    com.spicymango.fanfictionreader.activity.StoryObject access$7(com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader) -> d
-    void access$8(com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader,int) -> a
-    void access$9(com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader,android.os.Bundle) -> a
+    int access$4(com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader) -> c
+    void access$5(com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader,boolean) -> a
+    boolean access$6(com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader) -> d
+    void access$7(com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader,boolean) -> b
+    com.spicymango.fanfictionreader.activity.StoryObject access$8(com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader) -> e
+    void access$9(com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader,int) -> a
+    void access$10(com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader,android.os.Bundle,int) -> a
 com.spicymango.fanfictionreader.activity.StoryMenuActivity -> com.spicymango.fanfictionreader.activity.StoryMenuActivity:
     android.content.UriMatcher URI_MATCHER -> a
     android.net.Uri mUri -> b
@@ -9068,7 +9088,6 @@ com.spicymango.fanfictionreader.dialogs.DetailDialog -> com.spicymango.fanfictio
     com.spicymango.fanfictionreader.util.Story mStory -> a
     boolean mShowAuthor -> b
     int[] formats -> c
-    int[] labels -> d
     android.app.Dialog onCreateDialog(android.os.Bundle) -> onCreateDialog
     void onClick(android.view.View) -> onClick
     void show(android.support.v7.app.ActionBarActivity,com.spicymango.fanfictionreader.util.Story) -> a
@@ -9089,19 +9108,6 @@ com.spicymango.fanfictionreader.filter.FilterMenu -> com.spicymango.fanfictionre
 com.spicymango.fanfictionreader.filter.FilterMenu$1 -> com.spicymango.fanfictionreader.filter.b:
     com.spicymango.fanfictionreader.filter.FilterMenu this$0 -> a
     void onClick(android.view.View) -> onClick
-com.spicymango.fanfictionreader.filter.FilterSet -> com.spicymango.fanfictionreader.filter.FilterSet:
-    java.util.List filter -> a
-    android.os.Parcelable$Creator CREATOR -> CREATOR
-    int describeContents() -> describeContents
-    void writeToParcel(android.os.Parcel,int) -> writeToParcel
-com.spicymango.fanfictionreader.filter.FilterSet$1 -> com.spicymango.fanfictionreader.filter.c:
-    com.spicymango.fanfictionreader.filter.FilterSet[] newArray(int) -> a
-    com.spicymango.fanfictionreader.filter.FilterSet createFromParcel(android.os.Parcel) -> a
-    java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
-    java.lang.Object[] newArray(int) -> newArray
-com.spicymango.fanfictionreader.filter.FilterSet$FilterObject -> com.spicymango.fanfictionreader.filter.FilterSet$FilterObject:
-    int describeContents() -> describeContents
-    void writeToParcel(android.os.Parcel,int) -> writeToParcel
 com.spicymango.fanfictionreader.provider.DatabaseHelper -> com.spicymango.fanfictionreader.provider.a:
     void onCreate(android.database.sqlite.SQLiteDatabase) -> onCreate
     void onUpgrade(android.database.sqlite.SQLiteDatabase,int,int) -> onUpgrade
@@ -9116,8 +9122,7 @@ com.spicymango.fanfictionreader.provider.StoryProvider -> com.spicymango.fanfict
     boolean onCreate() -> onCreate
     android.database.Cursor query(android.net.Uri,java.lang.String[],java.lang.String,java.lang.String[],java.lang.String) -> query
     int update(android.net.Uri,android.content.ContentValues,java.lang.String,java.lang.String[]) -> update
-    int lastChapterRead(android.content.Context,long) -> a
-    int numberOfChapters(android.content.Context,long) -> b
+    int numberOfChapters(android.content.Context,long) -> a
 com.spicymango.fanfictionreader.util.BaseActivity -> com.spicymango.fanfictionreader.util.a:
     android.widget.BaseAdapter mAdapter -> a
     android.widget.Button mAddPageButton -> b
@@ -9154,7 +9159,6 @@ com.spicymango.fanfictionreader.util.BaseLoader -> com.spicymango.fanfictionread
     android.net.Uri formatUri(int) -> a
     int getTotalPages(org.jsoup.nodes.Document) -> a
     boolean load(org.jsoup.nodes.Document,java.util.List) -> a
-    void onReset() -> onReset
     void onStartLoading() -> onStartLoading
     int getCurrentPage() -> g
     int getTotalPages() -> h

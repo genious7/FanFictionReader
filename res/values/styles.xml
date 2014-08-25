@@ -8,6 +8,7 @@
         <item name="ic_action_view_as_list">@drawable/ic_action_view_as_list_dark</item>
         <item name="ic_folder_open">@drawable/ic_folder_open_dark</item>
         <item name="ic_storage">@drawable/ic_storage_dark</item>
+        <item name="ic_action_replay">@drawable/ic_action_replay_dark</item>
     </style>
 
     <style name="AppActionBarLight" parent="@style/Theme.AppCompat.Light.DarkActionBar">
@@ -18,6 +19,7 @@
         <item name="ic_action_view_as_list">@drawable/ic_action_view_as_list_light</item>
         <item name="ic_folder_open">@drawable/ic_folder_open_light</item>
         <item name="ic_storage">@drawable/ic_storage_light</item>
+        <item name="ic_action_replay">@drawable/ic_action_replay_light</item>
     </style>
 
     <style name="Dialog" parent="android:Theme.Dialog"></style>

@@ -32,7 +32,7 @@
     </PreferenceCategory>
     <PreferenceCategory
         android:orderingFromXml="true"
-        android:title="@string/pref_updating" >
+        android:title="@string/pref_behavior" >
         <ListPreference
             android:defaultValue="@string/pref_orientation_default"
             android:dialogTitle="@string/pref_orientation"
@@ -40,6 +40,17 @@
             android:entryValues="@array/pref_orientation_values"
             android:key="@string/pref_orientation"
             android:title="@string/pref_orientation" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="@string/pref_wake_lock"
+            android:title="@string/pref_wake_lock" />
+        <ListPreference
+            android:defaultValue="@string/pref_loc_default"
+            android:dialogTitle="@string/pref_loc"
+            android:entries="@array/pref_loc_entries"
+            android:entryValues="@array/pref_loc_values"
+            android:key="@string/pref_loc"
+            android:title="@string/pref_loc" />
     </PreferenceCategory>
 
 </PreferenceScreen>

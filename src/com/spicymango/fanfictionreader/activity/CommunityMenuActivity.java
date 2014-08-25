@@ -63,7 +63,6 @@ public class CommunityMenuActivity extends BaseActivity<CommunityItem>{
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, View view,
 			int position, long id) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

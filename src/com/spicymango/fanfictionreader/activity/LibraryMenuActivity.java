@@ -1,9 +1,9 @@
 package com.spicymango.fanfictionreader.activity;
 
-import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -36,6 +36,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +48,7 @@ import com.spicymango.fanfictionreader.filter.FilterDialog;
 import com.spicymango.fanfictionreader.filter.FilterMenu;
 import com.spicymango.fanfictionreader.provider.SqlConstants;
 import com.spicymango.fanfictionreader.provider.StoryProvider;
+import com.spicymango.fanfictionreader.util.FileHandler;
 import com.spicymango.fanfictionreader.util.Story;
 
 /**
@@ -60,10 +62,12 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 			R.id.story_menu_list_item_author,
 			R.id.story_menu_list_item_chapters,
 			R.id.story_menu_list_item_words,
-			R.id.story_menu_list_item_follows};
-	private static final String[] GET_PROJECTION = {KEY_STORY_ID,KEY_TITLE,KEY_SUMMARY,KEY_AUTHOR,KEY_CHAPTER, KEY_LENGHT,KEY_UPDATED, KEY_LAST, KEY_CATEGORY};
+			R.id.story_menu_list_item_follows,
+			R.id.completitionBar};
+	
+	private static final String[] GET_PROJECTION = {KEY_STORY_ID,KEY_TITLE,KEY_SUMMARY,KEY_AUTHOR,KEY_CHAPTER, KEY_LENGHT,KEY_UPDATED, KEY_LAST, KEY_CATEGORY, KEY_OFFSET};
 	private static final int LOADER_LIBRARY = 0;
-	private static final String[] TO_PROJECTION = {KEY_TITLE,KEY_SUMMARY,KEY_AUTHOR,KEY_CHAPTER, KEY_LENGHT,KEY_UPDATED};
+	private static final String[] TO_PROJECTION = {KEY_TITLE,KEY_SUMMARY,KEY_AUTHOR,KEY_CHAPTER, KEY_LENGHT,KEY_UPDATED, KEY_LAST};
 	
 	private int[] filter = {0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 	private ArrayList<Map<String, Integer>> filterList = new ArrayList<Map<String,Integer>>();
@@ -94,9 +98,8 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 			
 		case R.id.menu_library_context_delete:
 			int length = story.getChapterLenght();
-			for (int j = 0; j < length; j++) {
-				File file = new File(getFilesDir(), story.getId() + "_" + j + ".txt");
-				file.delete();
+			for (int j = 1; j <= length; j++) {
+				FileHandler.deleteFile(this, story.getId(), j);
 			}			
 			getContentResolver().delete(databaseUri, null, null);
 			return true;
@@ -149,9 +152,16 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 	
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int position, long id) {
-		int lastPageRead = StoryProvider.lastChapterRead(this, id);
+		
+		Cursor c = mAdapter.getCursor();
+		c.moveToPosition(position);
+		
+		int lastPageRead = c.getInt(c.getColumnIndexOrThrow(KEY_LAST));
+		int offset = c.getInt(c.getColumnIndexOrThrow(KEY_OFFSET));
+		
 		Intent i = new Intent (this, StoryDisplayActivity.class);
 		i.setData(Uri.parse("file://fanfiction/" + id + "_" + lastPageRead + ".txt"));
+		i.putExtra(StoryDisplayActivity.EXTRA_OFFSET, offset);
 		startActivity(i);
 	}
 
@@ -236,7 +246,7 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 					long id = Long.parseLong(value.toString());
 					LibraryDownloader.download(LibraryMenuActivity.this, id, 1);
 				} catch (Exception e) {
-					Toast toast = Toast.makeText(LibraryMenuActivity.this, R.string.dialog_unspecified, Toast.LENGTH_SHORT);
+					Toast toast = Toast.makeText(LibraryMenuActivity.this, R.string.menu_library_by_id_error, Toast.LENGTH_SHORT);
 					toast.show();
 				}
 			}
@@ -291,6 +301,7 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 				builder.append(" AND ");
 			}
 			String key = FilterMenu.getKeyByValue(filterList.get(13), filter[13]);
+			key = key.replaceAll("'", "''");
 			builder.append(KEY_CATEGORY + " LIKE '%" + key + "%' ");
 			
 		}
@@ -371,10 +382,10 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 		
 		mListView = (ListView)findViewById(R.id.list);
 		mListView.setOnItemClickListener(this);
-		View footer = getLayoutInflater().inflate(R.layout.footer_list, null);
+		View footer = getLayoutInflater().inflate(R.layout.footer_list, mListView, false);
 		mListView.addFooterView(footer, null, false);
 		
-		mAdapter = new SimpleCursorAdapter(this, R.layout.story_menu_list_item, null, TO_PROJECTION, DEST_PROJECTION, 0);
+		mAdapter = new SimpleCursorAdapter(this, R.layout.library_menu_list_item, null, TO_PROJECTION, DEST_PROJECTION, 0);
 		mAdapter.setViewBinder(new LibraryBinder(this));
 		mListView.setAdapter(mAdapter);
 		registerForContextMenu(mListView);
@@ -397,6 +408,7 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 		 */
 		private final String words, chapters;
 		private final DateFormat format;
+		private final int chapterColumn;
 		
 		/**
 		 * Creates a new Library Binder using the current context. 
@@ -406,26 +418,35 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 			words = context.getString(R.string.menu_library_words);
 			chapters = context.getString(R.string.menu_library_chapters);
 			format = SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT);
+			chapterColumn = Arrays.asList(GET_PROJECTION).indexOf(KEY_CHAPTER);
 		}
 		
 		@Override
 		public boolean setViewValue(View v, Cursor c, int column) {
+			
 			String text2;
 			switch (v.getId()) {
 			case R.id.story_menu_list_item_words:
 				text2 = String.format(Locale.US, words, c.getInt(column));
-				break;
+				((TextView)v).setText(text2);
+				return true;
 			case R.id.story_menu_list_item_chapters:
 				text2 = String.format(chapters, c.getInt(column));
-				break;
+				((TextView)v).setText(text2);
+				return true;
 			case R.id.story_menu_list_item_follows:
 				text2 = format.format(c.getLong(column));
-				break;
+				((TextView)v).setText(text2);
+				return true;
+			case R.id.completitionBar:
+				ProgressBar bar = (ProgressBar) v; 
+				int max = c.getInt(chapterColumn);
+				bar.setMax(max - 1);
+				bar.setProgress(c.getInt(column) - 1);
+				return true;
 			default:
 				return false;
 			}
-			((TextView)v).setText(text2);
-			return true;
 		}
 		
 	}

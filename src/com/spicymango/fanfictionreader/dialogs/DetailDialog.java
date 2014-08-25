@@ -17,9 +17,11 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /**
@@ -49,21 +51,6 @@ public class DetailDialog extends DialogFragment implements OnClickListener{
 				R.string.detail_complete
 	};
 	
-	private final static int[] labels = {
-				R.id.detail_author_label,
-				R.id.detail_category_label,
-				R.id.detail_rating_label,
-				R.id.detail_languague_label,
-				R.id.detail_genre_label,
-				R.id.detail_chapters_label,
-				R.id.detail_words_label,
-				R.id.detail_favorites_label,
-				R.id.detail_follows_label,
-				R.id.detail_updated_label,
-				R.id.detail_published_label,
-				R.id.detail_complete_label
-		};
-	
 	public DetailDialog(){
 	}
 	
@@ -75,20 +62,16 @@ public class DetailDialog extends DialogFragment implements OnClickListener{
 		mStory = getArguments().getParcelable(EXTRA_STORY);
 		mShowAuthor = getArguments().getBoolean(EXTRA_AUTHOR);
 
-		LayoutInflater inflater = getActivity().getLayoutInflater();
-		View view = inflater.inflate(R.layout.activity_detail_view, null);
+		int vPad = getResources().getDimensionPixelSize(R.dimen.activity_vertical_margin);
+		int hPad = getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin);
+		
+		final LinearLayout layout = new LinearLayout(getActivity());
+		layout.setOrientation(LinearLayout.VERTICAL);
+		layout.setPadding(hPad, vPad, hPad, vPad);
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setTitle(mStory.getName());
-		builder.setView(view);
-		
-		View btnAuthor = view.findViewById(R.id.btn_author);
-		if (mShowAuthor) {
-			btnAuthor.setOnClickListener(this);
-		}else{
-			btnAuthor.setVisibility(View.GONE);
-			
-		}
+		builder.setView(layout);
 		
 		String[] stringValues = {
 				mStory.getAuthor(),
@@ -105,13 +88,20 @@ public class DetailDialog extends DialogFragment implements OnClickListener{
 				mStory.isCompleted() ? getString(R.string.complete_true) : getString(R.string.complete_false)
 		};
 		
-		for (int i = 0; i < labels.length; i++) {
-			TextView label = (TextView) view.findViewById(labels[i]);
-			if (stringValues[i].equals("")) {
-				label.setVisibility(View.GONE);
-			}else{
+		for (int i = 0; i < formats.length; i++) {
+			if (stringValues[i].length() != 0) {
+				TextView label = new TextView(getActivity());
 				label.setText(Html.fromHtml(getString(formats[i], stringValues[i])));
+				layout.addView(label);
 			}
+		}
+		
+		if (mShowAuthor) {
+			Button authorBtn = new Button(getActivity());
+			authorBtn.setText(R.string.menu_navigation_browse_by_author);
+			authorBtn.setOnClickListener(this);
+			authorBtn.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+			layout.addView(authorBtn);
 		}
 		
 		AlertDialog diag= builder.create();
@@ -135,9 +125,7 @@ public class DetailDialog extends DialogFragment implements OnClickListener{
 	}
 	
 	public static final void show(ActionBarActivity context, Story story) {
-		
 		boolean showAuthor = true;
-		
 		if (context instanceof AuthorMenuActivity || context instanceof LibraryMenuActivity) {
 			showAuthor = false;
 		}

@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHelper extends SQLiteOpenHelper  implements SqlConstants{
 	
-	private static final int DATABASE_VERSION = 5; //Database version 5
+	private static final int DATABASE_VERSION = 6; //Database version 6
 	private static final String DATABASE_NAME = "library.db";
 	
 	//The name of the table
@@ -35,7 +35,8 @@ public class DatabaseHelper extends SQLiteOpenHelper  implements SqlConstants{
 	                + KEY_UPDATED + " INTEGER,"
 	                + KEY_SUMMARY + " TEXT NOT NULL,"
 	                + KEY_LAST + " INTEGER,"
-	                + KEY_COMPLETE + " BOOLEAN"
+	                + KEY_COMPLETE + " BOOLEAN,"
+	                + KEY_OFFSET + " INTEGER"
 	                + ")";
 		 db.execSQL(CREATE_CONTACTS_TABLE);
 	}
@@ -76,6 +77,9 @@ public class DatabaseHelper extends SQLiteOpenHelper  implements SqlConstants{
 		if (oldVersion < 5) {
 			db.execSQL("ALTER TABLE " + TABLE_LIBRARY + " ADD COLUMN " + KEY_COMPLETE + " BOOLEAN DEFAULT 0");
 		}
-		
+		if (oldVersion < 6) {
+			db.execSQL("ALTER TABLE " + TABLE_LIBRARY + " ADD COLUMN " + KEY_OFFSET + " INTEGER DEFAULT 0");
+		}	
 	}
+
 }

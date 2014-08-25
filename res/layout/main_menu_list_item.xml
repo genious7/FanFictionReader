@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/LinearLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/top_bottom_padding"
@@ -11,13 +12,12 @@
         android:id="@+id/list_item_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
         android:contentDescription="@string/menu_button_content_description"
         android:maxHeight="@dimen/main_menu_icon_size"
         android:maxWidth="@dimen/main_menu_icon_size"
         android:minHeight="@dimen/main_menu_icon_size"
         android:minWidth="@dimen/main_menu_icon_size"
+        android:paddingLeft="0dp"
         android:paddingRight="@dimen/main_menu_icon_padding"
         android:src="?attr/ic_storage" />
 
@@ -25,9 +25,6 @@
         android:id="@+id/list_item_title"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/list_item_icon"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/list_item_icon"
         android:gravity="center_vertical"
         android:minHeight="@dimen/main_menu_icon_size"
         android:text="@string/menu_button_my_library"
@@ -35,4 +32,4 @@
         android:textSize="@dimen/menu_title_text_size"
         android:textStyle="bold" />
 
-</RelativeLayout>
+</LinearLayout>

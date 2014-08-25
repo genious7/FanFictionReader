@@ -1,7 +1,11 @@
 package com.spicymango.fanfictionreader;
 
+import com.spicymango.fanfictionreader.util.FileHandler;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -15,6 +19,30 @@ import android.view.MenuItem;
 
 
 public class Settings extends PreferenceActivity implements OnPreferenceChangeListener{
+	
+	private enum TextSize{
+		SMALL(14,"S"),
+		MEDIUM(18,"M"),
+		LARGE(22,"L"),
+		XLARGE(32,"XL");
+		
+		private int size;
+		private String key;
+		
+		TextSize(int fontSize, String key){
+			size = fontSize;
+			this.key = key;
+		}
+	
+		public static int getSize(String key){
+			for (TextSize t : values()) {
+				if (t.key.equals(key)) {
+					return t.size;
+				}
+			}
+			return MEDIUM.size;
+		}
+	}
 	
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	@SuppressWarnings("deprecation")
@@ -33,6 +61,9 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
 		Preference orientationPref = findPreference(getString(R.string.pref_orientation));
 		orientationPref.setOnPreferenceChangeListener(this);
 		
+		Preference installLocation = findPreference(getString(R.string.pref_loc));
+		installLocation.setEnabled(FileHandler.isExternalStorageWritable());
+		installLocation.setOnPreferenceChangeListener(this);
 	}
 	
 	@Override
@@ -49,18 +80,22 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
 	public static int fontSize(Context context){
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
 		String textSize = sharedPref.getString(context.getString(R.string.pref_text_size), "");
-		if (textSize.equals("S")) {
-			return 14;
-		}else if (textSize.equals("M")) {
-			return 18;
-		} else {
-			return 22;
-		}
+		return TextSize.getSize(textSize);
 	}
 	
 	public static boolean isIncrementalUpdatingEnabled(Context context){
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
 		return sharedPref.getBoolean(context.getString(R.string.pref_incremental_updating), true);
+	}
+	
+	public static boolean isWakeLockEnabled(Context context){
+		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+		return sharedPref.getBoolean(context.getString(R.string.pref_wake_lock), true);
+	}
+	
+	public static boolean shouldWriteToSD(Context context){
+		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+		return sharedPref.getString(context.getString(R.string.pref_loc), "ext").equals("ext");
 	}
 	
 	/**
@@ -98,8 +133,18 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
 			} else {
 				this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 			}
+		} else if (preference.getKey() == getString(R.string.pref_loc)){
+			showMoveDialog();
 		}
 		return true;
+	}
+
+	private void showMoveDialog() {
+		AlertDialog.Builder diag = new Builder(this);
+		diag.setTitle(R.string.pref_loc_diag_title);
+		diag.setMessage(R.string.pref_loc_diag);
+		diag.setNeutralButton(android.R.string.ok, null);
+		diag.show();		
 	}
 
 }

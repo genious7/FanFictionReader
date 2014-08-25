@@ -57,7 +57,7 @@ public class Story implements Parcelable, SqlConstants{
 			cursor.getString(7), cursor.getString(4), cursor.getString(6),
 			cursor.getString(5), cursor.getInt(8), cursor.getInt(9),
 			cursor.getInt(10), cursor.getInt(11), cursor.getLong(13),
-			cursor.getLong(12), cursor.getShort(15) == 1);
+			cursor.getLong(12), cursor.getShort(16) == 1);
 	}
 	
 	public ContentValues toContentValues (int lastPage){

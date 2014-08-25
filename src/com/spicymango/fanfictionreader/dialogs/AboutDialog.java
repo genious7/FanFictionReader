@@ -31,7 +31,7 @@ public class AboutDialog extends DialogFragment implements OnClickListener{
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		
 		LayoutInflater inflater = getActivity().getLayoutInflater();
-		View content = inflater.inflate(R.layout.activity_about, null);
+		View content = inflater.inflate(R.layout.dialog_about, null);
 		
 		AlertDialog.Builder builder = new Builder(getActivity());
 		builder.setView(content);

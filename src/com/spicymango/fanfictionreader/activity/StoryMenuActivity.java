@@ -52,6 +52,7 @@ public class StoryMenuActivity extends BaseActivity<Story>{
 		matcher.addURI(FANFIC_AUTHORITY, "community/*/#/", URI_COMMUNITY_MENU);
 		matcher.addURI(FANFIC_AUTHORITY, "community/*/#/#/#/#/#/#/#/#/", URI_COMMUNITY_MENU);
 		matcher.addURI(FANFIC_AUTHORITY, "*/#/#/", URI_CROSSOVER_MENU);
+		matcher.addURI(FANFIC_AUTHORITY, "*/#/", URI_NORMAL_MENU);
 		matcher.addURI(FANFIC_AUTHORITY, "*/*/", URI_NORMAL_MENU);
 		return matcher;
 	}

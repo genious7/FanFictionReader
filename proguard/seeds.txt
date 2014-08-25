@@ -9523,6 +9523,7 @@ com.spicymango.fanfictionreader.R$attr: int homeAsUpIndicator
 com.spicymango.fanfictionreader.R$attr: int homeLayout
 com.spicymango.fanfictionreader.R$attr: int ic_action_about
 com.spicymango.fanfictionreader.R$attr: int ic_action_group
+com.spicymango.fanfictionreader.R$attr: int ic_action_replay
 com.spicymango.fanfictionreader.R$attr: int ic_action_search
 com.spicymango.fanfictionreader.R$attr: int ic_action_settings
 com.spicymango.fanfictionreader.R$attr: int ic_action_view_as_list
@@ -9714,6 +9715,8 @@ com.spicymango.fanfictionreader.R$drawable: int ic_action_download
 com.spicymango.fanfictionreader.R$drawable: int ic_action_group_dark
 com.spicymango.fanfictionreader.R$drawable: int ic_action_group_light
 com.spicymango.fanfictionreader.R$drawable: int ic_action_refresh
+com.spicymango.fanfictionreader.R$drawable: int ic_action_replay_dark
+com.spicymango.fanfictionreader.R$drawable: int ic_action_replay_light
 com.spicymango.fanfictionreader.R$drawable: int ic_action_search_dark
 com.spicymango.fanfictionreader.R$drawable: int ic_action_search_light
 com.spicymango.fanfictionreader.R$drawable: int ic_action_settings_dark
@@ -9728,7 +9731,6 @@ com.spicymango.fanfictionreader.R$drawable: int ic_storage_dark
 com.spicymango.fanfictionreader.R$drawable: int ic_storage_light
 com.spicymango.fanfictionreader.R$drawable: int launcher
 com.spicymango.fanfictionreader.R$id: int LinearLayout1
-com.spicymango.fanfictionreader.R$id: int RelativeLayout1
 com.spicymango.fanfictionreader.R$id: int about_contact
 com.spicymango.fanfictionreader.R$id: int action_bar
 com.spicymango.fanfictionreader.R$id: int action_bar_activity_content
@@ -9745,7 +9747,6 @@ com.spicymango.fanfictionreader.R$id: int activity_chooser_view_content
 com.spicymango.fanfictionreader.R$id: int always
 com.spicymango.fanfictionreader.R$id: int beginning
 com.spicymango.fanfictionreader.R$id: int browse_menu_label
-com.spicymango.fanfictionreader.R$id: int btn_author
 com.spicymango.fanfictionreader.R$id: int buttonBar
 com.spicymango.fanfictionreader.R$id: int category_menu_title
 com.spicymango.fanfictionreader.R$id: int category_menu_views
@@ -9761,19 +9762,7 @@ com.spicymango.fanfictionreader.R$id: int community_stories
 com.spicymango.fanfictionreader.R$id: int community_summary
 com.spicymango.fanfictionreader.R$id: int community_title
 com.spicymango.fanfictionreader.R$id: int default_activity_button
-com.spicymango.fanfictionreader.R$id: int detail_author_label
 com.spicymango.fanfictionreader.R$id: int detail_category_label
-com.spicymango.fanfictionreader.R$id: int detail_chapters_label
-com.spicymango.fanfictionreader.R$id: int detail_complete_label
-com.spicymango.fanfictionreader.R$id: int detail_favorites_label
-com.spicymango.fanfictionreader.R$id: int detail_follows_label
-com.spicymango.fanfictionreader.R$id: int detail_genre_label
-com.spicymango.fanfictionreader.R$id: int detail_languague_label
-com.spicymango.fanfictionreader.R$id: int detail_published_label
-com.spicymango.fanfictionreader.R$id: int detail_rating_label
-com.spicymango.fanfictionreader.R$id: int detail_updated_label
-com.spicymango.fanfictionreader.R$id: int detail_view_scroll_view
-com.spicymango.fanfictionreader.R$id: int detail_words_label
 com.spicymango.fanfictionreader.R$id: int dialog
 com.spicymango.fanfictionreader.R$id: int disableHome
 com.spicymango.fanfictionreader.R$id: int dropdown
@@ -9920,7 +9909,6 @@ com.spicymango.fanfictionreader.R$layout: int abc_popup_menu_item_layout
 com.spicymango.fanfictionreader.R$layout: int abc_search_dropdown_item_icons_2line
 com.spicymango.fanfictionreader.R$layout: int abc_search_view
 com.spicymango.fanfictionreader.R$layout: int activity_about
-com.spicymango.fanfictionreader.R$layout: int activity_detail_view
 com.spicymango.fanfictionreader.R$layout: int activity_filter_view
 com.spicymango.fanfictionreader.R$layout: int activity_list_view
 com.spicymango.fanfictionreader.R$layout: int activity_read_story
@@ -10012,6 +10000,7 @@ com.spicymango.fanfictionreader.R$string: int menu_button_communities
 com.spicymango.fanfictionreader.R$string: int menu_button_content_description
 com.spicymango.fanfictionreader.R$string: int menu_button_just_in
 com.spicymango.fanfictionreader.R$string: int menu_button_my_library
+com.spicymango.fanfictionreader.R$string: int menu_button_resume
 com.spicymango.fanfictionreader.R$string: int menu_button_search
 com.spicymango.fanfictionreader.R$string: int menu_button_settings
 com.spicymango.fanfictionreader.R$string: int menu_community_date
@@ -10049,6 +10038,7 @@ com.spicymango.fanfictionreader.R$string: int menu_search_title
 com.spicymango.fanfictionreader.R$string: int menu_story_filter_by
 com.spicymango.fanfictionreader.R$string: int menu_story_page_button
 com.spicymango.fanfictionreader.R$string: int menu_story_title_just_in
+com.spicymango.fanfictionreader.R$string: int menu_toast_resume
 com.spicymango.fanfictionreader.R$string: int pref_appearance
 com.spicymango.fanfictionreader.R$string: int pref_behavior
 com.spicymango.fanfictionreader.R$string: int pref_incremental_summary_off
@@ -10061,6 +10051,7 @@ com.spicymango.fanfictionreader.R$string: int pref_text_size_default
 com.spicymango.fanfictionreader.R$string: int pref_theme
 com.spicymango.fanfictionreader.R$string: int pref_theme_default
 com.spicymango.fanfictionreader.R$string: int pref_updating
+com.spicymango.fanfictionreader.R$string: int pref_wake_lock
 com.spicymango.fanfictionreader.R$string: int read_story_add
 com.spicymango.fanfictionreader.R$string: int read_story_add_condensed
 com.spicymango.fanfictionreader.R$string: int read_story_chapter
@@ -10321,6 +10312,8 @@ com.spicymango.fanfictionreader.R$styleable: int View_paddingStart
 com.spicymango.fanfictionreader.R$xml: int preferences
 com.spicymango.fanfictionreader.Settings
 com.spicymango.fanfictionreader.Settings: Settings()
+com.spicymango.fanfictionreader.Settings$TextSize: com.spicymango.fanfictionreader.Settings$TextSize[] values()
+com.spicymango.fanfictionreader.Settings$TextSize: com.spicymango.fanfictionreader.Settings$TextSize valueOf(java.lang.String)
 com.spicymango.fanfictionreader.activity.AuthorMenuActivity
 com.spicymango.fanfictionreader.activity.AuthorMenuActivity: AuthorMenuActivity()
 com.spicymango.fanfictionreader.activity.CommunityItem
@@ -10344,7 +10337,7 @@ com.spicymango.fanfictionreader.activity.SearchStoryActivity: SearchStoryActivit
 com.spicymango.fanfictionreader.activity.StoryDisplayActivity
 com.spicymango.fanfictionreader.activity.StoryDisplayActivity: StoryDisplayActivity()
 com.spicymango.fanfictionreader.activity.StoryDisplayActivity: void onClick(android.view.View)
-com.spicymango.fanfictionreader.activity.StoryDisplayActivity$2: void onClick(android.content.DialogInterface,int)
+com.spicymango.fanfictionreader.activity.StoryDisplayActivity$1: void onClick(android.content.DialogInterface,int)
 com.spicymango.fanfictionreader.activity.StoryMenuActivity
 com.spicymango.fanfictionreader.activity.StoryMenuActivity: StoryMenuActivity()
 com.spicymango.fanfictionreader.activity.StoryObject
@@ -10354,9 +10347,6 @@ com.spicymango.fanfictionreader.dialogs.DetailDialog: void onClick(android.view.
 com.spicymango.fanfictionreader.filter.FilterMenu
 com.spicymango.fanfictionreader.filter.FilterMenu: FilterMenu()
 com.spicymango.fanfictionreader.filter.FilterMenu$1: void onClick(android.view.View)
-com.spicymango.fanfictionreader.filter.FilterSet
-com.spicymango.fanfictionreader.filter.FilterSet: android.os.Parcelable$Creator CREATOR
-com.spicymango.fanfictionreader.filter.FilterSet$FilterObject
 com.spicymango.fanfictionreader.provider.StoryProvider
 com.spicymango.fanfictionreader.provider.StoryProvider: StoryProvider()
 com.spicymango.fanfictionreader.util.BaseActivity: BaseActivity()
