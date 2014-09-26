@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.spicymango.fanfictionreader"
     android:installLocation="preferExternal"
-    android:versionCode="21"
-    android:versionName="1.25" >
+    android:versionCode="34"
+    android:versionName="1.35" >
 
     <uses-sdk
         android:minSdkVersion="7"
@@ -11,6 +11,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="18"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="18"/>
 
     <application
         android:allowBackup="true"
@@ -91,6 +92,7 @@
             android:name=".activity.SearchAuthorActivity"
             android:label="@string/menu_search_title" >
         </activity>
-        <activity android:name=".util.LogInManager"></activity>
+        <activity android:name=".activity.AccountActivity"></activity>
+        <activity android:name=".activity.LogInActivity"></activity>
     </application>
 </manifest>

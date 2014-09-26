@@ -11,7 +11,7 @@ import com.spicymango.fanfictionreader.util.BaseActivity;
 import com.spicymango.fanfictionreader.util.Parser;
 import com.spicymango.fanfictionreader.util.SearchLoader;
 import com.spicymango.fanfictionreader.util.Story;
-import com.spicymango.fanfictionreader.util.StoryMenuAdapter;
+import com.spicymango.fanfictionreader.util.adapters.StoryMenuAdapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -34,8 +34,8 @@ import android.widget.Toast;
  * @author Michael Chen
  */
 public class SearchStoryActivity extends BaseActivity<Story> implements OnQueryTextListener{
-	SearchLoader<Story> mLoader;
-	SearchView sView;
+	private SearchLoader<Story> mLoader;
+	private SearchView sView;
 	
 	@Override
 	public Loader<List<Story>> onCreateLoader(int id, Bundle args) {
@@ -62,14 +62,7 @@ public class SearchStoryActivity extends BaseActivity<Story> implements OnQueryT
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
-		Intent i = new Intent(this, StoryDisplayActivity.class);
-		Uri.Builder builder = BaseUri.buildUpon();
-		builder.appendPath("s")
-				.appendPath(id + "")
-				.appendPath("1")
-				.appendPath("");
-		i.setData(builder.build());
-		startActivity(i);	
+		StoryDisplayActivity.openStory(this, id, true);
 	}
 	
 	@Override

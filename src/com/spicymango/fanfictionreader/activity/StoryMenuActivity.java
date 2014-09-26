@@ -13,7 +13,7 @@ import com.spicymango.fanfictionreader.util.BaseActivity;
 import com.spicymango.fanfictionreader.util.BaseLoader;
 import com.spicymango.fanfictionreader.util.Parser;
 import com.spicymango.fanfictionreader.util.Story;
-import com.spicymango.fanfictionreader.util.StoryMenuAdapter;
+import com.spicymango.fanfictionreader.util.adapters.StoryMenuAdapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -65,15 +65,7 @@ public class StoryMenuActivity extends BaseActivity<Story>{
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
-		Uri.Builder builder = BaseUri.buildUpon();
-		builder.appendPath("s")//Story
-				.appendPath("" + id)//Id
-				.appendPath("1")//Chapter 1
-				.appendPath("");//Adds the '/'
-		
-		Intent i = new Intent(this, StoryDisplayActivity.class);
-		i.setData(builder.build());
-		startActivity(i);	
+		StoryDisplayActivity.openStory(this, id, true);	
 	}
 
 	@Override

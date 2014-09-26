@@ -8650,44 +8650,40 @@ com.spicymango.fanfictionreader.BrowseMenu -> com.spicymango.fanfictionreader.Br
 com.spicymango.fanfictionreader.LibraryDownloader -> com.spicymango.fanfictionreader.LibraryDownloader:
     java.util.regex.Pattern patternAttrib -> a
     java.util.regex.Pattern patternAuthor -> b
-    int lastPage -> c
-    long storyId -> d
-    int storiesDownloaded -> e
-    int[] $SWITCH_TABLE$com$spicymango$fanfictionreader$LibraryDownloader$Result -> f
-    com.spicymango.fanfictionreader.LibraryDownloader$Result download() -> b
+    int NOTIFICATION_ID -> c
+    int lastPage -> d
+    int offset -> e
+    long storyId -> f
+    int storiesDownloaded -> g
+    int[] $SWITCH_TABLE$com$spicymango$fanfictionreader$util$Result -> h
+    com.spicymango.fanfictionreader.util.Result download() -> b
+    void sendReport(java.lang.String) -> a
     long lastUpdated() -> c
     com.spicymango.fanfictionreader.util.Story parseDetails(org.jsoup.nodes.Document) -> a
     void onHandleIntent(android.content.Intent) -> onHandleIntent
-    void download(android.content.Context,long,int) -> a
+    void download(android.content.Context,long,int,int) -> a
     void showNotification(java.lang.String,int,int) -> a
-    void showErrorNotification() -> d
-    void removeNoification() -> e
-    void showCompletetionNotification() -> f
-    int[] $SWITCH_TABLE$com$spicymango$fanfictionreader$LibraryDownloader$Result() -> a
-com.spicymango.fanfictionreader.LibraryDownloader$Result -> com.spicymango.fanfictionreader.a:
-    com.spicymango.fanfictionreader.LibraryDownloader$Result NO_CHANGE -> a
-    com.spicymango.fanfictionreader.LibraryDownloader$Result ERROR -> b
-    com.spicymango.fanfictionreader.LibraryDownloader$Result SUCCESS -> c
-    com.spicymango.fanfictionreader.LibraryDownloader$Result[] ENUM$VALUES -> d
-    com.spicymango.fanfictionreader.LibraryDownloader$Result[] values() -> values
-    com.spicymango.fanfictionreader.LibraryDownloader$Result valueOf(java.lang.String) -> valueOf
+    void showErrorNotification(int) -> a
+    void removeNoification() -> d
+    void showCompletetionNotification() -> e
+    int[] $SWITCH_TABLE$com$spicymango$fanfictionreader$util$Result() -> a
 com.spicymango.fanfictionreader.MainMenu -> com.spicymango.fanfictionreader.MainMenu:
     void onClick(android.content.DialogInterface,int) -> onClick
     void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
     void onActivityResult(int,int,android.content.Intent) -> onActivityResult
     void onCreate(android.os.Bundle) -> onCreate
-com.spicymango.fanfictionreader.MainMenu$MainMenuAdapter -> com.spicymango.fanfictionreader.b:
+com.spicymango.fanfictionreader.MainMenu$MainMenuAdapter -> com.spicymango.fanfictionreader.a:
     int layoutResourceId -> a
     long getItemId(int) -> getItemId
     android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView
-com.spicymango.fanfictionreader.MainMenu$MainMenuAdapter$MenuItemHolder -> com.spicymango.fanfictionreader.c:
+com.spicymango.fanfictionreader.MainMenu$MainMenuAdapter$MenuItemHolder -> com.spicymango.fanfictionreader.b:
     android.widget.ImageView imgIcon -> a
     android.widget.TextView txtTitle -> b
     void access$1(com.spicymango.fanfictionreader.MainMenu$MainMenuAdapter$MenuItemHolder,android.widget.ImageView) -> a
     void access$2(com.spicymango.fanfictionreader.MainMenu$MainMenuAdapter$MenuItemHolder,android.widget.TextView) -> a
     android.widget.TextView access$3(com.spicymango.fanfictionreader.MainMenu$MainMenuAdapter$MenuItemHolder) -> a
     android.widget.ImageView access$4(com.spicymango.fanfictionreader.MainMenu$MainMenuAdapter$MenuItemHolder) -> b
-com.spicymango.fanfictionreader.MainMenu$MenuItem -> com.spicymango.fanfictionreader.d:
+com.spicymango.fanfictionreader.MainMenu$MenuItem -> com.spicymango.fanfictionreader.c:
     int icon -> a
     java.lang.String title -> b
     int id -> c
@@ -8698,9 +8694,11 @@ com.spicymango.fanfictionreader.Settings -> com.spicymango.fanfictionreader.Sett
     int fontSize(android.content.Context) -> a
     boolean isIncrementalUpdatingEnabled(android.content.Context) -> b
     boolean isWakeLockEnabled(android.content.Context) -> c
+    boolean shouldWriteToSD(android.content.Context) -> d
     void setOrientationAndTheme(android.app.Activity) -> a
     boolean onPreferenceChange(android.preference.Preference,java.lang.Object) -> onPreferenceChange
-com.spicymango.fanfictionreader.Settings$TextSize -> com.spicymango.fanfictionreader.e:
+    void showMoveDialog() -> a
+com.spicymango.fanfictionreader.Settings$TextSize -> com.spicymango.fanfictionreader.d:
     com.spicymango.fanfictionreader.Settings$TextSize SMALL -> a
     com.spicymango.fanfictionreader.Settings$TextSize MEDIUM -> b
     com.spicymango.fanfictionreader.Settings$TextSize LARGE -> c
@@ -8711,24 +8709,131 @@ com.spicymango.fanfictionreader.Settings$TextSize -> com.spicymango.fanfictionre
     int getSize(java.lang.String) -> a
     com.spicymango.fanfictionreader.Settings$TextSize[] values() -> values
     com.spicymango.fanfictionreader.Settings$TextSize valueOf(java.lang.String) -> valueOf
-com.spicymango.fanfictionreader.activity.AuthorMenuActivity -> com.spicymango.fanfictionreader.activity.AuthorMenuActivity:
-    android.net.Uri mUri -> a
-    android.support.v4.content.Loader onCreateLoader(int,android.os.Bundle) -> onCreateLoader
-    void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
-    boolean onItemLongClick(android.widget.AdapterView,android.view.View,int,long) -> onItemLongClick
-    android.widget.BaseAdapter getAdapter() -> a
+com.spicymango.fanfictionreader.activity.AccountActivity -> com.spicymango.fanfictionreader.activity.AccountActivity:
+    android.support.v7.app.ActionBar actionbar -> a
     void onCreate(android.os.Bundle) -> onCreate
+    void onRestoreInstanceState(android.os.Bundle) -> onRestoreInstanceState
+    void onSaveInstanceState(android.os.Bundle) -> onSaveInstanceState
+    boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
+    boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
+com.spicymango.fanfictionreader.activity.AccountActivity$AccountFragment -> com.spicymango.fanfictionreader.activity.a:
+    java.util.List mList -> a
+    android.widget.BaseAdapter mAdapter -> b
+    android.view.View mNoConnectionBar -> c
+    android.view.View mProgressBar -> d
+    android.widget.Button mAddPageButton -> e
+    com.spicymango.fanfictionreader.activity.AccountActivity$AccountFragment$AccountLoader mLoader -> f
+    int[] $SWITCH_TABLE$com$spicymango$fanfictionreader$util$Result -> g
+    android.view.View onCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle) -> onCreateView
+    void onCreateContextMenu(android.view.ContextMenu,android.view.View,android.view.ContextMenu$ContextMenuInfo) -> onCreateContextMenu
+    boolean onContextItemSelected(android.view.MenuItem) -> onContextItemSelected
+    android.support.v4.content.Loader onCreateLoader(int,android.os.Bundle) -> onCreateLoader
+    void onLoadFinished(android.support.v4.content.Loader,com.spicymango.fanfictionreader.util.Result) -> a
+    void onLoaderReset(android.support.v4.content.Loader) -> onLoaderReset
+    void onClick(android.view.View) -> onClick
+    void onSaveInstanceState(android.os.Bundle) -> onSaveInstanceState
+    void onActivityResult(int,int,android.content.Intent) -> onActivityResult
+    void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
+    void onLoadFinished(android.support.v4.content.Loader,java.lang.Object) -> onLoadFinished
+    int[] $SWITCH_TABLE$com$spicymango$fanfictionreader$util$Result() -> a
+com.spicymango.fanfictionreader.activity.AccountActivity$AccountFragment$AccountLoader -> com.spicymango.fanfictionreader.activity.b:
+    java.util.ArrayList mData -> a
+    boolean mDataHasChanged -> b
+    java.util.regex.Pattern pattern -> c
+    void onSaveInstanceState(android.os.Bundle) -> a
+    com.spicymango.fanfictionreader.util.Result loadInBackground() -> a
+    java.lang.String getUrl() -> b
+    boolean parse(org.jsoup.nodes.Document) -> a
+    void onStartLoading() -> onStartLoading
+    java.lang.Object loadInBackground() -> loadInBackground
+    java.util.ArrayList access$1(com.spicymango.fanfictionreader.activity.AccountActivity$AccountFragment$AccountLoader) -> a
+    void access$2(com.spicymango.fanfictionreader.activity.AccountActivity$AccountFragment$AccountLoader,android.os.Bundle) -> a
+com.spicymango.fanfictionreader.activity.AccountActivity$AccountFragment$FavoriteLoader -> com.spicymango.fanfictionreader.activity.c:
+    java.lang.String getUrl() -> b
+com.spicymango.fanfictionreader.activity.AccountActivity$AccountFragment$FollowsLoader -> com.spicymango.fanfictionreader.activity.d:
+    java.lang.String getUrl() -> b
+com.spicymango.fanfictionreader.activity.AuthorMenuActivity -> com.spicymango.fanfictionreader.activity.AuthorMenuActivity:
+    long mAuthorId -> a
+    android.support.v7.app.ActionBar actionBar -> b
     long authorId(android.net.Uri) -> a
-    void onLoadFinished(android.support.v4.content.Loader,java.util.List) -> a
-com.spicymango.fanfictionreader.activity.AuthorMenuActivity$AuthorLoader -> com.spicymango.fanfictionreader.activity.a:
+    boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
+    void onCreate(android.os.Bundle) -> onCreate
+    void onRestoreInstanceState(android.os.Bundle) -> onRestoreInstanceState
+    void onSaveInstanceState(android.os.Bundle) -> onSaveInstanceState
+com.spicymango.fanfictionreader.activity.AuthorMenuActivity$ProfileFragment -> com.spicymango.fanfictionreader.activity.e:
+    long mAuthorId -> a
+    java.util.List mList -> b
+    android.widget.BaseAdapter mAdapter -> c
+    android.view.View mNoConnectionBar -> d
+    android.view.View mProgressBar -> e
+    com.spicymango.fanfictionreader.activity.AuthorMenuActivity$ProfileFragment$ProfileLoader mLoader -> f
+    int[] $SWITCH_TABLE$com$spicymango$fanfictionreader$util$Result -> g
+    android.view.View onCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle) -> onCreateView
+    android.support.v4.content.Loader onCreateLoader(int,android.os.Bundle) -> onCreateLoader
+    void onLoadFinished(android.support.v4.content.Loader,com.spicymango.fanfictionreader.util.Result) -> a
+    void onLoaderReset(android.support.v4.content.Loader) -> onLoaderReset
+    void onSaveInstanceState(android.os.Bundle) -> onSaveInstanceState
+    void onClick(android.view.View) -> onClick
+    void onLoadFinished(android.support.v4.content.Loader,java.lang.Object) -> onLoadFinished
+    int[] $SWITCH_TABLE$com$spicymango$fanfictionreader$util$Result() -> a
+com.spicymango.fanfictionreader.activity.AuthorMenuActivity$ProfileFragment$ProfileLoader -> com.spicymango.fanfictionreader.activity.f:
     java.lang.String mAuthor -> a
-    long mAuthorId -> d
-    java.util.regex.Pattern pattern -> e
+    long mAuthorId -> b
+    java.util.ArrayList mData -> c
+    boolean mDataHasChanged -> d
+    android.net.Uri BASE_URI -> e
     void onSavedInstanceState(android.os.Bundle) -> a
-    android.net.Uri formatUri(int) -> a
-    int getTotalPages(org.jsoup.nodes.Document) -> a
+    void onStartLoading() -> onStartLoading
+    com.spicymango.fanfictionreader.util.Result loadInBackground() -> a
+    void deliverResult(com.spicymango.fanfictionreader.util.Result) -> a
+    android.net.Uri formatUri() -> b
     boolean load(org.jsoup.nodes.Document,java.util.List) -> a
-    java.lang.String getAuthor(org.jsoup.nodes.Document) -> b
+    java.lang.String getAuthor(org.jsoup.nodes.Document) -> a
+    void deliverResult(java.lang.Object) -> deliverResult
+    java.lang.Object loadInBackground() -> loadInBackground
+    java.util.ArrayList access$2(com.spicymango.fanfictionreader.activity.AuthorMenuActivity$ProfileFragment$ProfileLoader) -> a
+com.spicymango.fanfictionreader.activity.AuthorMenuActivity$StoriesFragment -> com.spicymango.fanfictionreader.activity.g:
+    long mAuthorId -> a
+    java.util.List mList -> b
+    android.widget.BaseAdapter mAdapter -> c
+    android.view.View mNoConnectionBar -> d
+    android.view.View mProgressBar -> e
+    android.widget.Button mAddPageButton -> f
+    com.spicymango.fanfictionreader.activity.AuthorMenuActivity$StoriesFragment$AuthorLoader mLoader -> g
+    int[] $SWITCH_TABLE$com$spicymango$fanfictionreader$util$Result -> h
+    void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
+    android.view.View onCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle) -> onCreateView
+    android.support.v4.content.Loader onCreateLoader(int,android.os.Bundle) -> onCreateLoader
+    boolean onItemLongClick(android.widget.AdapterView,android.view.View,int,long) -> onItemLongClick
+    void onLoadFinished(android.support.v4.content.Loader,com.spicymango.fanfictionreader.util.Result) -> a
+    void onLoaderReset(android.support.v4.content.Loader) -> onLoaderReset
+    void onSaveInstanceState(android.os.Bundle) -> onSaveInstanceState
+    void onClick(android.view.View) -> onClick
+    void onLoadFinished(android.support.v4.content.Loader,java.lang.Object) -> onLoadFinished
+    int[] $SWITCH_TABLE$com$spicymango$fanfictionreader$util$Result() -> a
+com.spicymango.fanfictionreader.activity.AuthorMenuActivity$StoriesFragment$AuthorLoader -> com.spicymango.fanfictionreader.activity.h:
+    java.lang.String mAuthor -> a
+    long mAuthorId -> b
+    java.util.ArrayList mData -> c
+    int mCurrentPage -> d
+    int mTotalPages -> e
+    boolean mDataHasChanged -> f
+    android.net.Uri BASE_URI -> g
+    java.util.regex.Pattern pattern -> h
+    void onSavedInstanceState(android.os.Bundle) -> a
+    void loadNextPage() -> a
+    boolean hasNextPage() -> b
+    void onStartLoading() -> onStartLoading
+    com.spicymango.fanfictionreader.util.Result loadInBackground() -> c
+    void deliverResult(com.spicymango.fanfictionreader.util.Result) -> a
+    android.net.Uri formatUri(int) -> a
+    boolean load(org.jsoup.nodes.Document,java.util.List) -> a
+    java.lang.String getAuthor(org.jsoup.nodes.Document) -> a
+    void deliverResult(java.lang.Object) -> deliverResult
+    java.lang.Object loadInBackground() -> loadInBackground
+    java.util.ArrayList access$2(com.spicymango.fanfictionreader.activity.AuthorMenuActivity$StoriesFragment$AuthorLoader) -> a
+    int access$3(com.spicymango.fanfictionreader.activity.AuthorMenuActivity$StoriesFragment$AuthorLoader) -> b
+    int access$4(com.spicymango.fanfictionreader.activity.AuthorMenuActivity$StoriesFragment$AuthorLoader) -> c
 com.spicymango.fanfictionreader.activity.CommunityItem -> com.spicymango.fanfictionreader.activity.CommunityItem:
     java.lang.String title -> a
     java.lang.String uri -> b
@@ -8742,13 +8847,13 @@ com.spicymango.fanfictionreader.activity.CommunityItem -> com.spicymango.fanfict
     android.os.Parcelable$Creator CREATOR -> CREATOR
     int describeContents() -> describeContents
     void writeToParcel(android.os.Parcel,int) -> writeToParcel
-com.spicymango.fanfictionreader.activity.CommunityItem$1 -> com.spicymango.fanfictionreader.activity.b:
+com.spicymango.fanfictionreader.activity.CommunityItem$1 -> com.spicymango.fanfictionreader.activity.i:
     com.spicymango.fanfictionreader.activity.CommunityItem createFromParcel(android.os.Parcel) -> a
     com.spicymango.fanfictionreader.activity.CommunityItem[] newArray(int) -> a
     java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
     java.lang.Object[] newArray(int) -> newArray
 com.spicymango.fanfictionreader.activity.CommunityMenuActivity -> com.spicymango.fanfictionreader.activity.CommunityMenuActivity:
-    com.spicymango.fanfictionreader.activity.CommunityMenuActivity$CommunityLoader mLoader -> a
+    com.spicymango.fanfictionreader.activity.CommunityMenuActivity$CommunityLoader mLoader -> d
     android.support.v4.content.Loader onCreateLoader(int,android.os.Bundle) -> onCreateLoader
     boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
     void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
@@ -8757,9 +8862,9 @@ com.spicymango.fanfictionreader.activity.CommunityMenuActivity -> com.spicymango
     void onCreate(android.os.Bundle) -> onCreate
     boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
     android.widget.BaseAdapter getAdapter() -> a
-com.spicymango.fanfictionreader.activity.CommunityMenuActivity$CommunityAdapter -> com.spicymango.fanfictionreader.activity.c:
+com.spicymango.fanfictionreader.activity.CommunityMenuActivity$CommunityAdapter -> com.spicymango.fanfictionreader.activity.j:
     android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView
-com.spicymango.fanfictionreader.activity.CommunityMenuActivity$CommunityAdapter$ViewHolder -> com.spicymango.fanfictionreader.activity.d:
+com.spicymango.fanfictionreader.activity.CommunityMenuActivity$CommunityAdapter$ViewHolder -> com.spicymango.fanfictionreader.activity.k:
     android.widget.TextView author -> a
     android.widget.TextView title -> b
     android.widget.TextView stories -> c
@@ -8772,7 +8877,7 @@ com.spicymango.fanfictionreader.activity.CommunityMenuActivity$CommunityAdapter$
     android.widget.TextView access$6(com.spicymango.fanfictionreader.activity.CommunityMenuActivity$CommunityAdapter$ViewHolder) -> b
     android.widget.TextView access$7(com.spicymango.fanfictionreader.activity.CommunityMenuActivity$CommunityAdapter$ViewHolder) -> c
     android.widget.TextView access$8(com.spicymango.fanfictionreader.activity.CommunityMenuActivity$CommunityAdapter$ViewHolder) -> d
-com.spicymango.fanfictionreader.activity.CommunityMenuActivity$CommunityLoader -> com.spicymango.fanfictionreader.activity.e:
+com.spicymango.fanfictionreader.activity.CommunityMenuActivity$CommunityLoader -> com.spicymango.fanfictionreader.activity.l:
     android.net.Uri baseUri -> a
     com.spicymango.fanfictionreader.activity.CommunityMenuActivity$SortBy mSortBy -> d
     void onSavedInstanceState(android.os.Bundle) -> a
@@ -8780,7 +8885,7 @@ com.spicymango.fanfictionreader.activity.CommunityMenuActivity$CommunityLoader -
     int getTotalPages(org.jsoup.nodes.Document) -> a
     void setSort(com.spicymango.fanfictionreader.activity.CommunityMenuActivity$SortBy) -> a
     boolean load(org.jsoup.nodes.Document,java.util.List) -> a
-com.spicymango.fanfictionreader.activity.CommunityMenuActivity$SortBy -> com.spicymango.fanfictionreader.activity.f:
+com.spicymango.fanfictionreader.activity.CommunityMenuActivity$SortBy -> com.spicymango.fanfictionreader.activity.m:
     com.spicymango.fanfictionreader.activity.CommunityMenuActivity$SortBy RANDOM -> a
     com.spicymango.fanfictionreader.activity.CommunityMenuActivity$SortBy STAFF -> b
     com.spicymango.fanfictionreader.activity.CommunityMenuActivity$SortBy STORIES -> c
@@ -8802,8 +8907,8 @@ com.spicymango.fanfictionreader.activity.LibraryMenuActivity -> com.spicymango.f
     android.support.v4.widget.SimpleCursorAdapter mAdapter -> f
     android.widget.ListView mListView -> g
     android.view.View mProgressBar -> h
-    boolean onContextItemSelected(android.view.MenuItem) -> onContextItemSelected
     void onCreateContextMenu(android.view.ContextMenu,android.view.View,android.view.ContextMenu$ContextMenuInfo) -> onCreateContextMenu
+    boolean onContextItemSelected(android.view.MenuItem) -> onContextItemSelected
     android.support.v4.content.Loader onCreateLoader(int,android.os.Bundle) -> onCreateLoader
     boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
     void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
@@ -8811,34 +8916,47 @@ com.spicymango.fanfictionreader.activity.LibraryMenuActivity -> com.spicymango.f
     void onLoadFinished(android.support.v4.content.Loader,android.database.Cursor) -> a
     boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
     boolean onPrepareOptionsMenu(android.view.Menu) -> onPrepareOptionsMenu
-    void downloadByIdDialog() -> a
-    java.lang.String filterQuery() -> b
-    void initFilter() -> c
+    void downloadByIdDialog() -> b
+    java.lang.String filterQuery() -> c
+    void initFilter() -> d
     void prepareFilter(java.util.Set) -> a
-    java.lang.String sortOrder() -> d
+    java.lang.String sortOrder() -> e
     void onActivityResult(int,int,android.content.Intent) -> onActivityResult
     void onCreate(android.os.Bundle) -> onCreate
     void onLoadFinished(android.support.v4.content.Loader,java.lang.Object) -> onLoadFinished
-com.spicymango.fanfictionreader.activity.LibraryMenuActivity$1 -> com.spicymango.fanfictionreader.activity.g:
+    java.lang.String[] access$1() -> a
+com.spicymango.fanfictionreader.activity.LibraryMenuActivity$1 -> com.spicymango.fanfictionreader.activity.n:
     com.spicymango.fanfictionreader.activity.LibraryMenuActivity this$0 -> a
     android.widget.EditText val$input -> b
     void onClick(android.content.DialogInterface,int) -> onClick
-com.spicymango.fanfictionreader.activity.LibraryMenuActivity$2 -> com.spicymango.fanfictionreader.activity.h:
+com.spicymango.fanfictionreader.activity.LibraryMenuActivity$2 -> com.spicymango.fanfictionreader.activity.o:
     com.spicymango.fanfictionreader.activity.LibraryMenuActivity this$0 -> a
     void onClick(android.content.DialogInterface,int) -> onClick
-com.spicymango.fanfictionreader.activity.LibraryMenuActivity$LibraryBinder -> com.spicymango.fanfictionreader.activity.i:
+com.spicymango.fanfictionreader.activity.LibraryMenuActivity$LibraryBinder -> com.spicymango.fanfictionreader.activity.p:
     java.lang.String words -> a
     java.lang.String chapters -> b
     java.text.DateFormat format -> c
+    int chapterColumn -> d
     boolean setViewValue(android.view.View,android.database.Cursor,int) -> setViewValue
-com.spicymango.fanfictionreader.activity.LibraryMenuActivity$LibraryLoader -> com.spicymango.fanfictionreader.activity.j:
+com.spicymango.fanfictionreader.activity.LibraryMenuActivity$LibraryLoader -> com.spicymango.fanfictionreader.activity.q:
     java.util.Set fandoms -> a
     android.database.Cursor loadInBackground() -> loadInBackground
     java.util.Set access$0(com.spicymango.fanfictionreader.activity.LibraryMenuActivity$LibraryLoader) -> a
-com.spicymango.fanfictionreader.activity.LibraryMenuActivity$LibraryLoader$FilterComparator -> com.spicymango.fanfictionreader.activity.k:
+com.spicymango.fanfictionreader.activity.LibraryMenuActivity$LibraryLoader$FilterComparator -> com.spicymango.fanfictionreader.activity.r:
     java.lang.String all -> a
     int compare(java.lang.String,java.lang.String) -> a
     int compare(java.lang.Object,java.lang.Object) -> compare
+com.spicymango.fanfictionreader.activity.LogInActivity -> com.spicymango.fanfictionreader.activity.LogInActivity:
+    java.util.Map getCookies(android.content.Context) -> a
+    boolean isLoggedIn(android.content.Context) -> b
+    void logOut(android.content.Context) -> c
+    boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
+    void setCookies(java.lang.String) -> a
+    void onCreate(android.os.Bundle) -> onCreate
+    void access$0(com.spicymango.fanfictionreader.activity.LogInActivity,java.lang.String) -> a
+com.spicymango.fanfictionreader.activity.LogInActivity$WebClient -> com.spicymango.fanfictionreader.activity.s:
+    com.spicymango.fanfictionreader.activity.LogInActivity this$0 -> a
+    boolean shouldOverrideUrlLoading(android.webkit.WebView,java.lang.String) -> shouldOverrideUrlLoading
 com.spicymango.fanfictionreader.activity.NavigationMenuActivity -> com.spicymango.fanfictionreader.activity.NavigationMenuActivity:
     android.content.UriMatcher URIMATCHER -> a
     com.spicymango.fanfictionreader.activity.NavigationMenuActivity$NavigationMenuAdapter mAdapter -> b
@@ -8873,14 +8991,14 @@ com.spicymango.fanfictionreader.activity.NavigationMenuActivity -> com.spicymang
     void access$6(com.spicymango.fanfictionreader.activity.NavigationMenuActivity,android.net.Uri) -> a
     void access$7(com.spicymango.fanfictionreader.activity.NavigationMenuActivity,boolean) -> a
     com.spicymango.fanfictionreader.activity.NavigationMenuActivity$MenuLoader access$8(com.spicymango.fanfictionreader.activity.NavigationMenuActivity) -> d
-com.spicymango.fanfictionreader.activity.NavigationMenuActivity$1 -> com.spicymango.fanfictionreader.activity.l:
+com.spicymango.fanfictionreader.activity.NavigationMenuActivity$1 -> com.spicymango.fanfictionreader.activity.t:
     com.spicymango.fanfictionreader.activity.NavigationMenuActivity this$0 -> a
     void onClick(android.content.DialogInterface,int) -> onClick
-com.spicymango.fanfictionreader.activity.NavigationMenuActivity$ListComparator -> com.spicymango.fanfictionreader.activity.m:
+com.spicymango.fanfictionreader.activity.NavigationMenuActivity$ListComparator -> com.spicymango.fanfictionreader.activity.u:
     boolean sortBy -> a
     int compare(com.spicymango.fanfictionreader.util.MenuObject,com.spicymango.fanfictionreader.util.MenuObject) -> a
     int compare(java.lang.Object,java.lang.Object) -> compare
-com.spicymango.fanfictionreader.activity.NavigationMenuActivity$MenuLoader -> com.spicymango.fanfictionreader.activity.n:
+com.spicymango.fanfictionreader.activity.NavigationMenuActivity$MenuLoader -> com.spicymango.fanfictionreader.activity.v:
     boolean mConnectionError -> a
     boolean mHasChanged -> b
     java.util.List mList -> c
@@ -8895,16 +9013,16 @@ com.spicymango.fanfictionreader.activity.NavigationMenuActivity$MenuLoader -> co
     void onStartLoading() -> onStartLoading
     void deliverResult(java.lang.Object) -> deliverResult
     java.lang.Object loadInBackground() -> loadInBackground
-com.spicymango.fanfictionreader.activity.NavigationMenuActivity$NavigationMenuAdapter -> com.spicymango.fanfictionreader.activity.o:
+com.spicymango.fanfictionreader.activity.NavigationMenuActivity$NavigationMenuAdapter -> com.spicymango.fanfictionreader.activity.w:
     int layoutResourceId -> a
     android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView
     void sort(boolean) -> a
-com.spicymango.fanfictionreader.activity.NavigationMenuActivity$NavigationMenuAdapter$MenuItemHolder -> com.spicymango.fanfictionreader.activity.p:
+com.spicymango.fanfictionreader.activity.NavigationMenuActivity$NavigationMenuAdapter$MenuItemHolder -> com.spicymango.fanfictionreader.activity.x:
     android.widget.TextView txtTitle -> a
     android.widget.TextView txtViews -> b
 com.spicymango.fanfictionreader.activity.SearchAuthorActivity -> com.spicymango.fanfictionreader.activity.SearchAuthorActivity:
-    com.spicymango.fanfictionreader.util.SearchLoader mLoader -> a
-    android.support.v7.widget.SearchView sView -> b
+    com.spicymango.fanfictionreader.util.SearchLoader mLoader -> d
+    android.support.v7.widget.SearchView sView -> e
     android.support.v4.content.Loader onCreateLoader(int,android.os.Bundle) -> onCreateLoader
     boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
     void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
@@ -8917,19 +9035,19 @@ com.spicymango.fanfictionreader.activity.SearchAuthorActivity -> com.spicymango.
     boolean onQueryTextSubmit(java.lang.String) -> onQueryTextSubmit
     void onActivityResult(int,int,android.content.Intent) -> onActivityResult
     void onCreate(android.os.Bundle) -> onCreate
-com.spicymango.fanfictionreader.activity.SearchAuthorActivity$AuthorAdapter -> com.spicymango.fanfictionreader.activity.q:
+com.spicymango.fanfictionreader.activity.SearchAuthorActivity$AuthorAdapter -> com.spicymango.fanfictionreader.activity.y:
     android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView
-com.spicymango.fanfictionreader.activity.SearchAuthorActivity$AuthorAdapter$MenuItemHolder -> com.spicymango.fanfictionreader.activity.r:
+com.spicymango.fanfictionreader.activity.SearchAuthorActivity$AuthorAdapter$MenuItemHolder -> com.spicymango.fanfictionreader.activity.z:
     android.widget.TextView txtTitle -> a
     android.widget.TextView txtViews -> b
-com.spicymango.fanfictionreader.activity.SearchAuthorActivity$AuthorLoader -> com.spicymango.fanfictionreader.activity.s:
+com.spicymango.fanfictionreader.activity.SearchAuthorActivity$AuthorLoader -> com.spicymango.fanfictionreader.activity.aa:
     java.lang.String formatString -> a
     void resetFilter() -> a
     android.net.Uri formatUri(int) -> a
     boolean load(org.jsoup.nodes.Document,java.util.List) -> a
 com.spicymango.fanfictionreader.activity.SearchStoryActivity -> com.spicymango.fanfictionreader.activity.SearchStoryActivity:
-    com.spicymango.fanfictionreader.util.SearchLoader mLoader -> a
-    android.support.v7.widget.SearchView sView -> b
+    com.spicymango.fanfictionreader.util.SearchLoader mLoader -> d
+    android.support.v7.widget.SearchView sView -> e
     android.support.v4.content.Loader onCreateLoader(int,android.os.Bundle) -> onCreateLoader
     boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
     void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
@@ -8942,27 +9060,30 @@ com.spicymango.fanfictionreader.activity.SearchStoryActivity -> com.spicymango.f
     android.widget.BaseAdapter getAdapter() -> a
     void onActivityResult(int,int,android.content.Intent) -> onActivityResult
     void onCreate(android.os.Bundle) -> onCreate
-com.spicymango.fanfictionreader.activity.SearchStoryActivity$StorySearchLoader -> com.spicymango.fanfictionreader.activity.t:
+com.spicymango.fanfictionreader.activity.SearchStoryActivity$StorySearchLoader -> com.spicymango.fanfictionreader.activity.ab:
     android.net.Uri formatUri(int) -> a
     boolean load(org.jsoup.nodes.Document,java.util.List) -> a
     void resetFilter() -> a
 com.spicymango.fanfictionreader.activity.StoryDisplayActivity -> com.spicymango.fanfictionreader.activity.StoryDisplayActivity:
-    android.view.View btnFirst -> b
-    android.view.View btnPrev -> c
-    android.view.View btnNext -> d
-    android.view.View btnLast -> e
-    android.view.View progressBar -> f
-    android.view.View recconectBar -> g
-    android.view.View buttonBar -> h
-    android.widget.TextView btnPage -> i
-    com.spicymango.fanfictionreader.activity.StoryObject data -> j
-    int mCurrentPage -> k
-    com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader mLoader -> l
-    long mStoryId -> m
-    android.widget.ScrollView scroll -> n
-    int totalPages -> o
-    android.widget.TextView txtStory -> p
-    boolean fromBrowser -> a
+    android.view.View btnFirst -> a
+    android.view.View btnPrev -> b
+    android.view.View btnNext -> c
+    android.view.View btnLast -> d
+    android.view.View progressBar -> e
+    android.view.View recconectBar -> f
+    android.view.View buttonBar -> g
+    android.widget.TextView btnPage -> h
+    com.spicymango.fanfictionreader.activity.StoryObject data -> i
+    int mCurrentPage -> j
+    com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader mLoader -> k
+    long mStoryId -> l
+    long mAuthorId -> m
+    int totalPages -> n
+    android.widget.BaseAdapter mAdapter -> o
+    java.util.List mList -> p
+    android.widget.ListView mListView -> q
+    boolean fromBrowser -> r
+    void openStory(android.content.Context,long,boolean) -> a
     void onClick(android.view.View) -> onClick
     android.support.v4.content.Loader onCreateLoader(int,android.os.Bundle) -> onCreateLoader
     boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
@@ -8976,44 +9097,37 @@ com.spicymango.fanfictionreader.activity.StoryDisplayActivity -> com.spicymango.
     void updatePageButtons(int,int) -> a
     void onCreate(android.os.Bundle) -> onCreate
     void onSaveInstanceState(android.os.Bundle) -> onSaveInstanceState
-    void onRestoreInstanceState(android.os.Bundle) -> onRestoreInstanceState
-    int getCharacterOffset() -> b
+    int getOffset() -> b
     void scrollTo(int) -> b
     void onStop() -> onStop
     void onLoadFinished(android.support.v4.content.Loader,java.lang.Object) -> onLoadFinished
     int access$1(com.spicymango.fanfictionreader.activity.StoryDisplayActivity) -> a
     void access$2(com.spicymango.fanfictionreader.activity.StoryDisplayActivity,int) -> a
-    android.widget.TextView access$3(com.spicymango.fanfictionreader.activity.StoryDisplayActivity) -> b
-    android.widget.ScrollView access$4(com.spicymango.fanfictionreader.activity.StoryDisplayActivity) -> c
-com.spicymango.fanfictionreader.activity.StoryDisplayActivity$1 -> com.spicymango.fanfictionreader.activity.u:
+com.spicymango.fanfictionreader.activity.StoryDisplayActivity$1 -> com.spicymango.fanfictionreader.activity.ac:
     com.spicymango.fanfictionreader.activity.StoryDisplayActivity this$0 -> a
     void onClick(android.content.DialogInterface,int) -> onClick
-com.spicymango.fanfictionreader.activity.StoryDisplayActivity$2 -> com.spicymango.fanfictionreader.activity.v:
+com.spicymango.fanfictionreader.activity.StoryDisplayActivity$2 -> com.spicymango.fanfictionreader.activity.ad:
     com.spicymango.fanfictionreader.activity.StoryDisplayActivity this$0 -> a
-    int val$offset -> b
-    void onGlobalLayout() -> onGlobalLayout
-com.spicymango.fanfictionreader.activity.StoryDisplayActivity$3 -> com.spicymango.fanfictionreader.activity.w:
-    com.spicymango.fanfictionreader.activity.StoryDisplayActivity this$0 -> a
-com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader -> com.spicymango.fanfictionreader.activity.x:
+com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader -> com.spicymango.fanfictionreader.activity.ae:
     boolean connectionError -> b
+    boolean sdCardError -> c
     android.database.Cursor cursor -> a
-    int currentPage -> c
-    com.spicymango.fanfictionreader.activity.StoryObject data -> d
-    boolean dataHasChanged -> e
-    boolean hasUpdated -> f
-    android.database.ContentObserver observer -> g
-    boolean scrollTo -> h
-    boolean firstScroll -> i
-    long storyId -> j
-    int characterOffset -> k
+    int currentPage -> d
+    com.spicymango.fanfictionreader.activity.StoryObject mData -> e
+    boolean dataHasChanged -> f
+    boolean hasUpdated -> g
+    android.database.ContentObserver observer -> h
+    boolean scrollTo -> i
+    boolean firstScroll -> j
+    long storyId -> k
+    int characterOffset -> l
     void deliverResult(com.spicymango.fanfictionreader.activity.StoryObject) -> a
     boolean isRunning() -> a
     com.spicymango.fanfictionreader.activity.StoryObject loadInBackground() -> b
-    com.spicymango.fanfictionreader.activity.StoryObject fillFromSql(long) -> a
-    android.text.Spanned getStoryFromFile(long,int) -> a
-    android.text.Spanned getStoryFromSite(long,int) -> b
+    void fillFromSql(long) -> a
+    android.text.Spanned getStoryFromSite(long,int) -> a
     void loadPage(int) -> a
-    void onSaveInstanceState(android.os.Bundle,int) -> a
+    void onSaveInstanceState(android.os.Bundle) -> a
     void onReset() -> onReset
     int pageNumberOnline(java.lang.String,int) -> a
     void onStartLoading() -> onStartLoading
@@ -9021,16 +9135,17 @@ com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader -> com
     java.lang.Object loadInBackground() -> loadInBackground
     boolean access$2(com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader) -> a
     boolean access$3(com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader) -> b
-    int access$4(com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader) -> c
-    void access$5(com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader,boolean) -> a
-    boolean access$6(com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader) -> d
-    void access$7(com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader,boolean) -> b
-    com.spicymango.fanfictionreader.activity.StoryObject access$8(com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader) -> e
-    void access$9(com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader,int) -> a
-    void access$10(com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader,android.os.Bundle,int) -> a
+    boolean access$4(com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader) -> c
+    int access$5(com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader) -> d
+    void access$6(com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader,boolean) -> a
+    boolean access$7(com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader) -> e
+    void access$8(com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader,boolean) -> b
+    com.spicymango.fanfictionreader.activity.StoryObject access$9(com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader) -> f
+    void access$10(com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader,int) -> a
+    void access$11(com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader,android.os.Bundle) -> a
 com.spicymango.fanfictionreader.activity.StoryMenuActivity -> com.spicymango.fanfictionreader.activity.StoryMenuActivity:
-    android.content.UriMatcher URI_MATCHER -> a
-    android.net.Uri mUri -> b
+    android.content.UriMatcher URI_MATCHER -> d
+    android.net.Uri mUri -> e
     com.spicymango.fanfictionreader.activity.StoryMenuActivity$StoryLoader mLoader -> f
     android.content.UriMatcher getUriMatcher() -> c
     android.support.v4.content.Loader onCreateLoader(int,android.os.Bundle) -> onCreateLoader
@@ -9045,7 +9160,7 @@ com.spicymango.fanfictionreader.activity.StoryMenuActivity -> com.spicymango.fan
     void onCreate(android.os.Bundle) -> onCreate
     void setTitle() -> d
     android.content.UriMatcher access$0() -> b
-com.spicymango.fanfictionreader.activity.StoryMenuActivity$StoryLoader -> com.spicymango.fanfictionreader.activity.y:
+com.spicymango.fanfictionreader.activity.StoryMenuActivity$StoryLoader -> com.spicymango.fanfictionreader.activity.af:
     int[] filter -> a
     java.util.ArrayList filterList -> d
     android.net.Uri mUri -> e
@@ -9060,29 +9175,34 @@ com.spicymango.fanfictionreader.activity.StoryObject -> com.spicymango.fanfictio
     android.os.Parcelable$Creator CREATOR -> CREATOR
     int currentPage -> a
     boolean inLibrary -> b
-    android.text.Spanned storyText -> c
+    java.util.List storyText -> c
     java.lang.String storyTitle -> d
     int totalPages -> e
+    long authorId -> f
+    long getAuthorId() -> a
+    void setAuthorId(long) -> a
     int describeContents() -> describeContents
-    int getCurrentPage() -> a
-    android.text.Spanned getStoryText() -> b
-    java.lang.String getStoryTitle() -> c
-    int getTotalPages() -> d
-    boolean isInLibrary() -> e
+    int getCurrentPage() -> b
+    java.util.List getStoryText() -> c
+    java.lang.String getStoryTitle() -> d
+    int getTotalPages() -> e
+    boolean isInLibrary() -> f
     void setCurrentPage(int) -> a
     void setStoryText(android.text.Spanned) -> a
+    void setStoryText(java.util.List) -> a
     void setStoryTitle(java.lang.String) -> a
     void setTotalPages(int) -> b
     void writeToParcel(android.os.Parcel,int) -> writeToParcel
-    com.spicymango.fanfictionreader.activity.StoryObject clone() -> f
+    com.spicymango.fanfictionreader.activity.StoryObject clone() -> g
     java.lang.Object clone() -> clone
-com.spicymango.fanfictionreader.activity.StoryObject$1 -> com.spicymango.fanfictionreader.activity.z:
+com.spicymango.fanfictionreader.activity.StoryObject$1 -> com.spicymango.fanfictionreader.activity.ag:
     com.spicymango.fanfictionreader.activity.StoryObject createFromParcel(android.os.Parcel) -> a
     com.spicymango.fanfictionreader.activity.StoryObject[] newArray(int) -> a
     java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
     java.lang.Object[] newArray(int) -> newArray
 com.spicymango.fanfictionreader.dialogs.AboutDialog -> com.spicymango.fanfictionreader.a.a:
     android.app.Dialog onCreateDialog(android.os.Bundle) -> onCreateDialog
+    void onDismiss(android.content.DialogInterface) -> onDismiss
     void onClick(android.view.View) -> onClick
 com.spicymango.fanfictionreader.dialogs.DetailDialog -> com.spicymango.fanfictionreader.a.b:
     com.spicymango.fanfictionreader.util.Story mStory -> a
@@ -9091,6 +9211,32 @@ com.spicymango.fanfictionreader.dialogs.DetailDialog -> com.spicymango.fanfictio
     android.app.Dialog onCreateDialog(android.os.Bundle) -> onCreateDialog
     void onClick(android.view.View) -> onClick
     void show(android.support.v7.app.ActionBarActivity,com.spicymango.fanfictionreader.util.Story) -> a
+com.spicymango.fanfictionreader.dialogs.ReviewDialog -> com.spicymango.fanfictionreader.a.c:
+    android.widget.EditText review -> a
+    android.app.Dialog onCreateDialog(android.os.Bundle) -> onCreateDialog
+    void onActivityCreated(android.os.Bundle) -> onActivityCreated
+    void review(android.support.v7.app.ActionBarActivity,long,int) -> a
+    android.widget.EditText access$0(com.spicymango.fanfictionreader.dialogs.ReviewDialog) -> a
+com.spicymango.fanfictionreader.dialogs.ReviewDialog$1 -> com.spicymango.fanfictionreader.a.d:
+    com.spicymango.fanfictionreader.dialogs.ReviewDialog this$0 -> a
+    void onClick(android.content.DialogInterface,int) -> onClick
+com.spicymango.fanfictionreader.dialogs.ReviewDialog$2 -> com.spicymango.fanfictionreader.a.e:
+    com.spicymango.fanfictionreader.dialogs.ReviewDialog this$0 -> a
+    int val$currentPage -> b
+    long val$storyId -> c
+    void onClick(android.content.DialogInterface,int) -> onClick
+com.spicymango.fanfictionreader.dialogs.ReviewDialog$PostReview -> com.spicymango.fanfictionreader.a.f:
+    int mCurrentPage -> a
+    long mStoryId -> b
+    android.content.Context mContext -> c
+    java.lang.String mReview -> d
+    java.lang.String scheme -> e
+    java.lang.String authority -> f
+    java.util.Map cookies -> g
+    java.lang.Boolean doInBackground(java.lang.Void[]) -> a
+    void onPostExecute(java.lang.Boolean) -> a
+    void onPostExecute(java.lang.Object) -> onPostExecute
+    java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
 com.spicymango.fanfictionreader.filter.FilterDialog -> com.spicymango.fanfictionreader.filter.a:
     void show(android.app.Activity,java.util.ArrayList,int[]) -> a
 com.spicymango.fanfictionreader.filter.FilterMenu -> com.spicymango.fanfictionreader.filter.FilterMenu:
@@ -9123,14 +9269,25 @@ com.spicymango.fanfictionreader.provider.StoryProvider -> com.spicymango.fanfict
     android.database.Cursor query(android.net.Uri,java.lang.String[],java.lang.String,java.lang.String[],java.lang.String) -> query
     int update(android.net.Uri,android.content.ContentValues,java.lang.String,java.lang.String[]) -> update
     int numberOfChapters(android.content.Context,long) -> a
-com.spicymango.fanfictionreader.util.BaseActivity -> com.spicymango.fanfictionreader.util.a:
-    android.widget.BaseAdapter mAdapter -> a
-    android.widget.Button mAddPageButton -> b
-    java.util.List mList -> c
-    com.spicymango.fanfictionreader.util.BaseLoader mLoader -> d
+com.spicymango.fanfictionreader.util.AsyncPost -> com.spicymango.fanfictionreader.util.a:
+    android.content.Context context -> a
+    java.util.Map cookies -> b
+    java.util.Map data -> c
+    int posMsg -> d
+    android.net.Uri uri -> e
+    org.jsoup.Connection$Method method -> f
+    java.lang.Boolean doInBackground(java.lang.Void[]) -> a
+    void onPostExecute(java.lang.Boolean) -> a
+    void onPostExecute(java.lang.Object) -> onPostExecute
+    java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
+com.spicymango.fanfictionreader.util.BaseActivity -> com.spicymango.fanfictionreader.util.b:
+    android.widget.BaseAdapter mAdapter -> d
+    android.widget.Button mAddPageButton -> e
+    java.util.List mList -> a
+    com.spicymango.fanfictionreader.util.BaseLoader mLoader -> b
     android.view.View mNoConnectionBar -> f
     android.view.View mProgressBar -> g
-    android.net.Uri BaseUri -> e
+    android.net.Uri BaseUri -> c
     java.lang.String capitalizeString(java.lang.String) -> a
     void onClick(android.view.View) -> onClick
     void onLoaderReset(android.support.v4.content.Loader) -> onLoaderReset
@@ -9140,7 +9297,7 @@ com.spicymango.fanfictionreader.util.BaseActivity -> com.spicymango.fanfictionre
     void onCreate(android.os.Bundle) -> onCreate
     android.widget.BaseAdapter getAdapter() -> a
     void onLoadFinished(android.support.v4.content.Loader,java.lang.Object) -> onLoadFinished
-com.spicymango.fanfictionreader.util.BaseLoader -> com.spicymango.fanfictionreader.util.b:
+com.spicymango.fanfictionreader.util.BaseLoader -> com.spicymango.fanfictionreader.util.c:
     int mCurrentPage -> a
     java.util.ArrayList mData -> d
     boolean mDataHasChanged -> b
@@ -9165,6 +9322,13 @@ com.spicymango.fanfictionreader.util.BaseLoader -> com.spicymango.fanfictionread
     void resetState() -> i
     void deliverResult(java.lang.Object) -> deliverResult
     java.lang.Object loadInBackground() -> loadInBackground
+com.spicymango.fanfictionreader.util.FileHandler -> com.spicymango.fanfictionreader.util.d:
+    boolean writeFile(android.content.Context,long,int,java.lang.String) -> a
+    android.text.Spanned getFile(android.content.Context,long,int) -> a
+    java.lang.String getRawFile(android.content.Context,long,int) -> b
+    void deleteFile(android.content.Context,long,int) -> c
+    java.io.File getExternalFilesDir(android.content.Context) -> a
+    boolean isExternalStorageWritable() -> a
 com.spicymango.fanfictionreader.util.MenuObject -> com.spicymango.fanfictionreader.util.MenuObject:
     android.os.Parcelable$Creator CREATOR -> CREATOR
     int mSortInt -> a
@@ -9177,12 +9341,12 @@ com.spicymango.fanfictionreader.util.MenuObject -> com.spicymango.fanfictionread
     java.lang.String getUri() -> c
     java.lang.String getViews() -> d
     void writeToParcel(android.os.Parcel,int) -> writeToParcel
-com.spicymango.fanfictionreader.util.MenuObject$1 -> com.spicymango.fanfictionreader.util.c:
+com.spicymango.fanfictionreader.util.MenuObject$1 -> com.spicymango.fanfictionreader.util.e:
     com.spicymango.fanfictionreader.util.MenuObject createFromParcel(android.os.Parcel) -> a
     com.spicymango.fanfictionreader.util.MenuObject[] newArray(int) -> a
     java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
     java.lang.Object[] newArray(int) -> newArray
-com.spicymango.fanfictionreader.util.Parser -> com.spicymango.fanfictionreader.util.d:
+com.spicymango.fanfictionreader.util.Parser -> com.spicymango.fanfictionreader.util.f:
     java.util.regex.Pattern pattern -> a
     java.util.regex.Pattern pattern2 -> b
     boolean Stories(org.jsoup.nodes.Document,java.util.List) -> a
@@ -9192,7 +9356,19 @@ com.spicymango.fanfictionreader.util.Parser -> com.spicymango.fanfictionreader.u
     int getpageNumber(java.lang.String) -> b
     int parseInt(java.lang.String) -> a
     java.lang.String withSuffix(int) -> a
-com.spicymango.fanfictionreader.util.SearchLoader -> com.spicymango.fanfictionreader.util.e:
+    java.util.List split(android.text.Spanned) -> a
+com.spicymango.fanfictionreader.util.Result -> com.spicymango.fanfictionreader.util.g:
+    com.spicymango.fanfictionreader.util.Result NO_CHANGE -> a
+    com.spicymango.fanfictionreader.util.Result ERROR_CONNECTION -> b
+    com.spicymango.fanfictionreader.util.Result ERROR_SD -> c
+    com.spicymango.fanfictionreader.util.Result ERROR_PARSE -> d
+    com.spicymango.fanfictionreader.util.Result ERROR_LOGIN -> e
+    com.spicymango.fanfictionreader.util.Result LOADING -> f
+    com.spicymango.fanfictionreader.util.Result SUCCESS -> g
+    com.spicymango.fanfictionreader.util.Result[] ENUM$VALUES -> h
+    com.spicymango.fanfictionreader.util.Result[] values() -> values
+    com.spicymango.fanfictionreader.util.Result valueOf(java.lang.String) -> valueOf
+com.spicymango.fanfictionreader.util.SearchLoader -> com.spicymango.fanfictionreader.util.h:
     java.util.regex.Pattern pattern -> a
     int[] filter -> d
     java.util.ArrayList mFilterList -> e
@@ -9223,7 +9399,7 @@ com.spicymango.fanfictionreader.util.Story -> com.spicymango.fanfictionreader.ut
     java.util.Date published -> p
     java.util.regex.Pattern ATTRIBUTE_PATTERN -> q
     android.os.Parcelable$Creator CREATOR -> CREATOR
-    android.content.ContentValues toContentValues(int) -> a
+    android.content.ContentValues toContentValues(int,int) -> a
     int describeContents() -> describeContents
     void writeToParcel(android.os.Parcel,int) -> writeToParcel
     long getId() -> a
@@ -9242,37 +9418,64 @@ com.spicymango.fanfictionreader.util.Story -> com.spicymango.fanfictionreader.ut
     java.util.Date getUpdated() -> n
     java.util.Date getPublished() -> o
     boolean isCompleted() -> p
-com.spicymango.fanfictionreader.util.Story$1 -> com.spicymango.fanfictionreader.util.f:
+com.spicymango.fanfictionreader.util.Story$1 -> com.spicymango.fanfictionreader.util.i:
     com.spicymango.fanfictionreader.util.Story createFromParcel(android.os.Parcel) -> a
     com.spicymango.fanfictionreader.util.Story[] newArray(int) -> a
     java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
     java.lang.Object[] newArray(int) -> newArray
-com.spicymango.fanfictionreader.util.StoryMenuAdapter -> com.spicymango.fanfictionreader.util.g:
+com.spicymango.fanfictionreader.util.TabListener -> com.spicymango.fanfictionreader.util.j:
+    android.support.v4.app.Fragment mFragment -> a
+    android.support.v7.app.ActionBarActivity mActivity -> b
+    java.lang.Class mClass -> c
+    android.os.Bundle mArgs -> d
+    java.lang.String mTag -> e
+    void onTabSelected(android.support.v7.app.ActionBar$Tab,android.support.v4.app.FragmentTransaction) -> onTabSelected
+    void onTabUnselected(android.support.v7.app.ActionBar$Tab,android.support.v4.app.FragmentTransaction) -> onTabUnselected
+    void onTabReselected(android.support.v7.app.ActionBar$Tab,android.support.v4.app.FragmentTransaction) -> onTabReselected
+com.spicymango.fanfictionreader.util.adapters.StoryMenuAdapter -> com.spicymango.fanfictionreader.util.a.a:
     java.lang.String words -> a
     java.lang.String chapters -> b
     java.lang.String follows -> c
     long getItemId(int) -> getItemId
     android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView
-com.spicymango.fanfictionreader.util.StoryMenuAdapter$ViewHolder -> com.spicymango.fanfictionreader.util.h:
+com.spicymango.fanfictionreader.util.adapters.StoryMenuAdapter$ViewHolder -> com.spicymango.fanfictionreader.util.a.b:
     android.widget.TextView author -> a
     android.widget.TextView chapters -> b
     android.widget.TextView follows -> c
     android.widget.TextView summary -> d
     android.widget.TextView title -> e
     android.widget.TextView words -> f
-    void access$1(com.spicymango.fanfictionreader.util.StoryMenuAdapter$ViewHolder,android.widget.TextView) -> a
-    void access$2(com.spicymango.fanfictionreader.util.StoryMenuAdapter$ViewHolder,android.widget.TextView) -> b
-    void access$3(com.spicymango.fanfictionreader.util.StoryMenuAdapter$ViewHolder,android.widget.TextView) -> c
-    void access$4(com.spicymango.fanfictionreader.util.StoryMenuAdapter$ViewHolder,android.widget.TextView) -> d
-    void access$5(com.spicymango.fanfictionreader.util.StoryMenuAdapter$ViewHolder,android.widget.TextView) -> e
-    void access$6(com.spicymango.fanfictionreader.util.StoryMenuAdapter$ViewHolder,android.widget.TextView) -> f
-    android.widget.TextView access$7(com.spicymango.fanfictionreader.util.StoryMenuAdapter$ViewHolder) -> a
-    android.widget.TextView access$8(com.spicymango.fanfictionreader.util.StoryMenuAdapter$ViewHolder) -> b
-    android.widget.TextView access$9(com.spicymango.fanfictionreader.util.StoryMenuAdapter$ViewHolder) -> c
-    android.widget.TextView access$10(com.spicymango.fanfictionreader.util.StoryMenuAdapter$ViewHolder) -> d
-    android.widget.TextView access$11(com.spicymango.fanfictionreader.util.StoryMenuAdapter$ViewHolder) -> e
-    android.widget.TextView access$12(com.spicymango.fanfictionreader.util.StoryMenuAdapter$ViewHolder) -> f
-info.piwai.android.JellyBeanSpanFixTextView -> info.piwai.android.JellyBeanSpanFixTextView:
+    void access$1(com.spicymango.fanfictionreader.util.adapters.StoryMenuAdapter$ViewHolder,android.widget.TextView) -> a
+    void access$2(com.spicymango.fanfictionreader.util.adapters.StoryMenuAdapter$ViewHolder,android.widget.TextView) -> b
+    void access$3(com.spicymango.fanfictionreader.util.adapters.StoryMenuAdapter$ViewHolder,android.widget.TextView) -> c
+    void access$4(com.spicymango.fanfictionreader.util.adapters.StoryMenuAdapter$ViewHolder,android.widget.TextView) -> d
+    void access$5(com.spicymango.fanfictionreader.util.adapters.StoryMenuAdapter$ViewHolder,android.widget.TextView) -> e
+    void access$6(com.spicymango.fanfictionreader.util.adapters.StoryMenuAdapter$ViewHolder,android.widget.TextView) -> f
+    android.widget.TextView access$7(com.spicymango.fanfictionreader.util.adapters.StoryMenuAdapter$ViewHolder) -> a
+    android.widget.TextView access$8(com.spicymango.fanfictionreader.util.adapters.StoryMenuAdapter$ViewHolder) -> b
+    android.widget.TextView access$9(com.spicymango.fanfictionreader.util.adapters.StoryMenuAdapter$ViewHolder) -> c
+    android.widget.TextView access$10(com.spicymango.fanfictionreader.util.adapters.StoryMenuAdapter$ViewHolder) -> d
+    android.widget.TextView access$11(com.spicymango.fanfictionreader.util.adapters.StoryMenuAdapter$ViewHolder) -> e
+    android.widget.TextView access$12(com.spicymango.fanfictionreader.util.adapters.StoryMenuAdapter$ViewHolder) -> f
+com.spicymango.fanfictionreader.util.adapters.StoryReducedAdapter -> com.spicymango.fanfictionreader.util.a.c:
+    long getItemId(int) -> getItemId
+    android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView
+com.spicymango.fanfictionreader.util.adapters.StoryReducedAdapter$ViewHolder -> com.spicymango.fanfictionreader.util.a.d:
+    android.widget.TextView author -> a
+    android.widget.TextView summary -> b
+    android.widget.TextView title -> c
+    void access$1(com.spicymango.fanfictionreader.util.adapters.StoryReducedAdapter$ViewHolder,android.widget.TextView) -> a
+    void access$2(com.spicymango.fanfictionreader.util.adapters.StoryReducedAdapter$ViewHolder,android.widget.TextView) -> b
+    void access$3(com.spicymango.fanfictionreader.util.adapters.StoryReducedAdapter$ViewHolder,android.widget.TextView) -> c
+    android.widget.TextView access$4(com.spicymango.fanfictionreader.util.adapters.StoryReducedAdapter$ViewHolder) -> a
+    android.widget.TextView access$5(com.spicymango.fanfictionreader.util.adapters.StoryReducedAdapter$ViewHolder) -> b
+    android.widget.TextView access$6(com.spicymango.fanfictionreader.util.adapters.StoryReducedAdapter$ViewHolder) -> c
+com.spicymango.fanfictionreader.util.adapters.TextAdapter -> com.spicymango.fanfictionreader.util.a.e:
+    int padding -> a
+    int fontSize -> b
+    android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView
+    boolean isEnabled(int) -> isEnabled
+info.piwai.android.JellyBeanSpanFixTextView -> a.a.a.a:
     java.lang.String TAG -> a
     void onMeasure(int,int) -> onMeasure
     void fixOnMeasure(int,int) -> a
@@ -9282,78 +9485,96 @@ info.piwai.android.JellyBeanSpanFixTextView -> info.piwai.android.JellyBeanSpanF
     void setTextAndMeasure(java.lang.CharSequence,int,int) -> a
     void removeUnneededSpaces(int,int,android.text.SpannableStringBuilder,info.piwai.android.JellyBeanSpanFixTextView$FixingResult) -> a
     void fallbackToString(int,int) -> b
-info.piwai.android.JellyBeanSpanFixTextView$FixingResult -> info.piwai.android.a:
+info.piwai.android.JellyBeanSpanFixTextView$FixingResult -> a.a.a.b:
     boolean fixed -> a
     java.util.List spansWithSpacesBefore -> b
     java.util.List spansWithSpacesAfter -> c
     info.piwai.android.JellyBeanSpanFixTextView$FixingResult fixed(java.util.List,java.util.List) -> a
     info.piwai.android.JellyBeanSpanFixTextView$FixingResult notFixed() -> a
-org.jsoup.Connection -> a.a.a:
+org.jsoup.Connection -> b.a.a:
     org.jsoup.Connection url(java.lang.String) -> a
+    org.jsoup.Connection userAgent(java.lang.String) -> b
+    org.jsoup.Connection timeout(int) -> a
+    org.jsoup.Connection followRedirects(boolean) -> a
+    org.jsoup.Connection method(org.jsoup.Connection$Method) -> a
+    org.jsoup.Connection data(java.util.Map) -> a
+    org.jsoup.Connection cookies(java.util.Map) -> b
     org.jsoup.nodes.Document get() -> a
-org.jsoup.Connection$Base -> a.a.b:
+    org.jsoup.Connection$Response execute() -> b
+org.jsoup.Connection$Base -> b.a.b:
     java.net.URL url() -> a
     org.jsoup.Connection$Base url(java.net.URL) -> a
     org.jsoup.Connection$Method method() -> b
     org.jsoup.Connection$Base method(org.jsoup.Connection$Method) -> a
+    org.jsoup.Connection$Base header(java.lang.String,java.lang.String) -> a
     java.util.Map headers() -> c
-    org.jsoup.Connection$Base cookie(java.lang.String,java.lang.String) -> a
+    org.jsoup.Connection$Base cookie(java.lang.String,java.lang.String) -> b
     java.util.Map cookies() -> d
-org.jsoup.Connection$KeyVal -> a.a.c:
+org.jsoup.Connection$KeyVal -> b.a.c:
     java.lang.String key() -> a
     java.lang.String value() -> b
-org.jsoup.Connection$Method -> a.a.d:
+org.jsoup.Connection$Method -> b.a.d:
     org.jsoup.Connection$Method GET -> a
     org.jsoup.Connection$Method POST -> b
     org.jsoup.Connection$Method[] ENUM$VALUES -> c
     org.jsoup.Connection$Method[] values() -> values
     org.jsoup.Connection$Method valueOf(java.lang.String) -> valueOf
-org.jsoup.Connection$Request -> a.a.e:
+org.jsoup.Connection$Request -> b.a.e:
     int timeout() -> e
+    org.jsoup.Connection$Request timeout(int) -> a
     int maxBodySize() -> f
     boolean followRedirects() -> g
+    org.jsoup.Connection$Request followRedirects(boolean) -> a
     boolean ignoreHttpErrors() -> h
     boolean ignoreContentType() -> i
+    org.jsoup.Connection$Request data(org.jsoup.Connection$KeyVal) -> a
     java.util.Collection data() -> j
     org.jsoup.parser.Parser parser() -> k
-org.jsoup.Connection$Response -> a.a.f:
+org.jsoup.Connection$Response -> b.a.f:
     org.jsoup.nodes.Document parse() -> e
-org.jsoup.HttpStatusException -> a.a.g:
+    java.lang.String body() -> f
+org.jsoup.HttpStatusException -> b.a.g:
     int statusCode -> a
     java.lang.String url -> b
     java.lang.String toString() -> toString
-org.jsoup.Jsoup -> a.a.h:
+org.jsoup.Jsoup -> b.a.h:
     org.jsoup.Connection connect(java.lang.String) -> a
-org.jsoup.UnsupportedMimeTypeException -> a.a.i:
+org.jsoup.UnsupportedMimeTypeException -> b.a.i:
     java.lang.String mimeType -> a
     java.lang.String url -> b
     java.lang.String toString() -> toString
-org.jsoup.helper.DataUtil -> a.a.a.a:
+org.jsoup.helper.DataUtil -> b.a.a.a:
     java.util.regex.Pattern charsetPattern -> a
     org.jsoup.nodes.Document parseByteData(java.nio.ByteBuffer,java.lang.String,java.lang.String,org.jsoup.parser.Parser) -> a
     java.nio.ByteBuffer readToByteBuffer(java.io.InputStream,int) -> a
     java.lang.String getCharsetFromContentType(java.lang.String) -> a
-org.jsoup.helper.DescendableLinkedList -> a.a.a.b:
+org.jsoup.helper.DescendableLinkedList -> b.a.a.b:
     void push(java.lang.Object) -> push
     java.lang.Object peekLast() -> peekLast
     java.lang.Object pollLast() -> pollLast
     java.util.Iterator descendingIterator() -> descendingIterator
-org.jsoup.helper.DescendableLinkedList$DescendingIterator -> a.a.a.c:
+org.jsoup.helper.DescendableLinkedList$DescendingIterator -> b.a.a.c:
     java.util.ListIterator iter -> b
     org.jsoup.helper.DescendableLinkedList this$0 -> a
     boolean hasNext() -> hasNext
     java.lang.Object next() -> next
     void remove() -> remove
-org.jsoup.helper.HttpConnection -> a.a.a.d:
+org.jsoup.helper.HttpConnection -> b.a.a.d:
     org.jsoup.Connection$Request req -> a
     org.jsoup.Connection$Response res -> b
-    org.jsoup.Connection connect(java.lang.String) -> b
-    java.lang.String encodeUrl(java.lang.String) -> d
+    org.jsoup.Connection connect(java.lang.String) -> c
+    java.lang.String encodeUrl(java.lang.String) -> e
     org.jsoup.Connection url(java.lang.String) -> a
+    org.jsoup.Connection userAgent(java.lang.String) -> b
+    org.jsoup.Connection timeout(int) -> a
+    org.jsoup.Connection followRedirects(boolean) -> a
+    org.jsoup.Connection method(org.jsoup.Connection$Method) -> a
+    org.jsoup.Connection data(java.util.Map) -> a
+    org.jsoup.Connection cookies(java.util.Map) -> b
     org.jsoup.nodes.Document get() -> a
     org.jsoup.Connection$Response execute() -> b
-    java.lang.String access$0(java.lang.String) -> c
-org.jsoup.helper.HttpConnection$Base -> a.a.a.e:
+    java.lang.String access$0(java.lang.String) -> d
+org.jsoup.helper.HttpConnection$Base -> b.a.a.e:
     java.net.URL url -> a
     org.jsoup.Connection$Method method -> b
     java.util.Map headers -> c
@@ -9363,16 +9584,23 @@ org.jsoup.helper.HttpConnection$Base -> a.a.a.e:
     org.jsoup.Connection$Method method() -> b
     org.jsoup.Connection$Base method(org.jsoup.Connection$Method) -> a
     java.lang.String header(java.lang.String) -> a
-    org.jsoup.Connection$Base header(java.lang.String,java.lang.String) -> b
+    org.jsoup.Connection$Base header(java.lang.String,java.lang.String) -> a
     boolean hasHeader(java.lang.String) -> b
     org.jsoup.Connection$Base removeHeader(java.lang.String) -> c
     java.util.Map headers() -> c
     java.lang.String getHeaderCaseInsensitive(java.lang.String) -> e
     java.util.Map$Entry scanHeaders(java.lang.String) -> f
-    org.jsoup.Connection$Base cookie(java.lang.String,java.lang.String) -> a
+    org.jsoup.Connection$Base cookie(java.lang.String,java.lang.String) -> b
     boolean hasCookie(java.lang.String) -> d
     java.util.Map cookies() -> d
-org.jsoup.helper.HttpConnection$Request -> a.a.a.f:
+org.jsoup.helper.HttpConnection$KeyVal -> b.a.a.f:
+    java.lang.String key -> a
+    java.lang.String value -> b
+    org.jsoup.helper.HttpConnection$KeyVal create(java.lang.String,java.lang.String) -> a
+    java.lang.String key() -> a
+    java.lang.String value() -> b
+    java.lang.String toString() -> toString
+org.jsoup.helper.HttpConnection$Request -> b.a.a.g:
     int timeoutMilliseconds -> e
     int maxBodySizeBytes -> f
     boolean followRedirects -> g
@@ -9381,13 +9609,18 @@ org.jsoup.helper.HttpConnection$Request -> a.a.a.f:
     boolean ignoreContentType -> j
     org.jsoup.parser.Parser parser -> k
     int timeout() -> e
+    org.jsoup.helper.HttpConnection$Request timeout(int) -> b
     int maxBodySize() -> f
     boolean followRedirects() -> g
+    org.jsoup.Connection$Request followRedirects(boolean) -> a
     boolean ignoreHttpErrors() -> h
     boolean ignoreContentType() -> i
+    org.jsoup.helper.HttpConnection$Request data(org.jsoup.Connection$KeyVal) -> b
     java.util.Collection data() -> j
     org.jsoup.parser.Parser parser() -> k
-org.jsoup.helper.HttpConnection$Response -> a.a.a.g:
+    org.jsoup.Connection$Request data(org.jsoup.Connection$KeyVal) -> a
+    org.jsoup.Connection$Request timeout(int) -> a
+org.jsoup.helper.HttpConnection$Response -> b.a.a.h:
     int statusCode -> e
     java.lang.String statusMessage -> f
     java.nio.ByteBuffer byteData -> g
@@ -9398,15 +9631,16 @@ org.jsoup.helper.HttpConnection$Response -> a.a.a.g:
     org.jsoup.Connection$Request req -> l
     org.jsoup.helper.HttpConnection$Response execute(org.jsoup.Connection$Request) -> a
     org.jsoup.helper.HttpConnection$Response execute(org.jsoup.Connection$Request,org.jsoup.helper.HttpConnection$Response) -> a
-    java.lang.String contentType() -> f
+    java.lang.String contentType() -> g
     org.jsoup.nodes.Document parse() -> e
+    java.lang.String body() -> f
     java.net.HttpURLConnection createConnection(org.jsoup.Connection$Request) -> b
     void setupFromConnection(java.net.HttpURLConnection,org.jsoup.Connection$Response) -> a
     void processResponseHeaders(java.util.Map) -> a
     void writePost(java.util.Collection,java.io.OutputStream) -> a
     java.lang.String getRequestCookieString(org.jsoup.Connection$Request) -> c
     void serialiseRequestUrl(org.jsoup.Connection$Request) -> d
-org.jsoup.helper.StringUtil -> a.a.a.h:
+org.jsoup.helper.StringUtil -> b.a.a.i:
     java.lang.String[] padding -> a
     java.lang.String join(java.util.Collection,java.lang.String) -> a
     java.lang.String join(java.util.Iterator,java.lang.String) -> a
@@ -9416,7 +9650,7 @@ org.jsoup.helper.StringUtil -> a.a.a.h:
     boolean isWhitespace(int) -> b
     void appendNormalisedWhitespace(java.lang.StringBuilder,java.lang.String,boolean) -> a
     boolean in(java.lang.String,java.lang.String[]) -> a
-org.jsoup.helper.Validate -> a.a.a.i:
+org.jsoup.helper.Validate -> b.a.a.j:
     void notNull(java.lang.Object) -> a
     void notNull(java.lang.Object,java.lang.String) -> a
     void isTrue(boolean) -> a
@@ -9678,7 +9912,7 @@ org.jsoup.nodes.XmlDeclaration -> org.jsoup.nodes.s:
     void outerHtmlHead(java.lang.StringBuilder,int,org.jsoup.nodes.Document$OutputSettings) -> a
     void outerHtmlTail(java.lang.StringBuilder,int,org.jsoup.nodes.Document$OutputSettings) -> b
     java.lang.String toString() -> toString
-org.jsoup.parser.CharacterReader -> a.a.b.a:
+org.jsoup.parser.CharacterReader -> b.a.b.a:
     char[] input -> a
     int length -> b
     int pos -> c
@@ -9711,7 +9945,7 @@ org.jsoup.parser.CharacterReader -> a.a.b.a:
     boolean matchConsumeIgnoreCase(java.lang.String) -> e
     boolean containsIgnoreCase(java.lang.String) -> f
     java.lang.String toString() -> toString
-org.jsoup.parser.HtmlTreeBuilder -> a.a.b.b:
+org.jsoup.parser.HtmlTreeBuilder -> b.a.b.b:
     java.lang.String[] TagsScriptStyle -> j
     java.lang.String[] TagsSearchInScope -> a
     java.lang.String[] TagSearchList -> k
@@ -9804,7 +10038,7 @@ org.jsoup.parser.HtmlTreeBuilder -> a.a.b.b:
     void insertMarkerToFormattingElements() -> v
     void insertInFosterParent(org.jsoup.nodes.Node) -> a
     java.lang.String toString() -> toString
-org.jsoup.parser.HtmlTreeBuilderState -> a.a.b.c:
+org.jsoup.parser.HtmlTreeBuilderState -> b.a.b.c:
     org.jsoup.parser.HtmlTreeBuilderState Initial -> a
     org.jsoup.parser.HtmlTreeBuilderState BeforeHtml -> b
     org.jsoup.parser.HtmlTreeBuilderState BeforeHead -> c
@@ -9840,79 +10074,79 @@ org.jsoup.parser.HtmlTreeBuilderState -> a.a.b.c:
     void access$4(org.jsoup.parser.Token$StartTag,org.jsoup.parser.HtmlTreeBuilder) -> a
     void access$5(org.jsoup.parser.Token$StartTag,org.jsoup.parser.HtmlTreeBuilder) -> b
     java.lang.String access$6() -> a
-org.jsoup.parser.HtmlTreeBuilderState$1 -> a.a.b.d:
+org.jsoup.parser.HtmlTreeBuilderState$1 -> b.a.b.d:
     boolean process(org.jsoup.parser.Token,org.jsoup.parser.HtmlTreeBuilder) -> a
-org.jsoup.parser.HtmlTreeBuilderState$10 -> a.a.b.e:
+org.jsoup.parser.HtmlTreeBuilderState$10 -> b.a.b.e:
     int[] $SWITCH_TABLE$org$jsoup$parser$Token$TokenType -> x
     boolean process(org.jsoup.parser.Token,org.jsoup.parser.HtmlTreeBuilder) -> a
     int[] $SWITCH_TABLE$org$jsoup$parser$Token$TokenType() -> b
-org.jsoup.parser.HtmlTreeBuilderState$11 -> a.a.b.f:
+org.jsoup.parser.HtmlTreeBuilderState$11 -> b.a.b.f:
     boolean process(org.jsoup.parser.Token,org.jsoup.parser.HtmlTreeBuilder) -> a
-org.jsoup.parser.HtmlTreeBuilderState$12 -> a.a.b.g:
+org.jsoup.parser.HtmlTreeBuilderState$12 -> b.a.b.g:
     int[] $SWITCH_TABLE$org$jsoup$parser$Token$TokenType -> x
     boolean process(org.jsoup.parser.Token,org.jsoup.parser.HtmlTreeBuilder) -> a
     boolean anythingElse(org.jsoup.parser.Token,org.jsoup.parser.TreeBuilder) -> a
     int[] $SWITCH_TABLE$org$jsoup$parser$Token$TokenType() -> b
-org.jsoup.parser.HtmlTreeBuilderState$13 -> a.a.b.h:
+org.jsoup.parser.HtmlTreeBuilderState$13 -> b.a.b.h:
     int[] $SWITCH_TABLE$org$jsoup$parser$Token$TokenType -> x
     boolean process(org.jsoup.parser.Token,org.jsoup.parser.HtmlTreeBuilder) -> a
     boolean exitTableBody(org.jsoup.parser.Token,org.jsoup.parser.HtmlTreeBuilder) -> b
     boolean anythingElse(org.jsoup.parser.Token,org.jsoup.parser.HtmlTreeBuilder) -> c
     int[] $SWITCH_TABLE$org$jsoup$parser$Token$TokenType() -> b
-org.jsoup.parser.HtmlTreeBuilderState$14 -> a.a.b.i:
+org.jsoup.parser.HtmlTreeBuilderState$14 -> b.a.b.i:
     boolean process(org.jsoup.parser.Token,org.jsoup.parser.HtmlTreeBuilder) -> a
     boolean anythingElse(org.jsoup.parser.Token,org.jsoup.parser.HtmlTreeBuilder) -> b
     boolean handleMissingTr(org.jsoup.parser.Token,org.jsoup.parser.TreeBuilder) -> a
-org.jsoup.parser.HtmlTreeBuilderState$15 -> a.a.b.j:
+org.jsoup.parser.HtmlTreeBuilderState$15 -> b.a.b.j:
     boolean process(org.jsoup.parser.Token,org.jsoup.parser.HtmlTreeBuilder) -> a
     boolean anythingElse(org.jsoup.parser.Token,org.jsoup.parser.HtmlTreeBuilder) -> b
     void closeCell(org.jsoup.parser.HtmlTreeBuilder) -> a
-org.jsoup.parser.HtmlTreeBuilderState$16 -> a.a.b.k:
+org.jsoup.parser.HtmlTreeBuilderState$16 -> b.a.b.k:
     int[] $SWITCH_TABLE$org$jsoup$parser$Token$TokenType -> x
     boolean process(org.jsoup.parser.Token,org.jsoup.parser.HtmlTreeBuilder) -> a
     boolean anythingElse(org.jsoup.parser.Token,org.jsoup.parser.HtmlTreeBuilder) -> b
     int[] $SWITCH_TABLE$org$jsoup$parser$Token$TokenType() -> b
-org.jsoup.parser.HtmlTreeBuilderState$17 -> a.a.b.l:
+org.jsoup.parser.HtmlTreeBuilderState$17 -> b.a.b.l:
     boolean process(org.jsoup.parser.Token,org.jsoup.parser.HtmlTreeBuilder) -> a
-org.jsoup.parser.HtmlTreeBuilderState$18 -> a.a.b.m:
+org.jsoup.parser.HtmlTreeBuilderState$18 -> b.a.b.m:
     boolean process(org.jsoup.parser.Token,org.jsoup.parser.HtmlTreeBuilder) -> a
-org.jsoup.parser.HtmlTreeBuilderState$19 -> a.a.b.n:
+org.jsoup.parser.HtmlTreeBuilderState$19 -> b.a.b.n:
     boolean process(org.jsoup.parser.Token,org.jsoup.parser.HtmlTreeBuilder) -> a
-org.jsoup.parser.HtmlTreeBuilderState$2 -> a.a.b.o:
+org.jsoup.parser.HtmlTreeBuilderState$2 -> b.a.b.o:
     boolean process(org.jsoup.parser.Token,org.jsoup.parser.HtmlTreeBuilder) -> a
     boolean anythingElse(org.jsoup.parser.Token,org.jsoup.parser.HtmlTreeBuilder) -> b
-org.jsoup.parser.HtmlTreeBuilderState$20 -> a.a.b.p:
+org.jsoup.parser.HtmlTreeBuilderState$20 -> b.a.b.p:
     boolean process(org.jsoup.parser.Token,org.jsoup.parser.HtmlTreeBuilder) -> a
-org.jsoup.parser.HtmlTreeBuilderState$21 -> a.a.b.q:
+org.jsoup.parser.HtmlTreeBuilderState$21 -> b.a.b.q:
     boolean process(org.jsoup.parser.Token,org.jsoup.parser.HtmlTreeBuilder) -> a
-org.jsoup.parser.HtmlTreeBuilderState$22 -> a.a.b.r:
+org.jsoup.parser.HtmlTreeBuilderState$22 -> b.a.b.r:
     boolean process(org.jsoup.parser.Token,org.jsoup.parser.HtmlTreeBuilder) -> a
-org.jsoup.parser.HtmlTreeBuilderState$23 -> a.a.b.s:
+org.jsoup.parser.HtmlTreeBuilderState$23 -> b.a.b.s:
     boolean process(org.jsoup.parser.Token,org.jsoup.parser.HtmlTreeBuilder) -> a
-org.jsoup.parser.HtmlTreeBuilderState$3 -> a.a.b.t:
+org.jsoup.parser.HtmlTreeBuilderState$3 -> b.a.b.t:
     boolean process(org.jsoup.parser.Token,org.jsoup.parser.HtmlTreeBuilder) -> a
-org.jsoup.parser.HtmlTreeBuilderState$4 -> a.a.b.u:
+org.jsoup.parser.HtmlTreeBuilderState$4 -> b.a.b.u:
     int[] $SWITCH_TABLE$org$jsoup$parser$Token$TokenType -> x
     boolean process(org.jsoup.parser.Token,org.jsoup.parser.HtmlTreeBuilder) -> a
     boolean anythingElse(org.jsoup.parser.Token,org.jsoup.parser.TreeBuilder) -> a
     int[] $SWITCH_TABLE$org$jsoup$parser$Token$TokenType() -> b
-org.jsoup.parser.HtmlTreeBuilderState$5 -> a.a.b.v:
+org.jsoup.parser.HtmlTreeBuilderState$5 -> b.a.b.v:
     boolean process(org.jsoup.parser.Token,org.jsoup.parser.HtmlTreeBuilder) -> a
     boolean anythingElse(org.jsoup.parser.Token,org.jsoup.parser.HtmlTreeBuilder) -> b
-org.jsoup.parser.HtmlTreeBuilderState$6 -> a.a.b.w:
+org.jsoup.parser.HtmlTreeBuilderState$6 -> b.a.b.w:
     boolean process(org.jsoup.parser.Token,org.jsoup.parser.HtmlTreeBuilder) -> a
     boolean anythingElse(org.jsoup.parser.Token,org.jsoup.parser.HtmlTreeBuilder) -> b
-org.jsoup.parser.HtmlTreeBuilderState$7 -> a.a.b.x:
+org.jsoup.parser.HtmlTreeBuilderState$7 -> b.a.b.x:
     int[] $SWITCH_TABLE$org$jsoup$parser$Token$TokenType -> x
     boolean process(org.jsoup.parser.Token,org.jsoup.parser.HtmlTreeBuilder) -> a
     boolean anyOtherEndTag(org.jsoup.parser.Token,org.jsoup.parser.HtmlTreeBuilder) -> b
     int[] $SWITCH_TABLE$org$jsoup$parser$Token$TokenType() -> b
-org.jsoup.parser.HtmlTreeBuilderState$8 -> a.a.b.y:
+org.jsoup.parser.HtmlTreeBuilderState$8 -> b.a.b.y:
     boolean process(org.jsoup.parser.Token,org.jsoup.parser.HtmlTreeBuilder) -> a
-org.jsoup.parser.HtmlTreeBuilderState$9 -> a.a.b.z:
+org.jsoup.parser.HtmlTreeBuilderState$9 -> b.a.b.z:
     boolean process(org.jsoup.parser.Token,org.jsoup.parser.HtmlTreeBuilder) -> a
     boolean anythingElse(org.jsoup.parser.Token,org.jsoup.parser.HtmlTreeBuilder) -> b
-org.jsoup.parser.HtmlTreeBuilderState$Constants -> a.a.b.aa:
+org.jsoup.parser.HtmlTreeBuilderState$Constants -> b.a.b.aa:
     java.lang.String[] InBodyStartToHead -> a
     java.lang.String[] InBodyStartPClosers -> b
     java.lang.String[] Headings -> c
@@ -9947,23 +10181,23 @@ org.jsoup.parser.HtmlTreeBuilderState$Constants -> a.a.b.aa:
     java.lang.String[] access$14() -> o
     java.lang.String[] access$15() -> p
     java.lang.String[] access$16() -> q
-org.jsoup.parser.ParseError -> a.a.b.ab:
+org.jsoup.parser.ParseError -> b.a.b.ab:
     int pos -> a
     java.lang.String errorMsg -> b
     java.lang.String toString() -> toString
-org.jsoup.parser.ParseErrorList -> a.a.b.ac:
+org.jsoup.parser.ParseErrorList -> b.a.b.ac:
     int maxSize -> a
     boolean canAddError() -> a
     org.jsoup.parser.ParseErrorList noTracking() -> b
     org.jsoup.parser.ParseErrorList tracking(int) -> a
-org.jsoup.parser.Parser -> a.a.b.ad:
+org.jsoup.parser.Parser -> b.a.b.ad:
     org.jsoup.parser.TreeBuilder treeBuilder -> a
     int maxErrors -> b
     org.jsoup.parser.ParseErrorList errors -> c
     org.jsoup.nodes.Document parseInput(java.lang.String,java.lang.String) -> a
     boolean isTrackErrors() -> a
     org.jsoup.parser.Parser htmlParser() -> b
-org.jsoup.parser.Tag -> a.a.b.ae:
+org.jsoup.parser.Tag -> b.a.b.ae:
     java.util.Map tags -> a
     java.lang.String tagName -> b
     boolean isBlock -> c
@@ -9996,7 +10230,7 @@ org.jsoup.parser.Tag -> a.a.b.ae:
     int hashCode() -> hashCode
     java.lang.String toString() -> toString
     void register(org.jsoup.parser.Tag) -> a
-org.jsoup.parser.Token -> a.a.b.af:
+org.jsoup.parser.Token -> b.a.b.af:
     org.jsoup.parser.Token$TokenType type -> a
     java.lang.String tokenType() -> a
     boolean isDoctype() -> b
@@ -10010,16 +10244,16 @@ org.jsoup.parser.Token -> a.a.b.af:
     boolean isCharacter() -> j
     org.jsoup.parser.Token$Character asCharacter() -> k
     boolean isEOF() -> l
-org.jsoup.parser.Token$Character -> a.a.b.ag:
+org.jsoup.parser.Token$Character -> b.a.b.ag:
     java.lang.String data -> b
     java.lang.String getData() -> m
     java.lang.String toString() -> toString
-org.jsoup.parser.Token$Comment -> a.a.b.ah:
+org.jsoup.parser.Token$Comment -> b.a.b.ah:
     java.lang.StringBuilder data -> b
     boolean bogus -> c
     java.lang.String getData() -> m
     java.lang.String toString() -> toString
-org.jsoup.parser.Token$Doctype -> a.a.b.ai:
+org.jsoup.parser.Token$Doctype -> b.a.b.ai:
     java.lang.StringBuilder name -> b
     java.lang.StringBuilder publicIdentifier -> c
     java.lang.StringBuilder systemIdentifier -> d
@@ -10028,12 +10262,12 @@ org.jsoup.parser.Token$Doctype -> a.a.b.ai:
     java.lang.String getPublicIdentifier() -> n
     java.lang.String getSystemIdentifier() -> o
     boolean isForceQuirks() -> p
-org.jsoup.parser.Token$EOF -> a.a.b.aj:
-org.jsoup.parser.Token$EndTag -> a.a.b.ak:
+org.jsoup.parser.Token$EOF -> b.a.b.aj:
+org.jsoup.parser.Token$EndTag -> b.a.b.ak:
     java.lang.String toString() -> toString
-org.jsoup.parser.Token$StartTag -> a.a.b.al:
+org.jsoup.parser.Token$StartTag -> b.a.b.al:
     java.lang.String toString() -> toString
-org.jsoup.parser.Token$Tag -> a.a.b.am:
+org.jsoup.parser.Token$Tag -> b.a.b.am:
     java.lang.String tagName -> b
     java.lang.String pendingAttributeName -> e
     java.lang.StringBuilder pendingAttributeValue -> f
@@ -10053,7 +10287,7 @@ org.jsoup.parser.Token$Tag -> a.a.b.am:
     void appendAttributeValue(char) -> c
     void appendAttributeValue(char[]) -> a
     void ensureAttributeValue() -> r
-org.jsoup.parser.Token$TokenType -> a.a.b.an:
+org.jsoup.parser.Token$TokenType -> b.a.b.an:
     org.jsoup.parser.Token$TokenType Doctype -> a
     org.jsoup.parser.Token$TokenType StartTag -> b
     org.jsoup.parser.Token$TokenType EndTag -> c
@@ -10063,7 +10297,7 @@ org.jsoup.parser.Token$TokenType -> a.a.b.an:
     org.jsoup.parser.Token$TokenType[] ENUM$VALUES -> g
     org.jsoup.parser.Token$TokenType[] values() -> values
     org.jsoup.parser.Token$TokenType valueOf(java.lang.String) -> valueOf
-org.jsoup.parser.TokenQueue -> a.a.b.ao:
+org.jsoup.parser.TokenQueue -> b.a.b.ao:
     java.lang.String queue -> a
     int pos -> b
     boolean isEmpty() -> a
@@ -10086,7 +10320,7 @@ org.jsoup.parser.TokenQueue -> a.a.b.ao:
     java.lang.String consumeCssIdentifier() -> g
     java.lang.String remainder() -> h
     java.lang.String toString() -> toString
-org.jsoup.parser.Tokeniser -> a.a.b.ap:
+org.jsoup.parser.Tokeniser -> b.a.b.ap:
     org.jsoup.parser.CharacterReader reader -> e
     org.jsoup.parser.ParseErrorList errors -> f
     org.jsoup.parser.TokeniserState state -> g
@@ -10121,7 +10355,7 @@ org.jsoup.parser.Tokeniser -> a.a.b.ap:
     void eofError(org.jsoup.parser.TokeniserState) -> d
     void characterReferenceError(java.lang.String) -> b
     void error(java.lang.String) -> c
-org.jsoup.parser.TokeniserState -> a.a.b.aq:
+org.jsoup.parser.TokeniserState -> b.a.b.aq:
     org.jsoup.parser.TokeniserState Data -> a
     org.jsoup.parser.TokeniserState CharacterReferenceInData -> b
     org.jsoup.parser.TokeniserState Rcdata -> c
@@ -10199,142 +10433,142 @@ org.jsoup.parser.TokeniserState -> a.a.b.aq:
     java.lang.String access$3() -> a
     void access$4(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader,org.jsoup.parser.TokeniserState) -> a
     void access$5(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader,org.jsoup.parser.TokeniserState,org.jsoup.parser.TokeniserState) -> a
-org.jsoup.parser.TokeniserState$1 -> a.a.b.ar:
+org.jsoup.parser.TokeniserState$1 -> b.a.b.ar:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$10 -> a.a.b.as:
+org.jsoup.parser.TokeniserState$10 -> b.a.b.as:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$11 -> a.a.b.at:
+org.jsoup.parser.TokeniserState$11 -> b.a.b.at:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$12 -> a.a.b.au:
+org.jsoup.parser.TokeniserState$12 -> b.a.b.au:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$13 -> a.a.b.av:
+org.jsoup.parser.TokeniserState$13 -> b.a.b.av:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
     void anythingElse(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> b
-org.jsoup.parser.TokeniserState$14 -> a.a.b.aw:
+org.jsoup.parser.TokeniserState$14 -> b.a.b.aw:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$15 -> a.a.b.ax:
+org.jsoup.parser.TokeniserState$15 -> b.a.b.ax:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$16 -> a.a.b.ay:
+org.jsoup.parser.TokeniserState$16 -> b.a.b.ay:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$17 -> a.a.b.az:
+org.jsoup.parser.TokeniserState$17 -> b.a.b.az:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$18 -> a.a.b.ba:
+org.jsoup.parser.TokeniserState$18 -> b.a.b.ba:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$19 -> a.a.b.bb:
+org.jsoup.parser.TokeniserState$19 -> b.a.b.bb:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$2 -> a.a.b.bc:
+org.jsoup.parser.TokeniserState$2 -> b.a.b.bc:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$20 -> a.a.b.bd:
+org.jsoup.parser.TokeniserState$20 -> b.a.b.bd:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$21 -> a.a.b.be:
+org.jsoup.parser.TokeniserState$21 -> b.a.b.be:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$22 -> a.a.b.bf:
+org.jsoup.parser.TokeniserState$22 -> b.a.b.bf:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$23 -> a.a.b.bg:
+org.jsoup.parser.TokeniserState$23 -> b.a.b.bg:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$24 -> a.a.b.bh:
+org.jsoup.parser.TokeniserState$24 -> b.a.b.bh:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$25 -> a.a.b.bi:
+org.jsoup.parser.TokeniserState$25 -> b.a.b.bi:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$26 -> a.a.b.bj:
+org.jsoup.parser.TokeniserState$26 -> b.a.b.bj:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$27 -> a.a.b.bk:
+org.jsoup.parser.TokeniserState$27 -> b.a.b.bk:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$28 -> a.a.b.bl:
+org.jsoup.parser.TokeniserState$28 -> b.a.b.bl:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$29 -> a.a.b.bm:
+org.jsoup.parser.TokeniserState$29 -> b.a.b.bm:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$3 -> a.a.b.bn:
+org.jsoup.parser.TokeniserState$3 -> b.a.b.bn:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$30 -> a.a.b.bo:
+org.jsoup.parser.TokeniserState$30 -> b.a.b.bo:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$31 -> a.a.b.bp:
+org.jsoup.parser.TokeniserState$31 -> b.a.b.bp:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$32 -> a.a.b.bq:
+org.jsoup.parser.TokeniserState$32 -> b.a.b.bq:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$33 -> a.a.b.br:
+org.jsoup.parser.TokeniserState$33 -> b.a.b.br:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$34 -> a.a.b.bs:
+org.jsoup.parser.TokeniserState$34 -> b.a.b.bs:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$35 -> a.a.b.bt:
+org.jsoup.parser.TokeniserState$35 -> b.a.b.bt:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$36 -> a.a.b.bu:
+org.jsoup.parser.TokeniserState$36 -> b.a.b.bu:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$37 -> a.a.b.bv:
+org.jsoup.parser.TokeniserState$37 -> b.a.b.bv:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$38 -> a.a.b.bw:
+org.jsoup.parser.TokeniserState$38 -> b.a.b.bw:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$39 -> a.a.b.bx:
+org.jsoup.parser.TokeniserState$39 -> b.a.b.bx:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$4 -> a.a.b.by:
+org.jsoup.parser.TokeniserState$4 -> b.a.b.by:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$40 -> a.a.b.bz:
+org.jsoup.parser.TokeniserState$40 -> b.a.b.bz:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$41 -> a.a.b.ca:
+org.jsoup.parser.TokeniserState$41 -> b.a.b.ca:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$42 -> a.a.b.cb:
+org.jsoup.parser.TokeniserState$42 -> b.a.b.cb:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$43 -> a.a.b.cc:
+org.jsoup.parser.TokeniserState$43 -> b.a.b.cc:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$44 -> a.a.b.cd:
+org.jsoup.parser.TokeniserState$44 -> b.a.b.cd:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$45 -> a.a.b.ce:
+org.jsoup.parser.TokeniserState$45 -> b.a.b.ce:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$46 -> a.a.b.cf:
+org.jsoup.parser.TokeniserState$46 -> b.a.b.cf:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$47 -> a.a.b.cg:
+org.jsoup.parser.TokeniserState$47 -> b.a.b.cg:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$48 -> a.a.b.ch:
+org.jsoup.parser.TokeniserState$48 -> b.a.b.ch:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$49 -> a.a.b.ci:
+org.jsoup.parser.TokeniserState$49 -> b.a.b.ci:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$5 -> a.a.b.cj:
+org.jsoup.parser.TokeniserState$5 -> b.a.b.cj:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$50 -> a.a.b.ck:
+org.jsoup.parser.TokeniserState$50 -> b.a.b.ck:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$51 -> a.a.b.cl:
+org.jsoup.parser.TokeniserState$51 -> b.a.b.cl:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$52 -> a.a.b.cm:
+org.jsoup.parser.TokeniserState$52 -> b.a.b.cm:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$53 -> a.a.b.cn:
+org.jsoup.parser.TokeniserState$53 -> b.a.b.cn:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$54 -> a.a.b.co:
+org.jsoup.parser.TokeniserState$54 -> b.a.b.co:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$55 -> a.a.b.cp:
+org.jsoup.parser.TokeniserState$55 -> b.a.b.cp:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$56 -> a.a.b.cq:
+org.jsoup.parser.TokeniserState$56 -> b.a.b.cq:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$57 -> a.a.b.cr:
+org.jsoup.parser.TokeniserState$57 -> b.a.b.cr:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$58 -> a.a.b.cs:
+org.jsoup.parser.TokeniserState$58 -> b.a.b.cs:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$59 -> a.a.b.ct:
+org.jsoup.parser.TokeniserState$59 -> b.a.b.ct:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$6 -> a.a.b.cu:
+org.jsoup.parser.TokeniserState$6 -> b.a.b.cu:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$60 -> a.a.b.cv:
+org.jsoup.parser.TokeniserState$60 -> b.a.b.cv:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$61 -> a.a.b.cw:
+org.jsoup.parser.TokeniserState$61 -> b.a.b.cw:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$62 -> a.a.b.cx:
+org.jsoup.parser.TokeniserState$62 -> b.a.b.cx:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$63 -> a.a.b.cy:
+org.jsoup.parser.TokeniserState$63 -> b.a.b.cy:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$64 -> a.a.b.cz:
+org.jsoup.parser.TokeniserState$64 -> b.a.b.cz:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$65 -> a.a.b.da:
+org.jsoup.parser.TokeniserState$65 -> b.a.b.da:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$66 -> a.a.b.db:
+org.jsoup.parser.TokeniserState$66 -> b.a.b.db:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$67 -> a.a.b.dc:
+org.jsoup.parser.TokeniserState$67 -> b.a.b.dc:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$7 -> a.a.b.dd:
+org.jsoup.parser.TokeniserState$7 -> b.a.b.dd:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$8 -> a.a.b.de:
+org.jsoup.parser.TokeniserState$8 -> b.a.b.de:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TokeniserState$9 -> a.a.b.df:
+org.jsoup.parser.TokeniserState$9 -> b.a.b.df:
     void read(org.jsoup.parser.Tokeniser,org.jsoup.parser.CharacterReader) -> a
-org.jsoup.parser.TreeBuilder -> a.a.b.dg:
+org.jsoup.parser.TreeBuilder -> b.a.b.dg:
     org.jsoup.parser.CharacterReader reader -> c
     org.jsoup.parser.Tokeniser tokeniser -> d
     org.jsoup.nodes.Document doc -> e
@@ -10347,28 +10581,28 @@ org.jsoup.parser.TreeBuilder -> a.a.b.dg:
     void runParser() -> w
     boolean process(org.jsoup.parser.Token) -> a
     org.jsoup.nodes.Element currentElement() -> x
-org.jsoup.select.Collector -> a.a.c.a:
+org.jsoup.select.Collector -> b.a.c.a:
     org.jsoup.select.Elements collect(org.jsoup.select.Evaluator,org.jsoup.nodes.Element) -> a
-org.jsoup.select.Collector$Accumulator -> a.a.c.b:
+org.jsoup.select.Collector$Accumulator -> b.a.c.b:
     org.jsoup.nodes.Element root -> a
     org.jsoup.select.Elements elements -> b
     org.jsoup.select.Evaluator eval -> c
     void head(org.jsoup.nodes.Node,int) -> a
     void tail(org.jsoup.nodes.Node,int) -> b
-org.jsoup.select.CombiningEvaluator -> a.a.c.c:
+org.jsoup.select.CombiningEvaluator -> b.a.c.c:
     java.util.ArrayList evaluators -> a
     int num -> b
     org.jsoup.select.Evaluator rightMostEvaluator() -> a
     void replaceRightMostEvaluator(org.jsoup.select.Evaluator) -> a
     void updateNumEvaluators() -> b
-org.jsoup.select.CombiningEvaluator$And -> a.a.c.d:
+org.jsoup.select.CombiningEvaluator$And -> b.a.c.d:
     boolean matches(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> a
     java.lang.String toString() -> toString
-org.jsoup.select.CombiningEvaluator$Or -> a.a.c.e:
+org.jsoup.select.CombiningEvaluator$Or -> b.a.c.e:
     void add(org.jsoup.select.Evaluator) -> b
     boolean matches(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> a
     java.lang.String toString() -> toString
-org.jsoup.select.Elements -> a.a.c.f:
+org.jsoup.select.Elements -> b.a.c.f:
     java.util.List contents -> a
     org.jsoup.select.Elements clone() -> a
     java.lang.String html() -> b
@@ -10409,129 +10643,129 @@ org.jsoup.select.Elements -> a.a.c.f:
     boolean add(java.lang.Object) -> add
     java.lang.Object set(int,java.lang.Object) -> set
     java.lang.Object remove(int) -> remove
-org.jsoup.select.Evaluator -> a.a.c.g:
+org.jsoup.select.Evaluator -> b.a.c.g:
     boolean matches(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> a
-org.jsoup.select.Evaluator$AllElements -> a.a.c.h:
+org.jsoup.select.Evaluator$AllElements -> b.a.c.h:
     boolean matches(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> a
     java.lang.String toString() -> toString
-org.jsoup.select.Evaluator$Attribute -> a.a.c.i:
+org.jsoup.select.Evaluator$Attribute -> b.a.c.i:
     java.lang.String key -> a
     boolean matches(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> a
     java.lang.String toString() -> toString
-org.jsoup.select.Evaluator$AttributeKeyPair -> a.a.c.j:
+org.jsoup.select.Evaluator$AttributeKeyPair -> b.a.c.j:
     java.lang.String key -> a
     java.lang.String value -> b
-org.jsoup.select.Evaluator$AttributeStarting -> a.a.c.k:
+org.jsoup.select.Evaluator$AttributeStarting -> b.a.c.k:
     java.lang.String keyPrefix -> a
     boolean matches(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> a
     java.lang.String toString() -> toString
-org.jsoup.select.Evaluator$AttributeWithValue -> a.a.c.l:
+org.jsoup.select.Evaluator$AttributeWithValue -> b.a.c.l:
     boolean matches(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> a
     java.lang.String toString() -> toString
-org.jsoup.select.Evaluator$AttributeWithValueContaining -> a.a.c.m:
+org.jsoup.select.Evaluator$AttributeWithValueContaining -> b.a.c.m:
     boolean matches(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> a
     java.lang.String toString() -> toString
-org.jsoup.select.Evaluator$AttributeWithValueEnding -> a.a.c.n:
+org.jsoup.select.Evaluator$AttributeWithValueEnding -> b.a.c.n:
     boolean matches(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> a
     java.lang.String toString() -> toString
-org.jsoup.select.Evaluator$AttributeWithValueMatching -> a.a.c.o:
+org.jsoup.select.Evaluator$AttributeWithValueMatching -> b.a.c.o:
     java.lang.String key -> a
     java.util.regex.Pattern pattern -> b
     boolean matches(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> a
     java.lang.String toString() -> toString
-org.jsoup.select.Evaluator$AttributeWithValueNot -> a.a.c.p:
+org.jsoup.select.Evaluator$AttributeWithValueNot -> b.a.c.p:
     boolean matches(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> a
     java.lang.String toString() -> toString
-org.jsoup.select.Evaluator$AttributeWithValueStarting -> a.a.c.q:
+org.jsoup.select.Evaluator$AttributeWithValueStarting -> b.a.c.q:
     boolean matches(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> a
     java.lang.String toString() -> toString
-org.jsoup.select.Evaluator$Class -> a.a.c.r:
+org.jsoup.select.Evaluator$Class -> b.a.c.r:
     java.lang.String className -> a
     boolean matches(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> a
     java.lang.String toString() -> toString
-org.jsoup.select.Evaluator$ContainsOwnText -> a.a.c.s:
+org.jsoup.select.Evaluator$ContainsOwnText -> b.a.c.s:
     java.lang.String searchText -> a
     boolean matches(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> a
     java.lang.String toString() -> toString
-org.jsoup.select.Evaluator$ContainsText -> a.a.c.t:
+org.jsoup.select.Evaluator$ContainsText -> b.a.c.t:
     java.lang.String searchText -> a
     boolean matches(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> a
     java.lang.String toString() -> toString
-org.jsoup.select.Evaluator$CssNthEvaluator -> a.a.c.u:
+org.jsoup.select.Evaluator$CssNthEvaluator -> b.a.c.u:
     int a -> a
     int b -> b
     boolean matches(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> a
     java.lang.String toString() -> toString
     java.lang.String getPseudoClass() -> a
     int calculatePosition(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> b
-org.jsoup.select.Evaluator$Id -> a.a.c.v:
+org.jsoup.select.Evaluator$Id -> b.a.c.v:
     java.lang.String id -> a
     boolean matches(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> a
     java.lang.String toString() -> toString
-org.jsoup.select.Evaluator$IndexEquals -> a.a.c.w:
+org.jsoup.select.Evaluator$IndexEquals -> b.a.c.w:
     boolean matches(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> a
     java.lang.String toString() -> toString
-org.jsoup.select.Evaluator$IndexEvaluator -> a.a.c.x:
+org.jsoup.select.Evaluator$IndexEvaluator -> b.a.c.x:
     int index -> a
-org.jsoup.select.Evaluator$IndexGreaterThan -> a.a.c.y:
+org.jsoup.select.Evaluator$IndexGreaterThan -> b.a.c.y:
     boolean matches(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> a
     java.lang.String toString() -> toString
-org.jsoup.select.Evaluator$IndexLessThan -> a.a.c.z:
+org.jsoup.select.Evaluator$IndexLessThan -> b.a.c.z:
     boolean matches(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> a
     java.lang.String toString() -> toString
-org.jsoup.select.Evaluator$IsEmpty -> a.a.c.aa:
+org.jsoup.select.Evaluator$IsEmpty -> b.a.c.aa:
     boolean matches(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> a
     java.lang.String toString() -> toString
-org.jsoup.select.Evaluator$IsFirstChild -> a.a.c.ab:
+org.jsoup.select.Evaluator$IsFirstChild -> b.a.c.ab:
     boolean matches(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> a
     java.lang.String toString() -> toString
-org.jsoup.select.Evaluator$IsFirstOfType -> a.a.c.ac:
+org.jsoup.select.Evaluator$IsFirstOfType -> b.a.c.ac:
     java.lang.String toString() -> toString
-org.jsoup.select.Evaluator$IsLastChild -> a.a.c.ad:
+org.jsoup.select.Evaluator$IsLastChild -> b.a.c.ad:
     boolean matches(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> a
     java.lang.String toString() -> toString
-org.jsoup.select.Evaluator$IsLastOfType -> a.a.c.ae:
+org.jsoup.select.Evaluator$IsLastOfType -> b.a.c.ae:
     java.lang.String toString() -> toString
-org.jsoup.select.Evaluator$IsNthChild -> a.a.c.af:
+org.jsoup.select.Evaluator$IsNthChild -> b.a.c.af:
     int calculatePosition(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> b
     java.lang.String getPseudoClass() -> a
-org.jsoup.select.Evaluator$IsNthLastChild -> a.a.c.ag:
+org.jsoup.select.Evaluator$IsNthLastChild -> b.a.c.ag:
     int calculatePosition(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> b
     java.lang.String getPseudoClass() -> a
-org.jsoup.select.Evaluator$IsNthLastOfType -> a.a.c.ah:
+org.jsoup.select.Evaluator$IsNthLastOfType -> b.a.c.ah:
     int calculatePosition(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> b
     java.lang.String getPseudoClass() -> a
-org.jsoup.select.Evaluator$IsNthOfType -> a.a.c.ai:
+org.jsoup.select.Evaluator$IsNthOfType -> b.a.c.ai:
     int calculatePosition(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> b
     java.lang.String getPseudoClass() -> a
-org.jsoup.select.Evaluator$IsOnlyChild -> a.a.c.aj:
+org.jsoup.select.Evaluator$IsOnlyChild -> b.a.c.aj:
     boolean matches(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> a
     java.lang.String toString() -> toString
-org.jsoup.select.Evaluator$IsOnlyOfType -> a.a.c.ak:
+org.jsoup.select.Evaluator$IsOnlyOfType -> b.a.c.ak:
     boolean matches(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> a
     java.lang.String toString() -> toString
-org.jsoup.select.Evaluator$IsRoot -> a.a.c.al:
+org.jsoup.select.Evaluator$IsRoot -> b.a.c.al:
     boolean matches(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> a
     java.lang.String toString() -> toString
-org.jsoup.select.Evaluator$Matches -> a.a.c.am:
+org.jsoup.select.Evaluator$Matches -> b.a.c.am:
     java.util.regex.Pattern pattern -> a
     boolean matches(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> a
     java.lang.String toString() -> toString
-org.jsoup.select.Evaluator$MatchesOwn -> a.a.c.an:
+org.jsoup.select.Evaluator$MatchesOwn -> b.a.c.an:
     java.util.regex.Pattern pattern -> a
     boolean matches(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> a
     java.lang.String toString() -> toString
-org.jsoup.select.Evaluator$Tag -> a.a.c.ao:
+org.jsoup.select.Evaluator$Tag -> b.a.c.ao:
     java.lang.String tagName -> a
     boolean matches(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> a
     java.lang.String toString() -> toString
-org.jsoup.select.NodeTraversor -> a.a.c.ap:
+org.jsoup.select.NodeTraversor -> b.a.c.ap:
     org.jsoup.select.NodeVisitor visitor -> a
     void traverse(org.jsoup.nodes.Node) -> a
-org.jsoup.select.NodeVisitor -> a.a.c.aq:
+org.jsoup.select.NodeVisitor -> b.a.c.aq:
     void head(org.jsoup.nodes.Node,int) -> a
     void tail(org.jsoup.nodes.Node,int) -> b
-org.jsoup.select.QueryParser -> a.a.c.ar:
+org.jsoup.select.QueryParser -> b.a.c.ar:
     java.lang.String[] combinators -> a
     java.lang.String[] AttributeEvals -> b
     org.jsoup.parser.TokenQueue tq -> c
@@ -10558,32 +10792,32 @@ org.jsoup.select.QueryParser -> a.a.c.ar:
     void contains(boolean) -> a
     void matches(boolean) -> b
     void not() -> n
-org.jsoup.select.Selector -> a.a.c.as:
+org.jsoup.select.Selector -> b.a.c.as:
     org.jsoup.select.Evaluator evaluator -> a
     org.jsoup.nodes.Element root -> b
     org.jsoup.select.Elements select(java.lang.String,org.jsoup.nodes.Element) -> a
     org.jsoup.select.Elements select(java.lang.String,java.lang.Iterable) -> a
     org.jsoup.select.Elements select() -> a
-org.jsoup.select.Selector$SelectorParseException -> a.a.c.at:
-org.jsoup.select.StructuralEvaluator -> a.a.c.au:
+org.jsoup.select.Selector$SelectorParseException -> b.a.c.at:
+org.jsoup.select.StructuralEvaluator -> b.a.c.au:
     org.jsoup.select.Evaluator evaluator -> a
-org.jsoup.select.StructuralEvaluator$Has -> a.a.c.av:
+org.jsoup.select.StructuralEvaluator$Has -> b.a.c.av:
     boolean matches(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> a
     java.lang.String toString() -> toString
-org.jsoup.select.StructuralEvaluator$ImmediateParent -> a.a.c.aw:
+org.jsoup.select.StructuralEvaluator$ImmediateParent -> b.a.c.aw:
     boolean matches(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> a
     java.lang.String toString() -> toString
-org.jsoup.select.StructuralEvaluator$ImmediatePreviousSibling -> a.a.c.ax:
+org.jsoup.select.StructuralEvaluator$ImmediatePreviousSibling -> b.a.c.ax:
     boolean matches(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> a
     java.lang.String toString() -> toString
-org.jsoup.select.StructuralEvaluator$Not -> a.a.c.ay:
+org.jsoup.select.StructuralEvaluator$Not -> b.a.c.ay:
     boolean matches(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> a
     java.lang.String toString() -> toString
-org.jsoup.select.StructuralEvaluator$Parent -> a.a.c.az:
+org.jsoup.select.StructuralEvaluator$Parent -> b.a.c.az:
     boolean matches(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> a
     java.lang.String toString() -> toString
-org.jsoup.select.StructuralEvaluator$PreviousSibling -> a.a.c.ba:
+org.jsoup.select.StructuralEvaluator$PreviousSibling -> b.a.c.ba:
     boolean matches(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> a
     java.lang.String toString() -> toString
-org.jsoup.select.StructuralEvaluator$Root -> a.a.c.bb:
+org.jsoup.select.StructuralEvaluator$Root -> b.a.c.bb:
     boolean matches(org.jsoup.nodes.Element,org.jsoup.nodes.Element) -> a

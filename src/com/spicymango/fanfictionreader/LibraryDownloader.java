@@ -18,6 +18,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.util.Log;
 import android.util.SparseArray;
 
 import com.spicymango.fanfictionreader.activity.LibraryMenuActivity;
@@ -25,6 +26,7 @@ import com.spicymango.fanfictionreader.provider.SqlConstants;
 import com.spicymango.fanfictionreader.provider.StoryProvider;
 import com.spicymango.fanfictionreader.util.FileHandler;
 import com.spicymango.fanfictionreader.util.Parser;
+import com.spicymango.fanfictionreader.util.Result;
 import com.spicymango.fanfictionreader.util.Story;
 
 /**
@@ -33,19 +35,10 @@ import com.spicymango.fanfictionreader.util.Story;
  */
 public class LibraryDownloader extends IntentService{
 	
-	private enum Result{
-		NO_CHANGE,
-		ERROR_CONNECTION,
-		ERROR_SD,
-		ERROR_PARSE,
-		LOADING,
-		SUCCESS
-	}
-	
 	/**
 	 * Key for the last chapter read.
 	 */
-	public final static String EXTRA_LAST_PAGE = "Last page";
+	private final static String EXTRA_LAST_PAGE = "Last page";
 	
 	/**
 	 * Used for clearing the notification counter
@@ -53,9 +46,14 @@ public class LibraryDownloader extends IntentService{
 	private final static String EXTRA_UPDATE_NOT = "Notification";
 	
 	/**
+	 * Key for the offset desired
+	 */
+	private final static String EXTRA_OFFSET = "Offset";
+	
+	/**
 	 * Key for the story id
 	 */
-	public final static String EXTRA_STORY_ID = "Story id";
+	private final static String EXTRA_STORY_ID = "Story id";
 	
 	/**
 	 * Pattern describing the attributes fields
@@ -79,9 +77,11 @@ public class LibraryDownloader extends IntentService{
 	/**
 	 * ID for the notifications generated.
 	 */
-	private final static int NOTIFICATION_ID = 1;
+	private int NOTIFICATION_ID = 0;
 	
 	private int lastPage;
+	
+	private int offset;
 	
 	private long storyId;
 	
@@ -111,7 +111,7 @@ public class LibraryDownloader extends IntentService{
 
 				String url = "https://www.fanfiction.net/s/" + storyId + "/"
 						+ currentPage + "/";
-				Document document = Jsoup.connect(url).get();
+				Document document = Jsoup.connect(url).timeout(10000).userAgent("Mozilla/5.0").get();
 
 				// Execute on the first run only
 				if (totalPages == 1) { 
@@ -119,12 +119,16 @@ public class LibraryDownloader extends IntentService{
 					story = parseDetails(document);
 
 					//If an error occurs while parsing, quit
-					if (story == null) return Result.ERROR_PARSE;
+					if (story == null) {
+						Log.d(this.getClass().getName(), "Error parsing story attributes");
+						sendReport(document.html());
+						return Result.ERROR_PARSE;
+					}
 					
 					//If no updates have been made to the story, skip
 					if (story.getUpdated().getTime() == lastUpdated()) {
 						ContentResolver resolver = this.getContentResolver();
-						resolver.insert(StoryProvider.CONTENT_URI, story.toContentValues(lastPage));
+						resolver.insert(StoryProvider.CONTENT_URI, story.toContentValues(lastPage, offset));
 						return Result.NO_CHANGE;
 					}
 					
@@ -147,6 +151,8 @@ public class LibraryDownloader extends IntentService{
 				String span = document.select("div#storytext").html();
 				
 				if (span == null || span.length() == 0) {
+					Log.d(this.getClass().getName(), "Error downloading story text");
+					sendReport(document.html());
 					return Result.ERROR_PARSE;
 				}
 				
@@ -161,9 +167,17 @@ public class LibraryDownloader extends IntentService{
 		}
 
 		ContentResolver resolver = this.getContentResolver();
-		resolver.insert(StoryProvider.CONTENT_URI, story.toContentValues(lastPage));
+		resolver.insert(StoryProvider.CONTENT_URI, story.toContentValues(lastPage, offset));
 
 		return Result.SUCCESS;
+	}
+	
+	/**
+	 * Writes a log with the latest error
+	 * @param txt
+	 */
+	private void sendReport(String txt){
+		FileHandler.writeFile(this, 0, 0, txt);
 	}
 	
 	
@@ -196,19 +210,10 @@ public class LibraryDownloader extends IntentService{
 	 */
 	private Story parseDetails(Document document){
 		
-		String category = "";
 		Elements categoryElements = document.select("div#pre_story_links span a");
-		switch (categoryElements.size()) {
-		case 1:		
-			category = categoryElements.first().ownText();//Crossover
-			break;
-		case 2:
-			category = categoryElements.get(1).ownText();//Normal
-			break;
-		default:
-			return null;
-		}
-		
+		if (categoryElements.isEmpty()) return null;		
+		String category = categoryElements.last().ownText();
+
 		Element titleElement = document.select("div#profile_top > b").first();
 		if (titleElement == null) return null;
 		String title = titleElement.ownText();
@@ -216,6 +221,7 @@ public class LibraryDownloader extends IntentService{
 		Element authorElement = document.select("div#profile_top > a").first();
 		if (authorElement == null) return null;
 		String author = authorElement.ownText();
+		
 		Matcher matcher = patternAuthor.matcher(authorElement.attr("href"));
 		if (!matcher.find()) return null;
 		int authorId = Integer.valueOf(matcher.group(1));
@@ -227,16 +233,10 @@ public class LibraryDownloader extends IntentService{
 		Element attribs = document.select("div#profile_top > span").last();	
 		
 		Elements dates = attribs.select("span[data-xutime]");
-		long updateDate = 0;
-		long publishDate = 0;
+		if (dates.isEmpty()) return null;
+		long updateDate = Long.parseLong(dates.first().attr("data-xutime")) * 1000;
+		long publishDate = Long.parseLong(dates.last().attr("data-xutime")) * 1000;
 
-		if (dates.size() == 1) {
-			updateDate = Long.parseLong(dates.first().attr("data-xutime")) * 1000;
-			publishDate = updateDate;
-		} else if (dates.size() == 2) {
-			updateDate = Long.parseLong(dates.first().attr("data-xutime")) * 1000;
-			publishDate = Long.parseLong(dates.last().attr("data-xutime")) * 1000;
-		}else return null;
 		
 		matcher = patternAttrib.matcher(attribs.text());
 		if (!matcher.find()) return null;
@@ -260,9 +260,11 @@ public class LibraryDownloader extends IntentService{
 		
 		storyId = intent.getLongExtra(EXTRA_STORY_ID, -1);
 		lastPage = intent.getIntExtra(EXTRA_LAST_PAGE, 1);
+		offset = intent.getIntExtra(EXTRA_OFFSET, 0);
 
 		showNotification("", 0 , 0);
 
+		Log.d(this.getClass().getName(), "Starting Download");
 		switch (download()) {
 		case SUCCESS:
 			storiesDownloaded++;
@@ -281,6 +283,7 @@ public class LibraryDownloader extends IntentService{
 			removeNoification();
 			break;
 		}
+		Log.d(this.getClass().getName(), "Ending Download");
 	}
 	
 	/**
@@ -288,11 +291,13 @@ public class LibraryDownloader extends IntentService{
 	 * @param context The current context
 	 * @param StoryId The id of the story
 	 * @param currentPage The current page
+	 * @param offset The current offset
 	 */
-	public static void download(Context context, long StoryId, int currentPage){
+	public static void download(Context context, long StoryId, int currentPage, int offset){
 		Intent i = new Intent(context, LibraryDownloader.class);
 		i.putExtra(EXTRA_STORY_ID, StoryId);
 		i.putExtra(EXTRA_LAST_PAGE, currentPage);
+		i.putExtra(EXTRA_OFFSET, offset);
 		context.startService(i);
 	}
 	
@@ -306,7 +311,6 @@ public class LibraryDownloader extends IntentService{
 			notBuilder.setContentText(getString(R.string.downloader_context, storyTitle, currentPage, TotalPage));	
 		}
 			
-		//notBuilder.setSmallIcon(R.drawable.ic_action_download);
 		notBuilder.setSmallIcon(android.R.drawable.stat_sys_download);
 		notBuilder.setAutoCancel(false);
 		
@@ -322,7 +326,7 @@ public class LibraryDownloader extends IntentService{
 		notBuilder.setContentTitle(getString(R.string.downloader_error));
 		notBuilder.setContentText(getString(errorString));
 		notBuilder.setSmallIcon(R.drawable.ic_action_cancel);
-		notBuilder.setAutoCancel(false);
+		notBuilder.setAutoCancel(true);
 		
 		PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, new Intent(), PendingIntent.FLAG_UPDATE_CURRENT);
 		notBuilder.setContentIntent(pendingIntent);
@@ -335,6 +339,8 @@ public class LibraryDownloader extends IntentService{
 		if (storiesDownloaded == 0) {
 			NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 			manager.cancel(NOTIFICATION_ID);
+		}else{
+			showCompletetionNotification();
 		}
 	}
 	

@@ -458,7 +458,7 @@ public class NavigationMenuActivity extends ActionBarActivity implements LoaderC
 		public List<MenuObject> loadInBackground() {
 			
 			try {
-				Document document = Jsoup.connect(mUri.toString()).get();
+				Document document = Jsoup.connect(mUri.toString()).timeout(10000).get();
 				Elements categories = document.select("div#content > div.bs > a");
 				
 				ArrayList<MenuObject> tmpList = new ArrayList<MenuObject>(categories.size() + 1);

@@ -99,6 +99,52 @@ public class FileHandler {
 		}
 	}
 	
+	public static String getRawFile(Context context, long storyId, int currentPage){
+		try {
+			
+			//Internal Memory
+			String filename = storyId + "_" + currentPage + ".htm";
+			File file = new File(context.getFilesDir(), filename);
+			if (file.exists()) {
+				BufferedInputStream fin = new BufferedInputStream(
+						new FileInputStream(file));
+				byte[] buffer = new byte[(int) file.length()];
+				fin.read(buffer);
+				fin.close();
+				return new String(buffer);
+			}
+			
+			//External Memory
+			if (isExternalStorageWritable()) {
+				file = new File(getExternalFilesDir(context), filename);
+				if (file.exists()) {
+					BufferedInputStream fin = new BufferedInputStream(
+							new FileInputStream(file));
+					byte[] buffer = new byte[(int) file.length()];
+					fin.read(buffer);
+					fin.close();
+					return new String(buffer);
+				}
+			}
+			
+			//Deprecated format, internal only
+			filename = storyId + "_" + currentPage + ".txt";
+			file = new File(context.getFilesDir(), filename);
+			if (file.exists()) {
+				BufferedInputStream fin = new BufferedInputStream(
+						new FileInputStream(file));
+				byte[] buffer = new byte[(int) file.length()];
+				fin.read(buffer);
+				fin.close();
+				return new String(buffer);
+			}
+			return null;
+			
+		} catch (IOException e) {
+			return null;
+		}
+	}
+	
 	public static void deleteFile(Context context, long storyId, int currentPage){
 		
 		File file = new File(context.getFilesDir(), storyId + "_" + currentPage + ".htm");

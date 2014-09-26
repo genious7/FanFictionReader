@@ -56,6 +56,9 @@ import com.spicymango.fanfictionreader.util.Story;
  * @author Michael Chen
  */
 public class LibraryMenuActivity extends ActionBarActivity implements LoaderCallbacks<Cursor>, SqlConstants, OnItemClickListener{
+	private static final int LOADER_LIBRARY = 0;
+	private static final int LOADER_FILTER = 1;
+	
 	private static final int[] DEST_PROJECTION = {
 			R.id.story_menu_list_item_title,
 			R.id.story_menu_list_item_summary,
@@ -63,21 +66,28 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 			R.id.story_menu_list_item_chapters,
 			R.id.story_menu_list_item_words,
 			R.id.story_menu_list_item_follows,
-			R.id.completitionBar};
-	
-	private static final String[] GET_PROJECTION = {KEY_STORY_ID,KEY_TITLE,KEY_SUMMARY,KEY_AUTHOR,KEY_CHAPTER, KEY_LENGHT,KEY_UPDATED, KEY_LAST, KEY_CATEGORY, KEY_OFFSET};
-	private static final int LOADER_LIBRARY = 0;
-	private static final String[] TO_PROJECTION = {KEY_TITLE,KEY_SUMMARY,KEY_AUTHOR,KEY_CHAPTER, KEY_LENGHT,KEY_UPDATED, KEY_LAST};
-	
+			R.id.completitionBar };
+
+	private static final String[] GET_PROJECTION = { KEY_STORY_ID, KEY_TITLE,
+			KEY_SUMMARY, KEY_AUTHOR, KEY_CHAPTER, KEY_LENGHT, KEY_UPDATED,
+			KEY_LAST, KEY_CATEGORY, KEY_OFFSET };
+	private static final String[] TO_PROJECTION = { KEY_TITLE, KEY_SUMMARY,
+			KEY_AUTHOR, KEY_CHAPTER, KEY_LENGHT, KEY_UPDATED, KEY_LAST };
+
 	private int[] filter = {0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 	private ArrayList<Map<String, Integer>> filterList = new ArrayList<Map<String,Integer>>();
 	private SimpleCursorAdapter mAdapter;
 	private ListView mListView;
 	private View mProgressBar;
 	
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onContextItemSelected(android.view.MenuItem)
-	 */
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+		getMenuInflater().inflate(R.menu.library_context_menu, menu);
+	}
+	
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		
@@ -100,7 +110,7 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 			int length = story.getChapterLenght();
 			for (int j = 1; j <= length; j++) {
 				FileHandler.deleteFile(this, story.getId(), j);
-			}			
+			}		
 			getContentResolver().delete(databaseUri, null, null);
 			return true;
 		
@@ -120,30 +130,19 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onCreateContextMenu(android.view.ContextMenu, android.view.View, android.view.ContextMenu.ContextMenuInfo)
-	 */
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v,
-			ContextMenuInfo menuInfo) {
-		super.onCreateContextMenu(menu, v, menuInfo);
-		getMenuInflater().inflate(R.menu.library_context_menu, menu);
-	}
-	
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		switch (id) {
 		case LOADER_LIBRARY:
 			mProgressBar.setVisibility(View.VISIBLE);
 			return new LibraryLoader(this, StoryProvider.CONTENT_URI, GET_PROJECTION, filterQuery(), null, sortOrder());
+		case LOADER_FILTER:
+			return new CursorLoader(this);
 		default:
 			return null;
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
-	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.library_menu, menu);
@@ -152,17 +151,7 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 	
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int position, long id) {
-		
-		Cursor c = mAdapter.getCursor();
-		c.moveToPosition(position);
-		
-		int lastPageRead = c.getInt(c.getColumnIndexOrThrow(KEY_LAST));
-		int offset = c.getInt(c.getColumnIndexOrThrow(KEY_OFFSET));
-		
-		Intent i = new Intent (this, StoryDisplayActivity.class);
-		i.setData(Uri.parse("file://fanfiction/" + id + "_" + lastPageRead + ".txt"));
-		i.putExtra(StoryDisplayActivity.EXTRA_OFFSET, offset);
-		startActivity(i);
+		StoryDisplayActivity.openStory(this, id, false);
 	}
 
 	@Override
@@ -172,16 +161,24 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		LibraryLoader l = (LibraryLoader) loader;
-		mAdapter.swapCursor(data);
-		mProgressBar.setVisibility(View.GONE);
-		prepareFilter(l.fandoms);
-		supportInvalidateOptionsMenu();
+		
+		switch (loader.getId()) {
+		case LOADER_LIBRARY:
+			LibraryLoader l = (LibraryLoader) loader;
+			mAdapter.swapCursor(data);
+			mProgressBar.setVisibility(View.GONE);
+			prepareFilter(l.fandoms);
+			supportInvalidateOptionsMenu();
+			break;
+		case LOADER_FILTER:
+			
+			break;
+
+		default:
+			break;
+		}	
 	}
 	
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
-	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -192,9 +189,10 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 			Cursor c = mAdapter.getCursor();
 			int columnId = c.getColumnIndex(KEY_STORY_ID);
 			int columnLast = c.getColumnIndex(KEY_LAST);
+			int columnOffset = c.getColumnIndex(KEY_OFFSET);
 			if (c.moveToFirst()) {
 			    do {
-			    	LibraryDownloader.download(this, c.getLong(columnId), c.getInt(columnLast));
+			    	LibraryDownloader.download(this, c.getLong(columnId), c.getInt(columnLast), c.getInt(columnOffset));
 			    } while (c.moveToNext());
 			}
 			return true;
@@ -244,7 +242,7 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 				Editable value = input.getText();
 				try {
 					long id = Long.parseLong(value.toString());
-					LibraryDownloader.download(LibraryMenuActivity.this, id, 1);
+					LibraryDownloader.download(LibraryMenuActivity.this, id, 1, 0);
 				} catch (Exception e) {
 					Toast toast = Toast.makeText(LibraryMenuActivity.this, R.string.menu_library_by_id_error, Toast.LENGTH_SHORT);
 					toast.show();
@@ -296,6 +294,20 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 			break;
 		}
 		
+		if (builder.length() != 0 && filter[12] != 0) {
+			builder.append(" AND ");
+		}
+		switch (filter[12]) {
+		case 1:
+			builder.append(KEY_CATEGORY + " NOT LIKE '%Crossover' ");
+			break;
+		case 2:
+			builder.append(KEY_CATEGORY + " LIKE '%Crossover' ");
+			break;
+		default:
+			break;
+		}
+		
 		if (filter[13] != 0) {
 			if (builder.length() != 0) {
 				builder.append(" AND ");
@@ -322,7 +334,12 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 		String[] words = getResources().getStringArray(R.array.menu_library_filter_words);
 		for (int i = 0; i < words.length; i++) {
 			filterList.get(6).put(words[i], i);
-		}	
+		}
+		
+		String[] type = getResources().getStringArray(R.array.menu_library_filter_type);
+		for (int i = 0; i < type.length; i++) {
+			filterList.get(12).put(type[i], i);
+		}
 	}
 
 	private void prepareFilter(Set<String> fandoms) {
@@ -396,6 +413,7 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 	
 		getSupportLoaderManager().initLoader(LOADER_LIBRARY, null, this);
 	}
+	
 	
 	/**
 	 * A ViewBinder that adds the prefixes to the stories' details.

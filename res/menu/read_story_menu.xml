@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:spicymango="http://schemas.android.com/apk/res-auto" >
+
     <item
         android:id="@+id/read_story_menu_add"
         android:enabled="true"
@@ -8,9 +9,39 @@
         android:title="@string/read_story_add"
         android:titleCondensed="@string/read_story_add_condensed"
         spicymango:showAsAction="ifRoom"/>
-    <item
-        android:id="@+id/read_story_go_to"
-        android:title="@string/read_story_go_to"
-        android:titleCondensed="@string/read_story_go_to_condensed"
-        spicymango:showAsAction="never"/>
+
+    <group
+        android:id="@+id/go_to_group"
+        android:enabled="false"
+        android:menuCategory="container" >
+        <item
+            android:id="@+id/read_story_go_to"
+            android:title="@string/read_story_go_to"
+            android:titleCondensed="@string/read_story_go_to_condensed"
+            spicymango:showAsAction="never"/>
+        <item
+            android:id="@+id/read_story_go_to_top"
+            android:title="@string/read_story_go_to_top"
+            spicymango:showAsAction="never"/>
+    </group>
+
+    <group
+        android:id="@+id/account_group"
+        android:menuCategory="container"
+        android:visible="false" >
+        <item
+            android:id="@+id/follow"
+            android:title="@string/read_story_add_follow"
+            android:titleCondensed="@string/read_story_add_follow"
+            spicymango:showAsAction="never">
+        </item>
+        <item
+            android:id="@+id/favorite"
+            android:title="@string/read_story_add_favorites"
+            android:titleCondensed="@string/read_story_add_favorites"
+            spicymango:showAsAction="never">
+        </item>
+        <item android:id="@+id/review" android:title="@string/review"></item>
+    </group>
+
 </menu>

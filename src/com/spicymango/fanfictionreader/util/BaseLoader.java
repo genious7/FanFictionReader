@@ -161,7 +161,7 @@ public abstract class BaseLoader<T extends Parcelable> extends
 	public final List<T> loadInBackground() {
 		try {
 			Document document = Jsoup.connect(
-					formatUri(mCurrentPage).toString()).get();
+					formatUri(mCurrentPage).toString()).timeout(10000).get();
 
 			if (mCurrentPage == 1) {
 				mDataOld.clear();

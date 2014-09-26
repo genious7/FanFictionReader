@@ -30,8 +30,8 @@ import android.widget.TextView;
  */
 public class DetailDialog extends DialogFragment implements OnClickListener{
 
-	public final static String EXTRA_STORY = "Map";
-	public final static String EXTRA_AUTHOR = "AUTHOR";
+	private final static String EXTRA_STORY = "Map";
+	private final static String EXTRA_AUTHOR = "AUTHOR";
 	
 	private Story mStory;
 	private boolean mShowAuthor;
@@ -89,7 +89,7 @@ public class DetailDialog extends DialogFragment implements OnClickListener{
 		};
 		
 		for (int i = 0; i < formats.length; i++) {
-			if (stringValues[i].length() != 0) {
+			if (stringValues[i].length() != 0 && !stringValues[i].equals("0")) {
 				TextView label = new TextView(getActivity());
 				label.setText(Html.fromHtml(getString(formats[i], stringValues[i])));
 				layout.addView(label);

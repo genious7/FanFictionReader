@@ -2,10 +2,10 @@ com.spicymango.fanfictionreader.BrowseMenu:
     protected static final java.lang.String COMMUNITIES
 com.spicymango.fanfictionreader.BuildConfig
 com.spicymango.fanfictionreader.LibraryDownloader:
-    public static final java.lang.String EXTRA_LAST_PAGE
+    private static final java.lang.String EXTRA_LAST_PAGE
     private static final java.lang.String EXTRA_UPDATE_NOT
-    public static final java.lang.String EXTRA_STORY_ID
-    private static final int NOTIFICATION_ID
+    private static final java.lang.String EXTRA_OFFSET
+    private static final java.lang.String EXTRA_STORY_ID
 com.spicymango.fanfictionreader.MainMenu:
     public static final java.lang.String EXTRA_PREF
     public static final java.lang.String EXTRA_RESUME_ID
@@ -28,12 +28,35 @@ com.spicymango.fanfictionreader.R$string
 com.spicymango.fanfictionreader.R$style
 com.spicymango.fanfictionreader.R$styleable
 com.spicymango.fanfictionreader.R$xml
-com.spicymango.fanfictionreader.activity.AuthorMenuActivity$AuthorLoader:
-    private static final java.lang.String EXTRA_AUTHOR
+com.spicymango.fanfictionreader.activity.AccountActivity:
+    private static final java.lang.String STATE_TAB
+com.spicymango.fanfictionreader.activity.AccountActivity$AccountFragment:
+    private static final java.lang.String EXTRA_LOADER_ID
+    private static final int LOADER_FAVORITES
+    private static final int LOADER_FOLLOWS
+com.spicymango.fanfictionreader.activity.AccountActivity$AccountFragment$AccountLoader:
+    private static final java.lang.String STATE_DATA
+    private static final java.lang.String STATE_CHAGED
+com.spicymango.fanfictionreader.activity.AuthorMenuActivity:
+    private static final java.lang.String STATE_TAB
+    private static final java.lang.String EXTRA_ID
+com.spicymango.fanfictionreader.activity.AuthorMenuActivity$ProfileFragment$ProfileLoader:
+    private static final java.lang.String STATE_DATA
+    private static final java.lang.String STATE_CHANGED
+    private static final java.lang.String STATE_AUTHOR
+com.spicymango.fanfictionreader.activity.AuthorMenuActivity$StoriesFragment$AuthorLoader:
+    private static final java.lang.String STATE_CURRENT
+    private static final java.lang.String STATE_TOTAL
+    private static final java.lang.String STATE_DATA
+    private static final java.lang.String STATE_CHANGED
+    private static final java.lang.String STATE_AUTHOR
 com.spicymango.fanfictionreader.activity.CommunityMenuActivity$CommunityLoader:
     private static final java.lang.String STATE_SORT_BY
 com.spicymango.fanfictionreader.activity.LibraryMenuActivity:
     private static final int LOADER_LIBRARY
+    private static final int LOADER_FILTER
+com.spicymango.fanfictionreader.activity.LogInActivity:
+    private static final java.lang.String PREF_COOKIE
 com.spicymango.fanfictionreader.activity.NavigationMenuActivity:
     private static final int COMMUNITY_MENU
     private static final int CROSSOVER_MENU
@@ -49,7 +72,6 @@ com.spicymango.fanfictionreader.activity.StoryDisplayActivity:
 com.spicymango.fanfictionreader.activity.StoryDisplayActivity$StoryLoader:
     private static final java.lang.String STATE_DATA
     private static final java.lang.String STATE_UPDATED
-    private static final java.lang.String STATE_SCROLL
 com.spicymango.fanfictionreader.activity.StoryMenuActivity:
     private static final java.lang.String FANFIC_AUTHORITY
     private static final int URI_COMMUNITY_MENU
@@ -60,8 +82,12 @@ com.spicymango.fanfictionreader.activity.StoryMenuActivity$StoryLoader:
     private static final java.lang.String STATE_FILTER
     private static final java.lang.String STATE_FILTER_LIST
 com.spicymango.fanfictionreader.dialogs.DetailDialog:
-    public static final java.lang.String EXTRA_STORY
-    public static final java.lang.String EXTRA_AUTHOR
+    private static final java.lang.String EXTRA_STORY
+    private static final java.lang.String EXTRA_AUTHOR
+com.spicymango.fanfictionreader.dialogs.ReviewDialog:
+    private static final java.lang.String EXTRA_ID
+    private static final java.lang.String EXTRA_PAGE
+    private static final int EDIT_TEXT_ID
 com.spicymango.fanfictionreader.filter.FilterDialog:
     public static final int RESULT_CODE
     public static final java.lang.String RESULT
@@ -84,45 +110,44 @@ com.spicymango.fanfictionreader.provider.StoryProvider:
     private static final int GET_ALL
     private static final int GET_ONE
     225:238:public static int lastChapterRead(android.content.Context,long)
+com.spicymango.fanfictionreader.util.AsyncPost:
+    private static final int negMsg
 com.spicymango.fanfictionreader.util.BaseLoader:
     private static final java.lang.String STATE_CURRENT
     private static final java.lang.String STATE_TOTAL
     private static final java.lang.String STATE_DATA
     private static final java.lang.String STATE_CONNECTION
     private static final java.lang.String STATE_CHANGED
+com.spicymango.fanfictionreader.util.FileHandler:
+    18:18:public FileHandler()
 com.spicymango.fanfictionreader.util.Parser:
-    17:17:public Parser()
+    20:20:public Parser()
 com.spicymango.fanfictionreader.util.SearchLoader:
     private static final java.lang.String STATE_FILTER
     private static final java.lang.String STATE_FILTER_LIST
     private static final java.lang.String STATE_QUERY
+info.piwai.android.JellyBeanSpanFixTextView:
+    71:72:public JellyBeanSpanFixTextView(android.content.Context,android.util.AttributeSet,int)
+    75:76:public JellyBeanSpanFixTextView(android.content.Context,android.util.AttributeSet)
 org.jsoup.Connection:
     public abstract org.jsoup.Connection url(java.net.URL)
-    public abstract org.jsoup.Connection userAgent(java.lang.String)
-    public abstract org.jsoup.Connection timeout(int)
     public abstract org.jsoup.Connection maxBodySize(int)
     public abstract org.jsoup.Connection referrer(java.lang.String)
-    public abstract org.jsoup.Connection followRedirects(boolean)
-    public abstract org.jsoup.Connection method(org.jsoup.Connection$Method)
     public abstract org.jsoup.Connection ignoreHttpErrors(boolean)
     public abstract org.jsoup.Connection ignoreContentType(boolean)
     public abstract org.jsoup.Connection data(java.lang.String,java.lang.String)
     public abstract org.jsoup.Connection data(java.util.Collection)
-    public abstract org.jsoup.Connection data(java.util.Map)
     public varargs abstract org.jsoup.Connection data(java.lang.String[])
     public abstract org.jsoup.Connection header(java.lang.String,java.lang.String)
     public abstract org.jsoup.Connection cookie(java.lang.String,java.lang.String)
-    public abstract org.jsoup.Connection cookies(java.util.Map)
     public abstract org.jsoup.Connection parser(org.jsoup.parser.Parser)
     public abstract org.jsoup.nodes.Document post()
-    public abstract org.jsoup.Connection$Response execute()
     public abstract org.jsoup.Connection$Request request()
     public abstract org.jsoup.Connection request(org.jsoup.Connection$Request)
     public abstract org.jsoup.Connection$Response response()
     public abstract org.jsoup.Connection response(org.jsoup.Connection$Response)
 org.jsoup.Connection$Base:
     public abstract java.lang.String header(java.lang.String)
-    public abstract org.jsoup.Connection$Base header(java.lang.String,java.lang.String)
     public abstract boolean hasHeader(java.lang.String)
     public abstract org.jsoup.Connection$Base removeHeader(java.lang.String)
     public abstract java.lang.String cookie(java.lang.String)
@@ -132,19 +157,15 @@ org.jsoup.Connection$KeyVal:
     public abstract org.jsoup.Connection$KeyVal key(java.lang.String)
     public abstract org.jsoup.Connection$KeyVal value(java.lang.String)
 org.jsoup.Connection$Request:
-    public abstract org.jsoup.Connection$Request timeout(int)
     public abstract org.jsoup.Connection$Request maxBodySize(int)
-    public abstract org.jsoup.Connection$Request followRedirects(boolean)
     public abstract org.jsoup.Connection$Request ignoreHttpErrors(boolean)
     public abstract org.jsoup.Connection$Request ignoreContentType(boolean)
-    public abstract org.jsoup.Connection$Request data(org.jsoup.Connection$KeyVal)
     public abstract org.jsoup.Connection$Request parser(org.jsoup.parser.Parser)
 org.jsoup.Connection$Response:
     public abstract int statusCode()
     public abstract java.lang.String statusMessage()
     public abstract java.lang.String charset()
     public abstract java.lang.String contentType()
-    public abstract java.lang.String body()
     public abstract byte[] bodyAsBytes()
 org.jsoup.HttpStatusException:
     19:19:public int getStatusCode()
@@ -184,21 +205,15 @@ org.jsoup.helper.DataUtil:
 org.jsoup.helper.HttpConnection:
     32:34:public static org.jsoup.Connection connect(java.net.URL)
     52:53:public org.jsoup.Connection url(java.net.URL)
-    67:69:public org.jsoup.Connection userAgent(java.lang.String)
-    73:74:public org.jsoup.Connection timeout(int)
     78:79:public org.jsoup.Connection maxBodySize(int)
-    83:84:public org.jsoup.Connection followRedirects(boolean)
     88:90:public org.jsoup.Connection referrer(java.lang.String)
-    94:95:public org.jsoup.Connection method(org.jsoup.Connection$Method)
     99:100:public org.jsoup.Connection ignoreHttpErrors(boolean)
     104:105:public org.jsoup.Connection ignoreContentType(boolean)
     109:110:public org.jsoup.Connection data(java.lang.String,java.lang.String)
-    114:118:public org.jsoup.Connection data(java.util.Map)
     122:131:public varargs org.jsoup.Connection data(java.lang.String[])
     135:139:public org.jsoup.Connection data(java.util.Collection)
     143:144:public org.jsoup.Connection header(java.lang.String,java.lang.String)
     148:149:public org.jsoup.Connection cookie(java.lang.String,java.lang.String)
-    153:157:public org.jsoup.Connection cookies(java.util.Map)
     161:162:public org.jsoup.Connection parser(org.jsoup.parser.Parser)
     172:174:public org.jsoup.nodes.Document post()
     183:183:public org.jsoup.Connection$Request request()
@@ -208,24 +223,22 @@ org.jsoup.helper.HttpConnection:
 org.jsoup.helper.HttpConnection$Base:
     286:287:public java.lang.String cookie(java.lang.String)
     303:305:public org.jsoup.Connection$Base removeCookie(java.lang.String)
-org.jsoup.helper.HttpConnection$KeyVal
+org.jsoup.helper.HttpConnection$KeyVal:
+    682:684:public org.jsoup.helper.HttpConnection$KeyVal key(java.lang.String)
+    692:694:public org.jsoup.helper.HttpConnection$KeyVal value(java.lang.String)
+    1:1:public bridge synthetic org.jsoup.Connection$KeyVal key(java.lang.String)
+    1:1:public bridge synthetic org.jsoup.Connection$KeyVal value(java.lang.String)
 org.jsoup.helper.HttpConnection$Request:
-    337:339:public org.jsoup.helper.HttpConnection$Request timeout(int)
     347:349:public org.jsoup.Connection$Request maxBodySize(int)
-    357:358:public org.jsoup.Connection$Request followRedirects(boolean)
     366:367:public org.jsoup.Connection$Request ignoreHttpErrors(boolean)
     375:376:public org.jsoup.Connection$Request ignoreContentType(boolean)
-    380:382:public org.jsoup.helper.HttpConnection$Request data(org.jsoup.Connection$KeyVal)
     390:391:public org.jsoup.helper.HttpConnection$Request parser(org.jsoup.parser.Parser)
-    1:1:public bridge synthetic org.jsoup.Connection$Request data(org.jsoup.Connection$KeyVal)
-    1:1:public bridge synthetic org.jsoup.Connection$Request timeout(int)
     1:1:public bridge synthetic org.jsoup.Connection$Request parser(org.jsoup.parser.Parser)
 org.jsoup.helper.HttpConnection$Response:
     private static final int MAX_REDIRECTS
     500:500:public int statusCode()
     504:504:public java.lang.String statusMessage()
     508:508:public java.lang.String charset()
-    524:532:public java.lang.String body()
     536:537:public byte[] bodyAsBytes()
 org.jsoup.helper.StringUtil:
     9:9:public StringUtil()

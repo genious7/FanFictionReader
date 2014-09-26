@@ -12,6 +12,7 @@
 	<string name="menu_button_content_description">Menu Button</string>
 	<string name="menu_button_my_library">My Library</string>
 	<string name="menu_button_resume">Resume</string>
+	<string name="menu_button_favs_folls">Favorites and Follows</string>
 	<string name="menu_button_browse_stories">Browse Stories</string>
 	<string name="menu_button_just_in">Just In</string>
 	<string name="menu_button_search">Search</string>
@@ -150,7 +151,7 @@
 	<string name="menu_library_sync_all_condensed">Sync</string>
 	<string name="menu_library_context_detail">Details</string>
 	<string name="menu_library_context_author">Browse Author</string>
-	<string name="menu_library_context_delete">Delete Story</string>
+	<string name="menu_library_context_delete">Remove Story</string>
 	<string name="menu_library_words">Words: %,d</string>
 	<string name="menu_library_chapters">Chapters: %d</string>
 	<string-array name="menu_library_sort_by">
@@ -173,6 +174,11 @@
 	    <item >&gt; 60k words</item>
 	    <item >&gt; 100k words</item>
 	</string-array>
+	<string-array name="menu_library_filter_type">
+	    <item >All</item>
+	    <item >Regular</item>
+	    <item >CrossOver</item>
+	</string-array>
 	<string name="menu_library_by_id">Add story by Id</string>
 	<string name="menu_library_by_id_condensed">Add by Id</string>
 	<string name="menu_library_filter_all">All</string>
@@ -187,17 +193,42 @@
 	<string name="read_story_update">Update story</string>
 	<string name="read_story_update_condensed">Update</string>
 	<string name="read_story_add">Add to library</string>
+	<string name="read_story_add_follow">Add to follows</string>
+	<string name="read_story_add_favorites">Add to favorites</string>
 	<string name="read_story_add_condensed">Add</string>
 	<string name="read_story_chapter">Chapter\u0020</string>
 	<string name="read_story_filter">@string/menu_story_filter_by</string>
 	<string name="read_story_go_to">Go to page</string>
 	<string name="read_story_go_to_condensed">Go to</string>
+	<string name="read_story_go_to_top">Go to top</string>
+	
+	<string name="review">Review</string>
+	<string name="dialog_review_posted">Review posted successfully</string>
 	
 	<!-- About Page -->
 	<string name="about">This application was developed by Michael Chen. 
-		The author is not affiliated in anyway with Fanfiction.net.\n\n
-		Please report any bugs or request any features using the button below.</string>
+		The author is not affiliated in anyway with Fanfiction.net.\n
+		\nPlease report any bugs or request any features using the button below.\n
+		\nNote that if you experienced a recent downloading error, a report containing the 
+		failed story is added to the email automatically.</string>
 	<string name="about_feature">Contact the developer</string>
+	
+	<!-- Author Menu Activity -->
+	<string name="menu_author_stories">Stories</string>
+	<string name="menu_author_profile">Profile</string>
+	<string name="menu_author_no_profile">No profile found</string>
+	
+	<!-- Favorite and Follows Activity -->
+	<string name="dialog_log_in">Log In</string>
+	<string name="dialog_log_in_desc">Please log in to use this feature</string>
+	<string name="menu_log_out">Log Out</string>
+	
+	<!-- Account Management -->
+	<string name="menu_favs">Favorites</string>
+	<string name="menu_follows">Follows</string>
+	<string name="toast_added_follows">Story added to follows</string>
+	<string name="toast_added_favs">Story added to favorites</string>
+	<string name="toast_removed">Story removed</string>
 	
 	<!-- General Items and Strings -->
 	<string name="general_anime">Anime</string>

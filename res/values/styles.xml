@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="AppActionBar" parent="@style/Theme.AppCompat">
         <item name="ic_action_about">@drawable/ic_action_about_dark</item>
@@ -9,6 +9,11 @@
         <item name="ic_folder_open">@drawable/ic_folder_open_dark</item>
         <item name="ic_storage">@drawable/ic_storage_dark</item>
         <item name="ic_action_replay">@drawable/ic_action_replay_dark</item>
+        <item name="ic_action_important">@drawable/ic_action_important_dark</item>
+        
+        <item name="android:actionBarTabBarStyle" tools:targetApi="11">@style/CenteredTabs</item>
+        <!-- Support library compatibility -->
+        <item name="actionBarTabBarStyle">@style/CenteredTabs</item>
     </style>
 
     <style name="AppActionBarLight" parent="@style/Theme.AppCompat.Light.DarkActionBar">
@@ -20,8 +25,17 @@
         <item name="ic_folder_open">@drawable/ic_folder_open_light</item>
         <item name="ic_storage">@drawable/ic_storage_light</item>
         <item name="ic_action_replay">@drawable/ic_action_replay_light</item>
+        <item name="ic_action_important">@drawable/ic_action_important_light</item>
+        
+        <item name="android:actionBarTabBarStyle" tools:targetApi="11">@style/CenteredTabs</item>
+        <!-- Support library compatibility -->
+        <item name="actionBarTabBarStyle">@style/CenteredTabs</item>
     </style>
 
     <style name="Dialog" parent="android:Theme.Dialog"></style>
+    
+    <style name="CenteredTabs" parent="@style/Widget.AppCompat.ActionBar.TabBar">
+        <item name="android:gravity">center</item>
+    </style>
 
 </resources>

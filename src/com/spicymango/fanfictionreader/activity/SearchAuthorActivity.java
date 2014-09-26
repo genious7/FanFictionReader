@@ -1,6 +1,8 @@
 package com.spicymango.fanfictionreader.activity;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -34,8 +36,8 @@ import com.spicymango.fanfictionreader.util.MenuObject;
 import com.spicymango.fanfictionreader.util.SearchLoader;
 
 public class SearchAuthorActivity extends BaseActivity<MenuObject> implements OnQueryTextListener{
-	SearchLoader<MenuObject> mLoader; 
-	SearchView sView;
+	private SearchLoader<MenuObject> mLoader; 
+	private SearchView sView;
 	
 	@Override
 	public Loader<List<MenuObject>> onCreateLoader(int id, Bundle args) {
@@ -169,8 +171,6 @@ public class SearchAuthorActivity extends BaseActivity<MenuObject> implements On
 					.appendQueryParameter("categoryid", filter[13] + "")
 					.appendQueryParameter("genreid", filter[2] + "")
 					.appendQueryParameter("languageid", filter[5] + "")
-					.appendQueryParameter("censorid", filter[4] + "")
-					.appendQueryParameter("statusid", filter[7] + "")
 					.appendQueryParameter("ppage", currentPage + "")
 					.appendQueryParameter("words", filter[6] + "");
 			return builder.build();
@@ -186,6 +186,18 @@ public class SearchAuthorActivity extends BaseActivity<MenuObject> implements On
 			Elements authors = document.select("div#content div.bs");
 			Element link;
 			Element stories;
+			
+			if (authors.isEmpty()) {
+				Element auth = document.select("div#content form a").first();
+				if (auth != null) {
+					Pattern pattern = Pattern.compile(":(\\d++)");
+					Matcher matcher = pattern.matcher(auth.parent().ownText());
+					if (matcher.find()) {
+						String storyCount = String.format(formatString, matcher.group(1));
+						list.add(new MenuObject(auth.text(), storyCount, auth.attr("abs:href"), 0));
+					}		
+				}
+			}
 			
 			for (Element author : authors) {
 				link = author.select("a[href^=/u/]").first();

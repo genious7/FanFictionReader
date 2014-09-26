@@ -1,12 +1,14 @@
 package com.spicymango.fanfictionreader;
 
 import com.spicymango.fanfictionreader.R.attr;
+import com.spicymango.fanfictionreader.activity.AccountActivity;
 import com.spicymango.fanfictionreader.activity.LibraryMenuActivity;
 import com.spicymango.fanfictionreader.activity.SearchAuthorActivity;
 import com.spicymango.fanfictionreader.activity.SearchStoryActivity;
 import com.spicymango.fanfictionreader.activity.StoryDisplayActivity;
 import com.spicymango.fanfictionreader.activity.StoryMenuActivity;
 import com.spicymango.fanfictionreader.dialogs.AboutDialog;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -107,6 +109,9 @@ public class MainMenu extends ActionBarActivity implements OnItemClickListener, 
 				startActivity(i);
 			}
 			break;
+		case 8:
+			i = new Intent(this, AccountActivity.class);
+			startActivity(i);
 		default:
 			break;
 		}
@@ -138,6 +143,8 @@ public class MainMenu extends ActionBarActivity implements OnItemClickListener, 
 						R.string.menu_button_my_library, 0),
 				new MenuItem(attr.ic_action_replay,
 						R.string.menu_button_resume, 7),
+				new MenuItem(attr.ic_action_important,
+						R.string.menu_button_favs_folls, 8),
 				new MenuItem(attr.ic_folder_open,
 						R.string.menu_button_browse_stories, 1),
 				new MenuItem(attr.ic_action_view_as_list,

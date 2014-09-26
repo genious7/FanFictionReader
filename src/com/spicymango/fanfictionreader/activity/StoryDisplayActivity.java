@@ -1,7 +1,5 @@
 package com.spicymango.fanfictionreader.activity;
 
-import info.piwai.android.JellyBeanSpanFixTextView;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jsoup.Jsoup;
+import org.jsoup.Connection.Method;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -19,6 +18,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.ContentObserver;
 import android.database.Cursor;
@@ -33,29 +33,28 @@ import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.TextView.BufferType;
 
 import com.spicymango.fanfictionreader.LibraryDownloader;
 import com.spicymango.fanfictionreader.MainMenu;
 import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.Settings;
+import com.spicymango.fanfictionreader.dialogs.ReviewDialog;
 import com.spicymango.fanfictionreader.provider.SqlConstants;
 import com.spicymango.fanfictionreader.provider.StoryProvider;
+import com.spicymango.fanfictionreader.util.AsyncPost;
 import com.spicymango.fanfictionreader.util.FileHandler;
 import com.spicymango.fanfictionreader.util.Parser;
+import com.spicymango.fanfictionreader.util.adapters.TextAdapter;
 
 public class StoryDisplayActivity extends ActionBarActivity implements LoaderCallbacks<StoryObject>, OnClickListener{
 	public static final String EXTRA_OFFSET = "Offset";
@@ -69,11 +68,41 @@ public class StoryDisplayActivity extends ActionBarActivity implements LoaderCal
 	private int mCurrentPage;
 	private StoryLoader mLoader;
 	private long mStoryId;
+	private long mAuthorId;
 	private int totalPages;
 	private BaseAdapter mAdapter;
 	private List<Spanned> mList;
 	private ListView mListView;
-	boolean fromBrowser = false;
+	private boolean fromBrowser = false;
+	
+	/**
+	 * Opens the story with the selected id. If the story already exists in the
+	 * library, the story will open in the last position read. Otherwise, it
+	 * will open on the first page.
+	 * 
+	 * @param context The current context
+	 * @param id The id of the story
+	 * @param autoUpdate True to update the story if on library, false otherwise
+	 */
+	public static void openStory(Context context, long id, boolean autoUpdate){
+		Uri uri;
+		if (autoUpdate) {
+			Uri.Builder builder = new Uri.Builder();
+			builder.scheme(context.getString(R.string.fanfiction_scheme))
+					.authority(context.getString(R.string.fanfiction_authority))
+					.appendPath("s")// Story
+					.appendPath("" + id)// Id
+					.appendPath("1")// Chapter 1
+					.appendPath("");// Adds the '/'
+			uri = builder.build();
+		}else{
+			uri = Uri.parse("file://fanfiction/" + id + "_" + 1 + ".txt");
+		}		
+
+		Intent i = new Intent(context, StoryDisplayActivity.class);
+		i.setData(uri);
+		context.startActivity(i);	
+	}
 	
 	@Override
 	public void onClick(View v) {
@@ -109,6 +138,9 @@ public class StoryDisplayActivity extends ActionBarActivity implements LoaderCal
 	public boolean onCreateOptionsMenu(Menu menu){
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.read_story_menu, menu);
+
+		menu.setGroupVisible(R.id.account_group, LogInActivity.isLoggedIn(this));
+
 		return super.onCreateOptionsMenu(menu);
 	}
 	
@@ -158,7 +190,7 @@ public class StoryDisplayActivity extends ActionBarActivity implements LoaderCal
 		
 		if (fromBrowser && data.isInLibrary() && !mLoader.hasUpdated) {
 			mLoader.hasUpdated = true;
-			LibraryDownloader.download(this, mStoryId, mCurrentPage);
+			LibraryDownloader.download(this, mStoryId, mCurrentPage, getOffset());
 		}
 		supportInvalidateOptionsMenu();
 	}
@@ -168,11 +200,39 @@ public class StoryDisplayActivity extends ActionBarActivity implements LoaderCal
 		switch (item.getItemId()) {
 		case R.id.read_story_menu_add:
 			mLoader.hasUpdated = true;
-			LibraryDownloader.download(this, mStoryId, mCurrentPage);  
+			LibraryDownloader.download(this, mStoryId, mCurrentPage, getOffset());  
 			supportInvalidateOptionsMenu();
 			return true;
 		case R.id.read_story_go_to:
 			chapterPicker();
+			return true;
+		case R.id.follow:
+		case R.id.favorite:	
+			
+			Uri.Builder builder = new Uri.Builder();
+			builder.scheme(getString(R.string.fanfiction_scheme));
+			builder.authority(getString(R.string.fanfiction_authority));
+			builder.appendEncodedPath("m");
+			builder.appendEncodedPath("subs.php");
+			builder.appendQueryParameter("uid", Long.toString(mAuthorId));
+			builder.appendQueryParameter("sid", Long.toString(mStoryId));
+			builder.appendQueryParameter("src", "s");
+			builder.appendQueryParameter("ch", Long.toString(mCurrentPage));
+			
+			if (item.getItemId() == R.id.follow) {
+				builder.appendQueryParameter("salert", "1");
+				new AsyncPost(this,R.string.toast_added_follows, builder.build(), Method.GET).execute();
+			}else{
+				builder.appendQueryParameter("favs", "1");
+				new AsyncPost(this,R.string.toast_added_favs, builder.build(), Method.GET).execute();
+			}
+			
+			return true;
+		case R.id.read_story_go_to_top:
+			scrollTo(0);
+			return true;
+		case R.id.review:
+			ReviewDialog.review(this, mStoryId, mCurrentPage);
 			return true;
 		case android.R.id.home:
 			onBackPressed();
@@ -195,10 +255,16 @@ public class StoryDisplayActivity extends ActionBarActivity implements LoaderCal
 			item.setTitleCondensed(getString(R.string.read_story_add_condensed));
 		}
 
-		if (mLoader.hasUpdated) {
+		if (mLoader != null && mLoader.hasUpdated) {
 			item.setEnabled(false);
 			item.getIcon().setAlpha(64);
 		}
+		
+		if (!mList.isEmpty()) {
+			menu.setGroupEnabled(R.id.go_to_group, true);
+		}
+		
+		
 		return super.onPrepareOptionsMenu(menu);
 	}
 	
@@ -294,7 +360,7 @@ public class StoryDisplayActivity extends ActionBarActivity implements LoaderCal
 		View footer = getLayoutInflater().inflate(R.layout.footer_read_story, null);
 		mListView.addFooterView(footer);
 		mListView.setDividerHeight(0);
-		mAdapter = new StoryAdapter(this, mList);
+		mAdapter = new TextAdapter(this, mList);
 		mListView.setAdapter(mAdapter);
 
 		btnFirst = footer.findViewById(R.id.read_story_first);
@@ -314,7 +380,6 @@ public class StoryDisplayActivity extends ActionBarActivity implements LoaderCal
 		}
 		
 		getSupportLoaderManager().initLoader(0, savedInstanceState, this);
-
 	}
 
 	@Override
@@ -327,7 +392,7 @@ public class StoryDisplayActivity extends ActionBarActivity implements LoaderCal
 	 * Gets the first visible character at the current scroll position
 	 * @return The index of the first visible character
 	 */
-	private int getCharacterOffset(){
+	private int getOffset(){
 		int offset = 0;
 		int firstPosition = mListView.getFirstVisiblePosition();
 		for (int j = 0; j < firstPosition; j++) {
@@ -353,10 +418,10 @@ public class StoryDisplayActivity extends ActionBarActivity implements LoaderCal
 		while (j + mList.get(i).length() <= offset) {
 			j += mList.get(i).length();
 			i++;
-		}
-		
-		if (i >= mList.size()) {
-			i = mList.size() - 1;
+			if (i >= mList.size()) {
+				i = mList.size() - 1;
+				break;
+			}
 		}
 
 		mListView.setSelectionFromTop(i, 0);
@@ -368,7 +433,7 @@ public class StoryDisplayActivity extends ActionBarActivity implements LoaderCal
 			ContentResolver resolver = getContentResolver();
 			AsyncQueryHandler handler = new AsyncQueryHandler(resolver){};
 			
-			int offset = getCharacterOffset();
+			int offset = getOffset();
 			
 			ContentValues values = new ContentValues(1);
 			values.put(SqlConstants.KEY_LAST, mCurrentPage);
@@ -387,38 +452,9 @@ public class StoryDisplayActivity extends ActionBarActivity implements LoaderCal
 		super.onStop();
 	}
 	
-	private static class StoryAdapter extends ArrayAdapter<Spanned>{
-		private final int padding;
-		
-		public StoryAdapter(Context context, List<Spanned> objects) {
-			super(context, 0, objects);
-			padding = getContext().getResources().getDimensionPixelOffset(R.dimen.activity_horizontal_margin);
-		}
-		
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			TextView view;
-			if (convertView == null) {
-				view = new JellyBeanSpanFixTextView(getContext());
-				view.setTextSize(TypedValue.COMPLEX_UNIT_SP, Settings.fontSize(getContext()));
-				view.setPadding(padding, 0, padding, 0);
-			}else{
-				view = (TextView) convertView;
-			}
-			view.setText(getItem(position), BufferType.SPANNABLE);
-			return view;
-		}		
-		
-		@Override
-		public boolean isEnabled(int position) {
-			return false;
-		}
-	}
-	
 	private static class StoryLoader extends AsyncTaskLoader<StoryObject>{
 		private static final String STATE_DATA = "Data extra";
 		private static final String STATE_UPDATED = "Updated extra";
-		private static final String STATE_SCROLL = "Scroll";
 		private boolean connectionError;
 		private boolean sdCardError;
 		Cursor cursor;
@@ -441,7 +477,6 @@ public class StoryDisplayActivity extends ActionBarActivity implements LoaderCal
 			scrollTo = false;
 			if (in != null && in.containsKey(STATE_DATA)) {
 				firstScroll = false;
-				characterOffset = in.getInt(STATE_SCROLL);
 				mData = in.getParcelable(STATE_DATA);
 				this.currentPage = mData.getCurrentPage();
 				hasUpdated = in.getBoolean(STATE_UPDATED);
@@ -451,6 +486,7 @@ public class StoryDisplayActivity extends ActionBarActivity implements LoaderCal
 				this.currentPage = currentPage;
 				dataHasChanged = true;
 				hasUpdated = false;
+				characterOffset = offset;
 			}
 		}
 		
@@ -460,7 +496,7 @@ public class StoryDisplayActivity extends ActionBarActivity implements LoaderCal
 				StoryObject tmp = new StoryObject(currentPage, false);
 				tmp.setCurrentPage(currentPage);
 				tmp.setStoryTitle("");
-				tmp.setStoryText(Html.fromHtml(""));
+				tmp.setStoryText(new ArrayList<Spanned>());
 				super.deliverResult(tmp);
 			}else{
 				super.deliverResult(mData.clone());
@@ -476,7 +512,7 @@ public class StoryDisplayActivity extends ActionBarActivity implements LoaderCal
 			// Fills data from SQLite
 			// if this is the first
 			// instance.
-			mData = fillFromSql(storyId);
+			fillFromSql(storyId);
 			Spanned storyText;
 			
 			if (mData.isInLibrary() && mData.getTotalPages() >= currentPage) {
@@ -515,24 +551,29 @@ public class StoryDisplayActivity extends ActionBarActivity implements LoaderCal
 		 * @param storyId
 		 *            The numerical Id of the story
 		 */
-		private StoryObject fillFromSql(long storyId) {
+		private void fillFromSql(long storyId) {
 			if (mData == null) {
 				if (cursor != null && !cursor.isClosed()) {
 					cursor.close();
 				}
 				ContentResolver resolver = getContext().getContentResolver();
-				String[] projection = {SqlConstants.KEY_TITLE, SqlConstants.KEY_CHAPTER, SqlConstants.KEY_LAST}; 
-				cursor = resolver.query(StoryProvider.CONTENT_URI, projection, SqlConstants.KEY_STORY_ID + " = ?", new String[]{storyId + ""}, null);			
-				StoryObject tmpObj;
+				String[] projection = { SqlConstants.KEY_TITLE,
+						SqlConstants.KEY_CHAPTER, SqlConstants.KEY_LAST,
+						SqlConstants.KEY_OFFSET, SqlConstants.KEY_AUTHOR_ID };
+				cursor = resolver.query(StoryProvider.CONTENT_URI, projection,
+						SqlConstants.KEY_STORY_ID + " = ?",
+						new String[] { storyId + "" }, null);
+
 				if (cursor.moveToFirst()) {
 					cursor.registerContentObserver(observer);
-					tmpObj = new StoryObject(cursor.getInt(1), true);
-					tmpObj.setStoryTitle(cursor.getString(0));	
+					mData = new StoryObject(cursor.getInt(1), true);
+					mData.setStoryTitle(cursor.getString(0));	
+					mData.setAuthorId(cursor.getInt(4));
 					currentPage = cursor.getInt(2);
+					characterOffset = cursor.getInt(3);
 				} else {
-					tmpObj = new StoryObject(0, false);
+					mData = new StoryObject(0, false);
 				}
-				return tmpObj;
 				
 			}else if(mData.isInLibrary() && hasUpdated){
 				if (cursor != null && !cursor.isClosed()) {
@@ -545,7 +586,6 @@ public class StoryDisplayActivity extends ActionBarActivity implements LoaderCal
 				mData.setTotalPages(cursor.getInt(0));				
 				cursor.close();
 			}
-			return mData;
 		}
 
 		
@@ -563,7 +603,7 @@ public class StoryDisplayActivity extends ActionBarActivity implements LoaderCal
 			try {
 				String url = "https://m.fanfiction.net/s/" + storyId + "/"
 						+ pageNumber + "/";
-				org.jsoup.nodes.Document document = Jsoup.connect(url).get();
+				org.jsoup.nodes.Document document = Jsoup.connect(url).timeout(10000).get();
 				if (mData.getTotalPages() == 0) {
 					
 					Element title = document.select("div#content div b").first();
@@ -580,6 +620,10 @@ public class StoryDisplayActivity extends ActionBarActivity implements LoaderCal
 						totalPages = 1;
 					}
 					mData.setTotalPages(totalPages);
+					
+					Element authorElement = document.select("input[name=uid]").first();
+					long authorId = Long.parseLong(authorElement.attr("value"));
+					mData.setAuthorId(authorId);
 				}
 				
 				Elements storyText = document.select("div#storycontent");
@@ -598,7 +642,7 @@ public class StoryDisplayActivity extends ActionBarActivity implements LoaderCal
 		}
 		
 		private void onSaveInstanceState(Bundle outState){
-			if (mData.getStoryText() != null) {
+			if (mData != null && mData.getStoryText() != null) {
 				outState.putParcelable(STATE_DATA, mData);
 			}
 			outState.putBoolean(STATE_UPDATED, hasUpdated);
@@ -663,8 +707,16 @@ class StoryObject implements Parcelable{
 	private final boolean inLibrary;
 	private List<Spanned> storyText;
 	private String storyTitle;
-
 	private int totalPages;
+	private long authorId;
+
+	public long getAuthorId() {
+		return authorId;
+	}
+
+	public void setAuthorId(long authorId) {
+		this.authorId = authorId;
+	}
 
 	/**
 	 * Creates a new StoryObject representing the story
@@ -684,6 +736,7 @@ class StoryObject implements Parcelable{
 		currentPage = in.readInt();
 		totalPages = in.readInt();
 		storyTitle = in.readString();
+		authorId = in.readLong();
 		List<String> spans = new ArrayList<String>();
 		in.readStringList(spans);
 		
@@ -768,6 +821,7 @@ class StoryObject implements Parcelable{
 	public void setTotalPages(int totalPages) {
 		this.totalPages = totalPages;
 	}
+	
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
@@ -775,6 +829,7 @@ class StoryObject implements Parcelable{
 		dest.writeInt(currentPage);
 		dest.writeInt(totalPages);
 		dest.writeString(storyTitle);
+		dest.writeLong(authorId);
 		
 		List<String> spans = new ArrayList<String>();
 		for (Spanned span : storyText) {
@@ -790,6 +845,7 @@ class StoryObject implements Parcelable{
 		tmp.setCurrentPage(this.getCurrentPage());
 		tmp.setStoryTitle(this.getStoryTitle());
 		tmp.setStoryText(this.getStoryText());
+		tmp.setAuthorId(this.getAuthorId());
 		return tmp;
 	}
 

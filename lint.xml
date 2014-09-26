@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lint>
+    <issue id="InflateParams" severity="ignore" />
     <issue id="MissingTranslation">
         <ignore path="res/values/strings.xml" />
     </issue>

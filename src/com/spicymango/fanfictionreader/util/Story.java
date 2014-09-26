@@ -60,7 +60,7 @@ public class Story implements Parcelable, SqlConstants{
 			cursor.getLong(12), cursor.getShort(16) == 1);
 	}
 	
-	public ContentValues toContentValues (int lastPage){
+	public ContentValues toContentValues (int lastPage, int offset){
 		ContentValues v = new ContentValues();
 		v.put(KEY_STORY_ID, id);
 		v.put(KEY_TITLE, name);
@@ -79,6 +79,7 @@ public class Story implements Parcelable, SqlConstants{
 		v.put(KEY_PUBLISHED, published.getTime());
 		v.put(KEY_LAST, lastPage);
 		v.put(KEY_COMPLETE, completed ? 1 : 0);
+		v.put(KEY_OFFSET, offset);
 		return v;
 	}
 	
@@ -100,7 +101,7 @@ public class Story implements Parcelable, SqlConstants{
 	 * @param updated The date it was updated
 	 * @param published The date it was published.
 	 */
-	private Story(long id, String name, String author, long authorId,
+	public Story(long id, String name, String author, long authorId,
 			String summary, String category, String rating, String language,
 			String genre, int chapterLenght, int wordLenght, int favorites,
 			int follows, Date updated, Date published, boolean completed) {

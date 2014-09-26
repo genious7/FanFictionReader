@@ -1,8 +1,10 @@
-package com.spicymango.fanfictionreader.util;
+package com.spicymango.fanfictionreader.util.adapters;
 
 import java.util.List;
 
 import com.spicymango.fanfictionreader.R;
+import com.spicymango.fanfictionreader.util.Story;
+
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
