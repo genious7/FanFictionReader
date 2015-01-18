@@ -48,6 +48,7 @@ public class DetailDialog extends DialogFragment implements OnClickListener{
 				R.string.detail_follows,
 				R.string.detail_updated,
 				R.string.detail_published,
+				R.string.detail_story_id,
 				R.string.detail_complete
 	};
 	
@@ -79,12 +80,13 @@ public class DetailDialog extends DialogFragment implements OnClickListener{
 				mStory.getRating(),
 				mStory.getlanguage(),
 				mStory.getGenre(),
-				String.valueOf(mStory.getChapterLenght()),
+				Integer.toString(mStory.getChapterLenght()),
 				mStory.getWordLenght(),
 				mStory.getFavorites(),
 				mStory.getFollows(),
 				DateFormat.getDateInstance().format(mStory.getUpdated()),
 				DateFormat.getDateInstance().format(mStory.getPublished()),
+				Long.toString(mStory.getId()),
 				mStory.isCompleted() ? getString(R.string.complete_true) : getString(R.string.complete_false)
 		};
 		

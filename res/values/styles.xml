@@ -37,5 +37,4 @@
     <style name="CenteredTabs" parent="@style/Widget.AppCompat.ActionBar.TabBar">
         <item name="android:gravity">center</item>
     </style>
-
 </resources>

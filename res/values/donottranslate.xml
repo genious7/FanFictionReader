@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string-array name="pref_text_size_values">
-        <item>S</item>
-        <item>M</item>
-        <item>L</item>
-        <item>XL</item>
+    <string name="pref_text_size_default">14</string>
+    
+    <string-array name="diag_font_family">
+        <item >Sans-Serif</item>
+        <item >Serif</item>
     </string-array>
-    <string name="pref_text_size_default">M</string>
     
     <string-array name="pref_orientation_values">
         <item >A</item>
@@ -27,6 +26,12 @@
     	<item >ext</item>    
     </string-array> 
     <string name="pref_loc_default">int</string>
+    
+    <!-- Preference Keys -->
+    <string name="pref_key_text_size">Text Size</string>
+    <string name="pref_key_type_face">Type Face</string>
+    <string name="pref_key_back_up">Back Up</string>
+    <string name="pref_key_restore">Restore</string>
     
 
     <!-- Browse Meny Activity -->

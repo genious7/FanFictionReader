@@ -16,6 +16,7 @@ import org.jsoup.select.Elements;
 
 import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.Settings;
+import com.spicymango.fanfictionreader.activity.reader.StoryDisplayActivity;
 import com.spicymango.fanfictionreader.dialogs.DetailDialog;
 import com.spicymango.fanfictionreader.util.Parser;
 import com.spicymango.fanfictionreader.util.Result;
@@ -145,7 +146,7 @@ public class AuthorMenuActivity extends ActionBarActivity{
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
-			StoryDisplayActivity.openStory(getActivity(), id, true);
+			StoryDisplayActivity.openStory(getActivity(), id, Site.FANFICTION, true);
 		}
 		
 		@Override

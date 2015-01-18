@@ -2,29 +2,27 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.spicymango.fanfictionreader"
     android:installLocation="preferExternal"
-    android:versionCode="34"
-    android:versionName="1.35" >
+    android:versionCode="51"
+    android:versionName="1.45d" >
 
     <uses-sdk
-        android:minSdkVersion="7"
-        android:targetSdkVersion="20" />
+        android:minSdkVersion="7" android:targetSdkVersion="21"/>
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="18"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="18"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppActionBar" android:supportsRtl="false">
-        
+        android:supportsRtl="false"
+        android:theme="@style/AppActionBar" >
         <activity
             android:name="MainMenu"
-            android:label="@string/app_name" android:clearTaskOnLaunch="false">
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -43,7 +41,7 @@
         <service android:name="LibraryDownloader" >
         </service>
 
-        <activity android:name=".activity.StoryDisplayActivity" >
+        <activity android:name="com.spicymango.fanfictionreader.activity.reader.StoryDisplayActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -51,6 +49,8 @@
                 <data android:scheme="https" />
                 <data android:host="m.fanfiction.net" />
                 <data android:host="www.fanfiction.net" />
+<!--                 <data android:host="m.fictionpress.com"/> -->
+<!--                 <data android:host="www.fictionpress.com" /> -->
                 <data android:pathPrefix="/s/" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -60,7 +60,7 @@
         </activity>
         <activity
             android:name=".activity.LibraryMenuActivity"
-            android:label="@string/menu_library_title">
+            android:label="@string/menu_library_title" >
         </activity>
 
         <provider
@@ -92,7 +92,10 @@
             android:name=".activity.SearchAuthorActivity"
             android:label="@string/menu_search_title" >
         </activity>
-        <activity android:name=".activity.AccountActivity"></activity>
-        <activity android:name=".activity.LogInActivity"></activity>
+        <activity android:name=".activity.AccountActivity" >
+        </activity>
+        <activity android:name=".activity.LogInActivity" >
+        </activity>
     </application>
+
 </manifest>

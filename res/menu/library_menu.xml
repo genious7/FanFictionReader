@@ -10,7 +10,7 @@
         android:titleCondensed="@string/menu_library_sync_all_condensed"
         spicymango:showAsAction="ifRoom"/>
     <item
-        android:id="@+id/filter"
+        android:id="@id/filter"
         android:enabled="false"
         android:icon="@drawable/ic_filter"
         android:title="@string/menu_navigation_filter_by"

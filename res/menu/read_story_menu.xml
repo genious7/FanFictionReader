@@ -9,6 +9,12 @@
         android:title="@string/read_story_add"
         android:titleCondensed="@string/read_story_add_condensed"
         spicymango:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/read_story_full_screen"
+        android:checked="false"
+        android:title="@string/read_story_full_screen"
+        spicymango:showAsAction="never" android:checkable="true" android:visible="false">
+    </item>
 
     <group
         android:id="@+id/go_to_group"
@@ -23,8 +29,12 @@
             android:id="@+id/read_story_go_to_top"
             android:title="@string/read_story_go_to_top"
             spicymango:showAsAction="never"/>
+        <item
+            android:id="@+id/read_story_go_to_bottom"
+            android:title="@string/read_story_go_to_bottom"
+            spicymango:showAsAction="never">
+        </item>
     </group>
-
     <group
         android:id="@+id/account_group"
         android:menuCategory="container"
@@ -32,16 +42,18 @@
         <item
             android:id="@+id/follow"
             android:title="@string/read_story_add_follow"
-            android:titleCondensed="@string/read_story_add_follow"
             spicymango:showAsAction="never">
         </item>
         <item
             android:id="@+id/favorite"
             android:title="@string/read_story_add_favorites"
-            android:titleCondensed="@string/read_story_add_favorites"
             spicymango:showAsAction="never">
         </item>
-        <item android:id="@+id/review" android:title="@string/review"></item>
+        <item
+            android:id="@+id/review"
+            android:title="@string/review"
+            spicymango:showAsAction="never">
+        </item>
     </group>
 
 </menu>

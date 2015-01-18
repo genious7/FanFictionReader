@@ -3,7 +3,7 @@
     xmlns:spicymango="http://schemas.android.com/apk/res-auto" >
 
     <item
-        android:id="@+id/read_story_filter"
+        android:id="@id/filter"
         android:icon="@drawable/ic_filter"
         android:title="@string/read_story_filter"
         android:titleCondensed="@string/read_story_filter"

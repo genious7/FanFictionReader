@@ -5,9 +5,10 @@ package com.spicymango.fanfictionreader.activity;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -39,6 +40,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.SectionIndexer;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
@@ -169,10 +171,16 @@ public class NavigationMenuActivity extends ActionBarActivity implements LoaderC
 	@Override
 	public void onLoadFinished(Loader<List<MenuObject>> loader, List<MenuObject> data) {
 		mList.clear();
-		mList.addAll(data);
+		mList.addAll(data);		
 		mAdapter.sort(mSort);
 		mAdapter.notifyDataSetChanged();	
 		mLoader = (MenuLoader) loader;
+		
+		if (mCurrentFilter != 0) {
+			mListView.setFastScrollEnabled(false);
+		}else if (mSort){
+			mListView.setFastScrollEnabled(true);
+		}
 		
 		if (mLoader.hasConnectionError()) {
 			mProgressBar.setVisibility(View.GONE);
@@ -194,10 +202,14 @@ public class NavigationMenuActivity extends ActionBarActivity implements LoaderC
 		case R.id.navigation_library_sort_by_name:
 			mSort = true;
 			mAdapter.sort(true);
+			if (mCurrentFilter == 0) {
+				mListView.setFastScrollEnabled(true);
+			}
 			return true;
 		case R.id.navigation_library_sort_by_size:
 			mSort = false;
 			mAdapter.sort(false);
+			mListView.setFastScrollEnabled(false);
 			return true;
 		case R.id.filter:
 			displayFilterDialog();
@@ -503,7 +515,7 @@ public class NavigationMenuActivity extends ActionBarActivity implements LoaderC
 
 		/**
 		 * Sets a new {@link Uri} and starts loading if the new Uri does not
-		 * match the prexisting one.
+		 * match the existing one.
 		 * 
 		 * @param uri
 		 *            The new Uri
@@ -555,8 +567,10 @@ public class NavigationMenuActivity extends ActionBarActivity implements LoaderC
 
 	}
 
-	private static class NavigationMenuAdapter extends ArrayAdapter<MenuObject>{
-		int layoutResourceId;
+	private static class NavigationMenuAdapter extends ArrayAdapter<MenuObject> implements SectionIndexer{
+		final int layoutResourceId;
+		private HashMap<Character, Integer> sectionMap;
+		private Character[] sections;
 			
 		/**
 		 * Initializes the adapter
@@ -567,6 +581,37 @@ public class NavigationMenuActivity extends ActionBarActivity implements LoaderC
 		public NavigationMenuAdapter(Context context, int layoutResourceId, List<MenuObject> data) {
 			super(context, layoutResourceId, data);
 			this.layoutResourceId=layoutResourceId;
+			sectionMap = new HashMap<Character, Integer>();
+		}
+
+		/**
+		 * Recreates the section indexer
+		 */
+		private void invalidateSectionIndex(){
+			final int count = getCount();
+			sectionMap.clear();
+			for (int i = 0; i < count; i++) {
+				Character ch;
+				MenuObject object = getItem(i);
+				
+				//If the entry is the All Crossover entry, it should remain on the top
+				if (object.getSortInt() == Integer.MAX_VALUE) {
+					ch = ' ';
+				//Otherwise, use the first character to create the index
+				} else {
+					ch = Character.toUpperCase(object.getTitle().charAt(0));
+					if (!Character.isLetter(ch)) {
+						ch = '#';
+					}
+				}
+				if (!sectionMap.containsKey(ch)) {
+					sectionMap.put(ch, i);
+				}
+			}
+			sections = new Character[sectionMap.size()];
+			ArrayList<Character> sectionList = new ArrayList<Character>(sectionMap.keySet());
+			Collections.sort(sectionList);
+			sectionList.toArray(sections);
 		}
 		
 		@Override
@@ -597,12 +642,36 @@ public class NavigationMenuActivity extends ActionBarActivity implements LoaderC
 	        return convertView;
 		}
 		
+		@Override
+		public Object[] getSections() {
+			return sections;
+		}
+
+		@Override
+		public int getPositionForSection(int sectionIndex) {
+			int position = sectionMap.get(sections[sectionIndex]);
+			return position < getCount() ? position : getCount() - 1;
+		}
+
+		@Override
+		public int getSectionForPosition(int position) {
+			int i;
+			for (i = sections.length - 1; i >= 0; i--){
+				if(position >= sectionMap.get(sections[i]))
+					break;
+			}
+			return i < 0 ? 0 : i ;
+		}
+		
 		/**
 		 * Sorts the adapter either by views or by title
-		 * @param sortBy True to sort by title, false to sort by views
+		 * @param sortByTitle True to sort by title, false to sort by views
 		 */
-		public void sort(boolean sortBy) {
-			super.sort(new ListComparator(sortBy));
+		public void sort(boolean sortByTitle) {
+			super.sort(new ListComparator(sortByTitle));
+			if (sortByTitle) {
+				invalidateSectionIndex();
+			}
 		}
 		
 		/**
@@ -614,5 +683,7 @@ public class NavigationMenuActivity extends ActionBarActivity implements LoaderC
 	        TextView txtTitle;
 	        TextView txtViews;
 	    }
+
+		
 	}
 }

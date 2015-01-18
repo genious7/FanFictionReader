@@ -52,6 +52,7 @@
             android:id="@+id/read_story_first"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minWidth="64dp"
             android:onClick="onClick"
             android:text="@string/read_story_first" />
 
@@ -59,6 +60,7 @@
             android:id="@+id/read_story_prev"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minWidth="64dp"
             android:onClick="onClick"
             android:text="@string/read_story_prev" />
 
@@ -66,12 +68,14 @@
             android:id="@+id/read_story_page_counter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minWidth="64dp"
             android:text="" />
 
         <Button
             android:id="@+id/read_story_next"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minWidth="64dp"
             android:onClick="onClick"
             android:text="@string/read_story_next" />
 
@@ -79,6 +83,7 @@
             android:id="@+id/read_story_last"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minWidth="64dp"
             android:onClick="onClick"
             android:text="@string/read_story_last" />
     </LinearLayout>

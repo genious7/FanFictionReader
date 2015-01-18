@@ -22,6 +22,7 @@ import android.util.Log;
 import android.util.SparseArray;
 
 import com.spicymango.fanfictionreader.activity.LibraryMenuActivity;
+import com.spicymango.fanfictionreader.activity.Site;
 import com.spicymango.fanfictionreader.provider.SqlConstants;
 import com.spicymango.fanfictionreader.provider.StoryProvider;
 import com.spicymango.fanfictionreader.util.FileHandler;
@@ -120,6 +121,11 @@ public class LibraryDownloader extends IntentService{
 
 					//If an error occurs while parsing, quit
 					if (story == null) {
+						
+						if (document.body().text().contains("Story Not Found")) {
+							return Result.NO_CHANGE;
+						}
+						
 						Log.d(this.getClass().getName(), "Error parsing story attributes");
 						sendReport(document.html());
 						return Result.ERROR_PARSE;
@@ -128,7 +134,7 @@ public class LibraryDownloader extends IntentService{
 					//If no updates have been made to the story, skip
 					if (story.getUpdated().getTime() == lastUpdated()) {
 						ContentResolver resolver = this.getContentResolver();
-						resolver.insert(StoryProvider.CONTENT_URI, story.toContentValues(lastPage, offset));
+						resolver.insert(StoryProvider.FF_CONTENT_URI, story.toContentValues(lastPage, offset));
 						return Result.NO_CHANGE;
 					}
 					
@@ -138,7 +144,7 @@ public class LibraryDownloader extends IntentService{
 					if (Settings.isIncrementalUpdatingEnabled(this)) {
 						
 						//If there are more chapters, assume that the story has not been revised
-						int chaptersOnLastUpdate = StoryProvider.numberOfChapters(this, storyId);
+						int chaptersOnLastUpdate = StoryProvider.numberOfChapters(this, Site.FANFICTION, storyId);
 						if (chaptersOnLastUpdate > 1 && totalPages > chaptersOnLastUpdate) {
 							currentPage = chaptersOnLastUpdate;
 							incrementalIndex = currentPage;
@@ -167,7 +173,7 @@ public class LibraryDownloader extends IntentService{
 		}
 
 		ContentResolver resolver = this.getContentResolver();
-		resolver.insert(StoryProvider.CONTENT_URI, story.toContentValues(lastPage, offset));
+		resolver.insert(StoryProvider.FF_CONTENT_URI, story.toContentValues(lastPage, offset));
 
 		return Result.SUCCESS;
 	}
@@ -189,7 +195,7 @@ public class LibraryDownloader extends IntentService{
 	 */
 	private long lastUpdated() {
 		ContentResolver resolver = getContentResolver();
-		Cursor c = resolver.query(StoryProvider.CONTENT_URI,
+		Cursor c = resolver.query(StoryProvider.FF_CONTENT_URI,
 				new String[] { SqlConstants.KEY_UPDATED },
 				SqlConstants.KEY_STORY_ID + " = ?",
 				new String[] { String.valueOf(storyId) }, null);

@@ -12,12 +12,10 @@
             android:entryValues="@array/pref_theme_values"
             android:key="@string/pref_theme"
             android:title="@string/pref_theme" />
-        <ListPreference
+
+        <Preference
             android:defaultValue="@string/pref_text_size_default"
-            android:dialogTitle="@string/pref_text_size"
-            android:entries="@array/pref_text_size_entries"
-            android:entryValues="@array/pref_text_size_values"
-            android:key="@string/pref_text_size"
+            android:key="@string/pref_key_text_size"
             android:title="@string/pref_text_size" />
     </PreferenceCategory>
     <PreferenceCategory
@@ -40,10 +38,12 @@
             android:entryValues="@array/pref_orientation_values"
             android:key="@string/pref_orientation"
             android:title="@string/pref_orientation" />
+
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="@string/pref_wake_lock"
             android:title="@string/pref_wake_lock" />
+
         <ListPreference
             android:defaultValue="@string/pref_loc_default"
             android:dialogTitle="@string/pref_loc"
@@ -51,6 +51,17 @@
             android:entryValues="@array/pref_loc_values"
             android:key="@string/pref_loc"
             android:title="@string/pref_loc" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="@string/pref_back_and_restore"
+        android:orderingFromXml="true"
+        android:title="@string/pref_back_and_restore" >
+        <Preference
+            android:key="@string/pref_key_back_up"
+            android:title="@string/pref_back_up" />
+        <Preference
+            android:key="@string/pref_key_restore"
+            android:title="@string/pref_restore" />
     </PreferenceCategory>
 
 </PreferenceScreen>

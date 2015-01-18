@@ -3,7 +3,7 @@
     xmlns:spicymango="http://schemas.android.com/apk/res-auto" >
 
     <item
-        android:id="@+id/filter"
+        android:id="@id/filter"
         android:icon="@drawable/ic_filter"
         android:title="@string/menu_navigation_filter_by"
         android:titleCondensed="@string/menu_navigation_filter_by"

@@ -7,6 +7,7 @@ import java.util.List;
 import org.jsoup.nodes.Document;
 
 import com.spicymango.fanfictionreader.R;
+import com.spicymango.fanfictionreader.activity.reader.StoryDisplayActivity;
 import com.spicymango.fanfictionreader.dialogs.DetailDialog;
 import com.spicymango.fanfictionreader.filter.FilterDialog;
 import com.spicymango.fanfictionreader.util.BaseActivity;
@@ -65,7 +66,7 @@ public class StoryMenuActivity extends BaseActivity<Story>{
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
-		StoryDisplayActivity.openStory(this, id, true);	
+		StoryDisplayActivity.openStory(this, id, Site.FANFICTION, true);	
 	}
 
 	@Override
@@ -89,7 +90,7 @@ public class StoryMenuActivity extends BaseActivity<Story>{
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.read_story_filter:
+		case R.id.filter:
 			FilterDialog.show(this, mLoader.filterList, mLoader.filter);
 			return true;
 		default:
@@ -99,7 +100,7 @@ public class StoryMenuActivity extends BaseActivity<Story>{
 	
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		MenuItem filter = menu.findItem(R.id.read_story_filter);
+		MenuItem filter = menu.findItem(R.id.filter);
 		if (mLoader == null || mLoader.filterList == null) {
 			filter.setEnabled(false);
 			filter.getIcon().setAlpha(64);

@@ -1,0 +1,47 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.spicimango</groupId>
+  <artifactId>fanfictionreader</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>FanFictionReader</name>
+  <packaging>apk</packaging>
+  
+  <repositories>
+  	<repository>
+  		<id>android-support</id>
+  		<url>file://C:\Program Files (x86)\Android\android-sdk\extras\android\m2repository</url>
+  	</repository>
+  </repositories>
+  
+  <build>
+    <sourceDirectory>src</sourceDirectory>
+    <plugins>
+
+	    <plugin>
+	    	<groupId>com.jayway.maven.plugins.android.generation2</groupId>
+	    	<artifactId>android-maven-plugin</artifactId>
+	    	<version>3.9.0-rc.2</version>
+	    	<extensions>true</extensions>
+	    </plugin>
+	    
+    </plugins>
+  </build>
+  <dependencies>
+  	<dependency>
+  		<groupId>com.google.android</groupId>
+  		<artifactId>android</artifactId>
+  		<version>4.1.1.4</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>com.android.support</groupId>
+  		<artifactId>appcompat-v7</artifactId>
+  		<version>21.0.0</version>
+  		<type>aar</type>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.jsoup</groupId>
+  		<artifactId>jsoup</artifactId>
+  		<version>1.8.1</version>
+  	</dependency>
+  </dependencies>
+</project>

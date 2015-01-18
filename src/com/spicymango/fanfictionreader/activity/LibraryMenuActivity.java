@@ -43,6 +43,7 @@ import android.widget.Toast;
 import com.spicymango.fanfictionreader.LibraryDownloader;
 import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.Settings;
+import com.spicymango.fanfictionreader.activity.reader.StoryDisplayActivity;
 import com.spicymango.fanfictionreader.dialogs.DetailDialog;
 import com.spicymango.fanfictionreader.filter.FilterDialog;
 import com.spicymango.fanfictionreader.filter.FilterMenu;
@@ -94,11 +95,11 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 		long id = info.id;
 		
-		Uri databaseUri = Uri.withAppendedPath(StoryProvider.CONTENT_URI, String.valueOf(id));
+		final Uri databaseUri = Uri.withAppendedPath(StoryProvider.FF_CONTENT_URI, String.valueOf(id));
 		
 		Cursor c = getContentResolver().query(databaseUri, null, null, null, null);
 		c.moveToFirst();
-		Story story = new Story(c);
+		final Story story = new Story(c);
 		c.close();
 		
 		switch (item.getItemId()) {
@@ -107,11 +108,22 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 			return true;
 			
 		case R.id.menu_library_context_delete:
-			int length = story.getChapterLenght();
-			for (int j = 1; j <= length; j++) {
-				FileHandler.deleteFile(this, story.getId(), j);
-			}		
-			getContentResolver().delete(databaseUri, null, null);
+			
+			AlertDialog.Builder diag = new AlertDialog.Builder(this);
+			diag.setTitle(R.string.dialog_remove);
+			diag.setMessage(R.string.dialog_remove_text);
+			diag.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					int length = story.getChapterLenght();
+					for (int j = 1; j <= length; j++) {
+						FileHandler.deleteFile(LibraryMenuActivity.this, story.getId(), j);
+					}		
+					getContentResolver().delete(databaseUri, null, null);
+				}
+			});
+			diag.setNegativeButton(android.R.string.no, null);
+			diag.show();			
 			return true;
 		
 		case R.id.menu_library_context_author:
@@ -135,7 +147,7 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 		switch (id) {
 		case LOADER_LIBRARY:
 			mProgressBar.setVisibility(View.VISIBLE);
-			return new LibraryLoader(this, StoryProvider.CONTENT_URI, GET_PROJECTION, filterQuery(), null, sortOrder());
+			return new LibraryLoader(this, StoryProvider.FF_CONTENT_URI, GET_PROJECTION, filterQuery(), null, sortOrder());
 		case LOADER_FILTER:
 			return new CursorLoader(this);
 		default:
@@ -151,7 +163,7 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 	
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int position, long id) {
-		StoryDisplayActivity.openStory(this, id, false);
+		StoryDisplayActivity.openStory(this, id, Site.FANFICTION, false);
 	}
 
 	@Override

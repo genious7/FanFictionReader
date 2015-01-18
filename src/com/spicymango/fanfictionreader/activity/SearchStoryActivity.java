@@ -5,6 +5,7 @@ import java.util.List;
 import org.jsoup.nodes.Document;
 
 import com.spicymango.fanfictionreader.R;
+import com.spicymango.fanfictionreader.activity.reader.StoryDisplayActivity;
 import com.spicymango.fanfictionreader.dialogs.DetailDialog;
 import com.spicymango.fanfictionreader.filter.FilterDialog;
 import com.spicymango.fanfictionreader.util.BaseActivity;
@@ -62,7 +63,7 @@ public class SearchStoryActivity extends BaseActivity<Story> implements OnQueryT
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
-		StoryDisplayActivity.openStory(this, id, true);
+		StoryDisplayActivity.openStory(this, id, Site.FANFICTION, true);
 	}
 	
 	@Override

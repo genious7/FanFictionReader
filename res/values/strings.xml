@@ -7,6 +7,10 @@
     <string name="error_connection">Failed to connect to server</string>
 	<string name="error_sd">Please check that the SD card is available</string>
 	<string name="error_parsing">Please contact developer</string>
+	<string name="error_unknown">Unknown Error</string>
+	
+	<string name="dialog_remove">Remove story</string>
+	<string name="dialog_remove_text">Do you want to remove the selected story?</string>
 	
 	<!-- Main Menu -->
 	<string name="menu_button_content_description">Menu Button</string>
@@ -20,6 +24,11 @@
 	<string name="menu_button_settings">Settings</string>
 	<string name="menu_button_about">About</string>
 	<string name="menu_toast_resume">You must have viewed at least one saved story</string>
+	
+	<string-array name="site_options">
+	    <item >FanFiction Reader</item>
+	    <item >FictionPress Reader</item>
+	</string-array>
 	
 	<string name="dialog_loading">Loading…</string>
 	
@@ -48,6 +57,7 @@
 	<string name="detail_category">&lt;strong&gt;Category:&lt;/strong&gt; %s</string>
 	<string name="detail_complete">&lt;strong&gt;Status:&lt;/strong&gt; %s</string>
 	<string name="detail_author">&lt;strong&gt;Author:&lt;/strong&gt; %s</string>
+	<string name="detail_story_id">&lt;strong&gt;Story ID:&lt;/strong&gt; %s</string>
 	
 	<string name="complete_true">Completed</string>
 	<string name="complete_false">In progress</string>
@@ -56,14 +66,6 @@
 	<string name="pref_appearance">Appearance</string>
 	<string name="pref_behavior">Behavior</string>
 	<string name="pref_updating">Updating</string>
-	
-	<string name="pref_text_size">Text Size</string>
-	<string-array name="pref_text_size_entries">
-		<item >Small</item>
-		<item >Medium</item>
-		<item >Large</item>
-		<item >X-Large</item>
-	</string-array>
 	
 	<string name="pref_orientation">Application Orientation</string>
 	<string-array name="pref_orientation_entries">
@@ -91,7 +93,27 @@
     <string name="pref_incremental_summary_on">Updating a story will only download new chapters. Revised chapters will not be updated.</string>
      
     <string name="pref_wake_lock">Keep Screen On</string>
+    
+    <string name="pref_back_and_restore">Backup and restore</string>
+    <string name="pref_back_up">Back up files to memory</string>
+    <string name="pref_restore">Restore files from memory</string>
+    
+    <string name="diag_back_up">Creating Backup</string>
+    <string name="toast_back_up">Back up successful</string>
+    <string name="error_backup_not_found">Back up file not found</string>
+    <string name="toast_restore_successful">Restore completed successfuly</string>
+    <string name="diag_restoring">Restoring from Backup</string>
+    <string name="error_corrupted">The file is invalid</string>
+    <string name="diag_back_up_external">The backup file is being saved to the SD card.</string>
+    <string name="diag_back_up_internal">The backup file is being saved to the internal memory. If transferring the stories to another device, copy the file Fanfiction.bak to the other device. </string>
+    <string name="diag_restore_warning">Restoring from a backup will clear all data and remove all stories not present in the backup. Continue?</string>
 	
+    <!--  Font Picker -->
+    <string name="pref_text_size">Font size &amp; type</string>
+    <string name="diag_font_size">Text Size</string>
+    <string name="diag_font_family">Font</string>
+    <string name="diag_font_demo">Sample Text</string>
+    
 	<!-- Story Downloader -->
 	<string name="downloader_downloading">Downloading Story</string>
 	<string name="downloader_context">%1$s Chapter %2$d/%3$d</string>
@@ -198,9 +220,11 @@
 	<string name="read_story_add_condensed">Add</string>
 	<string name="read_story_chapter">Chapter\u0020</string>
 	<string name="read_story_filter">@string/menu_story_filter_by</string>
-	<string name="read_story_go_to">Go to page</string>
+	<string name="read_story_go_to">Go to chapter</string>
 	<string name="read_story_go_to_condensed">Go to</string>
 	<string name="read_story_go_to_top">Go to top</string>
+	<string name="read_story_go_to_bottom">Go to bottom</string>
+	<string name="read_story_full_screen">Full Screen</string>
 	
 	<string name="review">Review</string>
 	<string name="dialog_review_posted">Review posted successfully</string>
