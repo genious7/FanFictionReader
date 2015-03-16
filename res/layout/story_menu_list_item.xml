@@ -27,7 +27,8 @@
         android:layout_alignStart="@+id/story_menu_list_item_title"
         android:layout_below="@+id/story_menu_list_item_title"
         android:text="Author"
-        android:textStyle="bold" />
+        android:textStyle="bold" 
+        android:textColor="?android:attr/textColorSecondary"/>
 
     <TextView
         android:id="@+id/story_menu_list_item_summary"
@@ -53,7 +54,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="left"
-            android:text="@string/story_menu_words" />
+            android:text="@string/story_menu_words" 
+            android:textColor="?android:attr/textColorSecondary"/>
 
         <TextView
             android:id="@+id/story_menu_list_item_chapters"
@@ -61,7 +63,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_horizontal"
-            android:text="@string/story_menu_chapters" />
+            android:text="@string/story_menu_chapters" 
+            android:textColor="?android:attr/textColorSecondary"/>
 
         <TextView
             android:id="@+id/story_menu_list_item_follows"
@@ -69,7 +72,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="right"
-            android:text="@string/story_menu_follows" />
+            android:text="@string/story_menu_follows"
+			android:textColor="?android:attr/textColorSecondary"/>
     </LinearLayout>
 
 </RelativeLayout>

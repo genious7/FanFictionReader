@@ -19,7 +19,7 @@
         android:minWidth="@dimen/main_menu_icon_size"
         android:paddingLeft="0dp"
         android:paddingRight="@dimen/main_menu_icon_padding"
-        android:src="?attr/ic_storage" />
+        android:src="@drawable/ic_storage" />
 
     <TextView
         android:id="@+id/list_item_title"

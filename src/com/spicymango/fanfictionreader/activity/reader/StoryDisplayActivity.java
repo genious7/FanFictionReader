@@ -46,7 +46,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.spicymango.fanfictionreader.LibraryDownloader;
-import com.spicymango.fanfictionreader.MainMenu;
+import com.spicymango.fanfictionreader.MainActivity;
 import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.Settings;
 import com.spicymango.fanfictionreader.activity.LogInActivity;
@@ -505,9 +505,9 @@ public class StoryDisplayActivity extends ActionBarActivity implements LoaderCal
 					SqlConstants.KEY_STORY_ID + " = ?",
 					new String[] { String.valueOf(mStoryId) });
 			
-			SharedPreferences preference = getSharedPreferences(MainMenu.EXTRA_PREF,MODE_PRIVATE);
+			SharedPreferences preference = getSharedPreferences(MainActivity.EXTRA_PREF,MODE_PRIVATE);
 			SharedPreferences.Editor editor = preference.edit();
-			editor.putLong(MainMenu.EXTRA_RESUME_ID, mStoryId);
+			editor.putLong(MainActivity.EXTRA_RESUME_ID, mStoryId);
 			editor.commit();
 		}
 		super.onStop();

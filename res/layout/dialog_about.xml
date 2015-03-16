@@ -13,7 +13,8 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/about" />
+        android:text="@string/about" 
+        android:textColor="?android:attr/textColorSecondary"/>
 
     <Button
         android:id="@+id/about_contact"

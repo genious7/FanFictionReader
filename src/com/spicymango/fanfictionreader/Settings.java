@@ -10,6 +10,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
@@ -66,6 +68,7 @@ public class Settings extends ActionBarActivity {
 	}
 	
 	public static class PrefsFragment extends PreferenceFragment implements OnPreferenceChangeListener, OnPreferenceClickListener{
+		private final static String CREATE_DIALOG = "CreateDialog";
 		
 		@Override
 		public void onCreate(Bundle paramBundle) {
@@ -79,20 +82,38 @@ public class Settings extends ActionBarActivity {
 			Preference installLocation = findPreference(getString(R.string.pref_loc));
 			installLocation.setEnabled(isSdCardAvailable);
 			installLocation.setOnPreferenceChangeListener(this);
+			
+			Preference themeChanged = findPreference(getString(R.string.pref_key_theme));
+			themeChanged.setOnPreferenceChangeListener(this);
 						
-			Preference backup = findPreference(getString(R.string.pref_key_back_up));			
+			Preference backup = findPreference(getString(R.string.pref_key_back_up));
+			backup.setOnPreferenceClickListener(this);
+			
 			Preference restore = findPreference(getString(R.string.pref_key_restore));
 			restore.setEnabled(RestoreDialog.findBackUpFile(getActivity()) != null);
-			Preference fontDiag = findPreference(getString(R.string.pref_key_text_size));
-			backup.setOnPreferenceClickListener(this);
 			restore.setOnPreferenceClickListener(this);
+			
+			Preference fontDiag = findPreference(getString(R.string.pref_key_text_size));
 			fontDiag.setOnPreferenceClickListener(this);
+
+			if (getActivity().getIntent().getBooleanExtra(CREATE_DIALOG, false)) {
+				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+				builder.setMessage(R.string.diag_theme_warning);
+				builder.setPositiveButton(android.R.string.ok,	new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								dialog.dismiss();
+							}
+						});
+				builder.show();
+			}
 		}
-		
+
 		@Override
 		public boolean onPreferenceChange(Preference preference, Object newValue) {
 			
-			if (preference.getKey() == getString(R.string.pref_orientation)) {
+			if (preference.getKey().equals(getString(R.string.pref_orientation))) {
 				String value = (String) newValue;
 				if (value.equals("A")) {
 					getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
@@ -103,6 +124,32 @@ public class Settings extends ActionBarActivity {
 				}
 			} else if (preference.getKey().equals(getString(R.string.pref_loc))){
 				showMoveDialog();
+			} else if (preference.getKey().equals(getString(R.string.pref_key_theme))){
+				// Saves the preference, then reopens the settings file if
+				// the new value is different.
+				String currentValue = preference.getSharedPreferences()
+						.getString(getString(R.string.pref_key_theme), "D");
+				if (currentValue.equals(newValue)) {
+					return false;
+				} else {	
+					Editor editor = preference.getEditor();
+					editor.putString(preference.getKey(), (String) newValue);
+					editor.commit();
+					
+					Intent i = getActivity().getIntent();
+					
+					//Display imperfect theme dialog.
+					if (newValue.equals("DD")) {
+						i.putExtra(CREATE_DIALOG, true);
+					} else{
+						i.putExtra(CREATE_DIALOG, false);
+					}
+									
+					getActivity().finish();
+					startActivity(i);
+
+					return false;
+				}
 			}
 			return true;
 		}
@@ -192,12 +239,7 @@ public class Settings extends ActionBarActivity {
 		}
 	}
 	
-	/**
-	 * Sets the orientation of the activity based on current settings
-	 * @param activity The activity to set
-	 */
- 	public static void setOrientationAndTheme(Activity activity){
-		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(activity);
+	private static void setOrientation(Activity activity, SharedPreferences sharedPref){
 		String orientation = sharedPref.getString(activity.getString(R.string.pref_orientation), "A");
 		if (orientation.equals("A")) {
 			activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
@@ -206,9 +248,20 @@ public class Settings extends ActionBarActivity {
 		} else {
 			activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		}
+	}
+	
+	/**
+	 * Sets the orientation of the activity based on current settings
+	 * @param activity The activity to set
+	 */
+ 	public static void setOrientationAndTheme(Activity activity){
+		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(activity);
+		setOrientation(activity, sharedPref);
 		
 		String theme = sharedPref.getString(activity.getString(R.string.pref_theme), "D");
-		if (theme.equals("D")) {
+		if (theme.equals("DD")){
+			activity.setTheme(R.style.AppActionBar_Darker);
+		}else if (theme.equals("D")) {
 			activity.setTheme(R.style.AppActionBar);
 		}else{
 			activity.setTheme(R.style.AppActionBarLight);
@@ -221,20 +274,18 @@ public class Settings extends ActionBarActivity {
 	 */
  	public static void setOrientationAndThemeNoActionBar(Activity activity){
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(activity);
-		String orientation = sharedPref.getString(activity.getString(R.string.pref_orientation), "A");
-		if (orientation.equals("A")) {
-			activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
-		}else if (orientation.equals("H")) {
-			activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-		} else {
-			activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-		}
+		setOrientation(activity, sharedPref);
 		
-		String theme = sharedPref.getString(activity.getString(R.string.pref_theme), "D");
-		if (theme.equals("D")) {
-			activity.setTheme(R.style.Theme_AppCompat_NoActionBar);
-		}else{
-			activity.setTheme(R.style.Theme_AppCompat_Light_NoActionBar);
+		String theme = sharedPref.getString(activity.getString(R.string.pref_key_theme), "D");
+		if (theme.equals("DD")) {
+			//Materials Darker
+			activity.setTheme(R.style.MaterialDarker);
+		}else if (theme.equals("D")) {
+			//Materials Dark
+			activity.setTheme(R.style.MaterialDark);
+		}else if (theme.equals("L")){
+			//Materials Light
+			activity.setTheme(R.style.MaterialLight);
 		}
 	}
 }

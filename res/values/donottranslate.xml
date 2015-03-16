@@ -16,8 +16,9 @@
     <string name="pref_orientation_default">A</string>
     
     <string-array name="pref_theme_values">
-    	<item >D</item>
     	<item >L</item>    
+    	<item >D</item>
+    	<item >DD</item>
     </string-array> 
     <string name="pref_theme_default">D</string>
     
@@ -32,6 +33,7 @@
     <string name="pref_key_type_face">Type Face</string>
     <string name="pref_key_back_up">Back Up</string>
     <string name="pref_key_restore">Restore</string>
+    <string name="pref_key_theme">Application Theme</string>
     
 
     <!-- Browse Meny Activity -->

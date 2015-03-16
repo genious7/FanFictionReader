@@ -133,7 +133,7 @@ public class FileHandler {
 		if (currentapiVersion >= android.os.Build.VERSION_CODES.LOLLIPOP) {
 			// Use the isExternalStorageRemovable function added in Lollipop
 			for (File file : extFiles) {
-				if (Environment.isExternalStorageRemovable(file)) {
+				if (file != null && Environment.isExternalStorageRemovable(file)) {
 					sd = file;
 				}
 			}

@@ -32,7 +32,7 @@
             android:minHeight="@dimen/dimension_typ"
             android:text="@string/error_connection"
             android:textAppearance="?android:attr/textAppearance"
-            android:textColorHint="?android:attr/textColorPrimary"
+            android:textColorHint="?android:attr/textColorSecondary"
             android:textSize="@dimen/menu_title_text_size" />
 
         <Button

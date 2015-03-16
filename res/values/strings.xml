@@ -76,8 +76,9 @@
 	
 	<string name="pref_theme">Application Theme</string>
 	<string-array name="pref_theme_entries">
-	    <item >Dark</item>
 	    <item >Light</item>
+	    <item >Dark</item>
+	    <item >White on black</item>
 	</string-array>
 	
 	<string name="pref_loc">Save Location</string>
@@ -108,6 +109,7 @@
     <string name="diag_back_up_internal">The backup file is being saved to the internal memory. If transferring the stories to another device, copy the file Fanfiction.bak to the other device. </string>
     <string name="diag_restore_warning">Restoring from a backup will clear all data and remove all stories not present in the backup. Continue?</string>
 	
+    <string name="diag_theme_warning">Due to popular demand, I added a temporary black theme while I work on a better one. If you have suggestions regarding the black theme, feel free to contact me.</string>
     <!--  Font Picker -->
     <string name="pref_text_size">Font size &amp; type</string>
     <string name="diag_font_size">Text Size</string>

@@ -24,7 +24,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/community_title"
-        android:text="@string/app_name" />
+        android:text="@string/app_name" 
+        android:textColor="?android:attr/textColorSecondary"/>
 
     <TextView
         android:id="@+id/community_author"

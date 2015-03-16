@@ -26,6 +26,7 @@ import com.spicymango.fanfictionreader.Settings;
 public class TextAdapter extends ArrayAdapter<Spanned>{
 	private final int padding;
 	private final int fontSize;
+	private final int primaryColor;
 	private final Typeface tp;
 	
 	/**
@@ -38,6 +39,10 @@ public class TextAdapter extends ArrayAdapter<Spanned>{
 		padding = context.getResources().getDimensionPixelOffset(R.dimen.reading_margin);
 		fontSize = Settings.fontSize(context);
 		tp = Settings.getTypeFace(context);
+		
+		TypedValue color = new TypedValue();
+		context.getTheme().resolveAttribute(android.R.attr.textColorSecondary, color, true);
+		primaryColor = color.data;
 	}
 	
 	@Override
@@ -47,6 +52,7 @@ public class TextAdapter extends ArrayAdapter<Spanned>{
 			view = new JellyBeanSpanFixTextView(getContext());
 			view.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize);
 			view.setTypeface(tp);
+			view.setTextColor(primaryColor);
 			view.setPadding(padding, 0, padding, 0);
 			view.setMovementMethod(LinkMovementMethod.getInstance());
 		}else{

@@ -10,7 +10,7 @@
             android:dialogTitle="@string/pref_theme"
             android:entries="@array/pref_theme_entries"
             android:entryValues="@array/pref_theme_values"
-            android:key="@string/pref_theme"
+            android:key="@string/pref_key_theme"
             android:title="@string/pref_theme" />
 
         <Preference

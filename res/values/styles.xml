@@ -1,40 +1,52 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <color name="Black">#000000</color>
+    <color name="White">#FFFFFF</color>
 
     <style name="AppActionBar" parent="@style/Theme.AppCompat">
-        <item name="ic_action_about">@drawable/ic_action_about_dark</item>
-        <item name="ic_action_group">@drawable/ic_action_group_dark</item>
-        <item name="ic_action_search">@drawable/ic_action_search_dark</item>
-        <item name="ic_action_settings">@drawable/ic_action_settings_dark</item>
-        <item name="ic_action_view_as_list">@drawable/ic_action_view_as_list_dark</item>
-        <item name="ic_folder_open">@drawable/ic_folder_open_dark</item>
-        <item name="ic_storage">@drawable/ic_storage_dark</item>
-        <item name="ic_action_replay">@drawable/ic_action_replay_dark</item>
-        <item name="ic_action_important">@drawable/ic_action_important_dark</item>
-        
         <item name="android:actionBarTabBarStyle" tools:targetApi="11">@style/CenteredTabs</item>
         <!-- Support library compatibility -->
         <item name="actionBarTabBarStyle">@style/CenteredTabs</item>
+        
+        <item name="android:textColorPrimary">@color/text_color_primary_dark</item>
+        <item name="android:textColorSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
     <style name="AppActionBarLight" parent="@style/Theme.AppCompat.Light.DarkActionBar">
-        <item name="ic_action_about">@drawable/ic_action_about_light</item>
-        <item name="ic_action_group">@drawable/ic_action_group_light</item>
-        <item name="ic_action_search">@drawable/ic_action_search_light</item>
-        <item name="ic_action_settings">@drawable/ic_action_settings_light</item>
-        <item name="ic_action_view_as_list">@drawable/ic_action_view_as_list_light</item>
-        <item name="ic_folder_open">@drawable/ic_folder_open_light</item>
-        <item name="ic_storage">@drawable/ic_storage_light</item>
-        <item name="ic_action_replay">@drawable/ic_action_replay_light</item>
-        <item name="ic_action_important">@drawable/ic_action_important_light</item>
-        
         <item name="android:actionBarTabBarStyle" tools:targetApi="11">@style/CenteredTabs</item>
         <!-- Support library compatibility -->
         <item name="actionBarTabBarStyle">@style/CenteredTabs</item>
+        
+        <item name="android:textColorPrimary">@color/text_color_primary_light</item>
+        <item name="android:textColorSecondary">@color/primary_text_default_material_light</item>
+    </style>
+    
+    <style name="AppActionBar.Darker">
+        <item name="android:windowBackground">@color/Black</item>
+    </style>
+
+    <style name="MaterialLight" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+        <item name="actionBarPopupTheme">@style/ThemeOverlay.AppCompat.Light</item>
+        <item name="android:textColorPrimary">@color/primary_text_default_material_light</item>
+        <item name="android:textColorSecondary">@color/primary_text_default_material_light</item>
+        <item name="colorPrimary">@color/primary_material_dark</item>
+        <item name="colorPrimaryDark">@color/primary_dark_material_dark</item>
+    </style>
+
+    <style name="MaterialDark" parent="@style/Theme.AppCompat.NoActionBar">
+        <item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+        <item name="android:textColorPrimary">@color/primary_text_default_material_dark</item>
+        <item name="android:textColorSecondary">@color/secondary_text_default_material_dark</item>
+    </style>
+
+    <style name="MaterialDarker" parent="@style/MaterialDark">
+        <item name="android:windowBackground">@color/Black</item>
     </style>
 
     <style name="Dialog" parent="android:Theme.Dialog"></style>
-    
+
     <style name="CenteredTabs" parent="@style/Widget.AppCompat.ActionBar.TabBar">
         <item name="android:gravity">center</item>
     </style>
-</resources>
+ </resources>
