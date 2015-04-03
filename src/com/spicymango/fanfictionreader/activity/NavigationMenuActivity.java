@@ -351,7 +351,7 @@ public class NavigationMenuActivity extends ActionBarActivity implements LoaderC
 		mUri = getIntent().getData();
 		setTitle();
 		
-		mListView = (ListView)findViewById(R.id.list);
+		mListView = (ListView)findViewById(android.R.id.list);
 		mListView.addFooterView(footer, null, false);
 		mListView.setAdapter(mAdapter);
 		mListView.setOnItemClickListener(this);

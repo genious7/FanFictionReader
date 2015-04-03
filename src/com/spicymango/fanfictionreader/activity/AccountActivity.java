@@ -160,7 +160,7 @@ public class AccountActivity extends ActionBarActivity {
 
 			View v = inflater.inflate(R.layout.activity_list_view, container,
 					false);
-			ListView listView = (ListView) v.findViewById(R.id.list);
+			ListView listView = (ListView) v.findViewById(android.R.id.list);
 			View footer = inflater.inflate(R.layout.footer_list, null);
 			listView.addFooterView(footer, null, false);
 			listView.setOnItemClickListener(this);

@@ -25,11 +25,6 @@
 	<string name="menu_button_about">About</string>
 	<string name="menu_toast_resume">You must have viewed at least one saved story</string>
 	
-	<string-array name="site_options">
-	    <item >FanFiction Reader</item>
-	    <item >FictionPress Reader</item>
-	</string-array>
-	
 	<string name="dialog_loading">Loading…</string>
 	
 	<string name="filter_sort">Sort options</string>

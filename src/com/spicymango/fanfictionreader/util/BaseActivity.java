@@ -165,7 +165,7 @@ public abstract class BaseActivity<T extends Parcelable> extends
 		mList = new ArrayList<T>();
 		mAdapter = getAdapter();
 		
-		ListView listView = (ListView) findViewById(R.id.list);
+		ListView listView = (ListView) findViewById(android.R.id.list);
 		View footer = getLayoutInflater().inflate(R.layout.footer_list, null);
 		listView.addFooterView(footer, null, false);
 		listView.setOnItemClickListener(this);

@@ -46,12 +46,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.spicymango.fanfictionreader.LibraryDownloader;
-import com.spicymango.fanfictionreader.MainActivity;
 import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.Settings;
 import com.spicymango.fanfictionreader.activity.LogInActivity;
 import com.spicymango.fanfictionreader.activity.Site;
 import com.spicymango.fanfictionreader.dialogs.ReviewDialog;
+import com.spicymango.fanfictionreader.menu.mainmenu.MainActivity;
 import com.spicymango.fanfictionreader.provider.SqlConstants;
 import com.spicymango.fanfictionreader.provider.StoryProvider;
 import com.spicymango.fanfictionreader.util.AsyncPost;
@@ -441,7 +441,7 @@ public class StoryDisplayActivity extends ActionBarActivity implements LoaderCal
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		
 		mList = new ArrayList<Spanned>();
-		mListView = (ListView) findViewById(R.id.list);
+		mListView = (ListView) findViewById(android.R.id.list);
 		mListView.setKeepScreenOn(Settings.isWakeLockEnabled(this));
 		View footer = getLayoutInflater().inflate(R.layout.footer_read_story, null);
 		mListView.addFooterView(footer);

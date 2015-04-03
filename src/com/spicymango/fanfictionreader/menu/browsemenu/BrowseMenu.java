@@ -52,7 +52,7 @@ public class BrowseMenu extends ActionBarActivity implements OnItemClickListener
 		setContentView(R.layout.activity_list_view);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		
-		ListView category_menu= (ListView)findViewById(R.id.list);
+		ListView category_menu= (ListView)findViewById(android.R.id.list);
 		isCommunity = getIntent().getBooleanExtra(COMMUNITIES, false);
 		setTitle();
 		

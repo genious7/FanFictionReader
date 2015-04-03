@@ -32,12 +32,14 @@
         <item name="android:textColorSecondary">@color/primary_text_default_material_light</item>
         <item name="colorPrimary">@color/primary_material_dark</item>
         <item name="colorPrimaryDark">@color/primary_dark_material_dark</item>
+        <item name="colorBackground">@color/primary_material_light</item>
     </style>
 
     <style name="MaterialDark" parent="@style/Theme.AppCompat.NoActionBar">
         <item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
         <item name="android:textColorPrimary">@color/primary_text_default_material_dark</item>
         <item name="android:textColorSecondary">@color/secondary_text_default_material_dark</item>
+        <item name="colorBackground">@color/primary_material_dark</item>
     </style>
 
     <style name="MaterialDarker" parent="@style/MaterialDark">

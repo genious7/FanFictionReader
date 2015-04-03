@@ -409,7 +409,7 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 			
 		initFilter();
 		
-		mListView = (ListView)findViewById(R.id.list);
+		mListView = (ListView)findViewById(android.R.id.list);
 		mListView.setOnItemClickListener(this);
 		View footer = getLayoutInflater().inflate(R.layout.footer_list, mListView, false);
 		mListView.addFooterView(footer, null, false);

@@ -2,6 +2,5 @@
 <resources>
     <item type="id" name="review_dialog_edit_text"></item>
     <item type="id" name="filter"></item>
-    <item type="id" name="list"></item>
     <item type="id" name="toolbar"></item>
 </resources>

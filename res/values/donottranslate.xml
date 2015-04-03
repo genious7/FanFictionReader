@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="site_fanfiction">FanFiction</string>
+    <string name="site_archive">Archive of Our Own</string>
+    <string name="site_fictionpress">FictionPress</string>
+    
     <string name="pref_text_size_default">14</string>
     
     <string-array name="diag_font_family">
