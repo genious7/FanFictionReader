@@ -8,14 +8,14 @@ import com.spicymango.fanfictionreader.Settings;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-public class LogInActivity extends ActionBarActivity {
+public class LogInActivity extends AppCompatActivity {
 	private static final String PREF_COOKIE = "Cookie";
 
 	/**
@@ -120,7 +120,7 @@ public class LogInActivity extends ActionBarActivity {
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
 			
-			if (url.equals("https://www.fanfiction.net/account/settings.php")) {
+			if (url.equals("https://www.fanfiction.net/account/settings.php#")) {
 				// If successfully logged in, stop
 				String cookies = CookieManager.getInstance().getCookie(
 						"https://www.fanfiction.net/");

@@ -9,7 +9,7 @@
     android:paddingTop="@dimen/top_bottom_padding" >
 
     <ImageView
-        android:id="@+id/list_item_icon"
+        android:id="@android:id/icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/menu_button_content_description"
@@ -17,12 +17,16 @@
         android:maxWidth="@dimen/main_menu_icon_size"
         android:minHeight="@dimen/main_menu_icon_size"
         android:minWidth="@dimen/main_menu_icon_size"
+        android:paddingEnd="@dimen/main_menu_icon_padding"
         android:paddingLeft="0dp"
         android:paddingRight="@dimen/main_menu_icon_padding"
-        android:src="@drawable/ic_storage" />
+        android:paddingStart="0dp"
+        android:src="@drawable/ic_storage"
+        android:tint="?android:attr/textColorPrimary"
+        android:tintMode="src_in" />
 
     <TextView
-        android:id="@+id/list_item_title"
+        android:id="@android:id/text1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"

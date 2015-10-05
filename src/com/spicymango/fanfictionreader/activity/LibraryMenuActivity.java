@@ -5,13 +5,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,7 +21,8 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.InputType;
 import android.view.ContextMenu;
@@ -45,8 +44,9 @@ import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.Settings;
 import com.spicymango.fanfictionreader.activity.reader.StoryDisplayActivity;
 import com.spicymango.fanfictionreader.dialogs.DetailDialog;
-import com.spicymango.fanfictionreader.filter.FilterDialog;
-import com.spicymango.fanfictionreader.filter.FilterMenu;
+import com.spicymango.fanfictionreader.menu.storymenu.FilterDialog.FilterDialog;
+import com.spicymango.fanfictionreader.menu.storymenu.FilterDialog.FilterDialog.FilterListener;
+import com.spicymango.fanfictionreader.menu.storymenu.FilterDialog.SpinnerData;
 import com.spicymango.fanfictionreader.provider.SqlConstants;
 import com.spicymango.fanfictionreader.provider.StoryProvider;
 import com.spicymango.fanfictionreader.util.FileHandler;
@@ -56,10 +56,12 @@ import com.spicymango.fanfictionreader.util.Story;
  * An activity which displays the stories that are saved in the library.
  * @author Michael Chen
  */
-public class LibraryMenuActivity extends ActionBarActivity implements LoaderCallbacks<Cursor>, SqlConstants, OnItemClickListener{
+public class LibraryMenuActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>, SqlConstants, OnItemClickListener, FilterListener{
 	private static final int LOADER_LIBRARY = 0;
 	private static final int LOADER_FILTER = 1;
 	
+	private static final String STATE_FILTER = "STATE_FILTER";
+
 	private static final int[] DEST_PROJECTION = {
 			R.id.story_menu_list_item_title,
 			R.id.story_menu_list_item_summary,
@@ -70,18 +72,18 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 			R.id.completitionBar };
 
 	private static final String[] GET_PROJECTION = { KEY_STORY_ID, KEY_TITLE,
-			KEY_SUMMARY, KEY_AUTHOR, KEY_CHAPTER, KEY_LENGHT, KEY_UPDATED,
+			KEY_SUMMARY, KEY_AUTHOR, KEY_CHAPTER, KEY_LENGTH, KEY_UPDATED,
 			KEY_LAST, KEY_CATEGORY, KEY_OFFSET };
+	
 	private static final String[] TO_PROJECTION = { KEY_TITLE, KEY_SUMMARY,
-			KEY_AUTHOR, KEY_CHAPTER, KEY_LENGHT, KEY_UPDATED, KEY_LAST };
+			KEY_AUTHOR, KEY_CHAPTER, KEY_LENGTH, KEY_UPDATED, KEY_LAST };
 
-	private int[] filter = {0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-	private ArrayList<Map<String, Integer>> filterList = new ArrayList<Map<String,Integer>>();
+	private ArrayList<SpinnerData> filterData;
 	private SimpleCursorAdapter mAdapter;
 	private ListView mListView;
 	private View mProgressBar;
+	private boolean mLoadedFandom;
 	
-
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
@@ -99,7 +101,7 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 		
 		Cursor c = getContentResolver().query(databaseUri, null, null, null, null);
 		c.moveToFirst();
-		final Story story = new Story(c);
+		final Story story = Story.fromCursor(c);
 		c.close();
 		
 		switch (item.getItemId()) {
@@ -115,11 +117,16 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 			diag.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					int length = story.getChapterLenght();
-					for (int j = 1; j <= length; j++) {
-						FileHandler.deleteFile(LibraryMenuActivity.this, story.getId(), j);
-					}		
-					getContentResolver().delete(databaseUri, null, null);
+					new Thread(new Runnable() {
+						@Override
+						public void run() {
+							int length = story.getChapterLenght();
+							for (int j = 1; j <= length; j++) {
+								FileHandler.deleteFile(LibraryMenuActivity.this, story.getId(), j);
+							}
+							getContentResolver().delete(databaseUri, null, null);
+						}
+					}).start();
 				}
 			});
 			diag.setNegativeButton(android.R.string.no, null);
@@ -173,22 +180,38 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		
+
 		switch (loader.getId()) {
 		case LOADER_LIBRARY:
 			LibraryLoader l = (LibraryLoader) loader;
 			mAdapter.swapCursor(data);
 			mProgressBar.setVisibility(View.GONE);
-			prepareFilter(l.fandoms);
+			if (!mLoadedFandom) {
+				prepareFilter(l.fandoms);
+				mLoadedFandom = true;
+			}
 			supportInvalidateOptionsMenu();
 			break;
 		case LOADER_FILTER:
-			
+
 			break;
 
 		default:
 			break;
 		}	
+	}
+	
+	/**
+	 * Processes the new filter, restarting the loader if any of the filters was changed.
+	 * @param selected
+	 */
+	public void onFilter(int[] selected) {
+		
+		for (int i = 0; i < selected.length; i++) {
+			filterData.get(i).setSelected(selected[i]);
+		}
+		
+		getSupportLoaderManager().restartLoader(LOADER_LIBRARY, null, this);
 	}
 	
 	@Override
@@ -209,7 +232,13 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 			}
 			return true;
 		case R.id.filter:
-			FilterDialog.show(this, filterList, filter);
+			// Create and display a new filter
+			FilterDialog.Builder builder = new FilterDialog.Builder();
+			builder.addSingleSpinner(getString(R.string.filter_category), filterData.get(0));
+			builder.addSingleSpinner(getString(R.string.filter_sort), filterData.get(1));
+			builder.addSingleSpinner(getString(R.string.filter_length), filterData.get(2));
+			builder.addSingleSpinner(getString(R.string.filter_type), filterData.get(3));			
+			builder.show(this);
 			return true;
 		case R.id.library_menu_add_by_id:
 			downloadByIdDialog();
@@ -232,7 +261,7 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 		}
 		
 		MenuItem filter = menu.findItem(R.id.filter);
-		if (mAdapter.isEmpty() && this.filter == new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0}) {
+		if (mAdapter.isEmpty() && filterData == null) {
 			filter.setEnabled(false);
 			filter.getIcon().setAlpha(64);
 		}else{
@@ -243,6 +272,14 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 		return super.onPrepareOptionsMenu(menu);
 	}
 
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		if (mLoadedFandom) {
+			outState.putParcelableArrayList(STATE_FILTER, filterData);
+		}
+		super.onSaveInstanceState(outState);
+	}
+	
 	private void downloadByIdDialog(){
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
 		alert.setTitle(R.string.diag_by_id_title);
@@ -272,133 +309,90 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 	}
 	
 	private String filterQuery(){
+
+		// If the filter is unavailable, disregard
+		if (filterData == null) return null;
+	
 		StringBuilder builder = new StringBuilder();
 		
-		switch (filter[6]) {
-		case 1:
-			builder.append(KEY_LENGHT + " < 1000");
-			break;
-		case 2:
-			builder.append(KEY_LENGHT + " < 5000");
-			break;
-		case 3:
-			builder.append(KEY_LENGHT + " > 1000");
-			break;
-		case 4:
-			builder.append(KEY_LENGHT + " > 5000");
-			break;
-		case 5:
-			builder.append(KEY_LENGHT + " > 10000");
-			break;
-		case 6:
-			builder.append(KEY_LENGHT + " > 20000");
-			break;
-		case 7:
-			builder.append(KEY_LENGHT + " > 40000");
-			break;
-		case 8:
-			builder.append(KEY_LENGHT + " > 60000");
-			break;
-		case 9:
-			builder.append(KEY_LENGHT + " > 100000");
-			break;
-		default:
-			break;
-		}
+		builder.append("1 = 1");
 		
-		if (builder.length() != 0 && filter[12] != 0) {
+		if (filterData.get(2).getSelected() != 0) {
 			builder.append(" AND ");
-		}
-		switch (filter[12]) {
-		case 1:
-			builder.append(KEY_CATEGORY + " NOT LIKE '%Crossover' ");
-			break;
-		case 2:
-			builder.append(KEY_CATEGORY + " LIKE '%Crossover' ");
-			break;
-		default:
-			break;
+			builder.append(filterData.get(2).getName() + filterData.get(2).getCurrentFilter());
 		}
 		
-		if (filter[13] != 0) {
-			if (builder.length() != 0) {
-				builder.append(" AND ");
-			}
-			String key = FilterMenu.getKeyByValue(filterList.get(13), filter[13]);
+		if (filterData.get(3).getSelected() != 0) {
+			builder.append(" AND ");
+			builder.append(filterData.get(3).getName() + filterData.get(3).getCurrentFilter());
+		}
+		
+		if (filterData.get(0).getSelected() != 0) {
+			String key = filterData.get(0).getCurrentFilter();
 			key = key.replaceAll("'", "''");
-			builder.append(KEY_CATEGORY + " LIKE '%" + key + "%' ");
-			
+			builder.append(" AND ");
+			builder.append(filterData.get(0).getName() +" LIKE '%" + key + "%' ");
 		}
 		
 		return builder.toString();
 	}
 	
+	/**
+	 * Initializes the filter
+	 */
 	private void initFilter(){
-		for (int i = 0; i < filter.length; i++) {
-			filterList.add(new LinkedHashMap<String, Integer>());
-		}
+		filterData = new ArrayList<>();
 		
+		// Filter by fandom
+		filterData.add(new SpinnerData(KEY_CATEGORY, new ArrayList<String>(), new ArrayList<String>(), 0));
+		mLoadedFandom = false;
+				
+		// Filter by sort order
 		String[] sortBy = getResources().getStringArray(R.array.menu_library_sort_by);
-		for (int i = 0; i < sortBy.length; i++) {
-			filterList.get(0).put(sortBy[i], i);
-		}	
-		
+		String[] sortKey = { 
+				KEY_PUBLISHED + " DESC",
+				KEY_TITLE + " COLLATE NOCASE ASC",
+				KEY_AUTHOR + " COLLATE NOCASE ASC",
+				KEY_FAVORITES + " DESC",
+				KEY_FOLLOWERS + " DESC",
+				KEY_UPDATED + " DESC" };		
+		filterData.add(new SpinnerData("SortBy", sortBy, sortKey, 0));
+
+		// Filter by words
 		String[] words = getResources().getStringArray(R.array.menu_library_filter_words);
-		for (int i = 0; i < words.length; i++) {
-			filterList.get(6).put(words[i], i);
-		}
-		
+		String[] wordKey = { "", " < 1000", " < 5000", " > 1000", " > 5000", " > 10000", " > 20000", " > 40000",
+				" > 60000", " > 100000" };
+		filterData.add(new SpinnerData(KEY_LENGTH, words, wordKey, 0));
+
+		// Filter by type (regular vs. crossover)
 		String[] type = getResources().getStringArray(R.array.menu_library_filter_type);
-		for (int i = 0; i < type.length; i++) {
-			filterList.get(12).put(type[i], i);
-		}
+		String[] typeKey = { "", " NOT LIKE '%Crossover' ", " LIKE '%Crossover' " };
+		filterData.add(new SpinnerData(KEY_CATEGORY, type, typeKey, 0));
 	}
 
+	/**
+	 * Prepares the filter based on the available Fandoms.
+	 * @param fandoms A set containing the available fandoms.
+	 */
 	private void prepareFilter(Set<String> fandoms) {
-		int i = 0;
-		for (String string : fandoms) {
-			filterList.get(13).put(string, i);
-			i++;
-		}
+		List<String> fandomList = filterData.get(0).getLabels();
+		List<String> fandomFilter = filterData.get(0).getFilters();
+		fandomList.clear();
+		fandomList.addAll(fandoms);
+		fandomFilter.clear();		
+		fandomFilter.addAll(fandoms);
 	}
 
+	/**
+	 * Gets the SQL order by statement based on the currently selected filter.
+	 * @return
+	 */
 	private String sortOrder(){
-		switch (filter[0]) {
-		case 1:
-			return KEY_PUBLISHED + " DESC";
-		case 2:
-			return KEY_TITLE + " COLLATE NOCASE ASC";
-		case 3:
-			return KEY_AUTHOR + " COLLATE NOCASE ASC";
-		case 4:
-			return KEY_FAVORITES + " DESC";
-		case 5:
-			return KEY_FOLLOWERS + " DESC";
-		case 0: default:
-			return KEY_UPDATED + " DESC";
-		}
+		return filterData.get(1).getCurrentFilter();
 	}
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode==1){//Filter Menu
-			if (resultCode==RESULT_CANCELED) {
-				//Dialog cancelled
-				Toast toast = Toast.makeText(this, getResources().getString(R.string.dialog_cancelled), Toast.LENGTH_SHORT);
-				toast.show();
-			}else if (resultCode == RESULT_OK) {
-				int[] filter = data.getIntArrayExtra(FilterDialog.RESULT);
-				if (filter != this.filter) {
-					this.filter = filter;
-					getSupportLoaderManager().restartLoader(LOADER_LIBRARY, null, this);
-				}
-			}
-		}
-		super.onActivityResult(requestCode, resultCode, data);
-	}
-	
-	/* (non-Javadoc)
-	 * @see android.support.v7.app.ActionBarActivity#onCreate(android.os.Bundle)
+	/**
+	 * {@inheritDoc}
 	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -406,27 +400,31 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list_view);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-			
-		initFilter();
-		
-		mListView = (ListView)findViewById(android.R.id.list);
+
+		mListView = (ListView) findViewById(android.R.id.list);
 		mListView.setOnItemClickListener(this);
 		View footer = getLayoutInflater().inflate(R.layout.footer_list, mListView, false);
 		mListView.addFooterView(footer, null, false);
-		
-		mAdapter = new SimpleCursorAdapter(this, R.layout.library_menu_list_item, null, TO_PROJECTION, DEST_PROJECTION, 0);
+
+		mAdapter = new SimpleCursorAdapter(this, R.layout.library_menu_list_item, null, TO_PROJECTION, DEST_PROJECTION,	0);
 		mAdapter.setViewBinder(new LibraryBinder(this));
 		mListView.setAdapter(mAdapter);
 		registerForContextMenu(mListView);
 
 		findViewById(R.id.story_load_pages).setVisibility(View.GONE);
-		findViewById(R.id.row_no_connection).setVisibility(View.GONE);
-		mProgressBar = findViewById(R.id.progress_bar); 
-	
+		findViewById(R.id.row_retry).setVisibility(View.GONE);
+		mProgressBar = findViewById(R.id.progress_bar);
+		
+		if (savedInstanceState != null && savedInstanceState.containsKey(STATE_FILTER)) {
+			mLoadedFandom = true;
+			filterData = savedInstanceState.getParcelableArrayList(STATE_FILTER);
+		} else {
+			initFilter();
+		}
+
 		getSupportLoaderManager().initLoader(LOADER_LIBRARY, null, this);
 	}
-	
-	
+
 	/**
 	 * A ViewBinder that adds the prefixes to the stories' details.
 	 * @author Michael Chen
@@ -518,27 +516,25 @@ public class LibraryMenuActivity extends ActionBarActivity implements LoaderCall
 			}
 			return c;
 		}
-		
-		private static class FilterComparator implements Comparator<String>{
+
+		private static class FilterComparator implements Comparator<String> {
 
 			private final String all;
-			
+
 			public FilterComparator(String all) {
 				this.all = all;
 			}
-			
+
 			@Override
 			public int compare(String lhs, String rhs) {
 				if (lhs.equals(all)) {
 					return -1;
-				}else if(rhs.equals(all)){
+				} else if (rhs.equals(all)) {
 					return 1;
-				}else{
+				} else {
 					return lhs.compareTo(rhs);
 				}
 			}
-			
 		}
-		
 	}
 }

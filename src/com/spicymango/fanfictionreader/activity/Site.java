@@ -11,6 +11,7 @@ import com.spicymango.fanfictionreader.provider.StoryProvider;
  * @author Michael Chen
  *
  */
+@Deprecated
 public enum Site {
 	FANFICTION ("m.fanfiction.net","www.fanfiction.net", StoryProvider.FF_CONTENT_URI),
 	FICTIONPRESS("m.fictionpress.com","www.fictionpress.com", StoryProvider.FP_CONTENT_URI),

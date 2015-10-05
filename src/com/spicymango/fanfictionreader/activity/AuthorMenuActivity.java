@@ -36,7 +36,7 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.Tab;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.SpannedString;
@@ -53,7 +53,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
-public class AuthorMenuActivity extends ActionBarActivity{
+public class AuthorMenuActivity extends AppCompatActivity{
 	private static final String STATE_TAB = "Tab selected";
 	private static final String EXTRA_ID = "authorId";
 
@@ -167,8 +167,8 @@ public class AuthorMenuActivity extends ActionBarActivity{
 			mAddPageButton = (Button) footer.findViewById(R.id.story_load_pages);
 			mAddPageButton.setOnClickListener(this);
 			mProgressBar = footer.findViewById(R.id.progress_bar); 
-			mNoConnectionBar = footer.findViewById(R.id.row_no_connection);
-			View retryButton = mNoConnectionBar.findViewById(R.id.retry_internet_connection);
+			mNoConnectionBar = footer.findViewById(R.id.row_retry);
+			View retryButton = mNoConnectionBar.findViewById(R.id.btn_retry);
 			retryButton.setOnClickListener(this);
 			
 			mAuthorId = getArguments().getLong(EXTRA_ID);
@@ -185,7 +185,7 @@ public class AuthorMenuActivity extends ActionBarActivity{
 		@Override
 		public boolean onItemLongClick(AdapterView<?> parent, View view,
 				int position, long id) {
-			DetailDialog.show((ActionBarActivity) getActivity(), mList.get(position));
+			DetailDialog.show((AppCompatActivity) getActivity(), mList.get(position));
 			return true;
 		}
 		
@@ -211,7 +211,7 @@ public class AuthorMenuActivity extends ActionBarActivity{
 				mList.addAll(mLoader.mData);
 				mAdapter.notifyDataSetChanged();
 
-				((ActionBarActivity)getActivity()).getSupportActionBar().setSubtitle(mLoader.mAuthor);
+				((AppCompatActivity)getActivity()).getSupportActionBar().setSubtitle(mLoader.mAuthor);
 
 				if (mLoader.hasNextPage()) {
 					String text = String.format(
@@ -254,7 +254,7 @@ public class AuthorMenuActivity extends ActionBarActivity{
 			case R.id.story_load_pages:
 				mLoader.loadNextPage();
 				break;
-			case R.id.retry_internet_connection:
+			case R.id.btn_retry:
 				mLoader.startLoading();
 				break;
 			default:
@@ -416,13 +416,19 @@ public class AuthorMenuActivity extends ActionBarActivity{
 					boolean complete;
 					Elements imgs = element.select("img.mm");
 					complete = !imgs.isEmpty();
+					
+					Story.Builder builder = new Story.Builder();
+					builder.setId(Long.parseLong(storyIdMatcher.group(1)));
+					builder.setName(title.ownText());
+					builder.setAuthor(mAuthor);
+					builder.setAuthorId(mAuthorId);
+					builder.setSummary(element.ownText().replaceFirst("(?i)by\\s*", ""));
+					builder.setFanFicAttribs(attribs.text());
+					builder.setUpdateDate(updateDate);
+					builder.setPublishDate(publishDate);
+					builder.setCompleted(complete);
 
-					Story TempStory = new Story(Long.parseLong(storyIdMatcher
-							.group(1)), title.ownText(), mAuthor, mAuthorId,
-							element.ownText().replaceFirst("(?i)by\\s*", ""),
-							attribs.text(), updateDate, publishDate, complete);
-
-					list.add(TempStory);
+					list.add(builder.build());
 				}
 				return true;
 			}
@@ -473,8 +479,8 @@ public class AuthorMenuActivity extends ActionBarActivity{
 			View addPageBtn = (Button) footer.findViewById(R.id.story_load_pages);
 			addPageBtn.setVisibility(View.GONE);
 			mProgressBar = footer.findViewById(R.id.progress_bar); 
-			mNoConnectionBar = footer.findViewById(R.id.row_no_connection);
-			View retryButton = mNoConnectionBar.findViewById(R.id.retry_internet_connection);
+			mNoConnectionBar = footer.findViewById(R.id.row_retry);
+			View retryButton = mNoConnectionBar.findViewById(R.id.btn_retry);
 			retryButton.setOnClickListener(this);
 			
 			mAuthorId = getArguments().getLong(EXTRA_ID);
@@ -508,7 +514,7 @@ public class AuthorMenuActivity extends ActionBarActivity{
 				mList.addAll(mLoader.mData);
 				mAdapter.notifyDataSetChanged();
 
-				((ActionBarActivity)getActivity()).getSupportActionBar().setSubtitle(mLoader.mAuthor);
+				((AppCompatActivity)getActivity()).getSupportActionBar().setSubtitle(mLoader.mAuthor);
 				break;
 
 			default:
@@ -537,7 +543,7 @@ public class AuthorMenuActivity extends ActionBarActivity{
 		@Override
 		public void onClick(View v) {
 			switch (v.getId()) {
-			case R.id.retry_internet_connection:
+			case R.id.btn_retry:
 				mLoader.startLoading();
 				break;
 			default:

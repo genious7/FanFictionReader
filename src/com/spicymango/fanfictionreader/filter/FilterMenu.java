@@ -5,9 +5,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import android.app.Activity;
+
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -17,7 +18,8 @@ import android.widget.Spinner;
 
 import com.spicymango.fanfictionreader.R;
 
-public class FilterMenu extends Activity {
+@Deprecated
+public class FilterMenu extends AppCompatActivity {
 	
 	/**
 	 * Used to save the position of the spinners upon orientation change

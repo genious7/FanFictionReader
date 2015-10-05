@@ -23,11 +23,11 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.preference.PreferenceFragment;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 
-public class Settings extends ActionBarActivity {
+public class Settings extends AppCompatActivity {
 	
 	public final static int SANS_SERIF = 0;
 	public final static int SERIF = 1;
@@ -267,6 +267,16 @@ public class Settings extends ActionBarActivity {
 			activity.setTheme(R.style.AppActionBarLight);
 		}
 	}	
+ 	
+ 	public static int getDialogTheme(Context context){
+ 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+ 		String theme = sharedPref.getString(context.getString(R.string.pref_theme), "D");
+		if (theme.equals("DD") || theme.equals("D")){
+			return R.style.DialogDark;
+		}else{
+			return R.style.DialogLight;
+		}
+ 	}
  	
  	/**
  	 * Sets the orientation of the activity based on current settings

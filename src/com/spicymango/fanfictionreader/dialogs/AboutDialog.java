@@ -10,7 +10,6 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -28,9 +27,6 @@ import android.view.View.OnClickListener;
 @SuppressLint("InflateParams")
 public class AboutDialog extends DialogFragment implements OnClickListener{
 	
-	public AboutDialog() {
-	}
-	
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		
@@ -47,10 +43,10 @@ public class AboutDialog extends DialogFragment implements OnClickListener{
 		diag.setCanceledOnTouchOutside(true);
 		return diag;
 	}
-	
+
 	@Override
-	public void onDismiss(DialogInterface dialog) {
-		super.onDismiss(dialog);
+	public void onDestroy() {
+		super.onDestroy();
 		FileHandler.deleteFile(getActivity(), 0, 0);
 		Log.d(AboutDialog.class.getName(), "Dismissed");
 	}

@@ -15,7 +15,7 @@ import android.net.Uri;
 import android.net.Uri.Builder;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v4.app.FragmentActivity;
 import android.text.Html;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -126,9 +126,9 @@ public class DetailDialog extends DialogFragment implements OnClickListener{
 		
 	}
 	
-	public static final void show(ActionBarActivity context, Story story) {
+	public static final void show(FragmentActivity fragmentActivity, Story story) {
 		boolean showAuthor = true;
-		if (context instanceof AuthorMenuActivity || context instanceof LibraryMenuActivity) {
+		if (fragmentActivity instanceof AuthorMenuActivity || fragmentActivity instanceof LibraryMenuActivity) {
 			showAuthor = false;
 		}
 		DialogFragment diag = new DetailDialog();
@@ -136,7 +136,7 @@ public class DetailDialog extends DialogFragment implements OnClickListener{
 		bundle.putParcelable(EXTRA_STORY, story);
 		bundle.putBoolean(EXTRA_AUTHOR, showAuthor);
 		diag.setArguments(bundle);
-		diag.show(context.getSupportFragmentManager(), null);
+		diag.show(fragmentActivity.getSupportFragmentManager(), null);
 	}
 	
 }

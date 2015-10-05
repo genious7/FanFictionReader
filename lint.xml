@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lint>
+    <issue id="AppCompatMethod" severity="error" />
+    <issue id="DefaultLocale" severity="ignore" />
+    <issue id="IconMissingDensityFolder" severity="ignore" />
     <issue id="InflateParams" severity="ignore" />
-    <issue id="MissingTranslation">
+    <issue id="InlinedApi">
+        <ignore path="src/com/spicymango/fanfictionreader/views/JustifiedTextView.java" />
+    </issue>
+    <issue id="MissingTranslation" severity="warning">
         <ignore path="res/values/strings.xml" />
     </issue>
+    <issue id="NewApi" severity="warning" />
     <issue id="UnusedAttribute" severity="ignore" />
 </lint>

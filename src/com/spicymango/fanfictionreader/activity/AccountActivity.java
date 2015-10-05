@@ -40,7 +40,7 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.Tab;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -56,7 +56,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
-public class AccountActivity extends ActionBarActivity {
+public class AccountActivity extends AppCompatActivity {
 	private static final String STATE_TAB = "Tab selected";
 	private ActionBar actionbar;
 	
@@ -171,9 +171,9 @@ public class AccountActivity extends ActionBarActivity {
 					.findViewById(R.id.story_load_pages);
 			mAddPageButton.setOnClickListener(this);
 			mProgressBar = footer.findViewById(R.id.progress_bar);
-			mNoConnectionBar = footer.findViewById(R.id.row_no_connection);
+			mNoConnectionBar = footer.findViewById(R.id.row_retry);
 			View retryButton = mNoConnectionBar
-					.findViewById(R.id.retry_internet_connection);
+					.findViewById(R.id.btn_retry);
 			retryButton.setOnClickListener(this);
 
 			int loaderId = getArguments().getInt(EXTRA_LOADER_ID);
@@ -319,7 +319,7 @@ public class AccountActivity extends ActionBarActivity {
 		@Override
 		public void onClick(View v) {
 			switch (v.getId()) {
-			case R.id.retry_internet_connection:
+			case R.id.btn_retry:
 				mLoader.startLoading();
 				break;
 
@@ -480,14 +480,19 @@ public class AccountActivity extends ActionBarActivity {
 					} catch (ParseException e) {
 						return false;
 					}
+					
+					Story.Builder builder = new Story.Builder();
+					builder.setId((Long.parseLong(storyIdMatcher.group(1))));
+					builder.setName(story.text());
+					builder.setAuthor(author.text());
+					builder.setAuthorId(Long.parseLong(authorIdMatcher.group(1)));
+					builder.setSummary(summary.text());
+					builder.setCategory(category.text());
+					builder.setUpdateDate(update);
+					builder.setPublishDate(published);
+					builder.setCompleted(false);
 
-					Story storyObj = new Story(Long.parseLong(storyIdMatcher
-							.group(1)), story.text(), author.text(),
-							Long.parseLong(authorIdMatcher.group(1)),
-							summary.text(), category.text(), "", "", "", 0, 0,
-							0, 0, update, published, false);
-
-					mData.add(storyObj);
+					mData.add(builder.build());
 
 				}
 

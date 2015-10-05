@@ -27,7 +27,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.Spanned;
@@ -58,7 +58,7 @@ import com.spicymango.fanfictionreader.util.AsyncPost;
 import com.spicymango.fanfictionreader.util.FileHandler;
 import com.spicymango.fanfictionreader.util.adapters.TextAdapter;
 
-public class StoryDisplayActivity extends ActionBarActivity implements LoaderCallbacks<StoryObject>, OnClickListener{
+public class StoryDisplayActivity extends AppCompatActivity implements LoaderCallbacks<StoryObject>, OnClickListener{
 	private static final String STATE_UPDATED = "HasUpdated";
 	
 	/**
@@ -133,7 +133,7 @@ public class StoryDisplayActivity extends ActionBarActivity implements LoaderCal
 		case R.id.read_story_page_counter:
 			chapterPicker();
 			break;
-		case R.id.retry_internet_connection:
+		case R.id.btn_retry:
 			mLoader.startLoading();
 			break;
 		}	
@@ -306,7 +306,6 @@ public class StoryDisplayActivity extends ActionBarActivity implements LoaderCal
 				}
 			}
 		});
-		builder.setInverseBackgroundForced(true);
 		builder.create();
 		builder.show();
 	}
@@ -434,7 +433,7 @@ public class StoryDisplayActivity extends ActionBarActivity implements LoaderCal
 	protected void onCreate(Bundle savedInstanceState) {
 		Settings.setOrientationAndThemeNoActionBar(this);	//Sets the theme according to user settings
 		super.onCreate(savedInstanceState);					//Super() constructor
-		setContentView(R.layout.activity_read_story);		//Set the layout
+		setContentView(R.layout.activity_list_toolbar);		//Set the layout
 		
 		mToolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(mToolbar);
@@ -444,14 +443,14 @@ public class StoryDisplayActivity extends ActionBarActivity implements LoaderCal
 		mListView = (ListView) findViewById(android.R.id.list);
 		mListView.setKeepScreenOn(Settings.isWakeLockEnabled(this));
 		View footer = getLayoutInflater().inflate(R.layout.footer_read_story, null);
-		mListView.addFooterView(footer);
+		mListView.addFooterView(footer, null, false);
 		mListView.setDividerHeight(0);						//No line in between paragraphs
 		mAdapter = new TextAdapter(this, mList);
 		mListView.setAdapter(mAdapter);
 		
 		int currentapiVersion = android.os.Build.VERSION.SDK_INT;
 		if (currentapiVersion >= android.os.Build.VERSION_CODES.HONEYCOMB_MR1){
-			mListView.setOnScrollListener(new ListViewHider(mListView));
+			mListView.setOnScrollListener(new ListViewHider());
 		}
 		
 
@@ -460,10 +459,16 @@ public class StoryDisplayActivity extends ActionBarActivity implements LoaderCal
 		btnNext = footer.findViewById(R.id.read_story_next);
 		btnLast = footer.findViewById(R.id.read_story_last);
 		btnPage = (Button)findViewById(R.id.read_story_page_counter);
-		progressBar = footer.findViewById(R.id.progress_bar);
-		recconectBar = footer.findViewById(R.id.row_no_connection);
-		buttonBar = footer.findViewById(R.id.buttonBar);
+		
+		btnFirst.setOnClickListener(this);
+		btnPrev.setOnClickListener(this);
+		btnNext.setOnClickListener(this);
+		btnLast.setOnClickListener(this);
 		btnPage.setOnClickListener(this);
+		
+		progressBar = footer.findViewById(R.id.progress_bar);
+		recconectBar = footer.findViewById(R.id.row_retry);
+		buttonBar = footer.findViewById(R.id.buttonBar);
 		
 		//Creates a new activity, and sets the initial page and story Id
 		if (!parseUri(getIntent().getData())) {
@@ -520,7 +525,7 @@ public class StoryDisplayActivity extends ActionBarActivity implements LoaderCal
 		private int yAccumulator;
 		private int oldFirstVisibleItemHeigth;
 		
-		public ListViewHider(ListView listView) {
+		public ListViewHider() {
 			oldFirstVisibleItem = 0;
 			pixelThreshold = getResources().getDimensionPixelSize(R.dimen.main_menu_icon_size);
 		}

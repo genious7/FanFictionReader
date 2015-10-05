@@ -16,7 +16,7 @@
     </ProgressBar>
 
     <LinearLayout
-        android:id="@+id/row_no_connection"
+        android:id="@+id/row_retry"
         android:layout_width="match_parent"
         android:layout_height="@dimen/main_menu_icon_size"
         android:gravity="center_horizontal"
@@ -29,14 +29,15 @@
             android:id="@+id/label_retry"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center"
             android:minHeight="@dimen/dimension_typ"
             android:text="@string/error_connection"
             android:textAppearance="?android:attr/textAppearance"
-            android:textColorHint="?android:attr/textColorSecondary"
             android:textSize="@dimen/menu_title_text_size" />
 
         <Button
-            android:id="@+id/retry_internet_connection"
+            android:id="@+id/btn_retry"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minHeight="@dimen/dimension_typ"

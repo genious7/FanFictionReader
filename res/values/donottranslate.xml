@@ -4,7 +4,7 @@
     <string name="site_fanfiction">FanFiction</string>
     <string name="site_archive">Archive of Our Own</string>
     <string name="site_fictionpress">FictionPress</string>
-    
+        
     <string name="pref_text_size_default">14</string>
     
     <string-array name="diag_font_family">
@@ -40,8 +40,8 @@
     <string name="pref_key_theme">Application Theme</string>
     
 
-    <!-- Browse Meny Activity -->
-    <string-array name="category_button_normal">
+    <!-- Browse Menu Activity -->
+    <string-array name="browse_menu_ff">
 		<item >@string/general_anime</item>
 		<item >@string/general_books</item>
 		<item >@string/general_cartoons</item>
@@ -53,7 +53,7 @@
 		<item >@string/general_tv</item>      
 	</string-array>
 	
-    <string-array name="category_button_community">
+    <string-array name="browse_menu_ff_community">
         <item >@string/menu_browse_general_communities</item>
 		<item >@string/general_anime</item>
 		<item >@string/general_books</item>
@@ -64,6 +64,12 @@
 		<item >@string/general_movies</item>
 		<item >@string/general_plays</item>
 		<item >@string/general_tv</item>      
+	</string-array>
+	
+    <string-array name="browse_menu_fp_community">
+        <item >@string/menu_browse_general_communities</item>
+		<item >@string/toggle_fiction</item>
+		<item >@string/toggle_poetry</item>    
 	</string-array>
 
     <!-- Navigation Menu Activity  -->

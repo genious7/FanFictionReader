@@ -101,7 +101,7 @@ public class LibraryDownloader extends IntentService{
 	 * @return True if the operation succeeds, false otherwise
 	 */
 	private Result download(){
-		Story story = new Story();
+		Story story = null;
 		
 		int totalPages = 1;
 		int incrementalIndex = 0;
@@ -247,14 +247,25 @@ public class LibraryDownloader extends IntentService{
 		matcher = patternAttrib.matcher(attribs.text());
 		if (!matcher.find()) return null;
 		
-		return new Story(storyId, title, author, authorId, summary,
-				category, matcher.group(1), matcher.group(2),
-				matcher.group(3) == null ? "" : matcher.group(3),
-				matcher.group(4) == null ? 1 : Integer.valueOf(matcher.group(4)), 
-				Parser.parseInt(matcher.group(5)),
-				matcher.group(6) == null ? 0 : Parser.parseInt(matcher.group(6)),
-				matcher.group(7) == null ? 0 : Parser.parseInt(matcher.group(7)),
-				updateDate, publishDate, attribs.text().contains("Complete"));
+		Story.Builder builder = new Story.Builder();
+		builder.setId(storyId);
+		builder.setName(title);
+		builder.setAuthor(author);
+		builder.setAuthorId(authorId);
+		builder.setSummary(summary);
+		builder.setCategory(category);
+		builder.setRating(matcher.group(1));
+		builder.setLanguage(matcher.group(2));		
+		if (matcher.group(3) != null) builder.setGenre(matcher.group(3));
+		if (matcher.group(4) != null) builder.setChapterLenght(Integer.valueOf(matcher.group(4)));
+		builder.setWordLenght(Parser.parseInt(matcher.group(5)));
+		if (matcher.group(6) != null) builder.setFavorites(Integer.valueOf(matcher.group(6)));
+		if (matcher.group(7) != null) builder.setFollows(Integer.valueOf(matcher.group(7)));
+		builder.setUpdateDate(updateDate);		
+		builder.setPublishDate(publishDate);
+		builder.setCompleted(attribs.text().contains("Complete"));
+		
+		return builder.build();
 	}
 
 	@Override

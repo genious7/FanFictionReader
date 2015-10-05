@@ -9,6 +9,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.spicymango.fanfictionreader.menu.BaseLoader;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -66,11 +68,11 @@ public abstract class SearchLoader<T extends Parcelable> extends BaseLoader<T> {
 	public String mQuery;
 	
 	@Override
-	public void onSavedInstanceState(Bundle outState) {
-		outState.putString(STATE_QUERY, mQuery);
-		outState.putIntArray(STATE_FILTER, filter);
-		outState.putSerializable(STATE_FILTER_LIST, mFilterList);
-		super.onSavedInstanceState(outState);
+	protected void onSaveInstanceState(Bundle savedInstanceState) {
+		savedInstanceState.putString(STATE_QUERY, mQuery);
+		savedInstanceState.putIntArray(STATE_FILTER, filter);
+		savedInstanceState.putSerializable(STATE_FILTER_LIST, mFilterList);
+		super.onSaveInstanceState(savedInstanceState);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -83,7 +85,6 @@ public abstract class SearchLoader<T extends Parcelable> extends BaseLoader<T> {
 		}else{
 			resetFilter();
 		}
-		mDataHasChanged = false;
 	}
 
 	public void search(String query) {

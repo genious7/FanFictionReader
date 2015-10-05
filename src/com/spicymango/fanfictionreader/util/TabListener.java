@@ -2,23 +2,23 @@ package com.spicymango.fanfictionreader.util;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar.Tab;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 
 public class TabListener implements ActionBar.TabListener{
 	private Fragment mFragment;
-    private final ActionBarActivity mActivity;
+    private final AppCompatActivity mActivity;
     private final Class<? extends Fragment> mClass;
     private final Bundle mArgs;
     private final String mTag;
 	
-    public TabListener(ActionBarActivity activity, Class<? extends Fragment> fr, Bundle args){
-		this(activity, fr, args, fr.getName());
+    public TabListener(AppCompatActivity accountActivity, Class<? extends Fragment> fr, Bundle args){
+		this(accountActivity, fr, args, fr.getName());
     }
     
-    public TabListener(ActionBarActivity activity, Class<? extends Fragment> fr, Bundle args, String tag){
+    public TabListener(AppCompatActivity activity, Class<? extends Fragment> fr, Bundle args, String tag){
     	mActivity = activity;
     	mClass = fr;
     	mArgs = args;

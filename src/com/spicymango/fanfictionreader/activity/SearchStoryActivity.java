@@ -8,9 +8,10 @@ import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.activity.reader.StoryDisplayActivity;
 import com.spicymango.fanfictionreader.dialogs.DetailDialog;
 import com.spicymango.fanfictionreader.filter.FilterDialog;
-import com.spicymango.fanfictionreader.util.BaseActivity;
+import com.spicymango.fanfictionreader.menu.BaseActivity;
 import com.spicymango.fanfictionreader.util.Parser;
 import com.spicymango.fanfictionreader.util.SearchLoader;
+import com.spicymango.fanfictionreader.util.Sites;
 import com.spicymango.fanfictionreader.util.Story;
 import com.spicymango.fanfictionreader.util.adapters.StoryMenuAdapter;
 
@@ -151,8 +152,8 @@ public class SearchStoryActivity extends BaseActivity<Story> implements OnQueryT
 		}
 
 		@Override
-		protected Uri formatUri(int currentPage) {
-			Uri.Builder builder = BASE_URI.buildUpon();
+		protected Uri getUri(int currentPage) {
+			Uri.Builder builder = Sites.FANFICTION.BASE_URI.buildUpon();
 			builder.path("search.php")
 					.appendQueryParameter("type", "story")
 					.appendQueryParameter("ready", "1")

@@ -15,8 +15,6 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
 
-
-
 public class Parser {
 	
 	private static final  Pattern pattern = Pattern.compile("/[su]/([\\d]++)/");
@@ -57,13 +55,18 @@ public class Parser {
 			Elements imgs = element.select("img.mm");
 			complete = !imgs.isEmpty();
 			
-			Story TempStory = new Story(
-					Long.parseLong(storyIdMatcher.group(1)), title.ownText(),
-					author.text(), Long.parseLong(authorIdMatcher.group(1)),
-					element.ownText().replaceFirst("(?i)by\\s*", ""),
-					attribs.text(), updateDate, publishDate, complete);
+			Story.Builder builder = new Story.Builder();
+			builder.setId(Long.parseLong(storyIdMatcher.group(1)));
+			builder.setName(title.ownText());
+			builder.setAuthor(author.text());
+			builder.setAuthorId(Long.parseLong(authorIdMatcher.group(1)));
+			builder.setSummary(element.ownText().replaceFirst("(?i)by\\s*", ""));
+			builder.setFanFicAttribs(attribs.text());
+			builder.setUpdateDate(updateDate);
+			builder.setPublishDate(publishDate);
+			builder.setCompleted(complete);
 
-			list.add(TempStory);
+			list.add(builder.build());
 		}
 		return true;
 	}
@@ -144,7 +147,7 @@ public class Parser {
 				return 1;
 			return 2;
 		}
-		return getpageNumber(elements.first().attr("href"));
+		return getpageNumber(elements.last().attr("href"));
 		
 	}
 	

@@ -2,94 +2,95 @@
 <resources>
 
     <string name="app_name">Fanfiction Reader</string>
-    
-    <!-- Generic Error Messages -->
+
+    <!-- Error Messages -->
     <string name="error_connection">Failed to connect to server</string>
-	<string name="error_sd">Please check that the SD card is available</string>
-	<string name="error_parsing">Please contact developer</string>
-	<string name="error_unknown">Unknown Error</string>
-	
-	<string name="dialog_remove">Remove story</string>
-	<string name="dialog_remove_text">Do you want to remove the selected story?</string>
-	
-	<!-- Main Menu -->
-	<string name="menu_button_content_description">Menu Button</string>
-	<string name="menu_button_my_library">My Library</string>
-	<string name="menu_button_resume">Resume</string>
-	<string name="menu_button_favs_folls">Favorites and Follows</string>
-	<string name="menu_button_browse_stories">Browse Stories</string>
-	<string name="menu_button_just_in">Just In</string>
-	<string name="menu_button_search">Search</string>
-	<string name="menu_button_communities">Communities</string>
-	<string name="menu_button_settings">Settings</string>
-	<string name="menu_button_about">About</string>
-	<string name="menu_toast_resume">You must have viewed at least one saved story</string>
-	
-	<string name="dialog_loading">Loading…</string>
-	
-	<string name="filter_sort">Sort options</string>
-	<string name="filter_date">Time Range</string>
-	<string name="filter_genre">Genre</string>
-	<string name="filter_rating">Rating</string>
-	<string name="filter_languague">Languague</string>
-	<string name="filter_character">Character</string>
-	<string name="filter_status">Status</string>
-	<string name="filter_execute">Apply Filters</string>
-	<string name="dialog_cancelled">Cancelled</string>
-	<string name="filter_lenght">Length</string>
-	<string name="filter_category">Category</string>
-	<string name="filter_type">Type</string>
-	
-	<string name="detail_rating">&lt;strong&gt;Rating:&lt;/strong&gt; %s</string>
-	<string name="detail_languague">&lt;strong&gt;Languague:&lt;/strong&gt; %s</string>
-	<string name="detail_genre">&lt;strong&gt;Genre:&lt;/strong&gt; %s</string>
-	<string name="detail_chapters">&lt;strong&gt;Chapters:&lt;/strong&gt; %s</string>
-	<string name="detail_words">&lt;strong&gt;Words:&lt;/strong&gt; %s</string>
-	<string name="detail_favorites">&lt;strong&gt;Favorites:&lt;/strong&gt; %s</string>
-	<string name="detail_follows">&lt;strong&gt;Follows:&lt;/strong&gt; %s</string>
-	<string name="detail_updated">&lt;strong&gt;Updated:&lt;/strong&gt; %s</string>
-	<string name="detail_published">&lt;strong&gt;Published:&lt;/strong&gt; %s</string>
-	<string name="detail_category">&lt;strong&gt;Category:&lt;/strong&gt; %s</string>
-	<string name="detail_complete">&lt;strong&gt;Status:&lt;/strong&gt; %s</string>
-	<string name="detail_author">&lt;strong&gt;Author:&lt;/strong&gt; %s</string>
-	<string name="detail_story_id">&lt;strong&gt;Story ID:&lt;/strong&gt; %s</string>
-	
-	<string name="complete_true">Completed</string>
-	<string name="complete_false">In progress</string>
-	
-	<!-- Settings -->
-	<string name="pref_appearance">Appearance</string>
-	<string name="pref_behavior">Behavior</string>
-	<string name="pref_updating">Updating</string>
-	
-	<string name="pref_orientation">Application Orientation</string>
-	<string-array name="pref_orientation_entries">
-	    <item >Auto</item>
-	    <item >Landscape</item>
-	    <item >Portrait</item>  
-	</string-array>
-	
-	<string name="pref_theme">Application Theme</string>
-	<string-array name="pref_theme_entries">
-	    <item >Light</item>
-	    <item >Dark</item>
-	    <item >White on black</item>
-	</string-array>
-	
-	<string name="pref_loc">Save Location</string>
-	<string-array name="pref_loc_entries">
-	    <item >Internal Memory</item>
-	    <item >SD Card</item>
-	</string-array>
-	<string name="pref_loc_diag_title">Note</string>
-	<string name="pref_loc_diag">Stories are not moved automatically. To move, delete and then redownload the story.</string>
-	
-	<string name="pref_incremental_updating">Incremental Updating</string>
+    <string name="error_sd">File not found</string>
+    <string name="error_parsing_mini" >Parsing error</string>
+    <string name="error_parsing">Please contact developer</string>
+    <string name="error_parsing_long">Please check that the web page is available in the phone browser. If it is and the app still doesn\'t work, please contact developer.</string>
+    <string name="error_unknown">Unknown error</string>
+    <string name="dialog_remove">Remove story</string>
+    <string name="dialog_remove_text">Do you want to remove the selected story?</string>
+
+    <!-- Main Menu -->
+    <string name="menu_button_content_description">Menu Button</string>
+    <string name="menu_button_my_library">My Library</string>
+    <string name="menu_button_resume">Resume</string>
+    <string name="menu_button_favs_folls">Favorites and Follows</string>
+    <string name="menu_button_browse_stories">Browse Stories</string>
+    <string name="menu_button_just_in">Just In</string>
+    <string name="menu_button_search">Search</string>
+    <string name="menu_button_communities">Communities</string>
+    <string name="menu_button_settings">Settings</string>
+    <string name="menu_button_about">About</string>
+    <string name="menu_toast_resume">You must have viewed at least one saved story</string>
+    
+    <string name="dialog_loading">Loading…</string>
+    
+    <string name="filter_sort">Sort options</string>
+    <string name="filter_date">Time Range</string>
+    <string name="filter_genre">Genre</string>
+    <string name="filter_rating">Rating</string>
+    <string name="filter_language">Language</string>
+    <string name="filter_character">Character</string>
+    <string name="filter_status">Status</string>
+    <string name="filter_execute">Apply Filters</string>
+    <string name="dialog_cancelled">Cancelled</string>
+    <string name="filter_length">Length</string>
+    <string name="filter_category">Category</string>
+    <string name="filter_type">Type</string>
+    
+    <string name="detail_rating">&lt;strong&gt;Rating:&lt;/strong&gt; %s</string>
+    <string name="detail_languague">&lt;strong&gt;Language:&lt;/strong&gt; %s</string>
+    <string name="detail_genre">&lt;strong&gt;Genre:&lt;/strong&gt; %s</string>
+    <string name="detail_chapters">&lt;strong&gt;Chapters:&lt;/strong&gt; %s</string>
+    <string name="detail_words">&lt;strong&gt;Words:&lt;/strong&gt; %s</string>
+    <string name="detail_favorites">&lt;strong&gt;Favorites:&lt;/strong&gt; %s</string>
+    <string name="detail_follows">&lt;strong&gt;Follows:&lt;/strong&gt; %s</string>
+    <string name="detail_updated">&lt;strong&gt;Updated:&lt;/strong&gt; %s</string>
+    <string name="detail_published">&lt;strong&gt;Published:&lt;/strong&gt; %s</string>
+    <string name="detail_category">&lt;strong&gt;Category:&lt;/strong&gt; %s</string>
+    <string name="detail_complete">&lt;strong&gt;Status:&lt;/strong&gt; %s</string>
+    <string name="detail_author">&lt;strong&gt;Author:&lt;/strong&gt; %s</string>
+    <string name="detail_story_id">&lt;strong&gt;Story ID:&lt;/strong&gt; %s</string>
+    
+    <string name="complete_true">Completed</string>
+    <string name="complete_false">In progress</string>
+
+    <!-- Settings -->
+    <string name="pref_appearance">Appearance</string>
+    <string name="pref_behavior">Behavior</string>
+    <string name="pref_updating">Updating</string>
+    <string name="pref_orientation">Application Orientation</string>
+
+    <string-array name="pref_orientation_entries">
+        <item>Auto</item>
+        <item>Landscape</item>
+        <item>Portrait</item>
+    </string-array>
+
+    <string name="pref_theme">Application Theme</string>
+
+    <string-array name="pref_theme_entries">
+        <item>Light</item>
+        <item>Dark</item>
+        <item>White on black</item>
+    </string-array>
+
+    <string name="pref_loc">Save Location</string>
+
+    <string-array name="pref_loc_entries">
+        <item>Internal Memory</item>
+        <item>SD Card</item>
+    </string-array>
+
+    <string name="pref_loc_diag_title">Note</string>
+    <string name="pref_loc_diag">Stories are not moved automatically. To move, delete and then redownload the story.</string>
+    <string name="pref_incremental_updating">Incremental Updating</string>
     <string name="pref_incremental_summary_off">Updating a story will redownload every chapter</string>
     <string name="pref_incremental_summary_on">Updating a story will only download new chapters. Revised chapters will not be updated.</string>
-     
     <string name="pref_wake_lock">Keep Screen On</string>
-    
     <string name="pref_back_and_restore">Backup and restore</string>
     <string name="pref_back_up">Back up files to memory</string>
     <string name="pref_restore">Restore files from memory</string>
@@ -103,163 +104,170 @@
     <string name="diag_back_up_external">The backup file is being saved to the SD card.</string>
     <string name="diag_back_up_internal">The backup file is being saved to the internal memory. If transferring the stories to another device, copy the file Fanfiction.bak to the other device. </string>
     <string name="diag_restore_warning">Restoring from a backup will clear all data and remove all stories not present in the backup. Continue?</string>
-	
     <string name="diag_theme_warning">Due to popular demand, I added a temporary black theme while I work on a better one. If you have suggestions regarding the black theme, feel free to contact me.</string>
-    <!--  Font Picker -->
+    <!-- Font Picker -->
     <string name="pref_text_size">Font size &amp; type</string>
     <string name="diag_font_size">Text Size</string>
     <string name="diag_font_family">Font</string>
     <string name="diag_font_demo">Sample Text</string>
-    
-	<!-- Story Downloader -->
-	<string name="downloader_downloading">Downloading Story</string>
-	<string name="downloader_context">%1$s Chapter %2$d/%3$d</string>
+
+    <!-- Story Downloader -->
+    <string name="downloader_downloading">Downloading Story</string>
+    <string name="downloader_context">%1$s Chapter %2$d/%3$d</string>
+
     <plurals name="downloader_notification">
         <item quantity="one"> One story successfully added</item>
         <item quantity="other">%d stories successfully added</item>
     </plurals>
+
     <string name="downloader_error">Error downloading story</string>
+
+    <!-- Community Menu Activity -->
+    <string name="menu_community_random">Random</string>
+    <string name="menu_community_follows">Sort by follows</string>
+    <string name="menu_community_date">Sort by create date</string>
+    <string name="menu_community_staff">Sort by staff</string>
+    <string name="menu_community_stories">Sort by stories</string>
+
+    <!-- Search Menu -->
+    <string name="menu_search_title">Search</string>
+
+    <string-array name="menu_search_by">
+        <item>Search stories</item>
+        <item>Search authors</item>
+    </string-array>
+
+    <!-- Browse Menu Activity -->
+    <string name="menu_browse_general_communities">General Communities</string>
+    <string name="menu_browse_title_stories">Stories</string>
+    <string name="toggle_regular">Regular</string>
+    <string name="toggle_crossover">Crossover</string>
+    <string name="toggle_fiction">Fiction</string>
+    <string name="toggle_poetry">Poetry</string>
+
+    <!-- Navigation Menu Activity -->
+    <string name="menu_navigation_sort_by">Sort By</string>
+    <string name="menu_navigation_sort_by_condensed">Sort</string>
+    <string name="menu_navigation_sort_by_name">Sort by name</string>
+    <string name="menu_navigation_sort_by_size">Sort by size</string>
+    <string name="menu_navigation_filter_by">Filter</string>
+    <string name="menu_navigation_count_story">%1$s Stories</string>
+    <string name="menu_navigation_count_community">%1$s Communities</string>
+    <string name="menu_navigation_title_regular">Regular</string>
+    <string name="menu_navigation_title_crossover">Crossover</string>
+    <string name="menu_navigation_title_community">Communities</string>
+    <string name="menu_navigation_filter_top_200">Top 200</string>
+    <string name="menu_navigation_filter_crossover_all">All</string>
+    <string name="menu_navigation_retry_connection">Retry</string>
+    <string name="menu_navigation_browse_by_author">Browse by author</string>
+
+    <!-- Story Menu Activity -->
+    <string name="menu_story_page_button">Load page %1$d of %2$d</string>
+    <string name="menu_story_title_just_in">Just In</string>
+    <string name="menu_story_filter_by">Filter</string>
+    <string name="story_menu_follows">Follows: %s</string>
+    <string name="story_menu_words">Words: %s</string>
+    <string name="story_menu_chapters">Chapters: %d</string>
+
+    <!-- Library Menu Activity -->
+    <string name="menu_library_title">My Library</string>
+    <string name="menu_library_sync_all">Sync All</string>
+    <string name="menu_library_sync_all_condensed">Sync</string>
+    <string name="menu_library_context_detail">Details</string>
+    <string name="menu_library_context_author">Browse Author</string>
+    <string name="menu_library_context_delete">Remove Story</string>
+    <string name="menu_library_words">Words: %,d</string>
+    <string name="menu_library_chapters">Chapters: %d</string>
+
+    <string-array name="menu_library_sort_by">
+        <item>Update Date</item>
+        <item>Publish Date</item>
+        <item>Title</item>
+        <item>Author</item>
+        <item>Favorites</item>
+        <item>Follows</item>
+    </string-array>
     
-	<!-- Community Menu Activity -->
-	<string name="menu_community_random">Random</string>
-	<string name="menu_community_follows">Sort by follows</string>
-	<string name="menu_community_date">Sort by create date</string>
-	<string name="menu_community_staff">Sort by staff</string>
-	<string name="menu_community_stories">Sort by stories</string>
-	
-	<!-- Search Menu -->
-	<string name="menu_search_title">Search</string>
-	<string-array name="menu_search_by">
-	    <item >Search stories</item>
-	    <item >Search authors</item>
-	</string-array>
-	
-	<!-- Browse Menu Activity -->
-	<string name="menu_browse_general_communities">General Communities</string>
-	<string name="menu_browse_title_stories">Stories</string>
-	<string name="toggle_regular">Regular</string>
-	<string name="toggle_crossover">Crossover</string>
-	
-	<!-- Navigation Menu Activity -->
-	<string name="menu_navigation_sort_by">Sort By</string>
-	<string name="menu_navigation_sort_by_condensed">Sort</string>
-	<string name="menu_navigation_sort_by_name">Sort by name</string>
-	<string name="menu_navigation_sort_by_size">Sort by size</string>
-	<string name="menu_navigation_filter_by">Filter</string>
-	<string name="menu_navigation_count_story">%1$s Stories</string>
-	<string name="menu_navigation_count_community">%1$s Communities</string>
-	<string name="menu_navigation_title_regular">Regular</string>
-	<string name="menu_navigation_title_crossover">Crossover</string>
-	<string name="menu_navigation_title_community">Communities</string>
-	<string name="menu_navigation_filter_top_200">Top 200</string>
-	<string name="menu_navigation_filter_crossover_all">All</string>
-	<string name="menu_navigation_retry_connection">Retry</string>
-	<string name="menu_navigation_browse_by_author">Browse by author</string>
-	
-	<!-- Story Menu Activity -->
-	<string name="menu_story_page_button">Load page %1$d of %2$d</string>
-	<string name="menu_story_title_just_in">Just In</string>
-	<string name="menu_story_filter_by">Filter</string>
-	<string name="story_menu_follows">Follows: %s</string>
-	<string name="story_menu_words">Words: %s</string>
-	<string name="story_menu_chapters">Chapters: %d</string>
-	
-	<!-- Library Menu Activity -->
-	<string name="menu_library_title">My Library</string>
-	<string name="menu_library_sync_all">Sync All</string>
-	<string name="menu_library_sync_all_condensed">Sync</string>
-	<string name="menu_library_context_detail">Details</string>
-	<string name="menu_library_context_author">Browse Author</string>
-	<string name="menu_library_context_delete">Remove Story</string>
-	<string name="menu_library_words">Words: %,d</string>
-	<string name="menu_library_chapters">Chapters: %d</string>
-	<string-array name="menu_library_sort_by">
-		<item >Update Date</item>
-		<item >Publish Date</item>
-		<item >Title</item>
-		<item >Author</item>
-		<item >Favorites</item>
-		<item >Follows</item>
-	</string-array>
-	<string-array name="menu_library_filter_words">
-	    <item >All</item>
-	    <item >&lt; 1k words</item>
-	    <item >&lt; 5k words</item>
-	    <item >&gt; 1k words</item>
-	    <item >&gt; 5k words</item>
-	    <item >&gt; 10k words</item>
-	    <item >&gt; 20k words</item>
-	    <item >&gt; 40k words</item>
-	    <item >&gt; 60k words</item>
-	    <item >&gt; 100k words</item>
-	</string-array>
-	<string-array name="menu_library_filter_type">
-	    <item >All</item>
-	    <item >Regular</item>
-	    <item >CrossOver</item>
-	</string-array>
-	<string name="menu_library_by_id">Add story by Id</string>
-	<string name="menu_library_by_id_condensed">Add by Id</string>
-	<string name="menu_library_filter_all">All</string>
-	<string name="menu_library_by_id_error">Please enter a valid id</string>
-	
-	<!-- Download By Id -->
-	<string name="diag_by_id_title">Download by Id</string>
-	<string name="diag_btn_pos">OK</string>
-	<string name="diag_btn_neg">Cancel</string>
-	
-	<!-- Story Displayer Activity -->
-	<string name="read_story_update">Update story</string>
-	<string name="read_story_update_condensed">Update</string>
-	<string name="read_story_add">Add to library</string>
-	<string name="read_story_add_follow">Add to follows</string>
-	<string name="read_story_add_favorites">Add to favorites</string>
-	<string name="read_story_add_condensed">Add</string>
-	<string name="read_story_chapter">Chapter\u0020</string>
-	<string name="read_story_filter">@string/menu_story_filter_by</string>
-	<string name="read_story_go_to">Go to chapter</string>
-	<string name="read_story_go_to_condensed">Go to</string>
-	<string name="read_story_go_to_top">Go to top</string>
-	<string name="read_story_go_to_bottom">Go to bottom</string>
-	<string name="read_story_full_screen">Full Screen</string>
-	
-	<string name="review">Review</string>
-	<string name="dialog_review_posted">Review posted successfully</string>
-	
-	<!-- About Page -->
-	<string name="about">This application was developed by Michael Chen. 
+    <string-array name="menu_library_filter_words">
+        <item>All</item>
+        <item>&lt; 1k words</item>
+        <item>&lt; 5k words</item>
+        <item>&gt; 1k words</item>
+        <item>&gt; 5k words</item>
+        <item>&gt; 10k words</item>
+        <item>&gt; 20k words</item>
+        <item>&gt; 40k words</item>
+        <item>&gt; 60k words</item>
+        <item>&gt; 100k words</item>
+    </string-array>
+    
+    <string-array name="menu_library_filter_type">
+        <item>All</item>
+        <item>Regular</item>
+        <item>CrossOver</item>
+    </string-array>
+
+    <string name="menu_library_by_id">Add story by Id</string>
+    <string name="menu_library_by_id_condensed">Add by Id</string>
+    <string name="menu_library_filter_all">All</string>
+    <string name="menu_library_by_id_error">Please enter a valid id</string>
+
+    <!-- Download By Id -->
+    <string name="diag_by_id_title">Download by Id</string>
+    <string name="diag_btn_pos">OK</string>
+    <string name="diag_btn_neg">Cancel</string>
+
+    <!-- Story Displayer Activity -->
+    <string name="read_story_update">Update story</string>
+    <string name="read_story_update_condensed">Update</string>
+    <string name="read_story_add">Add to library</string>
+    <string name="read_story_add_follow">Add to follows</string>
+    <string name="read_story_add_favorites">Add to favorites</string>
+    <string name="read_story_add_condensed">Add</string>
+    <string name="read_story_chapter">Chapter\u0020</string>
+    <string name="read_story_filter">@string/menu_story_filter_by</string>
+    <string name="read_story_go_to">Go to chapter</string>
+    <string name="read_story_go_to_condensed">Go to</string>
+    <string name="read_story_go_to_top">Go to top</string>
+    <string name="read_story_go_to_bottom">Go to bottom</string>
+    <string name="read_story_full_screen">Full Screen</string>
+    <string name="review">Review</string>
+    <string name="dialog_review_posted">Review posted successfully</string>
+
+    <!-- About Page -->
+    <string name="about">This application was developed by Michael Chen. 
 		The author is not affiliated in anyway with Fanfiction.net.\n
 		\nPlease report any bugs or request any features using the button below.\n
 		\nNote that if you experienced a recent downloading error, a report containing the 
 		failed story is added to the email automatically.</string>
-	<string name="about_feature">Contact the developer</string>
-	
-	<!-- Author Menu Activity -->
-	<string name="menu_author_stories">Stories</string>
-	<string name="menu_author_profile">Profile</string>
-	<string name="menu_author_no_profile">No profile found</string>
-	
-	<!-- Favorite and Follows Activity -->
-	<string name="dialog_log_in">Log In</string>
-	<string name="dialog_log_in_desc">Please log in to use this feature</string>
-	<string name="menu_log_out">Log Out</string>
-	
-	<!-- Account Management -->
-	<string name="menu_favs">Favorites</string>
-	<string name="menu_follows">Follows</string>
-	<string name="toast_added_follows">Story added to follows</string>
-	<string name="toast_added_favs">Story added to favorites</string>
-	<string name="toast_removed">Story removed</string>
-	
-	<!-- General Items and Strings -->
-	<string name="general_anime">Anime</string>
-	<string name="general_books">Books</string>
-	<string name="general_cartoons">Cartoons</string>
-	<string name="general_comics">Comics</string>
-	<string name="general_games">Games</string>
-	<string name="general_misc">Misc</string>
-	<string name="general_movies">Movies</string>
-	<string name="general_plays">Plays &amp; Musicals</string>
-	<string name="general_tv">TV Shows</string>
-	
+    <string name="about_feature">Contact the developer</string>
+
+    <!-- Author Menu Activity -->
+    <string name="menu_author_stories">Stories</string>
+    <string name="menu_author_profile">Profile</string>
+    <string name="menu_author_no_profile">No profile found</string>
+
+    <!-- Favorite and Follows Activity -->
+    <string name="dialog_log_in">Log In</string>
+    <string name="dialog_log_in_desc">Please log in to use this feature</string>
+    <string name="menu_log_out">Log Out</string>
+
+    <!-- Account Management -->
+    <string name="menu_favs">Favorites</string>
+    <string name="menu_follows">Follows</string>
+    <string name="toast_added_follows">Story added to follows</string>
+    <string name="toast_added_favs">Story added to favorites</string>
+    <string name="toast_removed">Story removed</string>
+
+    <!-- Browse Menu Items Fanfiction -->
+    <string name="general_anime">Anime</string>
+    <string name="general_books">Books</string>
+    <string name="general_cartoons">Cartoons</string>
+    <string name="general_comics">Comics</string>
+    <string name="general_games">Games</string>
+    <string name="general_misc">Misc</string>
+    <string name="general_movies">Movies</string>
+    <string name="general_plays">Plays &amp; Musicals</string>
+    <string name="general_tv">TV Shows</string>
+
 </resources>

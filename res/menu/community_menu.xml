@@ -9,18 +9,14 @@
         android:titleCondensed="@string/menu_navigation_sort_by_condensed"
         spicymango:showAsAction="ifRoom">
         <menu
-            android:id="@+id/menu1"
+            android:id="@+id/community_menu_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" >
             <item
                 android:id="@+id/community_sort_random"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:title="@string/menu_community_random"/>
             <item
                 android:id="@+id/community_sort_staff"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:title="@string/menu_community_staff"/>
             <item
                 android:id="@+id/community_sort_stories"

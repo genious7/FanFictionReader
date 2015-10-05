@@ -10,7 +10,7 @@
         spicymango:showAsAction="ifRoom">
     </item>
     <item
-        android:id="@+id/menu_navigation_sort_by"
+        android:id="@id/sort_by"
         android:icon="@drawable/ic_action_sort_by_size"
         android:title="@string/menu_navigation_sort_by"
         android:titleCondensed="@string/menu_navigation_sort_by_condensed"

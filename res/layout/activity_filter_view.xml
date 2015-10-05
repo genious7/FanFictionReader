@@ -131,7 +131,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:text="@string/filter_languague" />
+                android:text="@string/filter_language" />
 
             <Spinner
                 android:id="@+id/filter_languague"
@@ -171,7 +171,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:text="@string/filter_lenght" />
+                android:text="@string/filter_length" />
 
             <Spinner
                 android:id="@+id/filter_length"

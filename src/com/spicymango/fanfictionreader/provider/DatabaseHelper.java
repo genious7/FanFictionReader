@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHelper extends SQLiteOpenHelper  implements SqlConstants{
 	
-	private static final int DATABASE_VERSION = 7; //Database version 6
+	private static final int DATABASE_VERSION = 7; //Database version 7
 	private static final String DATABASE_NAME = "library.db";
 	
 	//The name of the FanFiction table
@@ -27,7 +27,7 @@ public class DatabaseHelper extends SQLiteOpenHelper  implements SqlConstants{
             + KEY_LANGUAGUE + " TEXT," 
             + KEY_CATEGORY + " TEXT,"
             + KEY_CHAPTER + " INTEGER,"
-            + KEY_LENGHT + " INTEGER,"
+            + KEY_LENGTH + " INTEGER,"
             + KEY_FAVORITES + " INTEGER,"
             + KEY_FOLLOWERS + " INTEGER,"
             + KEY_PUBLISHED + " INTEGER,"
@@ -53,7 +53,7 @@ public class DatabaseHelper extends SQLiteOpenHelper  implements SqlConstants{
 			onCreate(db);
 		}
 		if (oldVersion < 4) {
-			db.execSQL("UPDATE " + FANFICTION_TABLE + " SET " + KEY_LENGHT + " = REPLACE(" + KEY_LENGHT+ ",',','')");
+			db.execSQL("UPDATE " + FANFICTION_TABLE + " SET " + KEY_LENGTH + " = REPLACE(" + KEY_LENGTH+ ",',','')");
 			db.execSQL("UPDATE " + FANFICTION_TABLE + " SET " + KEY_FAVORITES + " = REPLACE(" + KEY_FAVORITES+ ",',','')");
 			db.execSQL("UPDATE " + FANFICTION_TABLE + " SET " + KEY_FOLLOWERS + " = REPLACE(" + KEY_FOLLOWERS+ ",',','')");
 			
@@ -67,7 +67,7 @@ public class DatabaseHelper extends SQLiteOpenHelper  implements SqlConstants{
 	                + KEY_LANGUAGUE + " TEXT," 
 	                + KEY_CATEGORY + " TEXT,"
 	                + KEY_CHAPTER + " INTEGER,"
-	                + KEY_LENGHT + " INTEGER,"
+	                + KEY_LENGTH + " INTEGER,"
 	                + KEY_FAVORITES + " INTEGER,"
 	                + KEY_FOLLOWERS + " INTEGER,"
 	                + KEY_PUBLISHED + " INTEGER,"

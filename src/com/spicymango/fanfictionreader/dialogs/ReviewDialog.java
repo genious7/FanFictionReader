@@ -23,7 +23,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -80,7 +80,7 @@ public class ReviewDialog extends DialogFragment {
 		review.requestFocus();
 	}
 	
-	public static void review(ActionBarActivity context, long storyId, int currentPage){
+	public static void review(AppCompatActivity context, long storyId, int currentPage){
 		DialogFragment dialog = new ReviewDialog();
 		
 		Bundle bundle = new Bundle();

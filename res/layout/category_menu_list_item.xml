@@ -11,7 +11,7 @@
     android:paddingTop="@dimen/top_bottom_padding" >
 
     <TextView
-        android:id="@+id/category_menu_title"
+        android:id="@android:id/text1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/app_name"
@@ -20,7 +20,7 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/category_menu_views"
+        android:id="@android:id/text2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/app_name"

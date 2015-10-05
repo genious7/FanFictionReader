@@ -15,7 +15,7 @@
     </ProgressBar>
 
     <LinearLayout
-        android:id="@+id/row_no_connection"
+        android:id="@+id/row_retry"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center|center_horizontal"
@@ -34,7 +34,7 @@
             android:textAppearance="?android:attr/textAppearanceMedium"/>        
 
         <Button
-            android:id="@+id/retry_internet_connection"
+            android:id="@+id/btn_retry"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minHeight="@dimen/dimension_typ"
@@ -53,7 +53,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minWidth="64dp"
-            android:onClick="onClick"
             android:text="@string/read_story_first" />
 
         <Button
@@ -61,7 +60,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minWidth="64dp"
-            android:onClick="onClick"
             android:text="@string/read_story_prev" />
 
         <Button
@@ -76,7 +74,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minWidth="64dp"
-            android:onClick="onClick"
             android:text="@string/read_story_next" />
 
         <Button
@@ -84,7 +81,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minWidth="64dp"
-            android:onClick="onClick"
             android:text="@string/read_story_last" />
     </LinearLayout>
 

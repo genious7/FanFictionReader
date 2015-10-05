@@ -6,6 +6,7 @@ import java.util.Map;
 import android.app.Activity;
 import android.content.Intent;
 
+@Deprecated
 public class FilterDialog {
 
 	public final static int RESULT_CODE = 1;
@@ -17,6 +18,7 @@ public class FilterDialog {
 	 * @param filter The list containing filter and key pairs
 	 * @param keys The last selected keys, or null if none exist
 	 */
+	@Deprecated
 	public static <T extends Map<String, Integer>> void show(Activity activity,
 			ArrayList<T> filter, int[] keys) {
 		

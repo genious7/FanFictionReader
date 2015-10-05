@@ -3,29 +3,28 @@ package com.spicymango.fanfictionreader.menu.mainmenu;
 import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.Settings;
 import com.spicymango.fanfictionreader.dialogs.AboutDialog;
-import com.spicymango.fanfictionreader.menu.mainmenu.NavigationAdapter.DrawerItem;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.NavigationView;
+import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ListView;
 
-public class MainActivity extends ActionBarActivity implements OnItemClickListener {
+public class MainActivity extends AppCompatActivity implements OnNavigationItemSelectedListener {
 	private static final String FIRST_TIME_USER = "MainActivity.FIRST_TIME_USER";
-	private static final int INTENT_SETTINGS = 0;
+	private static boolean ENABLE_DRAWER = false;
+	
+	protected static final int INTENT_SETTINGS = 0;
 	
 	//TODO: Move
 	public static final String EXTRA_PREF = "Resume pref";
@@ -34,34 +33,32 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 	private DrawerLayout mDrawer;
 	private ActionBarDrawerToggle mDrawerToggle;
 	
-	private static final DrawerItem[] NAVIGATION_DRAWER = {
-		new DrawerItem(0, R.string.site_fanfiction),
-		new DrawerItem(1, R.string.site_archive),
-		new DrawerItem(2, R.string.site_fictionpress),
-		new DrawerItem(3, R.string.menu_button_settings),
-		new DrawerItem(4, R.string.menu_button_about)
-	};
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		//Initialize settings to default values upon the first access to the application
+		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 		
 		//Set the orientation and theme for the whole activity
 		Settings.setOrientationAndThemeNoActionBar(this);
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.activity_navigation_drawer);
-		
-		//Initialize settings to default values upon the first access to the application
-		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
-		
-		//Fill the navigation drawer
-		setNavigationDrawer();
-		
+
 		//Set the toolbar as the action bar
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		
+		
+		//Fill the navigation drawer
+		setNavigationDrawer();
+		
 		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.app_name, R.string.app_name);
+		
+		if (!ENABLE_DRAWER) {
+			mDrawer.setEnabled(false);
+			mDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+			mDrawerToggle.setDrawerIndicatorEnabled(false);
+		}		
 		
 		// Prevents the app from double loading when opened from the market or
 		// from some launchers.
@@ -91,7 +88,7 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 		
 		//Start with the navigation drawer open on the first use
 		final SharedPreferences prefs = getPreferences(MODE_PRIVATE);
-		if (prefs.getBoolean(FIRST_TIME_USER, true)) {
+		if (prefs.getBoolean(FIRST_TIME_USER, true) && ENABLE_DRAWER) {
 			prefs.edit().putBoolean(FIRST_TIME_USER, false).commit();
 			mDrawer.openDrawer(GravityCompat.START);
 		}	
@@ -118,54 +115,19 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 		}
 	}
 
-	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
-		FragmentTransaction ft;		
-		switch ((int)id) {
-		case 0: //FanFiction
-			ft = getSupportFragmentManager().beginTransaction();
-			ft.replace(R.id.content_frame, new FanFictionMain());
-			ft.commit();
-			break;
-		case 1: //Archive of Our Own
-			ft = getSupportFragmentManager().beginTransaction();
-			ft.replace(R.id.content_frame, new ArchiveOfOurOwnMain());
-			ft.commit();
-			break;
-		case 2: //FictionPress
-			ft = getSupportFragmentManager().beginTransaction();
-			ft.replace(R.id.content_frame, new FictionPressMain());
-			ft.commit();
-			break;
-		case 3:
-			Intent i = new Intent(this, Settings.class);
-			startActivityForResult(i, INTENT_SETTINGS);
-			break;
-		case 4:
-			DialogFragment diag = new AboutDialog();
-			diag.show(getSupportFragmentManager(), null);
-			break;
-		default:
-			throw new RuntimeException("Unknown ID");
-		}
-	}
-	
 	/**
 	 * Sets up the navigation drawer
 	 */
-	private void setNavigationDrawer(){	
+	private void setNavigationDrawer() {
 		mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-		
-		//Fill the drawer listview
-		final ListView lv = (ListView) findViewById(R.id.drawer_list);
-		lv.setAdapter(new NavigationAdapter(this, NAVIGATION_DRAWER));
-		lv.setOnItemClickListener(this);
+
+		final NavigationView view = (NavigationView) findViewById(R.id.drawer_list);
+		view.setNavigationItemSelectedListener(this);
 	}
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
-		
 		//Restart the activity after returning from settings in order to refresh the theme
 		case INTENT_SETTINGS:
 			Intent intent = getIntent();
@@ -176,5 +138,43 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 			super.onActivityResult(requestCode, resultCode, data);
 			break;
 		}
+	}
+
+	@Override
+	public boolean onNavigationItemSelected(MenuItem arg0) {
+		FragmentTransaction ft;		
+		switch (arg0.getItemId()) {
+		case R.id.fanfiction: //FanFiction
+			ft = getSupportFragmentManager().beginTransaction();
+			ft.replace(R.id.content_frame, new FanFictionMain());
+			ft.commit();
+			arg0.setChecked(true);
+			break;
+		case R.id.archive_of_our_own: //Archive of Our Own
+			ft = getSupportFragmentManager().beginTransaction();
+			ft.replace(R.id.content_frame, new ArchiveOfOurOwnMain());
+			ft.commit();
+			arg0.setChecked(true);
+			break;
+		case R.id.fictionpress: //FictionPress
+			ft = getSupportFragmentManager().beginTransaction();
+			ft.replace(R.id.content_frame, new FictionPressMain());
+			ft.commit();
+			arg0.setChecked(true);
+			break;
+		case R.id.settings:
+			Intent i = new Intent(this, Settings.class);
+			startActivityForResult(i, INTENT_SETTINGS);
+			break;
+		case R.id.about:
+			DialogFragment diag = new AboutDialog();
+			diag.show(getSupportFragmentManager(), null);
+			break;
+		default:
+			throw new RuntimeException("Unknown ID");
+		}
+		
+		mDrawer.closeDrawers();		
+		return true;
 	}
 }

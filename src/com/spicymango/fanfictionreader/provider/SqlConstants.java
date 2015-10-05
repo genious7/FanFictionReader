@@ -14,7 +14,7 @@ public interface SqlConstants {
 	public static final String KEY_LANGUAGUE = "languague";
 	public static final String KEY_CATEGORY = "category";
 	public static final String KEY_CHAPTER = "chapter";
-	public static final String KEY_LENGHT = "lenght";
+	public static final String KEY_LENGTH = "lenght";
 	public static final String KEY_FAVORITES = "favorites";
 	public static final String KEY_FOLLOWERS = "follows";
 	public static final String KEY_UPDATED = "updated";

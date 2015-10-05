@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <group android:checkableBehavior="single" >
+        <item
+            android:id="@id/fanfiction"
+            android:checked="true"
+            android:title="@string/site_fanfiction">
+        </item>
+        <item
+            android:id="@id/fictionpress"
+            android:title="@string/site_fictionpress">
+        </item>
+        <item
+            android:id="@id/archive_of_our_own"
+            android:title="@string/site_archive">
+        </item>
+    </group>
+
+    <item
+        android:title=""
+        android:titleCondensed="">
+        <menu>
+            <item
+                android:id="@+id/settings"
+                android:icon="@drawable/ic_action_settings"
+                android:title="@string/menu_button_settings">
+            </item>
+            <item
+                android:id="@+id/about"
+                android:icon="@drawable/ic_action_about"
+                android:title="@string/menu_button_about">
+            </item>
+        </menu>
+    </item>
+
+</menu>

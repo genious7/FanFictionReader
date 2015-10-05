@@ -31,9 +31,10 @@ import android.widget.Toast;
 
 import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.filter.FilterDialog;
-import com.spicymango.fanfictionreader.util.BaseActivity;
+import com.spicymango.fanfictionreader.menu.BaseActivity;
 import com.spicymango.fanfictionreader.util.MenuObject;
 import com.spicymango.fanfictionreader.util.SearchLoader;
+import com.spicymango.fanfictionreader.util.Sites;
 
 public class SearchAuthorActivity extends BaseActivity<MenuObject> implements OnQueryTextListener{
 	private SearchLoader<MenuObject> mLoader; 
@@ -162,8 +163,8 @@ public class SearchAuthorActivity extends BaseActivity<MenuObject> implements On
 		}
 
 		@Override
-		protected Uri formatUri(int currentPage) {
-			Uri.Builder builder = BASE_URI.buildUpon();
+		protected Uri getUri(int currentPage) {
+			Uri.Builder builder = Sites.FANFICTION.BASE_URI.buildUpon();
 			builder.path("search.php")
 					.appendQueryParameter("type", "author")
 					.appendQueryParameter("ready", "1")
@@ -244,8 +245,8 @@ public class SearchAuthorActivity extends BaseActivity<MenuObject> implements On
 	            convertView = inflater.inflate(R.layout.category_menu_list_item, parent, false);
 	           
 	            holder = new MenuItemHolder();
-	            holder.txtTitle = (TextView)convertView.findViewById(R.id.category_menu_title);
-	            holder.txtViews = (TextView)convertView.findViewById(R.id.category_menu_views);
+	            holder.txtTitle = (TextView)convertView.findViewById(android.R.id.text1);
+	            holder.txtViews = (TextView)convertView.findViewById(android.R.id.text2);
 	            convertView.setTag(holder);
 	        }
 	        else

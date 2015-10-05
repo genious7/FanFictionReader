@@ -1,10 +1,7 @@
 package com.spicymango.fanfictionreader.menu.mainmenu;
 
 import android.content.Context;
-import android.content.res.Resources.Theme;
-import android.graphics.PorterDuff;
-import android.support.v7.app.ActionBarActivity;
-import android.util.TypedValue;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +17,6 @@ import com.spicymango.fanfictionreader.R;
  */
 class MainMenuAdapter extends ArrayAdapter<MainMenuItem> {
 	private final static int mLayoutResourceId = R.layout.main_menu_list_item;
-	private final int mTintColor;
 	
 	/**
 	 * Initializes the adapter
@@ -30,13 +26,6 @@ class MainMenuAdapter extends ArrayAdapter<MainMenuItem> {
 	 */
 	public MainMenuAdapter(Context context, MainMenuItem[] data) {
 		super(context, mLayoutResourceId, data);
-
-		//Obtain the primary text color for the menu
-		TypedValue typedValue = new TypedValue();
-		Theme theme = context.getTheme();
-		theme.resolveAttribute(android.R.attr.textColorPrimary, typedValue, true);
-		mTintColor = typedValue.data;
-		
 	}
 	
 	@Override
@@ -47,18 +36,16 @@ class MainMenuAdapter extends ArrayAdapter<MainMenuItem> {
 	@Override 
 	public View getView(int position, View convertView, ViewGroup parent){
 		View row = convertView;
-		MainMenuAdapter.MenuItemHolder holder = null;
+		MenuItemHolder holder = null;
 		if(row == null)
         {
-            LayoutInflater inflater = ((ActionBarActivity )getContext()).getLayoutInflater();
+            LayoutInflater inflater = ((AppCompatActivity)getContext()).getLayoutInflater();
             row = inflater.inflate(mLayoutResourceId, parent, false);
            
             holder = new MenuItemHolder();
-            holder.txtTitle = (TextView)row.findViewById(R.id.list_item_title);
-            holder.imgIcon = (ImageView)row.findViewById(R.id.list_item_icon);
+            holder.txtTitle = (TextView)row.findViewById(android.R.id.text1);
+            holder.imgIcon = (ImageView)row.findViewById(android.R.id.icon);
 
-            //Tint icon according to theme
-            holder.imgIcon.setColorFilter(mTintColor, PorterDuff.Mode.SRC_IN);
             row.setTag(holder);
         }
         else
