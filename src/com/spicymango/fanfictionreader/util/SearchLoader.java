@@ -1,7 +1,6 @@
 package com.spicymango.fanfictionreader.util;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,6 +9,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import com.spicymango.fanfictionreader.menu.BaseLoader;
+import com.spicymango.fanfictionreader.menu.storymenu.FilterDialog.SpinnerData;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -63,24 +63,22 @@ public abstract class SearchLoader<T extends Parcelable> extends BaseLoader<T> {
 
 	public int[] filter;
 
-	public ArrayList<LinkedHashMap<String, Integer>> mFilterList;
-
+	public ArrayList<SpinnerData> mFilterData;
 	public String mQuery;
 	
 	@Override
 	protected void onSaveInstanceState(Bundle savedInstanceState) {
 		savedInstanceState.putString(STATE_QUERY, mQuery);
 		savedInstanceState.putIntArray(STATE_FILTER, filter);
-		savedInstanceState.putSerializable(STATE_FILTER_LIST, mFilterList);
+		savedInstanceState.putParcelableArrayList(STATE_FILTER_LIST, mFilterData);
 		super.onSaveInstanceState(savedInstanceState);
 	}
 
-	@SuppressWarnings("unchecked")
 	public SearchLoader(Context context, Bundle savedInstanceState) {
 		super(context, savedInstanceState);	
 		if (savedInstanceState != null && savedInstanceState.containsKey(STATE_FILTER_LIST)) {
 			filter = savedInstanceState.getIntArray(STATE_FILTER);
-			mFilterList = (ArrayList<LinkedHashMap<String, Integer>>) savedInstanceState.getSerializable(STATE_FILTER_LIST);
+			mFilterData = savedInstanceState.getParcelableArrayList(STATE_FILTER_LIST);
 			mQuery = savedInstanceState.getString(STATE_QUERY);
 		}else{
 			resetFilter();
@@ -90,7 +88,7 @@ public abstract class SearchLoader<T extends Parcelable> extends BaseLoader<T> {
 	public void search(String query) {
 		if (query != mQuery) {
 			resetFilter();
-			mFilterList = null;
+			mFilterData = null;
 		}
 		mQuery = query;
 		resetState();
@@ -107,36 +105,44 @@ public abstract class SearchLoader<T extends Parcelable> extends BaseLoader<T> {
 	 * @param document
 	 * @return
 	 */
-	protected static ArrayList<LinkedHashMap<String, Integer>> SearchFilter(Document document){
+	protected static ArrayList<SpinnerData> SearchFilter(Document document){
 		Elements form = document.select("div#content form > div#drop_m > select");
 		
 		Elements[] filter = {
-				form.select("[name=sort result type] > option"),
-				form.select("[title=time range options] > option"),
-				form.select("[name=genreid] > option"),
-				form.select("[title=genre 2 filter] > option"),
-				form.select("[name=censorid] > option"),
-				form.select("[name=languageid] > option"),
-				form.select("[name=words] > option"),
-				form.select("[name=statusid] > option"),
-				form.select("[title=character 1 filter] > option"),
-				form.select("[title=character 2 filter] > option"),
-				form.select("[title=character 3 filter] > option"),
-				form.select("[title=character 4 filter] > option"),
-				form.select("[name=s]:not([title]) > option"),
-				form.select("[name=categoryid] > option")};
+				form.select("[name=s]:not([title])"),
+				form.select("[name=categoryid]"),
+				form.select("[name=sort result type]"),
+				form.select("[title=time range options]"),
+				form.select("[name=genreid]"),
+				form.select("[title=genre 2 filter]"),
+				form.select("[name=censorid]"),
+				form.select("[name=languageid]"),
+				form.select("[name=words]"),
+				form.select("[name=statusid]"),
+				form.select("[title=character 1 filter]"),
+				form.select("[title=character 2 filter]"),
+				form.select("[title=character 3 filter]"),
+				form.select("[title=character 4 filter]")};
 		
-		ArrayList<LinkedHashMap<String, Integer>> list = new ArrayList<LinkedHashMap<String,Integer>>();		
-		LinkedHashMap<String, Integer> TempMap = new LinkedHashMap<String, Integer>();
+		ArrayList<SpinnerData> spinnerData = new ArrayList<>();
 		
 		for (Elements j : filter) {
-			for (Element k : j) {
-				TempMap.put(k.ownText(), Integer.valueOf(k.attr("value")));
+			final ArrayList<String> label = new ArrayList<>();
+			final ArrayList<String> filterKey = new ArrayList<>();
+			
+			String name = null;
+			if (!j.isEmpty()) {
+				name = j.attr("name");
+				Element item = j.first();
+				Elements options = item.children();
+				for (Element k : options) {
+					label.add(k.ownText());
+					filterKey.add(k.attr("value"));
+				}
 			}
-			list.add(TempMap);
-			TempMap = new LinkedHashMap<String,Integer>();
+			spinnerData.add(new SpinnerData(name, label, filterKey, 0));
 		}
-		return list;
+		return spinnerData;
 	}
 
 	protected abstract void resetFilter();

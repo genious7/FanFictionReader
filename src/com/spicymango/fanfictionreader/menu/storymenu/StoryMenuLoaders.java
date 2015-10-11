@@ -14,7 +14,7 @@ import org.jsoup.select.Elements;
 
 import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.menu.BaseLoader;
-import com.spicymango.fanfictionreader.menu.storymenu.StoryMenuActivity.StoryMenuFragment.Filterable;
+import com.spicymango.fanfictionreader.menu.BaseLoader.Filterable;
 import com.spicymango.fanfictionreader.menu.storymenu.FilterDialog.FilterDialog;
 import com.spicymango.fanfictionreader.menu.storymenu.FilterDialog.FilterDialog.Builder;
 import com.spicymango.fanfictionreader.menu.storymenu.FilterDialog.SpinnerData;
@@ -165,7 +165,7 @@ final class StoryMenuLoaders {
 	 * @author Michael Chen
 	 *
 	 */
-	public final static class FFJustInStoryLoader extends BaseLoader<Story>implements Filterable {
+	public final static class FFJustInStoryLoader extends BaseLoader<Story> implements Filterable {
 		private final static String STATE_FILTER = "STATE_FILTER";
 
 		private ArrayList<SpinnerData> mSpinnerData;

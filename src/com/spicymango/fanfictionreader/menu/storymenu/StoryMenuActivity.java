@@ -11,6 +11,7 @@ import com.spicymango.fanfictionreader.activity.reader.StoryDisplayActivity;
 import com.spicymango.fanfictionreader.dialogs.DetailDialog;
 import com.spicymango.fanfictionreader.menu.BaseFragment;
 import com.spicymango.fanfictionreader.menu.BaseLoader;
+import com.spicymango.fanfictionreader.menu.BaseLoader.Filterable;
 import com.spicymango.fanfictionreader.menu.storymenu.StoryMenuLoaders.*;
 import com.spicymango.fanfictionreader.menu.storymenu.FilterDialog.FilterDialog.FilterListener;
 import com.spicymango.fanfictionreader.util.Sites;
@@ -19,7 +20,6 @@ import com.spicymango.fanfictionreader.util.Story;
 import android.content.UriMatcher;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
@@ -304,39 +304,6 @@ public class StoryMenuActivity extends AppCompatActivity implements FilterListen
 		public void onFilter(int[] selected) {
 			Filterable filterable = (Filterable) mLoader;
 			filterable.filter(selected);
-		}
-		
-		/**
-		 * An interface that must be implemented by any loader that offers
-		 * filtering capabilities.
-		 * 
-		 * @author Michael Chen
-		 *
-		 */
-		protected interface Filterable {
-			/**
-			 * Called whenever the filter button is clicked
-			 * @param activity The calling activity.
-			 */
-			public void onFilterClick(FragmentActivity activity);
-
-			/**
-			 * Determines whether the filter can be displayed
-			 * 
-			 * @return True if the filter is available, false otherwise
-			 */
-			public boolean isFilterAvailable();
-
-			/**
-			 * Called whenever a new filter is available. For checkboxes, the
-			 * value will be zero when the check box is unchecked. Fors
-			 * spinners, the integer returned is the selected position
-			 * 
-			 * @param filterSelected The selected positions for the filter.
-			 */
-			public void filter(int[] filterSelected);
-		}
-
-		
+		}		
 	}
 }

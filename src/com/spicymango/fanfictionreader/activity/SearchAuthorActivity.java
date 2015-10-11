@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
@@ -27,16 +28,18 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.spicymango.fanfictionreader.R;
-import com.spicymango.fanfictionreader.filter.FilterDialog;
 import com.spicymango.fanfictionreader.menu.BaseActivity;
+import com.spicymango.fanfictionreader.menu.BaseLoader.Filterable;
+import com.spicymango.fanfictionreader.menu.storymenu.FilterDialog.FilterDialog;
+import com.spicymango.fanfictionreader.menu.storymenu.FilterDialog.SpinnerData;
+import com.spicymango.fanfictionreader.menu.storymenu.FilterDialog.FilterDialog.FilterListener;
 import com.spicymango.fanfictionreader.util.MenuObject;
 import com.spicymango.fanfictionreader.util.SearchLoader;
 import com.spicymango.fanfictionreader.util.Sites;
 
-public class SearchAuthorActivity extends BaseActivity<MenuObject> implements OnQueryTextListener{
+public class SearchAuthorActivity extends BaseActivity<MenuObject> implements OnQueryTextListener, FilterListener{
 	private SearchLoader<MenuObject> mLoader; 
 	private SearchView sView;
 	
@@ -47,11 +50,7 @@ public class SearchAuthorActivity extends BaseActivity<MenuObject> implements On
 		return mLoader;
 	}
 
-	/**
-	 * Initializes the menu on the action bar.
-	 * <p>
-	 * {@inheritDoc}
-	 */
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
@@ -89,7 +88,7 @@ public class SearchAuthorActivity extends BaseActivity<MenuObject> implements On
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.filter:
-			FilterDialog.show(this, mLoader.mFilterList, mLoader.filter);
+			((Filterable) mLoader).onFilterClick(this);
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -99,7 +98,7 @@ public class SearchAuthorActivity extends BaseActivity<MenuObject> implements On
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		MenuItem filter = menu.findItem(R.id.filter);
-		if (mLoader == null || mLoader.mFilterList == null) {
+		if (mLoader == null || !((Filterable)mLoader).isFilterAvailable()) {
 			filter.setEnabled(false);
 			filter.getIcon().setAlpha(64);
 		}else{
@@ -125,32 +124,15 @@ public class SearchAuthorActivity extends BaseActivity<MenuObject> implements On
 		mLoader.search(arg0);
 		return true;
 	}
-	
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode==1){//Filter Menu
-			if (resultCode==RESULT_CANCELED) {
-				//Dialog cancelled
-				Toast toast = Toast.makeText(this, getResources().getString(R.string.dialog_cancelled), Toast.LENGTH_SHORT);
-				toast.show();
-			}else if (resultCode == RESULT_OK) {
-				int[] filter = data.getIntArrayExtra(FilterDialog.RESULT);
-				mLoader.filter = filter;
-				mLoader.resetState();
-				mLoader.startLoading();
-			}
-		}
-		super.onActivityResult(requestCode, resultCode, data);
-	}
-	
+		
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		getSupportLoaderManager().initLoader(0, savedInstanceState, this);
 	}
 	
-	private static final class AuthorLoader extends SearchLoader<MenuObject>{
-		String formatString;
+	private static final class AuthorLoader extends SearchLoader<MenuObject> implements Filterable{
+		private final String formatString;
 		
 		public AuthorLoader(Context context, Bundle savedInstanceState) {
 			super(context, savedInstanceState);
@@ -169,20 +151,26 @@ public class SearchAuthorActivity extends BaseActivity<MenuObject> implements On
 					.appendQueryParameter("type", "author")
 					.appendQueryParameter("ready", "1")
 					.appendQueryParameter("keywords", mQuery)
-					.appendQueryParameter("categoryid", filter[13] + "")
-					.appendQueryParameter("genreid", filter[2] + "")
-					.appendQueryParameter("languageid", filter[5] + "")
-					.appendQueryParameter("ppage", currentPage + "")
-					.appendQueryParameter("words", filter[6] + "");
+					.appendQueryParameter("ppage", currentPage + "");
+			
+			// Adds the filter, if available
+			if (isFilterAvailable()) {
+				for (SpinnerData spinnerData : mFilterData) {
+					final String key = spinnerData.getName();
+					final String value = spinnerData.getCurrentFilter();
+					if (key == null) continue;
+					builder.appendQueryParameter(key, value);
+				}
+			}
 			return builder.build();
 		}
 
 		@Override
 		protected boolean load(Document document, List<MenuObject> list) {
 			// Load the filters if they aren't already loaded.
-			if (mFilterList == null) {
-				mFilterList = SearchFilter(document);
-			}	
+			if (!isFilterAvailable()) {
+				mFilterData = SearchFilter(document);
+			}
 			
 			Elements authors = document.select("div#content div.bs");
 			Element link;
@@ -218,7 +206,40 @@ public class SearchAuthorActivity extends BaseActivity<MenuObject> implements On
 
 			return true;
 		}
-		
+
+		@Override
+		public void onFilterClick(FragmentActivity activity) {
+			FilterDialog.Builder builder = new FilterDialog.Builder();
+			builder.addSingleSpinner(activity.getString(R.string.filter_type), mFilterData.get(0));
+			builder.addSingleSpinner(activity.getString(R.string.filter_category), mFilterData.get(1));
+			builder.addSingleSpinner(activity.getString(R.string.filter_sort), mFilterData.get(2));
+			builder.addSingleSpinner(activity.getString(R.string.filter_date), mFilterData.get(3));
+			builder.addDoubleSpinner(activity.getString(R.string.filter_genre), mFilterData.get(4), mFilterData.get(5));
+			builder.addSingleSpinner(activity.getString(R.string.filter_rating), mFilterData.get(6));
+			builder.addSingleSpinner(activity.getString(R.string.filter_language), mFilterData.get(7));
+			builder.addSingleSpinner(activity.getString(R.string.filter_length), mFilterData.get(8));
+			builder.addSingleSpinner(activity.getString(R.string.filter_status), mFilterData.get(9));
+			builder.addDoubleSpinner(activity.getString(R.string.filter_character), mFilterData.get(10),
+					mFilterData.get(11));
+			builder.addDoubleSpinner(activity.getString(R.string.filter_character), mFilterData.get(12),
+					mFilterData.get(13));
+			builder.show((SearchAuthorActivity) activity);
+		}
+
+		@Override
+		public boolean isFilterAvailable() {
+			return mFilterData != null;
+		}
+
+		@Override
+		public void filter(int[] filterSelected) {
+			for (int i = 0; i < mFilterData.size(); i++) {
+				mFilterData.get(i).setSelected(filterSelected[i]);
+			}
+			filter = filterSelected;
+			resetState();
+			startLoading();
+		}	
 	}
 	
 	private static class AuthorAdapter extends ArrayAdapter<MenuObject>{
@@ -270,6 +291,11 @@ public class SearchAuthorActivity extends BaseActivity<MenuObject> implements On
 	        TextView txtTitle;
 	        TextView txtViews;
 	    }
+	}
+
+	@Override
+	public void onFilter(int[] selected) {
+		((Filterable) mLoader).filter(selected);
 	}
 
 

@@ -13,6 +13,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.AsyncTaskLoader;
 
 /**
@@ -31,6 +32,37 @@ public abstract class BaseLoader<T extends Parcelable> extends
 	private final static String STATE_DATA = "STATE CURRENT DATA";
 	private final static String STATE_STATUS = "STATE STATUS";
 	private final static String STATE_TOTAL = "STATE TOTAL PAGES";
+	
+	/**
+	 * An interface that must be implemented by any loader that offers
+	 * filtering capabilities.
+	 * 
+	 * @author Michael Chen
+	 *
+	 */
+	public interface Filterable {
+		/**
+		 * Called whenever the filter button is clicked
+		 * @param activity The calling activity.
+		 */
+		public void onFilterClick(FragmentActivity activity);
+
+		/**
+		 * Determines whether the filter can be displayed
+		 * 
+		 * @return True if the filter is available, false otherwise
+		 */
+		public boolean isFilterAvailable();
+
+		/**
+		 * Called whenever a new filter is available. For checkboxes, the
+		 * value will be zero when the check box is unchecked. For
+		 * spinners, the integer returned is the selected position
+		 * 
+		 * @param filterSelected The selected positions for the filter.
+		 */
+		public void filter(int[] filterSelected);
+	}
 
 	/**
 	 * The page that is currently loaded
@@ -278,6 +310,8 @@ public abstract class BaseLoader<T extends Parcelable> extends
 	 */
 	protected abstract boolean load(Document document, List<T> list);
 
+	
+	
 	@Override
 	protected final void onStartLoading() {
 		// Reload the data if required.
