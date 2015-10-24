@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:paddingBottom="@dimen/top_bottom_padding"
+        android:paddingTop="@dimen/top_bottom_padding" >
+
+    </ProgressBar>
+
+    <LinearLayout
+        android:id="@+id/row_retry"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/main_menu_icon_size"
+        android:gravity="center_horizontal"
+        android:paddingBottom="@dimen/top_bottom_padding"
+        android:paddingRight="@dimen/main_menu_icon_padding"
+        android:paddingLeft="@dimen/main_menu_icon_padding"
+        android:paddingTop="@dimen/top_bottom_padding" >
+
+        <TextView
+            android:id="@+id/label_retry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center"
+            android:minHeight="@dimen/dimension_typ"
+            android:text="@string/error_connection"
+            android:textAppearance="?android:attr/textAppearance"
+            android:textSize="@dimen/menu_title_text_size" />
+
+        <Button
+            android:id="@+id/btn_retry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/dimension_typ"
+            android:text="@string/menu_navigation_retry_connection" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/story_load_pages"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/main_menu_icon_size"
+        android:text="@string/menu_story_page_button" />
+
+</LinearLayout>

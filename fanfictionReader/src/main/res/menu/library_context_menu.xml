@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item
+        android:id="@+id/menu_library_context_details"
+        android:title="@string/menu_library_context_detail">
+    </item>
+    <item
+        android:id="@+id/menu_library_context_author"
+        android:title="@string/menu_library_context_author">
+    </item>
+    <item
+        android:id="@+id/menu_library_context_delete"
+        android:title="@string/menu_library_context_delete">
+    </item>
+</menu>

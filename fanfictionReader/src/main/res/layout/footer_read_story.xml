@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:paddingBottom="@dimen/top_bottom_padding"
+        android:paddingTop="@dimen/top_bottom_padding" >
+    </ProgressBar>
+
+    <LinearLayout
+        android:id="@+id/row_retry"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center|center_horizontal"
+        android:paddingBottom="@dimen/top_bottom_padding"
+        android:paddingLeft="@dimen/main_menu_icon_padding"
+        android:paddingRight="@dimen/main_menu_icon_padding"
+        android:paddingTop="@dimen/top_bottom_padding" >
+
+        <TextView
+            android:id="@+id/label_retry"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/error_connection"
+            android:textAppearance="?android:attr/textAppearanceMedium"/>        
+
+        <Button
+            android:id="@+id/btn_retry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/dimension_typ"
+            android:onClick="onClick"
+            android:text="@string/menu_navigation_retry_connection" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/buttonBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal" >
+
+        <Button
+            android:id="@+id/read_story_first"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="64dp"
+            android:text="@string/read_story_first" />
+
+        <Button
+            android:id="@+id/read_story_prev"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="64dp"
+            android:text="@string/read_story_prev" />
+
+        <Button
+            android:id="@+id/read_story_page_counter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="64dp"
+            android:text="" />
+
+        <Button
+            android:id="@+id/read_story_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="64dp"
+            android:text="@string/read_story_next" />
+
+        <Button
+            android:id="@+id/read_story_last"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="64dp"
+            android:text="@string/read_story_last" />
+    </LinearLayout>
+
+</LinearLayout>

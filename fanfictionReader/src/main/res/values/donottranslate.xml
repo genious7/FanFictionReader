@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="site_fanfiction">FanFiction</string>
+    <string name="site_archive">Archive of Our Own</string>
+    <string name="site_fictionpress">FictionPress</string>
+        
+    <string name="pref_text_size_default">14</string>
+    
+    <string-array name="diag_font_family">
+        <item >Sans-Serif</item>
+        <item >Serif</item>
+    </string-array>
+    
+    <string-array name="pref_orientation_values">
+        <item >A</item>
+        <item >H</item>
+        <item >V</item>
+    </string-array>
+    <string name="pref_orientation_default">A</string>
+    
+    <string-array name="pref_theme_values">
+    	<item >L</item>    
+    	<item >D</item>
+    	<item >DD</item>
+    </string-array> 
+    <string name="pref_theme_default">D</string>
+    
+    <string-array name="pref_loc_values">
+    	<item >int</item>
+    	<item >ext</item>    
+    </string-array> 
+    <string name="pref_loc_default">int</string>
+    
+    <!-- Preference Keys -->
+    <string name="pref_key_text_size">Text Size</string>
+    <string name="pref_key_type_face">Type Face</string>
+    <string name="pref_key_back_up">Back Up</string>
+    <string name="pref_key_restore">Restore</string>
+    <string name="pref_key_theme">Application Theme</string>
+    
+
+    <!-- Browse Menu Activity -->
+    <string-array name="browse_menu_ff">
+		<item >@string/general_anime</item>
+		<item >@string/general_books</item>
+		<item >@string/general_cartoons</item>
+		<item >@string/general_comics</item>
+		<item >@string/general_games</item>
+		<item >@string/general_misc</item>
+		<item >@string/general_movies</item>
+		<item >@string/general_plays</item>
+		<item >@string/general_tv</item>      
+	</string-array>
+	
+    <string-array name="browse_menu_ff_community">
+        <item >@string/menu_browse_general_communities</item>
+		<item >@string/general_anime</item>
+		<item >@string/general_books</item>
+		<item >@string/general_cartoons</item>
+		<item >@string/general_comics</item>
+		<item >@string/general_games</item>
+		<item >@string/general_misc</item>
+		<item >@string/general_movies</item>
+		<item >@string/general_plays</item>
+		<item >@string/general_tv</item>      
+	</string-array>
+	
+    <string-array name="browse_menu_fp_community">
+        <item >@string/menu_browse_general_communities</item>
+		<item >@string/toggle_fiction</item>
+		<item >@string/toggle_poetry</item>    
+	</string-array>
+
+    <!-- Navigation Menu Activity  -->
+    <string-array name="menu_navigation_filter_crossover">
+        <item >@string/menu_navigation_filter_crossover_all</item>
+        <item >@string/general_anime</item>
+		<item >@string/general_books</item>
+		<item >@string/general_cartoons</item>
+		<item >@string/general_comics</item>
+		<item >@string/general_games</item>
+		<item >@string/general_misc</item>
+		<item >@string/general_movies</item>
+		<item >@string/general_plays</item>
+		<item >@string/general_tv</item>        
+    </string-array>
+    
+    <!-- Story Displayer Activity -->
+    <string name="read_story_first">&lt;&lt;</string>
+    <string name="read_story_prev">&lt;</string>
+    <string name="read_story_next">&gt;</string>
+    <string name="read_story_last">&gt;&gt;</string>
+        
+    <!-- Url's -->
+    <string name="fanfiction_scheme">https</string>
+    <string name="fanfiction_authority">m.fanfiction.net</string>    
+</resources>

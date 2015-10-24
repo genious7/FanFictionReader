@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.spicymango.fanfictionreader"
+    android:installLocation="preferExternal"
+    android:versionCode="56"
+    android:versionName="1.46b">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="false"
+        android:theme="@style/AppActionBar">
+        <activity
+            android:name=".menu.mainmenu.MainActivity"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".menu.browsemenu.BrowseMenuActivity" />
+        <activity android:name=".menu.categorymenu.CategoryMenuActivity" />
+        <activity android:name=".menu.storymenu.StoryMenuActivity" />
+        <activity android:name=".menu.communitymenu.CommunityMenuActivity" />
+        <activity android:name="Settings" />
+
+        <service android:name="LibraryDownloader" />
+
+        <activity android:name="com.spicymango.fanfictionreader.activity.reader.StoryDisplayActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="m.fanfiction.net" />
+                <data android:host="www.fanfiction.net" />
+                <!-- <data android:host="m.fictionpress.com"/> -->
+                <!-- <data android:host="www.fictionpress.com" /> -->
+                <data android:pathPrefix="/s/" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <!-- The BROWSABLE category is required to get links from web pages. -->
+                <category android:name="android.intent.category.BROWSABLE" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.LibraryMenuActivity"
+            android:label="@string/menu_library_title" />
+
+        <provider
+            android:name="com.spicymango.fanfictionreader.provider.StoryProvider"
+            android:authorities="com.spicymango.fanfictionreader.provider"
+            android:exported="false" />
+
+        <activity
+            android:name=".activity.SearchStoryActivity"
+            android:label="@string/menu_search_title" />
+        <activity
+            android:name=".activity.AuthorMenuActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".activity.SearchAuthorActivity"
+            android:label="@string/menu_search_title" />
+        <activity android:name=".activity.AccountActivity" />
+        <activity android:name=".activity.LogInActivity" />
+
+
+    </application>
+
+</manifest>

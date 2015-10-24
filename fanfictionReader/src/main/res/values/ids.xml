@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <item name="review_dialog_edit_text" type="id"></item>
+    <item name="filter" type="id"></item>
+    <item name="toolbar" type="id"></item>
+
+    <!-- ID's for site selection -->
+    <item name="fanfiction" type="id"></item>
+    <item name="fictionpress" type="id"></item>
+    <item name="archive_of_our_own" type="id"></item>
+
+</resources>
