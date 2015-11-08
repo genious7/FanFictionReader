@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion 23
@@ -6,18 +7,25 @@ android {
 
     defaultConfig {
         applicationId "com.spicymango.fanfictionreader"
-        minSdkVersion 7
+        minSdkVersion 8
         targetSdkVersion 23
-        compileOptions {
-            sourceCompatibility JavaVersion.VERSION_1_7
-            targetCompatibility JavaVersion.VERSION_1_7
-        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+    signingConfigs {
+        release
     }
 
     buildTypes {
         release {
             minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
+            signingConfig signingConfigs.release
         }
     }
 
@@ -34,4 +42,15 @@ dependencies {
     compile 'org.jsoup:jsoup:1.8.3'
     compile 'org.apache.commons:commons-collections4:4.0'
     compile 'org.apache.commons:commons-lang3:3.4'
+    compile('com.crashlytics.sdk.android:crashlytics:2.5.2@aar') {
+        transitive = true;
+    }
+}
+
+// If the signing configurations are defined in the local gradle.properties, add them to the script
+if (project.hasProperty('key.alias')) {
+    android.signingConfigs.release.keyAlias = project.property('key.alias')
+    android.signingConfigs.release.keyPassword = project.property('key.alias.password')
+    android.signingConfigs.release.storeFile = file(project.property('key.store'))
+    android.signingConfigs.release.storePassword = project.property('key.store.password')
 }

@@ -201,7 +201,7 @@ public class FileHandler {
 		if (sd == null || !sd.exists()) {
 			return null;
 		}
-		Log.v("getExternalStorageDirectory", sd.getAbsolutePath());
+		Log.v("getExternalStrDirectory", sd.getAbsolutePath());
 		return sd;
 	}
 

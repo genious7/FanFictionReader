@@ -116,7 +116,7 @@ final class CommunityMenuLoaders {
 				try {
 					date = dateFormat.parse(attribs[3].replaceAll("(?i)since:\\s*", ""));
 				} catch (ParseException e) {
-					Log.e("FanFictionCommunityLoader", e.getMessage());
+					Log.e("FanFicCommunityLoader", e.getMessage());
 					return false;
 				}
 

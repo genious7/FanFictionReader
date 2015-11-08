@@ -1,9 +1,5 @@
 package com.spicymango.fanfictionreader.menu.mainmenu;
 
-import com.spicymango.fanfictionreader.R;
-import com.spicymango.fanfictionreader.Settings;
-import com.spicymango.fanfictionreader.dialogs.AboutDialog;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -17,8 +13,11 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Gravity;
 import android.view.MenuItem;
+
+import com.spicymango.fanfictionreader.R;
+import com.spicymango.fanfictionreader.Settings;
+import com.spicymango.fanfictionreader.dialogs.AboutDialog;
 
 public class MainActivity extends AppCompatActivity implements OnNavigationItemSelectedListener {
 	private static final String FIRST_TIME_USER = "MainActivity.FIRST_TIME_USER";
@@ -47,8 +46,7 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
 		//Set the toolbar as the action bar
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
-		
-		
+
 		//Fill the navigation drawer
 		setNavigationDrawer();
 		
@@ -108,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
 	@Override
 	public void onBackPressed() {
 		//Close the navigation drawer on back
-		if (mDrawer.isDrawerOpen(Gravity.START)) {
+		if (mDrawer.isDrawerOpen(GravityCompat.START)) {
 			mDrawer.closeDrawers();
 		}else{
 			super.onBackPressed();

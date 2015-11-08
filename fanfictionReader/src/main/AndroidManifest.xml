@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
+        android:name=".FanFictionApplication"
         android:allowBackup="true"
         android:icon="@drawable/launcher"
         android:label="@string/app_name"
@@ -71,7 +72,9 @@
         <activity android:name=".activity.AccountActivity" />
         <activity android:name=".activity.LogInActivity" />
 
-
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="61aab708a9e345f4b2277b7b4503d011bb5ecf2a" />
     </application>
 
 </manifest>

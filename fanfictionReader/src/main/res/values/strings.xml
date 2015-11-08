@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Fanfiction Reader</string>
+    <string name="app_name">FanFiction Reader</string>
 
     <!-- Error Messages -->
     <string name="error_connection">Failed to connect to server</string>

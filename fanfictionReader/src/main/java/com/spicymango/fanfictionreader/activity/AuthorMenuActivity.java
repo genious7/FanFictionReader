@@ -319,7 +319,7 @@ public class AuthorMenuActivity extends AppCompatActivity{
 					mDataHasChanged = true;
 					startLoading();
 				} else {
-					Log.e("BaseLoader - loadNextPage", "Attempted to load page number "
+					Log.e("BaseLoader-loadNextPage", "Attempted to load page number "
 							+ (mCurrentPage + 1) + " when only " + mTotalPages
 							+ " pages exist.");
 				}
