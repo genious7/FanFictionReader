@@ -22,6 +22,7 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.preference.PreferenceFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
@@ -60,11 +61,12 @@ public class Settings extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		Settings.setOrientationAndTheme(this);
 		super.onCreate(savedInstanceState);
-		
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportFragmentManager().beginTransaction()
-				.replace(android.R.id.content, new PrefsFragment()).commit();
 
+		if (savedInstanceState == null) {
+			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+			ft.replace(android.R.id.content, new PrefsFragment()).commit();
+		}
 	}
 	
 	public static class PrefsFragment extends PreferenceFragment implements OnPreferenceChangeListener, OnPreferenceClickListener{
@@ -112,46 +114,51 @@ public class Settings extends AppCompatActivity {
 
 		@Override
 		public boolean onPreferenceChange(Preference preference, Object newValue) {
-			
-			if (preference.getKey().equals(getString(R.string.pref_orientation))) {
-				String value = (String) newValue;
-				if (value.equals("A")) {
-					getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-				} else if (value.equals("H")) {
-					getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-				} else {
-					getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-				}
-			} else if (preference.getKey().equals(getString(R.string.pref_loc))){
-				showMoveDialog();
-			} else if (preference.getKey().equals(getString(R.string.pref_key_theme))){
-				// Saves the preference, then reopens the settings file if
-				// the new value is different.
-				String currentValue = preference.getSharedPreferences()
-						.getString(getString(R.string.pref_key_theme), "D");
-				if (currentValue.equals(newValue)) {
-					return false;
-				} else {	
-					Editor editor = preference.getEditor();
-					editor.putString(preference.getKey(), (String) newValue);
-					editor.commit();
-					
-					Intent i = getActivity().getIntent();
-					
-					//Display imperfect theme dialog.
-					if (newValue.equals("DD")) {
-						i.putExtra(CREATE_DIALOG, true);
-					} else{
-						i.putExtra(CREATE_DIALOG, false);
+			switch (preference.getKey()) {
+				case "Application Orientation":
+					// If the requested orientation changes, update the orientation
+					String value = (String) newValue;
+					switch (value){
+						case "A":
+							getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+							break;
+						case "H":
+							getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+							break;
+						default:
+							getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+							break;
 					}
-									
-					getActivity().finish();
-					startActivity(i);
+					return true;
+				case "Save Location":
+					// Warn the user that changing the location does not move old stories
+					showMoveDialog();
+					return true;
+				case "Application Theme":
+					// Saves the preference, then reopens the settings file if
+					// the new value is different.
+					String currentValue = preference.getSharedPreferences()
+							.getString(getString(R.string.pref_key_theme), "D");
 
-					return false;
-				}
+					if (currentValue.equals(newValue)) {
+						return false;
+					} else {
+						Editor editor = preference.getEditor();
+						editor.putString(preference.getKey(), (String) newValue);
+						editor.commit();
+
+						Intent i = getActivity().getIntent();
+						//Display imperfect theme dialog.
+						if (newValue.equals("DD")) {
+							i.putExtra(CREATE_DIALOG, true);
+						}
+						getActivity().finish();
+						startActivity(i);
+						return false;
+					}
+				default:
+					return true;
 			}
-			return true;
 		}
 		
 		private void showMoveDialog() {
@@ -241,30 +248,39 @@ public class Settings extends AppCompatActivity {
 	
 	private static void setOrientation(Activity activity, SharedPreferences sharedPref){
 		String orientation = sharedPref.getString(activity.getString(R.string.pref_orientation), "A");
-		if (orientation.equals("A")) {
-			activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
-		}else if (orientation.equals("H")) {
-			activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-		} else {
-			activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		switch (orientation){
+			case "A":	// Automatic orientation
+				activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
+				break;
+			case "H":	// Landscape orientation
+				activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+				break;
+			default:	// Vertical orientation
+				activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+				break;
 		}
 	}
-	
+
 	/**
 	 * Sets the orientation of the activity based on current settings
+	 *
 	 * @param activity The activity to set
 	 */
- 	public static void setOrientationAndTheme(Activity activity){
+	public static void setOrientationAndTheme(Activity activity) {
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(activity);
 		setOrientation(activity, sharedPref);
-		
+
 		String theme = sharedPref.getString(activity.getString(R.string.pref_theme), "D");
-		if (theme.equals("DD")){
-			activity.setTheme(R.style.AppActionBar_Darker);
-		}else if (theme.equals("D")) {
-			activity.setTheme(R.style.AppActionBar);
-		}else{
-			activity.setTheme(R.style.AppActionBarLight);
+		switch (theme) {
+			case "DD":
+				activity.setTheme(R.style.AppActionBar_Darker);
+				break;
+			case "D":
+				activity.setTheme(R.style.AppActionBar);
+				break;
+			default:
+				activity.setTheme(R.style.AppActionBarLight);
+				break;
 		}
 	}	
  	
@@ -287,15 +303,16 @@ public class Settings extends AppCompatActivity {
 		setOrientation(activity, sharedPref);
 		
 		String theme = sharedPref.getString(activity.getString(R.string.pref_key_theme), "D");
-		if (theme.equals("DD")) {
-			//Materials Darker
-			activity.setTheme(R.style.MaterialDarker);
-		}else if (theme.equals("D")) {
-			//Materials Dark
-			activity.setTheme(R.style.MaterialDark);
-		}else if (theme.equals("L")){
-			//Materials Light
-			activity.setTheme(R.style.MaterialLight);
+		switch (theme){
+			case "DD":	//Materials Darker
+				activity.setTheme(R.style.MaterialDarker);
+				break;
+			case "D":	//Materials Dark
+				activity.setTheme(R.style.MaterialDark);
+				break;
+			default:	//Materials Light
+				activity.setTheme(R.style.MaterialLight);
+				break;
 		}
 	}
 }
