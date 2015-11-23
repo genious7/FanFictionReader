@@ -237,7 +237,8 @@ public class LibraryMenuActivity extends AppCompatActivity implements LoaderCall
 			builder.addSingleSpinner(getString(R.string.filter_category), filterData.get(0));
 			builder.addSingleSpinner(getString(R.string.filter_sort), filterData.get(1));
 			builder.addSingleSpinner(getString(R.string.filter_length), filterData.get(2));
-			builder.addSingleSpinner(getString(R.string.filter_type), filterData.get(3));			
+			builder.addSingleSpinner(getString(R.string.filter_type), filterData.get(3));
+			builder.addSingleSpinner(getString(R.string.filter_status), filterData.get(4));
 			builder.show(this);
 			return true;
 		case R.id.library_menu_add_by_id:
@@ -326,6 +327,11 @@ public class LibraryMenuActivity extends AppCompatActivity implements LoaderCall
 			builder.append(" AND ");
 			builder.append(filterData.get(3).getName() + filterData.get(3).getCurrentFilter());
 		}
+
+		if (filterData.get(4).getSelected() != 0) {
+			builder.append(" AND ");
+			builder.append(filterData.get(4).getName() + filterData.get(4).getCurrentFilter());
+		}
 		
 		if (filterData.get(0).getSelected() != 0) {
 			String key = filterData.get(0).getCurrentFilter();
@@ -368,6 +374,11 @@ public class LibraryMenuActivity extends AppCompatActivity implements LoaderCall
 		String[] type = getResources().getStringArray(R.array.menu_library_filter_type);
 		String[] typeKey = { "", " NOT LIKE '%Crossover' ", " LIKE '%Crossover' " };
 		filterData.add(new SpinnerData(KEY_CATEGORY, type, typeKey, 0));
+
+		// Filter if complete
+		String[] status = getResources().getStringArray(R.array.menu_library_filter_status);
+		String[] statusKey = { "", " != 0", " = 0" };
+		filterData.add(new SpinnerData(KEY_COMPLETE, status, statusKey, 0));
 	}
 
 	/**

@@ -85,7 +85,14 @@
 		<item >@string/general_plays</item>
 		<item >@string/general_tv</item>        
     </string-array>
-    
+
+    <!-- Library Filters-->
+    <string-array name="menu_library_filter_status">
+        <item>All</item>
+        <item>@string/complete_true</item>
+        <item>@string/complete_false</item>
+    </string-array>
+
     <!-- Story Displayer Activity -->
     <string name="read_story_first">&lt;&lt;</string>
     <string name="read_story_prev">&lt;</string>
