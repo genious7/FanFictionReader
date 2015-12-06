@@ -355,13 +355,13 @@ public class LibraryMenuActivity extends AppCompatActivity implements LoaderCall
 				
 		// Filter by sort order
 		String[] sortBy = getResources().getStringArray(R.array.menu_library_sort_by);
-		String[] sortKey = { 
+		String[] sortKey = {
+				KEY_UPDATED + " DESC",
 				KEY_PUBLISHED + " DESC",
 				KEY_TITLE + " COLLATE NOCASE ASC",
 				KEY_AUTHOR + " COLLATE NOCASE ASC",
 				KEY_FAVORITES + " DESC",
-				KEY_FOLLOWERS + " DESC",
-				KEY_UPDATED + " DESC" };		
+				KEY_FOLLOWERS + " DESC"};
 		filterData.add(new SpinnerData("SortBy", sortBy, sortKey, 0));
 
 		// Filter by words
