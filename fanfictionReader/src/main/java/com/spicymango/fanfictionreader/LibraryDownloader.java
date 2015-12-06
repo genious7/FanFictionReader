@@ -257,10 +257,10 @@ public class LibraryDownloader extends IntentService{
 		builder.setRating(matcher.group(1));
 		builder.setLanguage(matcher.group(2));		
 		if (matcher.group(3) != null) builder.setGenre(matcher.group(3));
-		if (matcher.group(4) != null) builder.setChapterLenght(Integer.valueOf(matcher.group(4)));
+		if (matcher.group(4) != null) builder.setChapterLenght(Parser.parseInt(matcher.group(4)));
 		builder.setWordLenght(Parser.parseInt(matcher.group(5)));
-		if (matcher.group(6) != null) builder.setFavorites(Integer.valueOf(matcher.group(6)));
-		if (matcher.group(7) != null) builder.setFollows(Integer.valueOf(matcher.group(7)));
+		if (matcher.group(6) != null) builder.setFavorites(Parser.parseInt(matcher.group(6)));
+		if (matcher.group(7) != null) builder.setFollows(Parser.parseInt(matcher.group(7)));
 		builder.setUpdateDate(updateDate);		
 		builder.setPublishDate(publishDate);
 		builder.setCompleted(attribs.text().contains("Complete"));
