@@ -3,6 +3,7 @@ package com.spicymango.fanfictionreader.activity;
 import java.util.List;
 
 import org.jsoup.nodes.Document;
+import org.w3c.dom.Text;
 
 import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.activity.reader.StoryDisplayActivity;
@@ -21,11 +22,13 @@ import com.spicymango.fanfictionreader.util.adapters.StoryMenuAdapter;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -139,6 +142,9 @@ public class SearchStoryActivity extends BaseActivity<Story> implements OnQueryT
 
 		@Override
 		protected Uri getUri(int currentPage) {
+			// Don't load anything on empty queries.
+			if (TextUtils.isEmpty(mQuery)) return null;
+
 			Uri.Builder builder = Sites.FANFICTION.BASE_URI.buildUpon();
 			builder.path("search.php").
 				appendQueryParameter("type", "story")
@@ -174,7 +180,7 @@ public class SearchStoryActivity extends BaseActivity<Story> implements OnQueryT
 
 		
 		@Override
-		public void onFilterClick(FragmentActivity activity) {
+		public void onFilterClick(@NonNull FragmentActivity activity) {
 			FilterDialog.Builder builder = new FilterDialog.Builder();	
 			builder.addSingleSpinner(activity.getString(R.string.filter_type), mFilterData.get(0));
 			builder.addSingleSpinner(activity.getString(R.string.filter_category), mFilterData.get(1));
@@ -186,9 +192,9 @@ public class SearchStoryActivity extends BaseActivity<Story> implements OnQueryT
 			builder.addSingleSpinner(activity.getString(R.string.filter_length), mFilterData.get(8));
 			builder.addSingleSpinner(activity.getString(R.string.filter_status), mFilterData.get(9));
 			builder.addDoubleSpinner(activity.getString(R.string.filter_character), mFilterData.get(10),
-					mFilterData.get(11));
+									 mFilterData.get(11));
 			builder.addDoubleSpinner(activity.getString(R.string.filter_character), mFilterData.get(12),
-					mFilterData.get(13));
+									 mFilterData.get(13));
 			builder.show((SearchStoryActivity) activity);
 		}
 

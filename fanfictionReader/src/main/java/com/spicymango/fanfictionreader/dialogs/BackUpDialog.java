@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import com.crashlytics.android.Crashlytics;
 import com.slezica.tools.async.ManagedAsyncTask;
 import com.slezica.tools.async.TaskManagerFragment;
 import com.spicymango.fanfictionreader.R;
@@ -18,6 +19,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -30,6 +32,7 @@ public class BackUpDialog extends DialogFragment {
 	private ProgressBar bar;
 	
 	@Override
+	@NonNull
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		setCancelable(false);
 		
@@ -69,7 +72,7 @@ public class BackUpDialog extends DialogFragment {
 			String s = activity.getApplicationInfo().dataDir;
 			app_internal = new File(s).listFiles(new FilesDirFilter());
 			
-			appFiles = new ArrayList<File>(3);
+			appFiles = new ArrayList<>(3);
 			appFiles.add(activity.getFilesDir());
 			
 			if (FileHandler.isExternalStorageWritable(activity)) {
@@ -123,12 +126,14 @@ public class BackUpDialog extends DialogFragment {
 				}
 				
 			} catch (IOException e) {
+				Crashlytics.logException(e);
 				result = R.string.error_unknown;
 			} finally {
 				try {
 					if (zos != null)
 						zos.close();
 				} catch (IOException e) {
+					Crashlytics.logException(e);
 					result = R.string.error_unknown;
 				}
 				
@@ -136,6 +141,7 @@ public class BackUpDialog extends DialogFragment {
 					if (fos != null)
 						fos.close();
 				} catch (IOException e2) {
+					Crashlytics.logException(e2);
 					result = R.string.error_unknown;
 				}
 				
@@ -195,7 +201,7 @@ public class BackUpDialog extends DialogFragment {
 					zipDir(zos, file, buffer, parent + '/' + file.getName());
 					continue;
 				}
-				FileInputStream in = new FileInputStream(file);;
+				FileInputStream in = new FileInputStream(file);
 				try{				
 					ZipEntry entry = new ZipEntry(parent + '/' + file.getName());
 					zos.putNextEntry(entry);

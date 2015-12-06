@@ -56,28 +56,6 @@ public abstract class BaseActivity<T extends Parcelable> extends
 	
 	private TextView mRetryLabel;
 
-	/**
-	 * Capitalizes the first letter of every word
-	 * 
-	 * @param string
-	 *            The String to capitalize
-	 * @return
-	 */
-	protected static final String capitalizeString(String string) {
-		char[] chars = string.toCharArray();
-		boolean found = false;
-		for (int i = 0; i < chars.length; i++) {
-			if (!found && Character.isLetter(chars[i])) {
-				chars[i] = Character.toUpperCase(chars[i]);
-				found = true;
-			} else if (Character.isWhitespace(chars[i]) || chars[i] == '.'
-					|| chars[i] == '\'') { // You can add other chars here
-				found = false;
-			}
-		}
-		return String.valueOf(chars);
-	}
-
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
@@ -177,7 +155,7 @@ public abstract class BaseActivity<T extends Parcelable> extends
 		setSupportActionBar(toolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-		mList = new ArrayList<T>();
+		mList = new ArrayList<>();
 		mAdapter = getAdapter();
 
 		ListView listView = (ListView) findViewById(android.R.id.list);

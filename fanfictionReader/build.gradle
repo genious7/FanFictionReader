@@ -9,6 +9,8 @@ android {
         applicationId "com.spicymango.fanfictionreader"
         minSdkVersion 8
         targetSdkVersion 23
+        versionCode 57
+        versionName "1.47"
     }
 
     compileOptions {
@@ -21,10 +23,14 @@ android {
     }
 
     buildTypes {
+        debug{
+            ext.enableCrashlytics = false
+            applicationIdSuffix ".debug"
+        }
         release {
             minifyEnabled true
             shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.pro'
             signingConfig signingConfigs.release
         }
     }
@@ -37,8 +43,8 @@ android {
 
 dependencies {
     compile project(':kolavar')
-    compile 'com.android.support:appcompat-v7:23.1.0'
-    compile 'com.android.support:design:23.1.0'
+    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.android.support:design:23.1.1'
     compile 'org.jsoup:jsoup:1.8.3'
     compile 'org.apache.commons:commons-collections4:4.0'
     compile 'org.apache.commons:commons-lang3:3.4'

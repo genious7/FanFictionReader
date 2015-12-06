@@ -13,11 +13,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -146,6 +148,9 @@ public class SearchAuthorActivity extends BaseActivity<MenuObject> implements On
 
 		@Override
 		protected Uri getUri(int currentPage) {
+			// Don't load anything on empty queries.
+			if (TextUtils.isEmpty(mQuery)) return null;
+
 			Uri.Builder builder = Sites.FANFICTION.BASE_URI.buildUpon();
 			builder.path("search.php")
 					.appendQueryParameter("type", "author")
@@ -208,7 +213,7 @@ public class SearchAuthorActivity extends BaseActivity<MenuObject> implements On
 		}
 
 		@Override
-		public void onFilterClick(FragmentActivity activity) {
+		public void onFilterClick(@NonNull FragmentActivity activity) {
 			FilterDialog.Builder builder = new FilterDialog.Builder();
 			builder.addSingleSpinner(activity.getString(R.string.filter_type), mFilterData.get(0));
 			builder.addSingleSpinner(activity.getString(R.string.filter_category), mFilterData.get(1));

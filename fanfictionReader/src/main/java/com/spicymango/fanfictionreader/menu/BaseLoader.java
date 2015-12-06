@@ -16,6 +16,9 @@ import android.os.Parcelable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.AsyncTaskLoader;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 /**
  * An loader of {@link Parcelable} objects that caches the objects across state
  * changes.
@@ -45,14 +48,14 @@ public abstract class BaseLoader<T extends Parcelable> extends
 		 * Called whenever the filter button is clicked
 		 * @param activity The calling activity.
 		 */
-		public void onFilterClick(FragmentActivity activity);
+		void onFilterClick(FragmentActivity activity);
 
 		/**
 		 * Determines whether the filter can be displayed
 		 * 
 		 * @return True if the filter is available, false otherwise
 		 */
-		public boolean isFilterAvailable();
+		boolean isFilterAvailable();
 
 		/**
 		 * Called whenever a new filter is available. For checkboxes, the
@@ -61,7 +64,7 @@ public abstract class BaseLoader<T extends Parcelable> extends
 		 * 
 		 * @param filterSelected The selected positions for the filter.
 		 */
-		public void filter(int[] filterSelected);
+		void filter(int[] filterSelected);
 	}
 
 	/**
@@ -97,8 +100,8 @@ public abstract class BaseLoader<T extends Parcelable> extends
 	public BaseLoader(Context context, Bundle savedInstanceState) {
 		super(context);
 
-		mData = new ArrayList<T>();
-		mDataOld = new ArrayList<T>();
+		mData = new ArrayList<>();
+		mDataOld = new ArrayList<>();
 		mDisableProgressBar = false;
 
 		final String key = STATE_LOADER + getId();
@@ -202,8 +205,10 @@ public abstract class BaseLoader<T extends Parcelable> extends
 		try {
 			final Uri uri = getUri(mCurrentPage);
 			if (uri == null) {
-				document = null;
+				// Assign the document an empty value
+				document = new Document("");
 			} else {
+				// Load the document
 				document = Jsoup.connect(uri.toString()).timeout(10000).get();
 			}
 		} catch (IOException e) {
@@ -275,7 +280,7 @@ public abstract class BaseLoader<T extends Parcelable> extends
 	/**
 	 * Swaps both lists
 	 */
-	private final void swapLists() {
+	private void swapLists() {
 		ArrayList<T> tmp = mDataOld;
 		mDataOld = mData;
 		mData = tmp;
@@ -291,12 +296,14 @@ public abstract class BaseLoader<T extends Parcelable> extends
 	protected abstract int getTotalPages(Document document);
 
 	/**
-	 * Gets the {@link Uri} that the loader should load. May be null if a
-	 * connection is not required.
-	 * 
+	 * Gets the {@link Uri} that the loader should load. May be null if a connection is not
+	 * required. If a null pointer is returned, the load method will be called with an empty
+	 * document
+	 *
 	 * @param currentPage The page that should be loaded
 	 * @return The complete Uri, including filters
 	 */
+	@Nullable
 	protected abstract Uri getUri(int currentPage);
 
 	/**

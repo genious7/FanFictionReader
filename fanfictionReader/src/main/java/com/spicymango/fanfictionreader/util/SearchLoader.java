@@ -14,6 +14,7 @@ import com.spicymango.fanfictionreader.menu.storymenu.FilterDialog.SpinnerData;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 public abstract class SearchLoader<T extends Parcelable> extends BaseLoader<T> {
 	private static final Pattern pattern = Pattern
@@ -21,16 +22,15 @@ public abstract class SearchLoader<T extends Parcelable> extends BaseLoader<T> {
 	private static final String STATE_FILTER = "filter";
 	private static final String STATE_FILTER_LIST = "filter list";
 	private static final String STATE_QUERY = "query";
-	
-	
+
+
 	/**
 	 * Gets the number of pages in the document
-	 * 
-	 * @param document
-	 *            The parsed document
+	 *
+	 * @param document The parsed document
 	 * @return The number of pages in the document
 	 */
-	private final static int getpageNumber(Document document) {
+	protected int getTotalPages(Document document) {
 		Elements elements = document
 				.select("div#content > form > div > a:matchesOwn(\\A(?i)last)");
 		if (elements.isEmpty()) {
@@ -40,7 +40,7 @@ public abstract class SearchLoader<T extends Parcelable> extends BaseLoader<T> {
 				return 1;
 			return 2;
 		}
-		return getpageNumber(elements.first().attr("href"));
+		return getPageNumber(elements.first().attr("href"));
 
 	}
 
@@ -51,12 +51,13 @@ public abstract class SearchLoader<T extends Parcelable> extends BaseLoader<T> {
 	 *            The Url to parse
 	 * @return The current page
 	 */
-	private final static int getpageNumber(String url) {
+	private static int getPageNumber(String url) {
 		Matcher matcher = pattern.matcher(url);
-		matcher.find();
-		for (int i = 1; i < matcher.groupCount() + 1; i++) {
-			if (matcher.group(i) != null)
-				return Integer.valueOf(matcher.group(i));
+		if (matcher.find()){
+			for (int i = 1; i < matcher.groupCount() + 1; i++) {
+				if (matcher.group(i) != null)
+					return Integer.valueOf(matcher.group(i));
+			}
 		}
 		return 1;
 	}
@@ -86,24 +87,26 @@ public abstract class SearchLoader<T extends Parcelable> extends BaseLoader<T> {
 	}
 
 	public void search(String query) {
-		if (query != mQuery) {
+		if (query.equals(mQuery)) {
+			// If the query matches the old query, do nothing.
+		} else if (TextUtils.isEmpty(query)) {
+			// If submitting an empty query, don't remove existing contents from the screen.
+		} else {
+			// Reset the filter if a different query is being used.
 			resetFilter();
 			mFilterData = null;
+
+			// Start the loader
+			mQuery = query;
+			resetState();
+			startLoading();
 		}
-		mQuery = query;
-		resetState();
-		startLoading();
 	}
 
-	@Override
-	protected int getTotalPages(Document document) {
-		return getpageNumber(document);
-	}
-	
 	/**
 	 * Loads the filters for the search menu.
-	 * @param document
-	 * @return
+	 * @param document The document containing the web site
+	 * @return A list of the filter spinner data
 	 */
 	protected static ArrayList<SpinnerData> SearchFilter(Document document){
 		Elements form = document.select("div#content form > div#drop_m > select");
