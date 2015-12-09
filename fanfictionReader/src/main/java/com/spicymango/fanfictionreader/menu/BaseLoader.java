@@ -325,10 +325,8 @@ public abstract class BaseLoader<T extends Parcelable> extends
 		if (mStatus == Result.SUCCESS) {
 			deliverResult(mData);
 		} else {
-			mStatus = Result.LOADING;
-			if (!mDisableProgressBar) {
-				deliverResult(mData);
-			}			
+			mStatus = mDisableProgressBar ? Result.LOADING_HIDE_PROGRESS : Result.LOADING;
+			deliverResult(mData);
 			forceLoad();
 		}
 	}

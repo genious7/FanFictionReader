@@ -91,6 +91,11 @@ public abstract class BaseFragment<T extends Parcelable> extends Fragment
 			mErrorBar.setVisibility(View.GONE);
 			mAddPageButton.setVisibility(View.GONE);
 			break;
+		case LOADING_HIDE_PROGRESS:
+			mProgressBar.setVisibility(View.GONE);
+			mErrorBar.setVisibility(View.GONE);
+			mAddPageButton.setVisibility(View.GONE);
+			break;
 		case ERROR_CONNECTION:
 			mProgressBar.setVisibility(View.GONE);
 			mErrorBar.setVisibility(View.VISIBLE);
