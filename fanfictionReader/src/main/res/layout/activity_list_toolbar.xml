@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content" >
-
-    <include layout="@layout/toolbar" />
 
     <ListView
         android:id="@android:id/list"
@@ -12,4 +10,10 @@
         android:clipToPadding="false"
         android:paddingTop="?attr/actionBarSize" />
 
-</RelativeLayout>
+    <include
+        android:layout_gravity="top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/toolbar" />
+
+</FrameLayout>
