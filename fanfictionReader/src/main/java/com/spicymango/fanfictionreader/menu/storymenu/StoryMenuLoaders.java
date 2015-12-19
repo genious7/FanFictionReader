@@ -440,8 +440,8 @@ final class StoryMenuLoaders {
 		@Override
 		public void onFilterClick(FragmentActivity activity) {
 			Builder builder = new Builder();
-			builder.addSingleSpinner(activity.getString(R.string.filter_sort), mSpinnerData.get(1));
-			builder.addSingleSpinner(activity.getString(R.string.filter_rating), mSpinnerData.get(0));
+			builder.addSingleSpinner(activity.getString(R.string.filter_sort), mSpinnerData.get(0));
+			builder.addSingleSpinner(activity.getString(R.string.filter_rating), mSpinnerData.get(1));
 			builder.addSingleSpinner(activity.getString(R.string.filter_date), mSpinnerData.get(2));
 			builder.addSingleSpinner(activity.getString(R.string.filter_genre), mSpinnerData.get(3));
 			builder.addSingleSpinner(activity.getString(R.string.filter_length), mSpinnerData.get(4));
@@ -474,8 +474,8 @@ final class StoryMenuLoaders {
 
 			// Adds the filter, if available
 			if (isFilterAvailable()) {
-				builder.appendEncodedPath(mSpinnerData.get(0).getCurrentFilter());	//Rating
-				builder.appendEncodedPath(mSpinnerData.get(1).getCurrentFilter());	//Sort Options
+				builder.appendEncodedPath(mSpinnerData.get(1).getCurrentFilter());	//Rating
+				builder.appendEncodedPath(mSpinnerData.get(0).getCurrentFilter());	//Sort Options
 				builder.appendEncodedPath(String.valueOf(currentPage));				//Current Page
 				builder.appendEncodedPath(mSpinnerData.get(3).getCurrentFilter());	//Genre
 				builder.appendEncodedPath(mSpinnerData.get(4).getCurrentFilter());	//Length
@@ -512,9 +512,9 @@ final class StoryMenuLoaders {
 		 */
 		private void loadFilter(Document document) {
 			Elements form = document.select("div#content div#d_menu form > select");
-			Elements[] filter = { 
-					form.select("[name=censorid]"),
+			Elements[] filter = {
 					form.select("[name=s]"),
+					form.select("[name=censorid]"),
 					form.select("[name=timeid]"),
 					form.select("[name=genreid]"),
 					form.select("[name=len]"),
