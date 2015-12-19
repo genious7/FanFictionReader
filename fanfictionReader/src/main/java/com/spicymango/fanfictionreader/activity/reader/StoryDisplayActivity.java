@@ -367,7 +367,7 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 		if (mList.isEmpty()) {
 			return;
 		}
-		
+
 		int i = 0;
 		int j = 0;
 
@@ -427,7 +427,7 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 
 		}
 	}
-	
+
 	@SuppressLint("InflateParams")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -448,11 +448,11 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 		mAdapter = new TextAdapter(this, mList);
 		mListView.setAdapter(mAdapter);
 		
-		int currentapiVersion = android.os.Build.VERSION.SDK_INT;
-		if (currentapiVersion >= android.os.Build.VERSION_CODES.HONEYCOMB_MR1){
+		int currentApiVersion = android.os.Build.VERSION.SDK_INT;
+		if (currentApiVersion >= android.os.Build.VERSION_CODES.HONEYCOMB_MR1){
 			mListView.setOnScrollListener(new ListViewHider());
 		}
-		
+
 
 		btnFirst = footer.findViewById(R.id.read_story_first);
 		btnPrev = footer.findViewById(R.id.read_story_prev);

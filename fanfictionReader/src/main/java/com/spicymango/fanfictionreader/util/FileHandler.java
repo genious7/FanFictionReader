@@ -60,9 +60,9 @@ public class FileHandler {
 	public static File getEmulatedFilesDir(Context context) {
 		File sd = null;
 
-		int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+		int currentApiVersion = android.os.Build.VERSION.SDK_INT;
 
-		if (currentapiVersion < android.os.Build.VERSION_CODES.GINGERBREAD) {
+		if (currentApiVersion < android.os.Build.VERSION_CODES.GINGERBREAD) {
 			// Froyo and Eclair does not have emulated storage
 			return null;
 
@@ -95,9 +95,9 @@ public class FileHandler {
 	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
 	public static boolean isEmulatedFilesDirWriteable() {
 
-		int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+		int currentApiVersion = android.os.Build.VERSION.SDK_INT;
 
-		if (currentapiVersion < android.os.Build.VERSION_CODES.GINGERBREAD) {
+		if (currentApiVersion < android.os.Build.VERSION_CODES.GINGERBREAD) {
 			// Froyo and Eclair does not have emulated storage
 			return false;
 
@@ -128,9 +128,9 @@ public class FileHandler {
 		File extFiles[] = ContextCompat.getExternalFilesDirs(context, null);
 		File sd = null;
 
-		int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+		int currentApiVersion = android.os.Build.VERSION.SDK_INT;
 
-		if (currentapiVersion >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+		if (currentApiVersion >= android.os.Build.VERSION_CODES.LOLLIPOP) {
 			// Use the isExternalStorageRemovable function added in Lollipop
 			for (File file : extFiles) {
 				if (file != null && Environment.isExternalStorageRemovable(file)) {
@@ -138,7 +138,7 @@ public class FileHandler {
 				}
 			}
 
-		} else if (currentapiVersion >= android.os.Build.VERSION_CODES.KITKAT) {
+		} else if (currentApiVersion >= android.os.Build.VERSION_CODES.KITKAT) {
 			// getExternalFilesDirs will return all storages on KitKat. Assume
 			// the second storage is the sd card
 			if (Environment.isExternalStorageRemovable()) {
@@ -147,7 +147,7 @@ public class FileHandler {
 				sd = extFiles[1];
 			}
 
-		} else if (currentapiVersion >= android.os.Build.VERSION_CODES.GINGERBREAD) {
+		} else if (currentApiVersion >= android.os.Build.VERSION_CODES.GINGERBREAD) {
 			// Use the secondary storage if the primary one is not removable
 			if (Environment.isExternalStorageRemovable()) {
 				sd = extFiles[0];
@@ -178,9 +178,9 @@ public class FileHandler {
 	public static File getExternalStorageDirectory(Context context) {
 		File sd = null;
 
-		int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+		int currentApiVersion = android.os.Build.VERSION.SDK_INT;
 
-		if (currentapiVersion >= android.os.Build.VERSION_CODES.GINGERBREAD) {
+		if (currentApiVersion >= android.os.Build.VERSION_CODES.GINGERBREAD) {
 			// Use the secondary storage if the primary one is not removable
 			if (Environment.isExternalStorageRemovable()) {
 				sd = Environment.getExternalStorageDirectory();
