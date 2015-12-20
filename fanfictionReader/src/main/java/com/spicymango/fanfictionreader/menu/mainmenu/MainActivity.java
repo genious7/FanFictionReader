@@ -34,9 +34,6 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		//Initialize settings to default values upon the first access to the application
-		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
-		
 		//Set the orientation and theme for the whole activity
 		Settings.setOrientationAndThemeNoActionBar(this);
 		super.onCreate(savedInstanceState);
@@ -85,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
 		mDrawerToggle.syncState();
 		
 		//Start with the navigation drawer open on the first use
-		final SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		if (prefs.getBoolean(FIRST_TIME_USER, true) && ENABLE_DRAWER) {
 			prefs.edit().putBoolean(FIRST_TIME_USER, false).commit();
 			mDrawer.openDrawer(GravityCompat.START);

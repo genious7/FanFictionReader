@@ -1,6 +1,7 @@
 package com.spicymango.fanfictionreader;
 
 import android.app.Application;
+import android.preference.PreferenceManager;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;
@@ -24,5 +25,8 @@ public class FanFictionApplication extends Application {
 
 		// Initialize Fabric with the debug-disabled crashlytics.
 		Fabric.with(this, crashlyticsKit);
+
+		//Initialize settings to default values upon the first access to the application
+		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 	}
 }
