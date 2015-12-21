@@ -16,7 +16,8 @@ import android.support.annotation.StringRes;
  * @author Michael Chen
  */
 public enum Sites {
-	ARCHIVE_OF_OUR_OWN("http", "archiveofourown.org", R.string.site_archive), 
+	// Note to self: do not rename enum names. They are used as keys elsewhere
+	ARCHIVE_OF_OUR_OWN("http", "archiveofourown.org", R.string.site_archive),
 	FANFICTION("https", "m.fanfiction.net", "www.fanfiction.net", R.string.site_fanfiction), 
 	FICTIONPRESS("https", "m.fictionpress.com","www.fictionpress.com", R.string.site_fictionpress);
 

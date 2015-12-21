@@ -79,13 +79,13 @@ public class BackUpDialog extends DialogFragment {
 				appFiles.add(FileHandler.getExternalFilesDir(activity));
 			}
 			
-			if (FileHandler.isEmulatedFilesDirWriteable()) {
+			if (FileHandler.isEmulatedFilesDirWritable()) {
 				appFiles.add(FileHandler.getEmulatedFilesDir(activity));
 			}
 			
 			if (FileHandler.isExternalStorageWritable(activity)) {
 				output = new File(FileHandler.getExternalStorageDirectory(activity),filename);
-			}else if(FileHandler.isEmulatedFilesDirWriteable()){
+			}else if(FileHandler.isEmulatedFilesDirWritable()){
 				output = new File(Environment.getExternalStorageDirectory(),filename);
 			}else{
 				output = null;
@@ -129,6 +129,7 @@ public class BackUpDialog extends DialogFragment {
 				Crashlytics.logException(e);
 				result = R.string.error_unknown;
 			} finally {
+				// Note that ZipOutputStream closes the underlying FileOutputStream
 				try {
 					if (zos != null)
 						zos.close();
@@ -136,15 +137,6 @@ public class BackUpDialog extends DialogFragment {
 					Crashlytics.logException(e);
 					result = R.string.error_unknown;
 				}
-				
-				try {
-					if (fos != null)
-						fos.close();
-				} catch (IOException e2) {
-					Crashlytics.logException(e2);
-					result = R.string.error_unknown;
-				}
-				
 			}
 			return result;
 		}
