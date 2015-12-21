@@ -7,6 +7,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,6 +17,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.os.EnvironmentCompat;
 import android.text.Html;
@@ -27,17 +31,14 @@ public class FileHandler {
 
 	/**
 	 * Deletes a story file if it exists
-	 * 
-	 * @param context
-	 *            The current context
-	 * @param storyId
-	 *            The id of the story that should be deleted
-	 * @param currentPage
-	 *            The page that should be deleted
+	 *
+	 * @param context     The current context
+	 * @param storyId     The id of the story that should be deleted
+	 * @param currentPage The page that should be deleted
 	 * @return True if the file is deleted successful, false otherwise
 	 */
-	public static boolean deleteFile(Context context, long storyId,
-			int currentPage) {
+	public static boolean deleteChapter(Context context, long storyId,
+										int currentPage) {
 		// Declare Variables
 		final FilenameFilter filter = new FileFilter(storyId, currentPage);
 		final File file = findFile(filter, context);
@@ -47,6 +48,32 @@ public class FileHandler {
 
 		//Delete the file
 		return file.delete();
+	}
+
+	/**
+	 * Deletes a story if it exists
+	 *
+	 * @param context     The current context
+	 * @param storyId     The id of the story that should be deleted
+	 * @return True if the story is deleted successful, false otherwise
+	 */
+	public static boolean deleteStory(Context context, long storyId) {
+		final FilenameFilter filter = new FileFilter(storyId);
+		final List<File> files = findFiles(filter, context);
+
+		boolean success = true;
+
+		// If there is nothing to delete, return a failure
+		if (files.size() == 0) success = false;
+
+		for (File chapter: files) {
+			success &= chapter.delete();
+		}
+
+		if (!success)
+			Log.d(FileHandler.class.getName(), "The story with the id " + storyId + " was not successfuly deleted");
+
+		return success;
 	}
 
 	/**
@@ -93,7 +120,7 @@ public class FileHandler {
 	}
 
 	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
-	public static boolean isEmulatedFilesDirWriteable() {
+	public static boolean isEmulatedFilesDirWritable() {
 
 		int currentApiVersion = android.os.Build.VERSION.SDK_INT;
 
@@ -325,7 +352,7 @@ public class FileHandler {
 
 			// Delete any pre-existing file; necessary in case write destination
 			// is different
-			deleteFile(context, storyId, currentPage);
+			deleteChapter(context, storyId, currentPage);
 
 			fos = new FileOutputStream(file);
 			fos.write(html.getBytes());
@@ -391,12 +418,59 @@ public class FileHandler {
 		return match[0];
 	}
 
+	/**
+	 * Finds all the files that satisfy the FilenameFilter
+	 *
+	 * @param filter  The filename filter to employ
+	 * @param context The current context
+	 * @return A list containing all the matching files, if any
+	 */
+	@NonNull
+	private static List<File> findFiles(@NonNull FilenameFilter filter, @NonNull Context context) {
+		// Declare Variables
+		File dir;
+		final List<File> matches = new LinkedList<>();
+
+		// Internal Memory
+		dir = context.getFilesDir();
+		matches.addAll(Arrays.asList(dir.listFiles(filter)));
+
+		// Emulated Memory
+		dir = getEmulatedFilesDir(context);
+		if (dir != null) matches.addAll(Arrays.asList(dir.listFiles(filter)));
+
+		// External Memory
+		if (isExternalStorageWritable(context)) {
+			dir = getExternalFilesDir(context);
+			matches.addAll(Arrays.asList(dir.listFiles(filter)));
+		}
+
+		return matches;
+	}
+
+	/**
+	 * Filters the filenames based on the story id and the chapter number
+	 */
 	private static final class FileFilter implements FilenameFilter {
 		private final Matcher matcher;
 
+		/**
+		 * Filters the file for a specific story and chapter
+		 * @param storyId
+		 * @param currentPage
+		 */
 		public FileFilter(long storyId, int currentPage) {
 			Pattern pattern = Pattern.compile(Long.toString(storyId) + "_"
-					+ Integer.toString(currentPage) + "\\..*");
+													  + Integer.toString(currentPage) + "\\..*");
+			matcher = pattern.matcher("");
+		}
+
+		/**
+		 * Filters all the files that correspond to a certain story
+		 * @param storyId
+		 */
+		public FileFilter(long storyId) {
+			Pattern pattern = Pattern.compile(Long.toString(storyId) + "_\\d++\\..*");
 			matcher = pattern.matcher("");
 		}
 

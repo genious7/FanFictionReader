@@ -110,7 +110,6 @@ public class LibraryMenuActivity extends AppCompatActivity implements LoaderCall
 			return true;
 			
 		case R.id.menu_library_context_delete:
-			
 			AlertDialog.Builder diag = new AlertDialog.Builder(this);
 			diag.setTitle(R.string.dialog_remove);
 			diag.setMessage(R.string.dialog_remove_text);
@@ -121,10 +120,8 @@ public class LibraryMenuActivity extends AppCompatActivity implements LoaderCall
 						@Override
 						public void run() {
 							int length = story.getChapterLenght();
-							for (int j = 1; j <= length; j++) {
-								FileHandler.deleteFile(LibraryMenuActivity.this, story.getId(), j);
-							}
 							getContentResolver().delete(databaseUri, null, null);
+							FileHandler.deleteStory(LibraryMenuActivity.this, story.getId());
 						}
 					}).start();
 				}

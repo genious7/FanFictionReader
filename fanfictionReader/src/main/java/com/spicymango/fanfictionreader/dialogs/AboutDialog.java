@@ -47,7 +47,7 @@ public class AboutDialog extends DialogFragment implements OnClickListener{
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		FileHandler.deleteFile(getActivity(), 0, 0);
+		FileHandler.deleteChapter(getActivity(), 0, 0);
 		Log.d(AboutDialog.class.getName(), "Dismissed");
 	}
 	

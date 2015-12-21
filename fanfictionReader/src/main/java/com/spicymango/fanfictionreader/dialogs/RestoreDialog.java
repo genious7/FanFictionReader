@@ -65,7 +65,7 @@ public class RestoreDialog extends DialogFragment {
 		
 		backUpFile = null;
 		
-		if (FileHandler.isEmulatedFilesDirWriteable()) {
+		if (FileHandler.isEmulatedFilesDirWritable()) {
 			backUpFile = new File(emuStorageDir, BackUpDialog.filename);
 		}
 		
