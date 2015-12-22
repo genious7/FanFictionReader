@@ -17,6 +17,7 @@ import com.spicymango.fanfictionreader.util.FileHandler;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.media.MediaScannerConnection;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -158,7 +159,12 @@ public class BackUpDialog extends DialogFragment {
 		protected void onPostExecute(Integer result) {
 			Toast toast = Toast.makeText(getActivity(), result, Toast.LENGTH_SHORT);
 			toast.show();
-			
+
+			// Fix for android issue 195362, in which files do not show in the MTP file explorer
+			// until a device reboot occurs.
+			// See https://code.google.com/p/android/issues/detail?id=195362
+			MediaScannerConnection.scanFile(getActivity(), new String[]{output.getAbsolutePath()}, null, null);
+
 			FragmentManager manager = getActivity().getSupportFragmentManager();
 
 			DialogFragment diag = (DialogFragment) manager
