@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.AppCompatActivity;
@@ -95,6 +96,8 @@ public final class FanFictionMain extends ListFragment implements OnClickListene
 			diag.show(getFragmentManager(), null);
 			break;
 		case 7:
+			//SharedPreferences preference = PreferenceManager.getDefaultSharedPreferences(getActivity());
+			//final String prefKey = Sites.FANFICTION.name() + " Resume ID";
 			SharedPreferences preference = getActivity().getSharedPreferences(MainActivity.EXTRA_PREF,MainActivity.MODE_PRIVATE);
 			long resumeId = preference.getLong(MainActivity.EXTRA_RESUME_ID, -1);
 			if (resumeId == -1) {
