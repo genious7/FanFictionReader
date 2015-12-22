@@ -3,14 +3,14 @@ apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    buildToolsVersion "23.0.2"
 
     defaultConfig {
         applicationId "com.spicymango.fanfictionreader"
         minSdkVersion 8
         targetSdkVersion 23
-        versionCode 60
-        versionName "1.47"
+        versionCode 62
+        versionName "1.47b"
     }
 
     compileOptions {
@@ -25,7 +25,6 @@ android {
     buildTypes {
         debug{
             ext.enableCrashlytics = false
-            applicationIdSuffix ".debug"
         }
         release {
             minifyEnabled true
@@ -48,7 +47,7 @@ dependencies {
     compile 'org.jsoup:jsoup:1.8.3'
     compile 'org.apache.commons:commons-collections4:4.0'
     compile 'org.apache.commons:commons-lang3:3.4'
-    compile('com.crashlytics.sdk.android:crashlytics:2.5.2@aar') {
+    compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
         transitive = true;
     }
 }
