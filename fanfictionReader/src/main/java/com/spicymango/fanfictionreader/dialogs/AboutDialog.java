@@ -55,13 +55,8 @@ public class AboutDialog extends DialogFragment implements OnClickListener{
 	public void onClick(View v) {
 		Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
 				"mailto", "michaelchentejada+dev@gmail.com", null));
+
 		emailIntent.putExtra(Intent.EXTRA_SUBJECT, "FanFiction Reader");
-		
-		String error = FileHandler.getRawFile(getActivity(), 0, 0);
-		if (error != null) {
-			emailIntent.putExtra(Intent.EXTRA_TEXT, error);
-		}
-		
 		startActivity(Intent.createChooser(emailIntent, "Send email..."));
 	}
 	

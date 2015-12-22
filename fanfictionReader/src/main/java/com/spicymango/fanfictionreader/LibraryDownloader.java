@@ -21,6 +21,7 @@ import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.util.SparseArray;
 
+import com.crashlytics.android.Crashlytics;
 import com.spicymango.fanfictionreader.activity.LibraryMenuActivity;
 import com.spicymango.fanfictionreader.activity.Site;
 import com.spicymango.fanfictionreader.provider.SqlConstants;
@@ -106,7 +107,7 @@ public class LibraryDownloader extends IntentService{
 		int totalPages = 1;
 		int incrementalIndex = 0;
 
-		SparseArray<String> array = new SparseArray<String>();
+		SparseArray<String> array = new SparseArray<>();
 		try {
 			for (int currentPage = 1; currentPage <= totalPages; currentPage++) {
 
@@ -127,7 +128,7 @@ public class LibraryDownloader extends IntentService{
 						}
 						
 						Log.d(this.getClass().getName(), "Error parsing story attributes");
-						sendReport(document.html());
+						sendReport(url);
 						return Result.ERROR_PARSE;
 					}
 					
@@ -158,7 +159,7 @@ public class LibraryDownloader extends IntentService{
 				
 				if (span == null || span.length() == 0) {
 					Log.d(this.getClass().getName(), "Error downloading story text");
-					sendReport(document.html());
+					sendReport(url);
 					return Result.ERROR_PARSE;
 				}
 				
@@ -183,7 +184,8 @@ public class LibraryDownloader extends IntentService{
 	 * @param txt
 	 */
 	private void sendReport(String txt){
-		FileHandler.writeFile(this, 0, 0, txt);
+		String message = "The story on " + txt + " cannot be parsed";
+		Crashlytics.logException(new Throwable(message));
 	}
 	
 	
