@@ -67,6 +67,8 @@ public class TextAdapter extends ArrayAdapter<Spanned> {
 	 * erroneous links.
 	 */
 	private static class MovementLinker extends LinkMovementMethod {
+		private static MovementLinker mInstance;
+
 		@Override
 		public boolean onTouchEvent(TextView widget, Spannable buffer, MotionEvent event) {
 			try {
@@ -75,6 +77,12 @@ public class TextAdapter extends ArrayAdapter<Spanned> {
 				// Swallow exceptions whenever they are caused by a link that has no corresponding activity
 				return true;
 			}
+		}
+
+		public static MovementLinker getInstance(){
+			if (mInstance == null)
+				mInstance = new MovementLinker();
+			return mInstance;
 		}
 	}
 }
