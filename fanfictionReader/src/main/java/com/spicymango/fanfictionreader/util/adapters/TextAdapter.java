@@ -2,12 +2,15 @@ package com.spicymango.fanfictionreader.util.adapters;
 
 import java.util.List;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.graphics.Typeface;
+import android.text.Spannable;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -46,7 +49,7 @@ public class TextAdapter extends ArrayAdapter<Spanned> {
 			view = (TextView) inflater.inflate(R.layout.read_story_list_item, parent, false);
 			view.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize);
 			view.setTypeface(tp);
-			view.setMovementMethod(LinkMovementMethod.getInstance());
+			view.setMovementMethod(MovementLinker.getInstance());
 		} else {
 			view = (TextView) convertView;
 		}
@@ -57,5 +60,29 @@ public class TextAdapter extends ArrayAdapter<Spanned> {
 	@Override
 	public boolean isEnabled(int position) {
 		return false;
+	}
+
+	/**
+	 * A movement method that adds makes links clickable, silently catching any exceptions caused by
+	 * erroneous links.
+	 */
+	private static class MovementLinker extends LinkMovementMethod {
+		private static MovementLinker mInstance;
+
+		@Override
+		public boolean onTouchEvent(TextView widget, Spannable buffer, MotionEvent event) {
+			try {
+				return super.onTouchEvent(widget, buffer, event);
+			} catch (ActivityNotFoundException ex) {
+				// Swallow exceptions whenever they are caused by a link that has no corresponding activity
+				return true;
+			}
+		}
+
+		public static MovementLinker getInstance(){
+			if (mInstance == null)
+				mInstance = new MovementLinker();
+			return mInstance;
+		}
 	}
 }
