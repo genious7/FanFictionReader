@@ -140,14 +140,14 @@ public class Parser {
 	 * @param document The parsed document
 	 * @return The number of pages in the document
 	 */
-	public final static int getpageNumber(Document document){
+	public final static int getPageNumber(Document document){
 		Elements elements = document.select("div#content a:matchesOwn(\\A(?i)last\\Z)");
 		if (elements.isEmpty()){
 			if (document.select("div#content a:matchesOwn(\\A(?i)next)").isEmpty())
 				return 1;
 			return 2;
 		}
-		return getpageNumber(elements.last().attr("href"));
+		return getPageNumber(elements.last().attr("href"));
 		
 	}
 	
@@ -156,12 +156,13 @@ public class Parser {
 	 * @param url The url to parse
 	 * @return The current page
 	 */
-	private final static int getpageNumber(String url){
+	private final static int getPageNumber(String url){
 		Matcher matcher = pattern2.matcher(url);
-		matcher.find();
-		for (int i = 1; i < matcher.groupCount(); i++) {
-			if (matcher.group(i) != null)
-				return Integer.valueOf(matcher.group(i));
+		if (matcher.find()) {
+			for (int i = 1; i < matcher.groupCount(); i++) {
+				if (matcher.group(i) != null)
+					return Integer.valueOf(matcher.group(i));
+			}
 		}
 		return 1;
 	}

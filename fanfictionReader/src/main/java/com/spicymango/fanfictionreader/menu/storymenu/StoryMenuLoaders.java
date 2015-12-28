@@ -314,7 +314,7 @@ final class StoryMenuLoaders {
 
 		@Override
 		protected int getTotalPages(Document document) {
-			return Math.max(Parser.getpageNumber(document), getCurrentPage());
+			return Math.max(Parser.getPageNumber(document), getCurrentPage());
 		}
 
 		@Override
@@ -465,7 +465,7 @@ final class StoryMenuLoaders {
 
 		@Override
 		protected int getTotalPages(Document document) {
-			return Math.max(Parser.getpageNumber(document), getCurrentPage());
+			return Math.max(Parser.getPageNumber(document), getCurrentPage());
 		}
 
 		@Override
