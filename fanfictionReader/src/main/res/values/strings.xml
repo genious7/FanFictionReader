@@ -186,6 +186,7 @@
         <item>Author</item>
         <item>Favorites</item>
         <item>Follows</item>
+        <item >Read Percentage</item>
     </string-array>
     
     <string-array name="menu_library_filter_words">
