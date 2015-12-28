@@ -182,6 +182,7 @@
 		<item >Autor</item>
 		<item >Ulubione</item>
 		<item >Obserwujący</item>
+		<item >Read Percentage</item>
 	</string-array>
 	<string-array name="menu_library_filter_words">
 	    <item >All</item>
