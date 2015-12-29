@@ -249,13 +249,15 @@ public class FileHandler {
 			fin = new BufferedInputStream(new FileInputStream(file));
 			byte[] buffer = new byte[(int) file.length()];
 			fin.read(buffer);
+			String text = new String(buffer);
 
 			if (file.getName().contains(".htm")) {
 				// HTML File
-				result = Html.fromHtml(new String(buffer));
+				text = text.replaceAll("<hr(.)*>", "<strong>====================</strong>");
+				result = Html.fromHtml(text);
 			} else if (file.getName().contains(".txt")) {
 				// Text File
-				result = new SpannedString(new String(buffer));
+				result = new SpannedString(text);
 			}
 		} catch (IOException e) {
 			Log.e(FileHandler.class.getName(), "Error loading file", e);
