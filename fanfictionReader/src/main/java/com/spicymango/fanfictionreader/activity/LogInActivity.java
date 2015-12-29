@@ -120,7 +120,7 @@ public class LogInActivity extends AppCompatActivity {
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
 			
-			if (url.equals("https://www.fanfiction.net/account/settings.php#")) {
+			if (url.startsWith("https://www.fanfiction.net/account/settings.php")) {
 				// If successfully logged in, stop
 				String cookies = CookieManager.getInstance().getCookie(
 						"https://www.fanfiction.net/");
