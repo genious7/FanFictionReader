@@ -15,6 +15,7 @@ import android.text.style.AlignmentSpan;
 import android.text.style.LineBackgroundSpan;
 import android.text.style.QuoteSpan;
 import android.text.style.RelativeSizeSpan;
+import android.text.style.StrikethroughSpan;
 import android.text.style.StyleSpan;
 import android.text.style.SubscriptSpan;
 import android.text.style.SuperscriptSpan;
@@ -165,6 +166,7 @@ public class HtmlParser {
 
 				switch (key.toLowerCase()) {
 					case "text-align":
+					case "text-decoration":
 						startSpan();
 						break;
 				}
@@ -192,6 +194,15 @@ public class HtmlParser {
 							endSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_OPPOSITE));
 						} else {
 							endSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_NORMAL));
+						}
+						break;
+					case "text-decoration":
+						if (value.equalsIgnoreCase("underline")){
+							endSpan(new UnderlineSpan());
+						} else if (value.equalsIgnoreCase("line-through")) {
+							endSpan(new StrikethroughSpan());
+						} else{
+							mSpanPositions.pop();
 						}
 						break;
 				}
