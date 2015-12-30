@@ -219,6 +219,11 @@ public class Settings extends AppCompatActivity {
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
 		return sharedPref.getBoolean(context.getString(R.string.pref_incremental_updating), true);
 	}
+
+	public static boolean volumeButtonsScrollStory(Context context){
+		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+		return sharedPref.getBoolean(context.getString(R.string.pref_volume_buttons_scroll_story), false);
+	}
 	
 	public static boolean isWakeLockEnabled(Context context){
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
