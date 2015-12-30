@@ -170,16 +170,19 @@ class StoryChapter implements Parcelable {
 	}
 
 	/**
-	 * Creates a deep copy of the StoryChapter
+	 * Creates a shallow copy of the StoryChapter
 	 * @return
 	 */
 	@Override
 	protected StoryChapter clone() {
-		StoryChapter tmp = new StoryChapter(mTotalChapters, mIsInLibrary);
-		tmp.setCurrentPage(mChapterNumber);
-		tmp.setStoryTitle(mStoryTitle);
-		tmp.setStoryText(mTextHtml);
-		tmp.setAuthorId(mAuthorId);
+		StoryChapter tmp = new StoryChapter();
+		tmp.mIsInLibrary = mIsInLibrary;
+		tmp.mChapterNumber = mChapterNumber;
+		tmp.mTotalChapters = mTotalChapters;
+		tmp.mAuthorId = mAuthorId;
+		tmp.mStoryTitle = mStoryTitle;
+		tmp.mTextHtml = mTextHtml;
+		tmp.mTextSpans = mTextSpans;
 		return tmp;
 	}
 

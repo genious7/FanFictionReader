@@ -360,7 +360,7 @@ public class HtmlParser {
 					}
 
 					if (previous != '\n' && previous != ' ') {
-						mBuilder.append(c);
+						mBuilder.append(' ');
 					}
 				} else {
 					mBuilder.append(c);
@@ -372,12 +372,19 @@ public class HtmlParser {
 		 * Inserts a horizontal break line in the page
 		 */
 		private void handleHR() {
-			startSpan();
+
+			// If the preceding character is not a newline or the start of the page, add a newline
+			int len = mBuilder.length();
+			if (len != 0 && mBuilder.charAt(len - 1) != '\n'){
+				mBuilder.append('\n');
+			}
 
 			// A non-zero length inside the span is required in order for the span to be drawn
+			startSpan();
 			mBuilder.append(' ');
-
 			endSpan(new HorizontalBreakSpan());
+
+			mBuilder.append('\n');
 		}
 
 		/**
