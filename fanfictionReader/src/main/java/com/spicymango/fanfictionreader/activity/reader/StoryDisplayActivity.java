@@ -31,6 +31,7 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Spanned;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -137,6 +138,25 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 			mLoader.startLoading();
 			break;
 		}	
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		final int stepSize = 100;
+
+		if(Settings.volumeButtonsScrollStory(this)) {
+			if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)) {
+				mListView.smoothScrollBy(stepSize, 100);
+				return true;
+			}
+
+			if ((keyCode == KeyEvent.KEYCODE_VOLUME_UP)) {
+				mListView.smoothScrollBy(-stepSize, 100);
+				return true;
+			}
+		}
+
+		return false;
 	}
 	
 	@Override

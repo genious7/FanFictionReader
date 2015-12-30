@@ -85,6 +85,7 @@
 	<string name="pref_loc_diag">Opowieści nie są przenoszone automatycznie. By przenieść, usuń i pobierz ponownie opowieść.</string>
 	
 	<string name="pref_incremental_updating">Aktualizowanie przyrostowe</string>
+	<string name="pref_volume_buttons_scroll_story">Volume buttons to scroll story</string>
     <string name="pref_incremental_summary_off">Aktualizowanie spowoduje pobranie każdego rozdziału ponownie</string>
     <string name="pref_incremental_summary_on">Aktualizowanie spowoduje pobranie tylko nowych rozdziałów. Poprawione rozdziały nie będą pobierane.</string>
      
