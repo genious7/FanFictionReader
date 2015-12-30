@@ -222,7 +222,7 @@ public class Settings extends AppCompatActivity {
 
 	public static boolean volumeButtonsScrollStory(Context context){
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPref.getBoolean(context.getString(R.string.pref_volume_buttons_scroll_story), false);
+		return sharedPref.getBoolean(context.getString(R.string.pref_key_volume_scroll), false);
 	}
 	
 	public static boolean isWakeLockEnabled(Context context){

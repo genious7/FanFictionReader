@@ -38,6 +38,7 @@
     <string name="pref_key_back_up">Back Up</string>
     <string name="pref_key_restore">Restore</string>
     <string name="pref_key_theme">Application Theme</string>
+    <string name="pref_key_volume_scroll">Volume Scroll</string>
     
 
     <!-- Browse Menu Activity -->
