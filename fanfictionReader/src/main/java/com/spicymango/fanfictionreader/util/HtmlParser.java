@@ -197,7 +197,7 @@ public class HtmlParser {
 					case "text-decoration":
 						switch(value.toLowerCase()){
 							case "underline":
-                                endSpan(new UnderlineSpan());
+								endSpan(new UnderlineSpan());
 								break;
 						}
 						break;
