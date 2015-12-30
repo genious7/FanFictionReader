@@ -194,6 +194,13 @@ public class HtmlParser {
 							endSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_NORMAL));
 						}
 						break;
+					case "text-decoration":
+						switch(value.toLowerCase()){
+							case "underline":
+								endSpan(new UnderlineSpan());
+								break;
+						}
+						break;
 				}
 			}
 		}
@@ -233,6 +240,7 @@ public class HtmlParser {
 				case "sub":
 				case "sup":
 				case "a":
+				case "span":
 					startSpan();
 					break;
 			}
