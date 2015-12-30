@@ -239,9 +239,7 @@
     <!-- About Page -->
     <string name="about">This application was developed by Michael Chen. 
 		The author is not affiliated in anyway with Fanfiction.net.\n
-		\nPlease report any bugs or request any features using the button below.\n
-		\nNote that if you experienced a recent downloading error, a report containing the 
-		failed story is added to the email automatically.</string>
+		\nPlease report any bugs or request any features using the button below.</string>
     <string name="about_feature">Contact the developer</string>
 
     <!-- Author Menu Activity -->
