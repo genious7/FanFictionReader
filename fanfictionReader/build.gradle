@@ -9,8 +9,8 @@ android {
         applicationId "com.spicymango.fanfictionreader"
         minSdkVersion 8
         targetSdkVersion 23
-        versionCode 65
-        versionName "1.48"
+        versionCode 66
+        versionName "1.48b"
     }
 
     compileOptions {
