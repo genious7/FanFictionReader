@@ -32,14 +32,25 @@
     </string-array>
     <string name="pref_loc_default" translatable="false">int</string>
 
+    <string-array name="pref_locale_values">
+        <item>auto</item>
+        <item>en</item>
+        <item>pl</item>
+    </string-array>
+    <string name="pref_locale_default" translatable="false">auto</string>
+
     <!-- Preference Keys -->
+    <string name="pref_key_orientation" translatable="false">Application Orientation</string>
+    <string name="pref_key_incremental_updating" translatable="false">Incremental Updating</string>
     <string name="pref_key_text_size" translatable="false">Text Size</string>
     <string name="pref_key_type_face" translatable="false">Type Face</string>
+    <string name="pref_key_loc" translatable="false">Save Location</string>
+    <string name="pref_key_wake_lock" translatable="false">Keep Screen On</string>
     <string name="pref_key_back_up" translatable="false">Back Up</string>
     <string name="pref_key_restore" translatable="false">Restore</string>
     <string name="pref_key_theme" translatable="false">Application Theme</string>
     <string name="pref_key_volume_scroll" translatable="false">Volume Scroll</string>
-
+    <string name="pref_key_locale" translatable="false">Locale</string>
 
     <!-- Browse Menu Activity -->
     <string-array name="browse_menu_ff">

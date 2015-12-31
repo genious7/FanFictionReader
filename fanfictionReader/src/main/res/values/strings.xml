@@ -62,8 +62,8 @@
     <string name="pref_appearance">Appearance</string>
     <string name="pref_behavior">Behavior</string>
     <string name="pref_updating">Updating</string>
-    <string name="pref_orientation">Application Orientation</string>
 
+    <string name="pref_orientation">Application Orientation</string>
     <string-array name="pref_orientation_entries">
         <item>Auto</item>
         <item>Landscape</item>
@@ -71,7 +71,6 @@
     </string-array>
 
     <string name="pref_theme">Application Theme</string>
-
     <string-array name="pref_theme_entries">
         <item>Light</item>
         <item>Dark</item>
@@ -79,10 +78,16 @@
     </string-array>
 
     <string name="pref_loc">Save Location</string>
-
     <string-array name="pref_loc_entries">
         <item>Internal Memory</item>
         <item>SD Card</item>
+    </string-array>
+
+    <string name="pref_locale">Language</string>
+    <string-array name="pref_locale_entries">
+        <item>Default</item>
+        <item>English</item>
+        <item>Polish</item>
     </string-array>
 
     <string name="pref_loc_diag_title">Note</string>
@@ -187,7 +192,7 @@
         <item>Author</item>
         <item>Favorites</item>
         <item>Follows</item>
-        <item >Read Percentage</item>
+        <item>Read Percentage</item>
     </string-array>
     
     <string-array name="menu_library_filter_words">
