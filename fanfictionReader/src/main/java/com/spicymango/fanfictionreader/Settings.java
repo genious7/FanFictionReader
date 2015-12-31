@@ -354,7 +354,7 @@ public class Settings extends AppCompatActivity {
 		Resources res = context.getResources();
 		DisplayMetrics metrics = res.getDisplayMetrics();
 		Configuration configuration = res.getConfiguration();
-		configuration.setLocale(locale);
+		configuration.locale = locale;
 		res.updateConfiguration(configuration, metrics);
 	}
 
