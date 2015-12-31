@@ -25,7 +25,7 @@
     <string name="menu_button_about">Über</string>
     <string name="menu_toast_resume">Keine Geschichte zum Weiterlesen vorhanden</string>
     
-    <string name="dialog_loading">Laden...</string>
+    <string name="dialog_loading">Laden…</string>
     
     <string name="filter_sort">Sortieren</string>
     <string name="filter_date">Zeitraum</string>
@@ -184,6 +184,7 @@
         <item>Autor</item>
         <item>Favoriten</item>
         <item>Follows</item>
+        <item >Read Percentage</item>
     </string-array>
     
     <string-array name="menu_library_filter_words">
