@@ -144,19 +144,16 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		final int stepSize = 100;
 
-		if(Settings.volumeButtonsScrollStory(this)) {
+		if (Settings.volumeButtonsScrollStory(this)) {
 			if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)) {
 				mListView.smoothScrollBy(stepSize, 100);
 				return true;
-			}
-
-			if ((keyCode == KeyEvent.KEYCODE_VOLUME_UP)) {
+			} else if ((keyCode == KeyEvent.KEYCODE_VOLUME_UP)) {
 				mListView.smoothScrollBy(-stepSize, 100);
 				return true;
 			}
 		}
-
-		return false;
+		return super.onKeyDown(keyCode, event);
 	}
 	
 	@Override
