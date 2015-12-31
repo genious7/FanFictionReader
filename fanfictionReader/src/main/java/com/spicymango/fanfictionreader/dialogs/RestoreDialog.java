@@ -16,24 +16,34 @@ import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.Settings;
 import com.spicymango.fanfictionreader.util.FileHandler;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 public class RestoreDialog extends DialogFragment {
+	private final static int PERMISSION_READ = 0;
+	private boolean shouldDismiss;
+
 	private ProgressBar bar;
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		setCancelable(false);
+
+		// By default, the dialog should not be dismissed. This variable is later changed if a call
+		// to dismiss is required from onRequestPermissionResult
+		shouldDismiss = false;
 
 		bar = new ProgressBar(getActivity(), null,
 				android.R.attr.progressBarStyleHorizontal);
@@ -47,13 +57,13 @@ public class RestoreDialog extends DialogFragment {
 	}
 
 	@Override
-	public void onStart() {
-		super.onStart();
+	public void onResume() {
+		super.onResume();
 
-		Fragment manager = getFragmentManager().findFragmentByTag(
-				TaskManagerFragment.DEFAULT_TAG);
-		if (manager == null) {
-			new RestoreTask(getActivity()).execute((Void) null);
+		if (shouldDismiss){
+			dismiss();
+		}else{
+			startRestore();
 		}
 	}
 
@@ -77,6 +87,45 @@ public class RestoreDialog extends DialogFragment {
 			return null;
 		}
 		return backUpFile;
+	}
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+		switch (requestCode) {
+			case PERMISSION_READ:
+				// This check is required because if the request is cancelled, the result arrays are empty.
+				if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+					shouldDismiss = false;
+				} else {
+					Toast toast = Toast.makeText(getActivity(), R.string.dialog_cancelled,
+												 Toast.LENGTH_SHORT);
+					toast.show();
+					shouldDismiss = true;
+				}
+				break;
+			default:
+				super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+		}
+	}
+
+	private void startRestore() {
+
+		// Check if the restore task has already been started
+		// The ManagedAsyncTask creates the following fragment when started
+		Fragment manager = getFragmentManager().findFragmentByTag(TaskManagerFragment.DEFAULT_TAG);
+
+		if (manager == null){
+			// The restore task has not been started. Check for permissions
+			int readPermission = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE);
+
+			if (readPermission == PackageManager.PERMISSION_GRANTED){
+				// The read permission is available. Proceed.
+				new RestoreTask(getActivity()).execute((Void) null);
+			} else{
+				// Request the permission
+				requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_READ);
+			}
+		}
 	}
 
 	private static class RestoreTask extends

@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 
 import org.jsoup.Jsoup;
 import org.jsoup.Connection.Method;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -29,8 +30,8 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.text.Spanned;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -58,7 +59,7 @@ import com.spicymango.fanfictionreader.util.AsyncPost;
 import com.spicymango.fanfictionreader.util.FileHandler;
 import com.spicymango.fanfictionreader.util.adapters.TextAdapter;
 
-public class StoryDisplayActivity extends AppCompatActivity implements LoaderCallbacks<StoryObject>, OnClickListener{
+public class StoryDisplayActivity extends AppCompatActivity implements LoaderCallbacks<StoryChapter>, OnClickListener{
 	private static final String STATE_UPDATED = "HasUpdated";
 	
 	/**
@@ -94,7 +95,7 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 	private View btnFirst, btnPrev, btnNext, btnLast, progressBar, recconectBar, buttonBar;
 	
 	private TextView btnPage;
-	private StoryObject mData;
+	private StoryChapter mData;
 	private boolean fromBrowser = false;
 	private BaseAdapter mAdapter;
 	private long mAuthorId;
@@ -138,9 +139,25 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 			break;
 		}	
 	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		final int stepSize = 100;
+
+		if (Settings.volumeButtonsScrollStory(this)) {
+			if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)) {
+				mListView.smoothScrollBy(stepSize, 100);
+				return true;
+			} else if ((keyCode == KeyEvent.KEYCODE_VOLUME_UP)) {
+				mListView.smoothScrollBy(-stepSize, 100);
+				return true;
+			}
+		}
+		return super.onKeyDown(keyCode, event);
+	}
 	
 	@Override
-	public Loader<StoryObject> onCreateLoader(int id, Bundle args) {
+	public Loader<StoryChapter> onCreateLoader(int id, Bundle args) {
 		return new FanFictionLoader(this, args, mStoryId, mCurrentPage);
 	}
 	
@@ -153,11 +170,11 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 	}
 	
 	@Override
-	public void onLoaderReset(Loader<StoryObject> loader) {
+	public void onLoaderReset(Loader<StoryChapter> loader) {
 	}
 
 	@Override
-	public void onLoadFinished(Loader<StoryObject> loader, StoryObject data) {
+	public void onLoadFinished(Loader<StoryChapter> loader, StoryChapter data) {
 		
 		mLoader = (StoryLoader) loader;
 		
@@ -181,12 +198,12 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 			break;
 		case SUCCESS:
 			mData = data;
-			mTotalPages = data.getTotalPages();
-			mCurrentPage = data.getCurrentPage();
+			mTotalPages = data.getTotalChapters();
+			mCurrentPage = data.getChapterNumber();
 			getSupportActionBar().setSubtitle(data.getStoryTitle());
 			
 			mList.clear();
-			mList.addAll(data.getStoryText());
+			mList.addAll(data.getStorySpans());
 			mAdapter.notifyDataSetChanged();											//Update story text
 			
 			if (mLoader.mScrollTo) {														//Scroll to desired position, if needed
@@ -593,12 +610,12 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 		}
 
 		@Override
-		protected Spanned getStoryFromFile(long storyId, int currentPage) {
+		protected String getStoryFromFile(long storyId, int currentPage) {
 			return FileHandler.getFile(getContext(), storyId, currentPage);
 		}
 
 		@Override
-		protected Spanned getStoryFromSite(long storyId, int currentPage, StoryObject data) throws IOException {
+		protected String getStoryFromSite(long storyId, int currentPage, StoryChapter data) throws IOException {
 			Uri.Builder builder = new Uri.Builder();
 			builder.scheme(Site.scheme);
 			builder.authority(Site.FANFICTION.authorityMobile);
@@ -607,9 +624,9 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 			builder.appendEncodedPath(Integer.toString(currentPage));
 			builder.appendEncodedPath("");
 			
-			org.jsoup.nodes.Document document = Jsoup.connect(builder.toString()).timeout(10000).get();
+			Document document = Jsoup.connect(builder.toString()).timeout(10000).get();
 			
-			if (data.getTotalPages() == 0) {	
+			if (data.getTotalChapters() == 0) {
 				Element title = document.select("div#content div b").first();
 				if (title == null) return null;
 				data.setStoryTitle(title.ownText());
@@ -623,7 +640,7 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 				else {
 					totalPages = 1;
 				}
-				data.setTotalPages(totalPages);
+				data.setTotalChapters(totalPages);
 				
 				Element authorElement = document.select("input[name=uid]").first();
 				long authorId = Long.parseLong(authorElement.attr("value"));
@@ -632,7 +649,7 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 			
 			Elements storyText = document.select("div#storycontent");
 			if (storyText.isEmpty()) return null;
-			return Html.fromHtml(storyText.html());
+			return storyText.html();
 		}
 		
 		/**
@@ -662,6 +679,5 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 			new String[] {Long.toString(storyId)}, null);
 			return c;
 		}
-		
 	}
 }

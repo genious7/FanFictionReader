@@ -232,7 +232,7 @@ public class FileHandler {
 		return sd;
 	}
 
-	public static Spanned getFile(Context context, long storyId, int currentPage) {
+	public static String getFile(Context context, long storyId, int currentPage) {
 
 		// Find story
 		FilenameFilter filter = new FileFilter(storyId, currentPage);
@@ -243,7 +243,7 @@ public class FileHandler {
 			return null;
 
 		BufferedInputStream fin = null;
-		Spanned result = null;
+		String result = null;
 
 		try {
 			fin = new BufferedInputStream(new FileInputStream(file));
@@ -252,10 +252,10 @@ public class FileHandler {
 
 			if (file.getName().contains(".htm")) {
 				// HTML File
-				result = Html.fromHtml(new String(buffer));
+				result = new String(buffer);
 			} else if (file.getName().contains(".txt")) {
 				// Text File
-				result = new SpannedString(new String(buffer));
+				result = Html.toHtml(new SpannedString(new String(buffer)));
 			}
 		} catch (IOException e) {
 			Log.e(FileHandler.class.getName(), "Error loading file", e);

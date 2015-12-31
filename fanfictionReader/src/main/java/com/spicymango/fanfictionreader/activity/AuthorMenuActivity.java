@@ -355,7 +355,7 @@ public class AuthorMenuActivity extends AppCompatActivity{
 					}
 					
 					if (mTotalPages == 0) {
-						mTotalPages = Math.max(Parser.getpageNumber(document),mCurrentPage);
+						mTotalPages = Math.max(Parser.getPageNumber(document),mCurrentPage);
 					}
 
 					if (load(document, mData)) {

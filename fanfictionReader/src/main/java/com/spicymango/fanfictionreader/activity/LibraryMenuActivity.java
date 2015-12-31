@@ -358,7 +358,11 @@ public class LibraryMenuActivity extends AppCompatActivity implements LoaderCall
 				KEY_TITLE + " COLLATE NOCASE ASC",
 				KEY_AUTHOR + " COLLATE NOCASE ASC",
 				KEY_FAVORITES + " DESC",
-				KEY_FOLLOWERS + " DESC"};
+				KEY_FOLLOWERS + " DESC",
+				//We substract 1 from the last chapter and chapter so chapter 1 always starts at 0 and the last chapter always ends at 1
+				//When the percentage is the same we will use the default sort behavior(update date)
+				"(CAST(" + KEY_LAST + " - 1 AS FLOAT) / (" + KEY_CHAPTER + " - 1)) ASC, " + KEY_UPDATED + " DESC"
+		};
 		filterData.add(new SpinnerData("SortBy", sortBy, sortKey, 0));
 
 		// Filter by words

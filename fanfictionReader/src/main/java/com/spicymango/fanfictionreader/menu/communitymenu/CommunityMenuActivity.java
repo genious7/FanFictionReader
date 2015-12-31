@@ -171,11 +171,11 @@ public class CommunityMenuActivity extends AppCompatActivity {
 			// Remove any prior filters by only copying the segment of the path
 			// that does not start with a number.
 			Builder builder = uri.buildUpon();
-			builder.encodedPath(null);
+			builder.path(null);
 			List<String> pathSegments = uri.getPathSegments();
 			for (String pathSegment : pathSegments) {
 				if (!Character.isDigit(pathSegment.charAt(0))) {
-					builder.appendEncodedPath(pathSegment);
+					builder.appendPath(pathSegment);
 				} else {
 					break;
 				}

@@ -182,6 +182,7 @@
 		<item >Autor</item>
 		<item >Ulubione</item>
 		<item >Obserwujący</item>
+		<item >Read Percentage</item>
 	</string-array>
 	<string-array name="menu_library_filter_words">
 	    <item >All</item>
@@ -229,11 +230,9 @@
 	<string name="dialog_review_posted">Recenzja opublikowana pomyślnie</string>
 	
 	<!-- About Page -->
-	<string name="about">This application was developed by Michael Chen. 
+	<string name="about">This application was developed by Michael Chen.
 		The author is not affiliated in anyway with Fanfiction.net.\n
 		\nPlease report any bugs or request any features using the button below.\n
-		\nNote that if you experienced a recent downloading error, a report containing the 
-		failed story is added to the email automatically.\n
 		\nTłumaczenie na język polski: Paweł Zmarzły</string>
 	<string name="about_feature">Contact the developer</string>
 	

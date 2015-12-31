@@ -76,10 +76,11 @@ final class CategoryMenuLoaders {
 			Elements categories = document.select("div#content > div.bs > a");
 
 			for (Element category : categories) {
-				if (category.childNodeSize() == 0) { return false; }
+				Elements children = category.children();
+				if (children.size() == 0) { return false; }
 
 				String title = category.ownText();
-				String views = category.child(0).ownText();
+				String views = children.get(0).ownText();
 				views = String.format(mFormatString, views);
 				Uri url = Uri.parse(category.absUrl("href"));
 				CategoryMenuItem item = new CategoryMenuItem(title, views, url);
@@ -176,10 +177,11 @@ final class CategoryMenuLoaders {
 			list.add(allCrossovers);
 
 			for (Element category : categories) {
-				if (category.childNodeSize() == 0) { return false; }
+				Elements children = category.children();
+				if (children.size() == 0) { return false; }
 
 				String title = category.ownText();
-				String views = category.child(0).ownText();
+				String views = children.get(0).ownText();
 				views = String.format(mFormatString, views);
 				Uri url = Uri.parse(category.absUrl("href"));
 				CategoryMenuItem item = new CategoryMenuItem(title, views, url);
@@ -281,10 +283,11 @@ final class CategoryMenuLoaders {
 			Elements categories = document.select("div#content > div.bs > a");
 
 			for (Element category : categories) {
-				if (category.childNodeSize() == 0) { return false; }
+				Elements children = category.children();
+				if (children.size() == 0) { return false; }
 
 				String title = category.ownText();
-				String views = category.child(0).ownText();
+				String views = children.get(0).ownText();
 				views = String.format(mFormatString, views);
 				Uri url = Uri.parse(category.absUrl("href"));
 				CategoryMenuItem item = new CategoryMenuItem(title, views, url);
@@ -344,10 +347,11 @@ final class CategoryMenuLoaders {
 			Elements categories = document.select("div#content > div.bs > a");
 
 			for (Element category : categories) {
-				if (category.childNodeSize() == 0) { return false; }
+				Elements children = category.children();
+				if (children.size() == 0) { return false; }
 
 				String title = category.ownText();
-				String views = category.child(0).ownText();
+				String views = children.get(0).ownText();
 				views = String.format(mFormatString, views);
 				Uri url = Uri.parse(category.absUrl("href"));
 				CategoryMenuItem item = new CategoryMenuItem(title, views, url);
@@ -445,12 +449,12 @@ final class CategoryMenuLoaders {
 				mCache = new ArrayList<>(fandoms.size());
 
 				for (Element fandom : fandoms) {
-					if (fandom.childNodeSize() == 0) { return false; }
+					Elements children = fandom.children();
+					if (children.size() == 0) { return false; }
 
 					// Remove non Latin characters from the beginning in order
-					// to
-					// improve section indexing
-					String title = fandom.child(0).ownText();
+					// to improve section indexing
+					String title = children.get(0).ownText();
 					if (!CONSERVE_CHARACTERS.contains(Character.UnicodeBlock.of(title.charAt(0)))) {
 						title = title.contains("| ") ? title.substring(title.lastIndexOf("| ") + 2) : title;
 						title = Character.toUpperCase(title.charAt(0)) + title.substring(1);
@@ -462,7 +466,7 @@ final class CategoryMenuLoaders {
 					views = mFormatter.format(viewsAsInt);
 					views = String.format(mFormatString, views);
 
-					Uri url = Uri.parse(fandom.child(0).absUrl("href"));
+					Uri url = Uri.parse(children.get(0).absUrl("href"));
 
 					CategoryMenuItem item = new CategoryMenuItem(title, views, url);
 					mCache.add(item);
