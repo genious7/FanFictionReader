@@ -116,14 +116,14 @@ public class RestoreDialog extends DialogFragment {
 
 		if (manager == null){
 			// The restore task has not been started. Check for permissions
-			int readPermission = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE);
+			int readPermission = ContextCompat.checkSelfPermission(getActivity(), "android.permission.READ_EXTERNAL_STORAGE");
 
 			if (readPermission == PackageManager.PERMISSION_GRANTED){
 				// The read permission is available. Proceed.
 				new RestoreTask(getActivity()).execute((Void) null);
 			} else{
 				// Request the permission
-				requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_READ);
+				requestPermissions(new String[]{"android.permission.READ_EXTERNAL_STORAGE"}, PERMISSION_READ);
 			}
 		}
 	}
