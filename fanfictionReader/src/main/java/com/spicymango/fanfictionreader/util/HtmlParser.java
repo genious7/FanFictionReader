@@ -45,15 +45,14 @@ import java.util.Stack;
 public class HtmlParser {
 
 	/**
-	 * Returns displayable styled text from the provided HTML string. The base uri is used to
-	 * resolve relative URLs into absolute URLs
+	 * Returns displayable styled text from the provided HTML string. Relative links will not be
+	 * resolved, use {@link #fromHtml(String, Uri)} if relative link resolution is required.
 	 *
 	 * @param source  The source Html web page, as a string
-	 * @param baseUri The base uri
 	 * @return The document as styled text
 	 */
 	public static Spanned fromHtml(String source) {
-		Document htmlDoc = Jsoup.parse(source, Sites.FANFICTION.BASE_URI.toString());
+		Document htmlDoc = Jsoup.parse(source);
 		return fromHtml(htmlDoc);
 	}
 
