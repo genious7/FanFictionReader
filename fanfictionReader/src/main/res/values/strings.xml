@@ -87,6 +87,7 @@
     <string-array name="pref_locale_entries">
         <item>Default</item>
         <item>English</item>
+        <item>German</item>
         <item>Polish</item>
     </string-array>
 

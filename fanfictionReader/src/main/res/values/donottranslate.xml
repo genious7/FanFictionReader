@@ -35,6 +35,7 @@
     <string-array name="pref_locale_values">
         <item>auto</item>
         <item>en</item>
+        <item>de</item>
         <item>pl</item>
     </string-array>
     <string name="pref_locale_default" translatable="false">auto</string>
