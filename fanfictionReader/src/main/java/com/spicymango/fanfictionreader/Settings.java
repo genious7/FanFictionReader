@@ -123,10 +123,10 @@ public class Settings extends AppCompatActivity {
 							getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
 							break;
 						case "H":
-							getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+							getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
 							break;
 						default:
-							getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+							getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
 							break;
 					}
 					return true;
@@ -184,8 +184,7 @@ public class Settings extends AppCompatActivity {
 			return false;
 		}
 	}
-	
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -258,10 +257,10 @@ public class Settings extends AppCompatActivity {
 				activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
 				break;
 			case "H":	// Landscape orientation
-				activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+				activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
 				break;
 			default:	// Vertical orientation
-				activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+				activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
 				break;
 		}
 	}
