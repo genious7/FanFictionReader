@@ -21,7 +21,7 @@
     </LinearLayout>
     <!-- The navigation drawer -->
 
-    <android.support.design.widget.NavigationView
+    <com.spicymango.fanfictionreader.util.FixedNavigationView
         android:id="@+id/drawer_list"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"

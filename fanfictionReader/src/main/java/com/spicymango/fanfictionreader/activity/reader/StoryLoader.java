@@ -2,18 +2,17 @@ package com.spicymango.fanfictionreader.activity.reader;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import android.content.Context;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.content.AsyncTaskLoader;
-import android.text.Spanned;
+
 import com.spicymango.fanfictionreader.provider.SqlConstants;
 import com.spicymango.fanfictionreader.util.Result;
 
-public abstract class StoryLoader extends AsyncTaskLoader<StoryObject> {
+public abstract class StoryLoader extends AsyncTaskLoader<StoryChapter> {
 	private static final String STATE_DATA = "Data";
 	
 	public Result mResult;
@@ -21,7 +20,7 @@ public abstract class StoryLoader extends AsyncTaskLoader<StoryObject> {
 	
 	private int mCurrentPage;
 	private Cursor mCursor;
-	private StoryObject mData;
+	private StoryChapter mData;
 	private boolean mDataHasChanged;
 	private boolean mFirstScroll;
 	private final ContentObserver mObserver;
@@ -39,7 +38,7 @@ public abstract class StoryLoader extends AsyncTaskLoader<StoryObject> {
 			mScrollTo = false;
 			
 			mData = in.getParcelable(STATE_DATA);
-			mCurrentPage = mData.getCurrentPage();
+			mCurrentPage = mData.getChapterNumber();
 			mDataHasChanged = false;
 		}else{
 			// If it is the first time opening the activity, scroll to the
@@ -47,7 +46,7 @@ public abstract class StoryLoader extends AsyncTaskLoader<StoryObject> {
 			mFirstScroll = true;
 			mScrollTo = true;
 			
-			mData = new StoryObject();
+			mData = new StoryChapter();
 			
 			mCurrentPage = currentPage;
 			mDataHasChanged = true;
@@ -57,12 +56,12 @@ public abstract class StoryLoader extends AsyncTaskLoader<StoryObject> {
 	
 
 	@Override
-	public void deliverResult(StoryObject data) {
-		if (mData.getStoryText() == null) {
-			StoryObject tmp = new StoryObject(mCurrentPage, false);
+	public void deliverResult(StoryChapter data) {
+		if (mData.getStorySpans() == null) {
+			StoryChapter tmp = new StoryChapter(mCurrentPage, false);
 			tmp.setCurrentPage(mCurrentPage);
 			tmp.setStoryTitle("");
-			tmp.setStoryText(new ArrayList<Spanned>());
+			tmp.setStoryText("");
 			super.deliverResult(tmp);
 		}else{
 			super.deliverResult(mData.clone());
@@ -74,17 +73,17 @@ public abstract class StoryLoader extends AsyncTaskLoader<StoryObject> {
 	}
 	
 	@Override
-	public StoryObject loadInBackground() {
+	public StoryChapter loadInBackground() {
 		
 		Thread.currentThread().setName("Story Loader Thread");
 		
 		syncSql();
-		Spanned storyText;
+		final String html;
 		
-		if (mData.isInLibrary() && mData.getTotalPages() >= mCurrentPage) {
+		if (mData.isInLibrary() && mData.getTotalChapters() >= mCurrentPage) {
 			try {
-				storyText = getStoryFromFile(mStoryId, mCurrentPage);
-				if (storyText == null) {
+				html = getStoryFromFile(mStoryId, mCurrentPage);
+				if (html == null) {
 					throw new FileNotFoundException();
 				}
 			} catch (FileNotFoundException e) {
@@ -92,19 +91,19 @@ public abstract class StoryLoader extends AsyncTaskLoader<StoryObject> {
 				return null;
 			}
 		} else {
-			try{
-				storyText = getStoryFromSite(mStoryId,mCurrentPage, mData);
-				if (storyText == null) {
+			try {
+				html = getStoryFromSite(mStoryId, mCurrentPage, mData);
+				if (html == null) {
 					mResult = Result.ERROR_PARSE;
 					return null;
 				}
-			}catch (IOException e){
+			} catch (IOException e) {
 				mResult = Result.ERROR_CONNECTION;
 				return null;
 			}
 		}
 
-		mData.setStoryText(storyText);
+		mData.setStoryText(html);
 		mData.setCurrentPage(mCurrentPage);
 		
 		//Do not reset scroll to zero if opening a saved story
@@ -133,7 +132,7 @@ public abstract class StoryLoader extends AsyncTaskLoader<StoryObject> {
 	}
 	
 	public void onSaveInstanceState(Bundle outState){
-		if (mData.getStoryText() != null) {
+		if (mData.getStorySpans() != null) {
 			outState.putParcelable(STATE_DATA, mData);
 		}
 	}
@@ -155,7 +154,7 @@ public abstract class StoryLoader extends AsyncTaskLoader<StoryObject> {
 		if(mCursor != null && mCursor.moveToFirst()){
 			mData.setAuthorId(mCursor.getLong(mCursor.getColumnIndexOrThrow(SqlConstants.KEY_AUTHOR_ID)));
 			mData.setStoryTitle(mCursor.getString(mCursor.getColumnIndexOrThrow(SqlConstants.KEY_TITLE)));
-			mData.setTotalPages(mCursor.getInt(mCursor.getColumnIndexOrThrow(SqlConstants.KEY_CHAPTER)));
+			mData.setTotalChapters(mCursor.getInt(mCursor.getColumnIndexOrThrow(SqlConstants.KEY_CHAPTER)));
 			mData.setInLibrary(true);
 			
 			if(mFirstScroll){
@@ -172,12 +171,12 @@ public abstract class StoryLoader extends AsyncTaskLoader<StoryObject> {
 	 * Gets the requested story from the file system
 	 * @param storyId The id of the target story
 	 * @param currentPage The target page number
-	 * @return A formatted span containing the requested chapter
+	 * @return The html document containing the story
 	 * @throws FileNotFoundException If the requested file is not found 
 	 */
-	protected abstract Spanned getStoryFromFile(final long storyId,final int currentPage) throws FileNotFoundException;
+	protected abstract String getStoryFromFile(final long storyId,final int currentPage) throws FileNotFoundException;
 	
-	protected abstract Spanned getStoryFromSite(final long storyId,final int currentPage, StoryObject data) throws IOException;
+	protected abstract String getStoryFromSite(final long storyId,final int currentPage, StoryChapter data) throws IOException;
 	
 	/**
 	 * Closes the cursor when finished

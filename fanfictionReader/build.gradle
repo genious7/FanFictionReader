@@ -9,8 +9,8 @@ android {
         applicationId "com.spicymango.fanfictionreader"
         minSdkVersion 8
         targetSdkVersion 23
-        versionCode 64
-        versionName "1.47c"
+        versionCode 68
+        versionName "1.48c"
     }
 
     compileOptions {
@@ -45,7 +45,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
     compile 'org.jsoup:jsoup:1.8.3'
-    compile 'org.apache.commons:commons-collections4:4.0'
+    compile 'org.apache.commons:commons-collections4:4.1'
     compile 'org.apache.commons:commons-lang3:3.4'
     compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
         transitive = true;

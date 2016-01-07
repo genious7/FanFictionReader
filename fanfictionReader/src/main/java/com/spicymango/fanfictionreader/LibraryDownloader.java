@@ -1,6 +1,8 @@
 package com.spicymango.fanfictionreader;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -90,7 +92,7 @@ public class LibraryDownloader extends IntentService{
 	/**
 	 * Used to keep track for notification purposes
 	 */
-	private static int storiesDownloaded = 0;
+	private static List<String> storiesDownloaded = new ArrayList<String>();
 
 	public LibraryDownloader() {
 		super("Story Downloader");
@@ -175,6 +177,7 @@ public class LibraryDownloader extends IntentService{
 
 		ContentResolver resolver = this.getContentResolver();
 		resolver.insert(StoryProvider.FF_CONTENT_URI, story.toContentValues(lastPage, offset));
+		storiesDownloaded.add(story.getName());
 
 		return Result.SUCCESS;
 	}
@@ -273,7 +276,7 @@ public class LibraryDownloader extends IntentService{
 	@Override
 	protected void onHandleIntent(Intent intent) {
 		if (intent.getBooleanExtra(EXTRA_UPDATE_NOT, false)) {
-			storiesDownloaded = 0;
+			storiesDownloaded.clear();
 			return;
 		}
 		
@@ -286,7 +289,6 @@ public class LibraryDownloader extends IntentService{
 		Log.d(this.getClass().getName(), "Starting Download");
 		switch (download()) {
 		case SUCCESS:
-			storiesDownloaded++;
 			showCompletetionNotification();
 			break;
 		case ERROR_CONNECTION:
@@ -355,7 +357,7 @@ public class LibraryDownloader extends IntentService{
 	}
 	
 	private void removeNoification(){
-		if (storiesDownloaded == 0) {
+		if (storiesDownloaded.size() == 0) {
 			NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 			manager.cancel(NOTIFICATION_ID);
 		}else{
@@ -365,10 +367,23 @@ public class LibraryDownloader extends IntentService{
 	
 	private void showCompletetionNotification(){
 		NotificationCompat.Builder notBuilder = new NotificationCompat.Builder(this);
-		String title = getResources().getQuantityString(R.plurals.downloader_notification, storiesDownloaded, storiesDownloaded);
+		String title = getResources().getQuantityString(R.plurals.downloader_notification, storiesDownloaded.size(), storiesDownloaded.size());
 		notBuilder.setContentTitle(title);
 		notBuilder.setSmallIcon(R.drawable.ic_action_accept);
 		notBuilder.setAutoCancel(true);
+
+        String text = null;
+
+        for(int i = 0; i < storiesDownloaded.size(); i++)
+        {
+            if (i == 0) {
+                text = storiesDownloaded.get(i);
+            }else{
+                text += ", " + storiesDownloaded.get(i);
+            }
+        }
+
+        notBuilder.setContentText(text);
 		
 		Intent i = new Intent(this, LibraryMenuActivity.class);
 		TaskStackBuilder taskBuilder = TaskStackBuilder.create(this);
