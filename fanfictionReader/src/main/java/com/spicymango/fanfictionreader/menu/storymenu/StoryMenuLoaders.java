@@ -103,7 +103,7 @@ final class StoryMenuLoaders {
 				// Add characters if they exist
 				Elements characters = story.select("li.characters > a");
 				for (Element character : characters) {
-					builder.addCharacters(character.ownText());
+					builder.addCharacter(character.ownText());
 				}
 
 				// Fetch the language
@@ -114,14 +114,14 @@ final class StoryMenuLoaders {
 				// Fetch the number of words
 				Element words = story.select("dd.words").first();
 				if (words == null) return false;
-				builder.setWordLenght(Parser.parseInt(words.ownText()));
+				builder.setWordLength(Parser.parseInt(words.ownText()));
 
 				// Fetch the number of chapters
 				Element chapters = story.select("dd.chapters").first();
 				if (chapters == null) return false;
 				String chapterNo = chapters.text();
 				chapterNo = chapterNo.substring(0, chapterNo.indexOf('/'));
-				builder.setChapterLenght(Integer.parseInt(chapterNo));
+				builder.setChapterLength(Integer.parseInt(chapterNo));
 
 				// Fetch the number of hits (follows)
 				Element follows = story.select("dd.hits").first();

@@ -236,8 +236,7 @@
     <!-- About Page -->
     <string name="about">This application was developed by Michael Chen.
 		The author is not affiliated in anyway with Fanfiction.net.\n
-		\nPlease report any bugs or request any features using the button below.\n
-		\nTranslation by 9byte</string>
+		\nPlease report any bugs or request any features using the button below.</string>
     <string name="about_feature">Contact the developer</string>
 
     <!-- Author Menu Activity -->

@@ -244,7 +244,7 @@ public class AccountActivity extends AppCompatActivity {
 				builder.scheme(getString(R.string.fanfiction_scheme))
 						.authority(getString(R.string.fanfiction_authority))
 						.appendEncodedPath("u")
-						.appendEncodedPath(story.getAuthor_id() + "")
+						.appendEncodedPath(story.getAuthorId() + "")
 						.appendEncodedPath("");
 				Intent i = new Intent(getActivity(), AuthorMenuActivity.class);
 				i.setData(builder.build());

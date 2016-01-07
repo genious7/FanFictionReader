@@ -20,6 +20,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
 
@@ -66,7 +67,7 @@ public class LibraryDownloader extends IntentService{
 			+ "(?i)\\ARated: Fiction ([KTM]\\+?) - "//Rating
 			+ "([^-]+) - "//language
 			+ "(?:([^ ]+) - )?"//Genre
-			+ "(?:(?!(?>Chapters))(?:(?! - ).)++ - )?"//characters (non capturing)
+			+ "(?:(?!Chapters)([^-]+(?:(?<=Jenny )- [^-]+)?) - )?"//characters (non capturing)
 			+ "(?:Chapters: (\\d++) - )?" //Chapters
 			+ "Words: ([\\d,]++) - " //Words
 			+ "(?:Reviews: [\\d,]++ - )?"//Reviews (non capturing)
@@ -141,7 +142,7 @@ public class LibraryDownloader extends IntentService{
 						return Result.NO_CHANGE;
 					}
 					
-					totalPages = story.getChapterLenght();
+					totalPages = story.getChapterLength();
 				
 					//If an update exists and incremental updating is enabled, update chapters as needed
 					if (Settings.isIncrementalUpdatingEnabled(this)) {
@@ -262,10 +263,17 @@ public class LibraryDownloader extends IntentService{
 		builder.setRating(matcher.group(1));
 		builder.setLanguage(matcher.group(2));		
 		if (matcher.group(3) != null) builder.setGenre(matcher.group(3));
-		if (matcher.group(4) != null) builder.setChapterLenght(Parser.parseInt(matcher.group(4)));
-		builder.setWordLenght(Parser.parseInt(matcher.group(5)));
-		if (matcher.group(6) != null) builder.setFavorites(Parser.parseInt(matcher.group(6)));
-		if (matcher.group(7) != null) builder.setFollows(Parser.parseInt(matcher.group(7)));
+		if (matcher.group(4) != null){
+			String[] characterArray = matcher.group(4).split("([,\\[\\]] ?)++");
+			for (String character : characterArray) {
+				if (!TextUtils.isEmpty(character))
+					builder.addCharacter(character);
+			}
+		}
+		if (matcher.group(5) != null) builder.setChapterLength(Parser.parseInt(matcher.group(5)));
+		builder.setWordLength(Parser.parseInt(matcher.group(6)));
+		if (matcher.group(7) != null) builder.setFavorites(Parser.parseInt(matcher.group(7)));
+		if (matcher.group(8) != null) builder.setFollows(Parser.parseInt(matcher.group(8)));
 		builder.setUpdateDate(updateDate);		
 		builder.setPublishDate(publishDate);
 		builder.setCompleted(attribs.text().contains("Complete"));

@@ -70,10 +70,10 @@ public class StoryMenuAdapter extends ArrayAdapter<Story> {
 			holder.title.setText(getItem(position).getName());
 			holder.summary.setText(getItem(position).getSummary());
 			holder.author.setText(getItem(position).getAuthor());
-			holder.author.setTag(getItem(position).getAuthor_id());
-			holder.words.setText(String.format(words, getItem(position).getWordLenght()));
+			holder.author.setTag(getItem(position).getAuthorId());
+			holder.words.setText(String.format(words, getItem(position).getWordLength()));
 			holder.follows.setText(String.format(follows, getItem(position).getFollows()));
-			holder.chapters.setText(String.format(chapters, getItem(position).getChapterLenght()));
+			holder.chapters.setText(String.format(chapters, getItem(position).getChapterLength()));
 
 		    return convertView;
 	}

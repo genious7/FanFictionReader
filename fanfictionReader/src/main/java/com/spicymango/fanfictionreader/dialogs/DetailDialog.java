@@ -14,9 +14,11 @@ import android.content.Intent;
 import android.net.Uri;
 import android.net.Uri.Builder;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.Html;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
@@ -34,7 +36,6 @@ public class DetailDialog extends DialogFragment implements OnClickListener{
 	private final static String EXTRA_AUTHOR = "AUTHOR";
 	
 	private Story mStory;
-	private boolean mShowAuthor;
 	
 	private final static int[] formats = {
 				R.string.detail_author,
@@ -49,19 +50,21 @@ public class DetailDialog extends DialogFragment implements OnClickListener{
 				R.string.detail_updated,
 				R.string.detail_published,
 				R.string.detail_story_id,
-				R.string.detail_complete
+				R.string.detail_complete,
+				R.string.detail_characters
 	};
 	
 	public DetailDialog(){
 	}
 	
 	@SuppressLint("InflateParams")
+	@NonNull
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		super.onCreateDialog(savedInstanceState);
 		
 		mStory = getArguments().getParcelable(EXTRA_STORY);
-		mShowAuthor = getArguments().getBoolean(EXTRA_AUTHOR);
+		boolean showAuthor = getArguments().getBoolean(EXTRA_AUTHOR);
 
 		int vPad = getResources().getDimensionPixelSize(R.dimen.activity_vertical_margin);
 		int hPad = getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin);
@@ -78,16 +81,17 @@ public class DetailDialog extends DialogFragment implements OnClickListener{
 				mStory.getAuthor(),
 				mStory.getCategory(),
 				mStory.getRating(),
-				mStory.getlanguage(),
+				mStory.getLanguage(),
 				mStory.getGenre(),
-				Integer.toString(mStory.getChapterLenght()),
-				mStory.getWordLenght(),
+				Integer.toString(mStory.getChapterLength()),
+				mStory.getWordLength(),
 				mStory.getFavorites(),
 				mStory.getFollows(),
 				DateFormat.getDateInstance().format(mStory.getUpdated()),
 				DateFormat.getDateInstance().format(mStory.getPublished()),
 				Long.toString(mStory.getId()),
-				mStory.isCompleted() ? getString(R.string.complete_true) : getString(R.string.complete_false)
+				mStory.isCompleted() ? getString(R.string.complete_true) : getString(R.string.complete_false),
+				TextUtils.join(", ", mStory.getCharacters())
 		};
 		
 		for (int i = 0; i < formats.length; i++) {
@@ -98,7 +102,7 @@ public class DetailDialog extends DialogFragment implements OnClickListener{
 			}
 		}
 		
-		if (mShowAuthor) {
+		if (showAuthor) {
 			Button authorBtn = new Button(getActivity());
 			authorBtn.setText(R.string.menu_navigation_browse_by_author);
 			authorBtn.setOnClickListener(this);
@@ -106,9 +110,9 @@ public class DetailDialog extends DialogFragment implements OnClickListener{
 			layout.addView(authorBtn);
 		}
 		
-		AlertDialog diag= builder.create();
-		diag.setCanceledOnTouchOutside(true);
-		return diag;
+		AlertDialog dialog= builder.create();
+		dialog.setCanceledOnTouchOutside(true);
+		return dialog;
 	}
 	
 	@Override
@@ -118,7 +122,7 @@ public class DetailDialog extends DialogFragment implements OnClickListener{
 		builder.scheme(getString(R.string.fanfiction_scheme))
 				.authority(getString(R.string.fanfiction_authority))
 				.appendEncodedPath("u")
-				.appendEncodedPath(mStory.getAuthor_id() + "")
+				.appendEncodedPath(mStory.getAuthorId() + "")
 				.appendEncodedPath("");
 		Intent i = new Intent(getActivity(), AuthorMenuActivity.class);
 		i.setData(builder.build());
@@ -126,17 +130,17 @@ public class DetailDialog extends DialogFragment implements OnClickListener{
 		
 	}
 	
-	public static final void show(FragmentActivity fragmentActivity, Story story) {
+	public static void show(FragmentActivity fragmentActivity, Story story) {
 		boolean showAuthor = true;
 		if (fragmentActivity instanceof AuthorMenuActivity || fragmentActivity instanceof LibraryMenuActivity) {
 			showAuthor = false;
 		}
-		DialogFragment diag = new DetailDialog();
+		DialogFragment dialog = new DetailDialog();
 		Bundle bundle = new Bundle();
 		bundle.putParcelable(EXTRA_STORY, story);
 		bundle.putBoolean(EXTRA_AUTHOR, showAuthor);
-		diag.setArguments(bundle);
-		diag.show(fragmentActivity.getSupportFragmentManager(), null);
+		dialog.setArguments(bundle);
+		dialog.show(fragmentActivity.getSupportFragmentManager(), null);
 	}
 	
 }

@@ -11,7 +11,7 @@ public interface SqlConstants {
 	public static final String KEY_AUTHOR_ID = "authorId";
 	public static final String KEY_RATING = "rating";
 	public static final String KEY_GENRE = "genre";
-	public static final String KEY_LANGUAGUE = "languague";
+	public static final String KEY_LANGUAGE = "languague";
 	public static final String KEY_CATEGORY = "category";
 	public static final String KEY_CHAPTER = "chapter";
 	public static final String KEY_LENGTH = "lenght";
@@ -23,4 +23,5 @@ public interface SqlConstants {
 	public static final String KEY_LAST = "lastChapter";
 	public static final String KEY_COMPLETE = "completed";
 	public static final String KEY_OFFSET = "characterOffset";
+	public static final String KEY_CHARACTERS = "characters";
 }

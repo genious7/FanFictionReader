@@ -119,7 +119,7 @@ public class LibraryMenuActivity extends AppCompatActivity implements LoaderCall
 					new Thread(new Runnable() {
 						@Override
 						public void run() {
-							int length = story.getChapterLenght();
+							int length = story.getChapterLength();
 							getContentResolver().delete(databaseUri, null, null);
 							FileHandler.deleteStory(LibraryMenuActivity.this, story.getId());
 						}
@@ -136,7 +136,7 @@ public class LibraryMenuActivity extends AppCompatActivity implements LoaderCall
 			builder.scheme(getString(R.string.fanfiction_scheme))
 					.authority(getString(R.string.fanfiction_authority))
 					.appendEncodedPath("u")
-					.appendEncodedPath(story.getAuthor_id() + "")
+					.appendEncodedPath(story.getAuthorId() + "")
 					.appendEncodedPath("");
 			Intent i = new Intent(this, AuthorMenuActivity.class);
 			i.setData(builder.build());

@@ -58,7 +58,7 @@ public class StoryReducedAdapter extends ArrayAdapter<Story>{
 			holder.title.setText(getItem(position).getName());
 			holder.summary.setText(getItem(position).getSummary());
 			holder.author.setText(getItem(position).getAuthor());
-			holder.author.setTag(getItem(position).getAuthor_id());
+			holder.author.setTag(getItem(position).getAuthorId());
 		    return convertView;
 	}
 	

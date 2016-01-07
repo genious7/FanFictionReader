@@ -423,7 +423,7 @@ public class AuthorMenuActivity extends AppCompatActivity{
 					builder.setAuthor(mAuthor);
 					builder.setAuthorId(mAuthorId);
 					builder.setSummary(element.ownText().replaceFirst("(?i)by\\s*", ""));
-					builder.setFanFicAttribs(attribs.text());
+					builder.setFanFicAttributes(attribs.text());
 					builder.setUpdateDate(updateDate);
 					builder.setPublishDate(publishDate);
 					builder.setCompleted(complete);
