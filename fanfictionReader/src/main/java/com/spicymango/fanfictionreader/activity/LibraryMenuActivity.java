@@ -412,6 +412,7 @@ public class LibraryMenuActivity extends AppCompatActivity implements LoaderCall
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list_view);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setTitle(R.string.menu_library_title);
 
 		mListView = (ListView) findViewById(android.R.id.list);
 		mListView.setOnItemClickListener(this);
