@@ -278,4 +278,7 @@
     <string name="general_plays">Plays &amp; Musicals</string>
     <string name="general_tv">TV Shows</string>
 
+    <!-- Reviews -->
+    <string name="menu_reviews_title">Reviews</string>
+    <string name="menu_reviews_chapter_posted">Chapter %d</string>
 </resources>
