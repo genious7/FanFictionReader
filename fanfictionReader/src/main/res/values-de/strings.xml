@@ -41,7 +41,7 @@
     <string name="filter_type">Typ</string>
     
     <string name="detail_rating">&lt;strong&gt;Bewertung:&lt;/strong&gt; %s</string>
-    <string name="detail_languague">&lt;strong&gt;Sprache:&lt;/strong&gt; %s</string>
+    <string name="detail_language">&lt;strong&gt;Sprache:&lt;/strong&gt; %s</string>
     <string name="detail_genre">&lt;strong&gt;Genre:&lt;/strong&gt; %s</string>
     <string name="detail_chapters">&lt;strong&gt;Kapitel:&lt;/strong&gt; %s</string>
     <string name="detail_words">&lt;strong&gt;Wörter:&lt;/strong&gt; %s</string>

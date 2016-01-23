@@ -43,7 +43,7 @@
 
     <!-- Detail Dialog -->
     <string name="detail_rating">&lt;strong&gt;Rating:&lt;/strong&gt; %s</string>
-    <string name="detail_languague">&lt;strong&gt;Language:&lt;/strong&gt; %s</string>
+    <string name="detail_language">&lt;strong&gt;Language:&lt;/strong&gt; %s</string>
     <string name="detail_genre">&lt;strong&gt;Genre:&lt;/strong&gt; %s</string>
     <string name="detail_chapters">&lt;strong&gt;Chapters:&lt;/strong&gt; %s</string>
     <string name="detail_words">&lt;strong&gt;Words:&lt;/strong&gt; %s</string>
@@ -56,6 +56,7 @@
     <string name="detail_author">&lt;strong&gt;Author:&lt;/strong&gt; %s</string>
     <string name="detail_story_id">&lt;strong&gt;Story ID:&lt;/strong&gt; %s</string>
     <string name="detail_characters">&lt;strong&gt;Characters:&lt;/strong&gt; %s</string>
+    <string name="detail_reviews">&lt;strong&gt;Reviews:&lt;/strong&gt; %s</string>
     
     <string name="complete_true">Completed</string>
     <string name="complete_false">In progress</string>

@@ -24,4 +24,5 @@ public interface SqlConstants {
 	public static final String KEY_COMPLETE = "completed";
 	public static final String KEY_OFFSET = "characterOffset";
 	public static final String KEY_CHARACTERS = "characters";
+	public static final String KEY_REVIEWS = "reviews";
 }

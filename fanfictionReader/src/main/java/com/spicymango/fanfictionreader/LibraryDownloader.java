@@ -70,7 +70,7 @@ public class LibraryDownloader extends IntentService{
 			+ "(?:(?!Chapters)([^-]+(?:(?<=Jenny )- [^-]+)?) - )?"//characters (non capturing)
 			+ "(?:Chapters: (\\d++) - )?" //Chapters
 			+ "Words: ([\\d,]++) - " //Words
-			+ "(?:Reviews: [\\d,]++ - )?"//Reviews (non capturing)
+			+ "(?:Reviews: ([\\d,]++) - )?"//Reviews
 			+ "(?:Favs: ([\\d,]++) - )?"//favorites
 			+ "(?:Follows: ([\\d,]++))?"); //Follows
 	
@@ -272,8 +272,9 @@ public class LibraryDownloader extends IntentService{
 		}
 		if (matcher.group(5) != null) builder.setChapterLength(Parser.parseInt(matcher.group(5)));
 		builder.setWordLength(Parser.parseInt(matcher.group(6)));
-		if (matcher.group(7) != null) builder.setFavorites(Parser.parseInt(matcher.group(7)));
-		if (matcher.group(8) != null) builder.setFollows(Parser.parseInt(matcher.group(8)));
+		if (matcher.group(7) != null) builder.setReviews(Parser.parseInt(matcher.group(7)));
+		if (matcher.group(8) != null) builder.setFavorites(Parser.parseInt(matcher.group(8)));
+		if (matcher.group(9) != null) builder.setFollows(Parser.parseInt(matcher.group(9)));
 		builder.setUpdateDate(updateDate);		
 		builder.setPublishDate(publishDate);
 		builder.setCompleted(attribs.text().contains("Complete"));

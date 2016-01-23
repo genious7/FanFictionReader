@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHelper extends SQLiteOpenHelper  implements SqlConstants{
 	
-	private static final int DATABASE_VERSION = 8; //Database version 8
+	private static final int DATABASE_VERSION = 9; //Database version 8
 	private static final String DATABASE_NAME = "library.db";
 	
 	//The name of the FanFiction table
@@ -36,7 +36,8 @@ public class DatabaseHelper extends SQLiteOpenHelper  implements SqlConstants{
             + KEY_LAST + " INTEGER,"
             + KEY_COMPLETE + " BOOLEAN,"
             + KEY_OFFSET + " INTEGER,"
-			+ KEY_CHARACTERS + " TEXT"
+			+ KEY_CHARACTERS + " TEXT,"
+			+ KEY_REVIEWS + " INTEGER"
             + ")";
 	
 	@Override
@@ -97,6 +98,10 @@ public class DatabaseHelper extends SQLiteOpenHelper  implements SqlConstants{
 		if (oldVersion < 8){
 			// A column for the different characters was added
 			db.execSQL("ALTER TABLE " + FANFICTION_TABLE + " ADD COLUMN " + KEY_CHARACTERS + " TEXT DEFAULT ''");
+		}
+		if (oldVersion < 9){
+			// A column for the different characters was added
+			db.execSQL("ALTER TABLE " + FANFICTION_TABLE + " ADD COLUMN " + KEY_REVIEWS + " INTEGER DEFAULT 0");
 		}
 	}
 

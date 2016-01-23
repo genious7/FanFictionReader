@@ -135,6 +135,12 @@ final class StoryMenuLoaders {
 					builder.setFollows(Parser.parseInt(favorites.text()));
 				}
 
+				// Fetch the number of comments (reviews)
+				Element comments = story.select("dd.comments").first();
+				if (comments != null){
+					builder.setReviews(Parser.parseInt(comments.text()));
+				}
+
 				// Fetch the update date
 				Element updateText = story.select("p.datetime").first();
 				if (updateText == null) return false;
