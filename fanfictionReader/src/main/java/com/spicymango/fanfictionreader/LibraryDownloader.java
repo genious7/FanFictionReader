@@ -67,12 +67,12 @@ public class LibraryDownloader extends IntentService{
 			+ "(?i)\\ARated: Fiction ([KTM]\\+?) - "//Rating
 			+ "([^-]+) - "//language
 			+ "(?:([^ ]+) - )?"//Genre
-			+ "(?:(?!Chapters)([^-]+(?:(?<=Jenny )- [^-]+)?) - )?"//characters (non capturing)
-			+ "(?:Chapters: (\\d++) - )?" //Chapters
-			+ "Words: ([\\d,]++) - " //Words
-			+ "(?:Reviews: [\\d,]++ - )?"//Reviews (non capturing)
-			+ "(?:Favs: ([\\d,]++) - )?"//favorites
-			+ "(?:Follows: ([\\d,]++))?"); //Follows
+			+ "(?:(?!Chapters)((?:(?! - ).)+?(?:(?<=Jenny) - [^-]+)?) - )?"//characters (non capturing)
+			+ "(?>Chapters: (\\d+) - )?" //Chapters
+			+ "Words: ([\\d,]+) - " //Words
+			+ "(?>Reviews: [\\d,]+ - )?"//Reviews (non capturing)
+			+ "(?>Favs: ([\\d,]+) - )?"//favorites
+			+ "(?>Follows: ([\\d,]+))?"); //Follows
 	
 	/**
 	 * Describes the author id Url pattern
