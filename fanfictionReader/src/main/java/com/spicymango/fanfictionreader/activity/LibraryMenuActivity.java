@@ -44,6 +44,7 @@ import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.Settings;
 import com.spicymango.fanfictionreader.activity.reader.StoryDisplayActivity;
 import com.spicymango.fanfictionreader.dialogs.DetailDialog;
+import com.spicymango.fanfictionreader.menu.reviewmenu.ReviewMenuActivity;
 import com.spicymango.fanfictionreader.menu.storymenu.FilterDialog.FilterDialog;
 import com.spicymango.fanfictionreader.menu.storymenu.FilterDialog.FilterDialog.FilterListener;
 import com.spicymango.fanfictionreader.menu.storymenu.FilterDialog.SpinnerData;
@@ -88,7 +89,22 @@ public class LibraryMenuActivity extends AppCompatActivity implements LoaderCall
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
+
+		// Inflate the basic menu
 		getMenuInflater().inflate(R.menu.library_context_menu, menu);
+
+		// Obtain the id that is being loaded
+		final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+		final long storyId = info.id;
+		final Uri databaseUri = Uri.withAppendedPath(StoryProvider.FF_CONTENT_URI, String.valueOf(storyId));
+		final Cursor c = getContentResolver().query(databaseUri, null, null, null, null);
+		c.moveToFirst();
+		final Story story = Story.fromCursor(c);
+		c.close();
+
+		// Gray out the review option if required.
+		MenuItem reviewItem = menu.findItem(R.id.menu_library_context_view_reviews);
+		reviewItem.setEnabled(story.getReviews() != 0);
 	}
 	
 	@Override
@@ -103,46 +119,61 @@ public class LibraryMenuActivity extends AppCompatActivity implements LoaderCall
 		c.moveToFirst();
 		final Story story = Story.fromCursor(c);
 		c.close();
-		
-		switch (item.getItemId()) {
-		case R.id.menu_library_context_details:
-			DetailDialog.show(this, story);
-			return true;
-			
-		case R.id.menu_library_context_delete:
-			AlertDialog.Builder diag = new AlertDialog.Builder(this);
-			diag.setTitle(R.string.dialog_remove);
-			diag.setMessage(R.string.dialog_remove_text);
-			diag.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					new Thread(new Runnable() {
-						@Override
-						public void run() {
-							int length = story.getChapterLength();
-							getContentResolver().delete(databaseUri, null, null);
-							FileHandler.deleteStory(LibraryMenuActivity.this, story.getId());
-						}
-					}).start();
-				}
-			});
-			diag.setNegativeButton(android.R.string.no, null);
-			diag.show();			
-			return true;
-		
-		case R.id.menu_library_context_author:
-			Uri.Builder builder = new Builder();
 
-			builder.scheme(getString(R.string.fanfiction_scheme))
-					.authority(getString(R.string.fanfiction_authority))
-					.appendEncodedPath("u")
-					.appendEncodedPath(story.getAuthorId() + "")
-					.appendEncodedPath("");
-			Intent i = new Intent(this, AuthorMenuActivity.class);
-			i.setData(builder.build());
-			startActivity(i);
-		default:
-			return false;
+		switch (item.getItemId()) {
+			case R.id.menu_library_context_details:
+				DetailDialog.show(this, story);
+				return true;
+
+			case R.id.menu_library_context_delete:
+				AlertDialog.Builder diag = new AlertDialog.Builder(this);
+				diag.setTitle(R.string.dialog_remove);
+				diag.setMessage(R.string.dialog_remove_text);
+				diag.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						new Thread(new Runnable() {
+							@Override
+							public void run() {
+								int length = story.getChapterLength();
+								getContentResolver().delete(databaseUri, null, null);
+								FileHandler.deleteStory(LibraryMenuActivity.this, story.getId());
+							}
+						}).start();
+					}
+				});
+				diag.setNegativeButton(android.R.string.no, null);
+				diag.show();
+				return true;
+
+			case R.id.menu_library_context_author: {
+				Uri.Builder builder = new Builder();
+
+				builder.scheme(getString(R.string.fanfiction_scheme))
+						.authority(getString(R.string.fanfiction_authority))
+						.appendEncodedPath("u")
+						.appendEncodedPath(story.getAuthorId() + "")
+						.appendEncodedPath("");
+				Intent i = new Intent(this, AuthorMenuActivity.class);
+				i.setData(builder.build());
+				startActivity(i);
+				return true;
+			}
+			case R.id.menu_library_context_view_reviews: {
+				Uri.Builder builder = new Builder();
+				builder.scheme(getString(R.string.fanfiction_scheme))
+						.authority(getString(R.string.fanfiction_authority))
+						.appendEncodedPath("r")
+						.appendEncodedPath(Long.toString(story.getId()))
+						.appendEncodedPath("");
+				Intent i = new Intent(this, ReviewMenuActivity.class);
+				i.setData(builder.build());
+				startActivity(i);
+				return true;
+			}
+
+			default:
+				return false;
 		}
 	}
 	

@@ -53,7 +53,7 @@ public class Parser {
 			Elements completeIcon = element.select("img.mm");
 			boolean complete = !completeIcon.isEmpty();
 
-			Elements reviewIcon = element.select("img.mt");
+			Elements reviewIcon = element.select("a > img.mt");
 			final int reviews;
 			if (reviewIcon.isEmpty()) {
 				reviews = 0;

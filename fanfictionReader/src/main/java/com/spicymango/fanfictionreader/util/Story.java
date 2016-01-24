@@ -142,12 +142,12 @@ public class Story implements Parcelable, SqlConstants {
 	// --------------------------------------Parceling--------------------------------------------------
 
 	/**
-	 * Generates a new Story object from the parcel.
+	 * Generates a new Story object from the parcel. This constructor is only used internally by the
+	 * {@link Story#CREATOR}.
 	 *
 	 * @param in The parcel containing the object.
 	 */
-	@SuppressWarnings("WeakerAccess")
-	public static Story fromParcel(Parcel in) {
+	private static Story fromParcel(Parcel in) {
 		Builder builder = new Builder();
 		builder.setId(in.readLong());
 		builder.setName(in.readString());
@@ -352,8 +352,8 @@ public class Story implements Parcelable, SqlConstants {
 	 *
 	 * @return The number of reviews
 	 */
-	public String getReviews() {
-		return Parser.withSuffix(mReviews);
+	public int getReviews() {
+		return mReviews;
 	}
 
 	public final static class Builder {

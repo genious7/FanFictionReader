@@ -9,6 +9,11 @@
         android:title="@string/menu_library_context_author">
     </item>
     <item
+        android:id="@+id/menu_library_context_view_reviews"
+        android:title="@string/menu_library_context_reviews">
+        >
+    </item>
+    <item
         android:id="@+id/menu_library_context_delete"
         android:title="@string/menu_library_context_delete">
     </item>

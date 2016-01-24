@@ -160,7 +160,7 @@ final class ReviewMenuLoaders {
 				for (; i < nodes.size(); i++) {
 					if (reviewText.length() != 0)
 						reviewText.append('\n');
-					reviewText.append(nodes.get(i).text());
+					reviewText.append(nodes.get(i).text().trim());
 				}
 
 				// Get the chapter number

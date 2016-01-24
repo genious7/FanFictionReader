@@ -57,6 +57,8 @@
     <string name="detail_story_id">&lt;strong&gt;Story ID:&lt;/strong&gt; %s</string>
     <string name="detail_characters">&lt;strong&gt;Characters:&lt;/strong&gt; %s</string>
     <string name="detail_reviews">&lt;strong&gt;Reviews:&lt;/strong&gt; %s</string>
+
+    <string name="detail_view_reviews">View Reviews</string>
     
     <string name="complete_true">Completed</string>
     <string name="complete_false">In progress</string>
@@ -185,6 +187,7 @@
     <string name="menu_library_sync_all_condensed">Sync</string>
     <string name="menu_library_context_detail">Details</string>
     <string name="menu_library_context_author">Browse Author</string>
+    <string name="menu_library_context_reviews">@string/detail_view_reviews</string>
     <string name="menu_library_context_delete">Remove Story</string>
     <string name="menu_library_words">Words: %,d</string>
     <string name="menu_library_chapters">Chapters: %d</string>
