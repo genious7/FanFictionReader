@@ -358,6 +358,7 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 		switch (mSite) {
 		case FANFICTION:
 		case FICTIONPRESS:
+			// TODO: Make links work without chapter numbers
 			Pattern filePattern = Pattern.compile("/s/(\\d++)/(\\d++)/");
 			Matcher matcher = filePattern.matcher(uri.toString());
 			if (matcher.find()) {

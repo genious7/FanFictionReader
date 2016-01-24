@@ -43,7 +43,7 @@
 
     <!-- Detail Dialog -->
     <string name="detail_rating">&lt;strong&gt;Rating:&lt;/strong&gt; %s</string>
-    <string name="detail_languague">&lt;strong&gt;Language:&lt;/strong&gt; %s</string>
+    <string name="detail_language">&lt;strong&gt;Language:&lt;/strong&gt; %s</string>
     <string name="detail_genre">&lt;strong&gt;Genre:&lt;/strong&gt; %s</string>
     <string name="detail_chapters">&lt;strong&gt;Chapters:&lt;/strong&gt; %s</string>
     <string name="detail_words">&lt;strong&gt;Words:&lt;/strong&gt; %s</string>
@@ -56,6 +56,9 @@
     <string name="detail_author">&lt;strong&gt;Author:&lt;/strong&gt; %s</string>
     <string name="detail_story_id">&lt;strong&gt;Story ID:&lt;/strong&gt; %s</string>
     <string name="detail_characters">&lt;strong&gt;Characters:&lt;/strong&gt; %s</string>
+    <string name="detail_reviews">&lt;strong&gt;Reviews:&lt;/strong&gt; %s</string>
+
+    <string name="detail_view_reviews">View Reviews</string>
     
     <string name="complete_true">Completed</string>
     <string name="complete_false">In progress</string>
@@ -184,6 +187,7 @@
     <string name="menu_library_sync_all_condensed">Sync</string>
     <string name="menu_library_context_detail">Details</string>
     <string name="menu_library_context_author">Browse Author</string>
+    <string name="menu_library_context_reviews">@string/detail_view_reviews</string>
     <string name="menu_library_context_delete">Remove Story</string>
     <string name="menu_library_words">Words: %,d</string>
     <string name="menu_library_chapters">Chapters: %d</string>
@@ -278,4 +282,7 @@
     <string name="general_plays">Plays &amp; Musicals</string>
     <string name="general_tv">TV Shows</string>
 
+    <!-- Reviews -->
+    <string name="menu_reviews_title">Reviews</string>
+    <string name="menu_reviews_chapter_posted">Chapter %d</string>
 </resources>

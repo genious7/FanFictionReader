@@ -34,24 +34,33 @@ public class Parser {
 			element.select("b").unwrap();
 			Element title = element.select("a[href~=(?i)/s/\\d+/1/.*]").first();
 			Element author = element.select("a[href^=/u/]").first();
-			Element attribs = element.select("div.gray").first();
+			Element attributes = element.select("div.gray").first();
 			Elements dates = element.select("span[data-xutime]");
+
+			// Check that all the elements are valid. If at least one of them is invalid, return false
+			if (title == null || author == null || attributes == null || dates.isEmpty())
+				return false;
 			
 			storyIdMatcher.reset(title.attr("href"));
 			authorIdMatcher.reset(author.attr("href"));
 			
-			storyIdMatcher.find();
-			authorIdMatcher.find();
-				
-			long updateDate = 0;
-			long publishDate = 0;
+			if (!(storyIdMatcher.find() & authorIdMatcher.find()))
+				return false;
 
-			updateDate = Long.parseLong(dates.first().attr("data-xutime")) * 1000;
-			publishDate = Long.parseLong(dates.last().attr("data-xutime")) * 1000;
-			
-			boolean complete;	
-			Elements imgs = element.select("img.mm");
-			complete = !imgs.isEmpty();
+			long updateDate = Long.parseLong(dates.first().attr("data-xutime")) * 1000;
+			long publishDate = Long.parseLong(dates.last().attr("data-xutime")) * 1000;
+
+			Elements completeIcon = element.select("img.mm");
+			boolean complete = !completeIcon.isEmpty();
+
+			Elements reviewIcon = element.select("a > img.mt");
+			final int reviews;
+			if (reviewIcon.isEmpty()) {
+				reviews = 0;
+			} else {
+				Element reviewLink = reviewIcon.first().parent();
+				reviews = parseInt(reviewLink.ownText());
+			}
 			
 			Story.Builder builder = new Story.Builder();
 			builder.setId(Long.parseLong(storyIdMatcher.group(1)));
@@ -59,10 +68,11 @@ public class Parser {
 			builder.setAuthor(author.text());
 			builder.setAuthorId(Long.parseLong(authorIdMatcher.group(1)));
 			builder.setSummary(element.ownText().replaceFirst("(?i)by\\s*", ""));
-			builder.setFanFicAttributes(attribs.text());
+			builder.setFanFicAttributes(attributes.text());
 			builder.setUpdateDate(updateDate);
 			builder.setPublishDate(publishDate);
 			builder.setCompleted(complete);
+			builder.setReviews(reviews);
 
 			list.add(builder.build());
 		}
@@ -79,7 +89,7 @@ public class Parser {
 	 * @param document The parsed document
 	 * @return The number of pages in the document
 	 */
-	public final static int getPageNumber(Document document){
+	public static int getPageNumber(Document document){
 		Elements elements = document.select("div#content a:matchesOwn(\\A(?i)last\\Z)");
 		if (elements.isEmpty()){
 			if (document.select("div#content a:matchesOwn(\\A(?i)next)").isEmpty())
@@ -95,7 +105,7 @@ public class Parser {
 	 * @param url The url to parse
 	 * @return The current page
 	 */
-	private final static int getPageNumber(String url){
+	private static int getPageNumber(String url){
 		Matcher matcher = pattern2.matcher(url);
 		if (matcher.find()) {
 			for (int i = 1; i < matcher.groupCount(); i++) {
@@ -106,7 +116,7 @@ public class Parser {
 		return 1;
 	}
 	
-	public final static int parseInt(String string){
+	public static int parseInt(String string){
 		if (string.length() == 0) {
 			return 0;
 		} else {
@@ -118,22 +128,22 @@ public class Parser {
 		}
 	}
 	
-	public static final String withSuffix(int count) {
+	public static String withSuffix(int count) {
 	    if (count < 1000) return "" + count;
 	    return count/1000 + "k+";
 	}
 	
-	public static final List<Spanned> split(Spanned spanned){
+	public static List<Spanned> split(Spanned spanned){
 		String[] list = spanned.toString().split("\n");
 		
 		int i = 0;
-		List<Spanned> result = new ArrayList<Spanned>(list.length);
-		
-		for (int j = 0; j < list.length; j++) {
-			SpannableString line = new SpannableString(list[j]);
-			TextUtils.copySpansFrom(spanned, i, i + list[j].length(), null, line, 0);
-			i += list[j].length() + 1;
-			result.add(line);
+		List<Spanned> result = new ArrayList<>(list.length);
+
+		for (String paragraph : list) {
+			SpannableString styledParagraph = new SpannableString(paragraph);
+			TextUtils.copySpansFrom(spanned, i, i + paragraph.length(), null, styledParagraph, 0);
+			i += paragraph.length() + 1;
+			result.add(styledParagraph);
 		}
 		return result;
 	}
