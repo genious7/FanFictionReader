@@ -70,7 +70,7 @@ public class LibraryDownloader extends IntentService{
 			+ "(?:(?!Chapters)((?:(?! - ).)+?(?:(?<=Jenny) - [^-]+)?) - )?"//characters (non capturing)
 			+ "(?>Chapters: (\\d+) - )?" //Chapters
 			+ "Words: ([\\d,]+) - " //Words
-			+ "(?>Reviews: [\\d,]+ - )?"//Reviews (non capturing)
+			+ "(?>Reviews: ([\\d,]+) - )?"//Reviews (non capturing)
 			+ "(?>Favs: ([\\d,]+) - )?"//favorites
 			+ "(?>Follows: ([\\d,]+))?"); //Follows
 	
