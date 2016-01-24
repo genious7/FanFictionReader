@@ -22,13 +22,13 @@ public enum Site {
 	public final Uri content_uri;
 	public static final String scheme = "https";
 	
-	private Site(String authorityMobile, String authorityRegular, Uri contentUri) {
+	Site(String authorityMobile, String authorityRegular, Uri contentUri) {
 		this.authorityMobile = authorityMobile;
 		this.authorityRegular = authorityRegular;
 		this.content_uri = contentUri;
 	}
 
-	private Site(String authorityMobile, Uri contentUri){
+	Site(String authorityMobile, Uri contentUri){
 		this(authorityMobile, authorityMobile, contentUri);
 	}
 	

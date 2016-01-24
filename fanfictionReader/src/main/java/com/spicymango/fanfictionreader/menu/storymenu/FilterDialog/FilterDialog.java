@@ -70,7 +70,7 @@ public class FilterDialog extends DialogFragment implements OnClickListener {
 		 * @param selected
 		 *            The selected spinner positions
 		 */
-		public void onFilter(int[] selected);
+		void onFilter(int[] selected);
 	}
 
 	@Override

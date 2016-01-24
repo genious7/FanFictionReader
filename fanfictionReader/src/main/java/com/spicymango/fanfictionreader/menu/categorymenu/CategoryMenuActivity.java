@@ -323,9 +323,9 @@ public class CategoryMenuActivity extends AppCompatActivity {
 
 		protected interface Filterable {
 
-			public String[] getFilterEntries();
+			String[] getFilterEntries();
 
-			public void onFilterSelected(int position);
+			void onFilterSelected(int position);
 
 		}
 

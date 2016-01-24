@@ -39,7 +39,7 @@ public class CommunityMenuActivity extends AppCompatActivity {
 		 *
 		 */
 		interface Sortable{
-			public void sort(SortBy sortKey);
+			void sort(SortBy sortKey);
 		}
 		
 		private static final int ARCHIVE_OF_OUR_OWN_COLLECTION = 2;

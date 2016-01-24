@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * A parcelable class that represents a single story chapter
  */
-class StoryChapter implements Parcelable {
+class StoryChapter implements Parcelable, Cloneable {
 	public final static Parcelable.Creator<StoryChapter> CREATOR = new Creator<StoryChapter>() {
 
 		@Override

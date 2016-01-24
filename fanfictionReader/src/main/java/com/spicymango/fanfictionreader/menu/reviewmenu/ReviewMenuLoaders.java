@@ -25,7 +25,7 @@ final class ReviewMenuLoaders {
 
 	interface TitleLoader{
 		@Nullable
-		public String getTitle();
+		String getTitle();
 	}
 
 	static final class FanFictionReviewLoader extends BaseLoader<ReviewMenuItem> implements  TitleLoader{

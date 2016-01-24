@@ -314,10 +314,7 @@ public class FileHandler {
 			// If the external directory exists, an SD card is present.
 			// If it doesn't, try to create the folder. Success indicates that
 			// the SD card is writable
-			if (sd.exists() || sd.mkdirs())
-				return true;
-			else
-				return false;
+			return sd.exists() || sd.mkdirs();
 		}
 		return false;
 	}
