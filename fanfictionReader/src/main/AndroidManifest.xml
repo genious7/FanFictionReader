@@ -67,10 +67,7 @@
         <activity
             android:name=".activity.SearchStoryActivity"
             android:label="@string/menu_search_title" />
-        <activity
-            android:name=".activity.AuthorMenuActivity"
-            android:label="@string/app_name"
-            android:launchMode="singleTop" />
+        <activity android:name=".menu.authormenu.AuthorMenuActivity"/>
         <activity
             android:name=".activity.SearchAuthorActivity"
             android:label="@string/menu_search_title" />

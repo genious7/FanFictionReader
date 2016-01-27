@@ -3,8 +3,8 @@ package com.spicymango.fanfictionreader.dialogs;
 import java.text.DateFormat;
 
 import com.spicymango.fanfictionreader.R;
-import com.spicymango.fanfictionreader.activity.AuthorMenuActivity;
 import com.spicymango.fanfictionreader.activity.LibraryMenuActivity;
+import com.spicymango.fanfictionreader.menu.authormenu.AuthorMenuActivity;
 import com.spicymango.fanfictionreader.menu.reviewmenu.ReviewMenuActivity;
 import com.spicymango.fanfictionreader.util.Parser;
 import com.spicymango.fanfictionreader.util.Story;

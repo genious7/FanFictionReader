@@ -34,6 +34,7 @@ import android.widget.TextView;
 import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.menu.BaseActivity;
 import com.spicymango.fanfictionreader.menu.BaseLoader.Filterable;
+import com.spicymango.fanfictionreader.menu.authormenu.AuthorMenuActivity;
 import com.spicymango.fanfictionreader.menu.storymenu.FilterDialog.FilterDialog;
 import com.spicymango.fanfictionreader.menu.storymenu.FilterDialog.SpinnerData;
 import com.spicymango.fanfictionreader.menu.storymenu.FilterDialog.FilterDialog.FilterListener;
