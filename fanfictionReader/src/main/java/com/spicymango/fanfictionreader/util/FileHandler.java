@@ -21,7 +21,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.os.EnvironmentCompat;
 import android.text.Html;
-import android.text.Spanned;
 import android.text.SpannedString;
 import android.util.Log;
 
