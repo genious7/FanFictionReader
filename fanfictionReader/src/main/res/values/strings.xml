@@ -147,6 +147,7 @@
     <string-array name="menu_search_by">
         <item>Search stories</item>
         <item>Search authors</item>
+        <item>Search communities</item>
     </string-array>
 
     <!-- Browse Menu Activity -->

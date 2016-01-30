@@ -110,7 +110,11 @@ public abstract class SearchLoader<T extends Parcelable> extends BaseLoader<T> {
 	 */
 	protected static ArrayList<SpinnerData> SearchFilter(Document document){
 		Elements form = document.select("div#content form > div#drop_m > select");
-		
+
+		if(form.size() == 0) {
+			form = document.select("div#content_wrapper_inner > div > select");
+		}
+
 		Elements[] filter = {
 				form.select("[name=s]:not([title])"),
 				form.select("[name=categoryid]"),
