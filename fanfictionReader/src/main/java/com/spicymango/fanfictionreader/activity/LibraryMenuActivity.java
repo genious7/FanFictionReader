@@ -255,9 +255,12 @@ public class LibraryMenuActivity extends AppCompatActivity implements LoaderCall
 			int columnLast = c.getColumnIndex(KEY_LAST);
 			int columnOffset = c.getColumnIndex(KEY_OFFSET);
 			if (c.moveToFirst()) {
-			    do {
-			    	LibraryDownloader.download(this, c.getLong(columnId), c.getInt(columnLast), c.getInt(columnOffset));
-			    } while (c.moveToNext());
+				do {
+					if(c.getPosition() ==0)
+						LibraryDownloader.download(this, c.getLong(columnId), c.getInt(columnLast), c.getInt(columnOffset), c.getPosition(), c.getCount());
+					else
+						LibraryDownloader.download(this, c.getLong(columnId), c.getInt(columnLast), c.getInt(columnOffset), c.getPosition());
+				} while (c.moveToNext());
 			}
 			return true;
 		case R.id.filter:

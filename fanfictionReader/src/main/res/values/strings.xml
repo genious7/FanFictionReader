@@ -125,6 +125,7 @@
 
     <!-- Story Downloader -->
     <string name="downloader_downloading">Downloading Story</string>
+    <string name="downloader_checking_updates">Checking For Updates</string>
     <string name="downloader_context">%1$s Chapter %2$d/%3$d</string>
 
     <plurals name="downloader_notification">
