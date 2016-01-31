@@ -296,8 +296,8 @@ public class StoryMenuActivity extends AppCompatActivity implements FilterListen
 		}
 
 		@Override
-		protected BaseAdapter adapter(List<Story> dataset) {
-			return new StoryMenuAdapter(getActivity(), dataset);
+		protected BaseAdapter adapter(List<Story> dataSet) {
+			return new StoryMenuAdapter(getActivity(), dataSet);
 		}
 
 		@Override

@@ -317,8 +317,8 @@ public class CategoryMenuActivity extends AppCompatActivity {
 		}
 
 		@Override
-		protected BaseAdapter adapter(List<CategoryMenuItem> dataset) {
-			return mAdapter = new CategoryMenuAdapter(getActivity(), dataset);
+		protected BaseAdapter adapter(List<CategoryMenuItem> dataSet) {
+			return mAdapter = new CategoryMenuAdapter(getActivity(), dataSet);
 		}
 
 		protected interface Filterable {

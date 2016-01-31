@@ -125,8 +125,8 @@ public class ReviewMenuActivity extends AppCompatActivity{
 		}
 
 		@Override
-		protected BaseAdapter adapter(List<ReviewMenuItem> dataset) {
-			return new ReviewAdapter(getActivity(), dataset);
+		protected BaseAdapter adapter(List<ReviewMenuItem> dataSet) {
+			return new ReviewAdapter(getActivity(), dataSet);
 		}
 	}
 

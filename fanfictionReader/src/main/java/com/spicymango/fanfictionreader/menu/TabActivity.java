@@ -1,6 +1,7 @@
 package com.spicymango.fanfictionreader.menu;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -126,6 +127,22 @@ public abstract class TabActivity extends AppCompatActivity{
 		}
 	}
 
+	/**
+	 * Gets the currently selected fragment. If no fragments have been defined, this returns null
+	 * @return The currently selected fragment
+	 */
+	@Nullable
+	protected final Fragment getCurrentFragment(){
+		final int selectedPosition = mTabLayout.getSelectedTabPosition();
+		if (selectedPosition == -1)
+			return null;
+		else{
+			final FragmentManager manager = getSupportFragmentManager();
+			final String fragmentTag = Integer.toString(selectedPosition);
+			return manager.findFragmentByTag(fragmentTag);
+		}
+	}
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -137,7 +154,7 @@ public abstract class TabActivity extends AppCompatActivity{
 		}
 	}
 
-	private TabLayout.OnTabSelectedListener mTabListener = new TabLayout.OnTabSelectedListener() {
+	private final TabLayout.OnTabSelectedListener mTabListener = new TabLayout.OnTabSelectedListener() {
 		@Override
 		public void onTabSelected(TabLayout.Tab tab) {
 			// Get the position of the tab, which is used as a tag for the fragment and as the index

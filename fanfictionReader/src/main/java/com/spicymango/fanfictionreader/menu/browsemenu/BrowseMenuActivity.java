@@ -277,8 +277,8 @@ public class BrowseMenuActivity extends AppCompatActivity {
 		}
 
 		@Override
-		protected BaseAdapter adapter(List<BrowseMenuItem> dataset) {
-			return new BrowseMenuAdapter(getActivity(), dataset);
+		protected BaseAdapter adapter(List<BrowseMenuItem> dataSet) {
+			return new BrowseMenuAdapter(getActivity(), dataSet);
 		}
 	}
 }

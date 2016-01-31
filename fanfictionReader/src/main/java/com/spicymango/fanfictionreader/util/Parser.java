@@ -115,7 +115,14 @@ public class Parser {
 		}
 		return 1;
 	}
-	
+
+	/**
+	 * Parses an integer into a string. This implementation will recognize when the character 'k' is
+	 * used to denote thousands.
+	 *
+	 * @param string The string that should be parsed
+	 * @return The integer representation of the string.
+	 */
 	public static int parseInt(String string){
 		if (string.length() == 0) {
 			return 0;

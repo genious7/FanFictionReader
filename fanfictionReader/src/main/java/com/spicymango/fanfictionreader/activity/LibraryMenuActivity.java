@@ -44,7 +44,7 @@ import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.Settings;
 import com.spicymango.fanfictionreader.activity.reader.StoryDisplayActivity;
 import com.spicymango.fanfictionreader.dialogs.DetailDialog;
-import com.spicymango.fanfictionreader.menu.authormenu.*;
+import com.spicymango.fanfictionreader.menu.authormenu.AuthorMenuActivity;
 import com.spicymango.fanfictionreader.menu.reviewmenu.ReviewMenuActivity;
 import com.spicymango.fanfictionreader.menu.storymenu.FilterDialog.FilterDialog;
 import com.spicymango.fanfictionreader.menu.storymenu.FilterDialog.FilterDialog.FilterListener;

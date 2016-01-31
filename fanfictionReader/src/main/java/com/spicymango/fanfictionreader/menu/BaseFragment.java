@@ -132,7 +132,7 @@ public abstract class BaseFragment<T extends Parcelable> extends Fragment
 		mLoader.saveInstanceState(outState);
 	}
 
-	protected abstract BaseAdapter adapter(List<T> dataset);
+	protected abstract BaseAdapter adapter(List<T> dataSet);
 
 	protected final void setSubTitle(@StringRes int title) {
 		((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(title);

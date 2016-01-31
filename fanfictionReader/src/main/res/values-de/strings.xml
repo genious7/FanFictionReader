@@ -133,6 +133,7 @@
     <string-array name="menu_search_by">
         <item>Geschichten suchen</item>
         <item>Autoren suchen</item>
+        <item>Search communities</item>
     </string-array>
 
     <!-- Browse Menu Activity -->

@@ -70,8 +70,8 @@ public class CommunityMenuActivity extends AppCompatActivity {
 		private LoaderAdapter<CommunityMenuItem> mLoaderAdapter;
 
 		@Override
-		protected BaseAdapter adapter(List<CommunityMenuItem> dataset) {
-			return new CommunityAdapter(getActivity(), dataset);
+		protected BaseAdapter adapter(List<CommunityMenuItem> dataSet) {
+			return new CommunityAdapter(getActivity(), dataSet);
 		}
 
 		@Override
