@@ -201,6 +201,7 @@
         <item>Author</item>
         <item>Favorites</item>
         <item>Follows</item>
+        <item>Reviews</item>
         <item>Read Percentage</item>
     </string-array>
     
