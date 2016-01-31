@@ -185,6 +185,7 @@
         <item>Autor</item>
         <item>Favoriten</item>
         <item>Follows</item>
+        <item>Reviews</item>
         <item >Read Percentage</item>
     </string-array>
     

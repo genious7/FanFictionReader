@@ -256,7 +256,7 @@ public class LibraryMenuActivity extends AppCompatActivity implements LoaderCall
 			int columnOffset = c.getColumnIndex(KEY_OFFSET);
 			if (c.moveToFirst()) {
 				do {
-					if(c.getPosition() ==0)
+					if (c.getPosition() == 0)
 						LibraryDownloader.download(this, c.getLong(columnId), c.getInt(columnLast), c.getInt(columnOffset), c.getPosition(), c.getCount());
 					else
 						LibraryDownloader.download(this, c.getLong(columnId), c.getInt(columnLast), c.getInt(columnOffset), c.getPosition());
