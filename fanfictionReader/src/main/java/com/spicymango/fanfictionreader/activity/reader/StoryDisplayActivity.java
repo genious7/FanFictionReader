@@ -51,12 +51,14 @@ import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.Settings;
 import com.spicymango.fanfictionreader.activity.LogInActivity;
 import com.spicymango.fanfictionreader.activity.Site;
+import com.spicymango.fanfictionreader.dialogs.DetailDialog;
 import com.spicymango.fanfictionreader.dialogs.ReviewDialog;
 import com.spicymango.fanfictionreader.menu.mainmenu.MainActivity;
 import com.spicymango.fanfictionreader.provider.SqlConstants;
 import com.spicymango.fanfictionreader.provider.StoryProvider;
 import com.spicymango.fanfictionreader.util.AsyncPost;
 import com.spicymango.fanfictionreader.util.FileHandler;
+import com.spicymango.fanfictionreader.util.Story;
 import com.spicymango.fanfictionreader.util.adapters.TextAdapter;
 
 public class StoryDisplayActivity extends AppCompatActivity implements LoaderCallbacks<StoryChapter>, OnClickListener{
@@ -271,6 +273,16 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 			return true;
 		case android.R.id.home:
 			onBackPressed();
+			return true;
+		case R.id.read_story_detail:
+			final Uri databaseUri = Uri.withAppendedPath(StoryProvider.FF_CONTENT_URI, String.valueOf(mStoryId));
+
+			Cursor c = getContentResolver().query(databaseUri, null, null, null, null);
+			c.moveToFirst();
+			final Story story = Story.fromCursor(c);
+			c.close();
+
+			DetailDialog.show(this, story);
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);

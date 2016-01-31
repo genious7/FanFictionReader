@@ -246,6 +246,7 @@
     <string name="read_story_go_to_condensed">Go to</string>
     <string name="read_story_go_to_top">Go to top</string>
     <string name="read_story_go_to_bottom">Go to bottom</string>
+    <string name="read_story_detail">Details</string>
     <string name="read_story_full_screen">Full Screen</string>
     <string name="review">Review</string>
     <string name="dialog_review_posted">Review posted successfully</string>

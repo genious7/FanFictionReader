@@ -34,6 +34,11 @@
             android:title="@string/read_story_go_to_bottom"
             spicymango:showAsAction="never">
         </item>
+        <item
+            android:id="@+id/read_story_detail"
+            android:title="@string/read_story_detail"
+            spicymango:showAsAction="never">
+        </item>
     </group>
     <group
         android:id="@+id/account_group"
