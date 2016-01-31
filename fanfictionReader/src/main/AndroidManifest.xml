@@ -71,6 +71,9 @@
         <activity
             android:name=".activity.SearchAuthorActivity"
             android:label="@string/menu_search_title" />
+        <activity
+            android:name=".activity.SearchCommunityActivity"
+            android:label="@string/menu_search_title" />
         <activity android:name=".activity.AccountActivity" />
         <activity android:name=".activity.LogInActivity" />
         <activity android:name=".menu.reviewmenu.ReviewMenuActivity"/>

@@ -19,6 +19,7 @@ import com.spicymango.fanfictionreader.Settings;
 import com.spicymango.fanfictionreader.activity.AccountActivity;
 import com.spicymango.fanfictionreader.activity.LibraryMenuActivity;
 import com.spicymango.fanfictionreader.activity.SearchAuthorActivity;
+import com.spicymango.fanfictionreader.activity.SearchCommunityActivity;
 import com.spicymango.fanfictionreader.activity.SearchStoryActivity;
 import com.spicymango.fanfictionreader.activity.Site;
 import com.spicymango.fanfictionreader.activity.reader.StoryDisplayActivity;
@@ -123,6 +124,9 @@ public final class FanFictionMain extends ListFragment implements OnClickListene
 			break;
 		case 1:
 			i = new Intent(getActivity(), SearchAuthorActivity.class);
+			break;
+		case 2:
+			i = new Intent(getActivity(), SearchCommunityActivity.class);
 			break;
 		default:
 			return;
