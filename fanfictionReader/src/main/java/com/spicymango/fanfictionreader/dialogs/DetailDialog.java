@@ -26,6 +26,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 /**
@@ -73,14 +74,16 @@ public class DetailDialog extends DialogFragment implements OnClickListener{
 
 		int vPad = getResources().getDimensionPixelSize(R.dimen.activity_vertical_margin);
 		int hPad = getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin);
-		
+
+		final ScrollView scrollView = new ScrollView(getActivity());
 		final LinearLayout layout = new LinearLayout(getActivity());
+		scrollView.addView(layout);
 		layout.setOrientation(LinearLayout.VERTICAL);
 		layout.setPadding(hPad, vPad, hPad, vPad);
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setTitle(mStory.getName());
-		builder.setView(layout);
+		builder.setView(scrollView);
 		
 		String[] stringValues = {
 				mStory.getAuthor(),
