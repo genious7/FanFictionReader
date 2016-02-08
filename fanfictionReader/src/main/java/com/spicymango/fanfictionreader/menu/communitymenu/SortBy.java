@@ -14,7 +14,7 @@ enum SortBy {
 
 	private final int id;
 
-	private SortBy(int id) {
+	SortBy(int id) {
 		this.id = id;
 	}
 

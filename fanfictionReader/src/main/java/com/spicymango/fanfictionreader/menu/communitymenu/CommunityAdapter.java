@@ -18,7 +18,7 @@ import android.widget.TextView;
  * @author Michael Chen
  *
  */
-final class CommunityAdapter extends ArrayAdapter<CommunityMenuItem> {
+public final class CommunityAdapter extends ArrayAdapter<CommunityMenuItem> {
 
 	/**
 	 * Creates a new {@link CommunityAdapter}

@@ -57,8 +57,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.LibraryMenuActivity"
-            android:label="@string/menu_library_title" />
+            android:name=".activity.LibraryMenuActivity"/>
 
         <provider
             android:name="com.spicymango.fanfictionreader.provider.StoryProvider"
@@ -68,15 +67,16 @@
         <activity
             android:name=".activity.SearchStoryActivity"
             android:label="@string/menu_search_title" />
-        <activity
-            android:name=".activity.AuthorMenuActivity"
-            android:label="@string/app_name"
-            android:launchMode="singleTop" />
+        <activity android:name=".menu.authormenu.AuthorMenuActivity"/>
         <activity
             android:name=".activity.SearchAuthorActivity"
             android:label="@string/menu_search_title" />
+        <activity
+            android:name=".activity.SearchCommunityActivity"
+            android:label="@string/menu_search_title" />
         <activity android:name=".activity.AccountActivity" />
         <activity android:name=".activity.LogInActivity" />
+        <activity android:name=".menu.reviewmenu.ReviewMenuActivity"/>
 
         <meta-data
             android:name="io.fabric.ApiKey"

@@ -16,7 +16,6 @@ import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.Settings;
 import com.spicymango.fanfictionreader.util.FileHandler;
 
-import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -310,7 +309,7 @@ public class RestoreDialog extends DialogFragment {
 		 * @return True if all the files are successfully deleted, false
 		 *         otherwise
 		 */
-		private static final boolean deleteDir(File dir) {
+		private static boolean deleteDir(File dir) {
 			boolean success = true;
 			if (dir.isDirectory()) {
 				String[] children = dir.list();

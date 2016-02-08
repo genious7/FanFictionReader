@@ -132,7 +132,7 @@ public abstract class BaseFragment<T extends Parcelable> extends Fragment
 		mLoader.saveInstanceState(outState);
 	}
 
-	protected abstract BaseAdapter adapter(List<T> dataset);
+	protected abstract BaseAdapter adapter(List<T> dataSet);
 
 	protected final void setSubTitle(@StringRes int title) {
 		((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(title);
@@ -172,6 +172,6 @@ public abstract class BaseFragment<T extends Parcelable> extends Fragment
 	 * @param <T> The type of data handled by the loader.
 	 */
 	protected interface LoaderAdapter<T extends Parcelable> {
-		public BaseLoader<T> getNewLoader(Bundle args);
+		BaseLoader<T> getNewLoader(Bundle args);
 	}
 }

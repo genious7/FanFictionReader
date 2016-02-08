@@ -3,6 +3,7 @@ package com.spicymango.fanfictionreader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,6 +21,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
 
@@ -58,6 +60,15 @@ public class LibraryDownloader extends IntentService{
 	 * Key for the story id
 	 */
 	private final static String EXTRA_STORY_ID = "Story id";
+
+	/**
+	 * Key for the current psoition the update is upto
+	 */
+	private final static String EXTRA_CURRENT_STORY_POSITION = "Current story position";
+	/**
+	 * Key for the total amount of stories
+	 */
+	private final static String EXTRA_TOTAL_STORIES = "Total Stories";
 	
 	/**
 	 * Pattern describing the attributes fields
@@ -66,12 +77,12 @@ public class LibraryDownloader extends IntentService{
 			+ "(?i)\\ARated: Fiction ([KTM]\\+?) - "//Rating
 			+ "([^-]+) - "//language
 			+ "(?:([^ ]+) - )?"//Genre
-			+ "(?:(?!(?>Chapters))(?:(?! - ).)++ - )?"//characters (non capturing)
-			+ "(?:Chapters: (\\d++) - )?" //Chapters
-			+ "Words: ([\\d,]++) - " //Words
-			+ "(?:Reviews: [\\d,]++ - )?"//Reviews (non capturing)
-			+ "(?:Favs: ([\\d,]++) - )?"//favorites
-			+ "(?:Follows: ([\\d,]++))?"); //Follows
+			+ "(?:(?!Chapters)((?:(?! - ).)+?(?:(?<=Jenny) - [^-]+)?) - )?"//characters (non capturing)
+			+ "(?>Chapters: (\\d+) - )?" //Chapters
+			+ "Words: ([\\d,]+) - " //Words
+			+ "(?>Reviews: ([\\d,]+) - )?"//Reviews (non capturing)
+			+ "(?>Favs: ([\\d,]+) - )?"//favorites
+			+ "(?>Follows: ([\\d,]+))?"); //Follows
 	
 	/**
 	 * Describes the author id Url pattern
@@ -94,6 +105,8 @@ public class LibraryDownloader extends IntentService{
 	 */
 	private static List<String> storiesDownloaded = new ArrayList<String>();
 
+	private int totalStories = 0;
+
 	public LibraryDownloader() {
 		super("Story Downloader");
 		setIntentRedelivery(true);
@@ -105,7 +118,7 @@ public class LibraryDownloader extends IntentService{
 	 */
 	private Result download(){
 		Story story = null;
-		
+
 		int totalPages = 1;
 		int incrementalIndex = 0;
 
@@ -118,34 +131,34 @@ public class LibraryDownloader extends IntentService{
 				Document document = Jsoup.connect(url).timeout(10000).userAgent("Mozilla/5.0").get();
 
 				// Execute on the first run only
-				if (totalPages == 1) { 
+				if (totalPages == 1) {
 					//Parse the details
 					story = parseDetails(document);
 
 					//If an error occurs while parsing, quit
 					if (story == null) {
-						
+
 						if (document.body().text().contains("Story Not Found")) {
 							return Result.NO_CHANGE;
 						}
-						
+
 						Log.d(this.getClass().getName(), "Error parsing story attributes");
 						sendReport(url);
 						return Result.ERROR_PARSE;
 					}
-					
+
 					//If no updates have been made to the story, skip
 					if (story.getUpdated().getTime() == lastUpdated()) {
 						ContentResolver resolver = this.getContentResolver();
 						resolver.insert(StoryProvider.FF_CONTENT_URI, story.toContentValues(lastPage, offset));
 						return Result.NO_CHANGE;
 					}
-					
-					totalPages = story.getChapterLenght();
-				
+
+					totalPages = story.getChapterLength();
+
 					//If an update exists and incremental updating is enabled, update chapters as needed
 					if (Settings.isIncrementalUpdatingEnabled(this)) {
-						
+
 						//If there are more chapters, assume that the story has not been revised
 						int chaptersOnLastUpdate = StoryProvider.numberOfChapters(this, Site.FANFICTION, storyId);
 						if (chaptersOnLastUpdate > 1 && totalPages > chaptersOnLastUpdate) {
@@ -154,17 +167,17 @@ public class LibraryDownloader extends IntentService{
 							continue;
 						}
 					}
-					
+
 				}
 				showNotification(story.getName(), currentPage, totalPages);
 				String span = document.select("div#storytext").html();
-				
+
 				if (span == null || span.length() == 0) {
 					Log.d(this.getClass().getName(), "Error downloading story text");
 					sendReport(url);
 					return Result.ERROR_PARSE;
 				}
-				
+
 				array.append(currentPage - 1, span);
 			}
 		} catch (IOException e) {
@@ -262,10 +275,18 @@ public class LibraryDownloader extends IntentService{
 		builder.setRating(matcher.group(1));
 		builder.setLanguage(matcher.group(2));		
 		if (matcher.group(3) != null) builder.setGenre(matcher.group(3));
-		if (matcher.group(4) != null) builder.setChapterLenght(Parser.parseInt(matcher.group(4)));
-		builder.setWordLenght(Parser.parseInt(matcher.group(5)));
-		if (matcher.group(6) != null) builder.setFavorites(Parser.parseInt(matcher.group(6)));
-		if (matcher.group(7) != null) builder.setFollows(Parser.parseInt(matcher.group(7)));
+		if (matcher.group(4) != null){
+			String[] characterArray = matcher.group(4).split("([,\\[\\]] ?)++");
+			for (String character : characterArray) {
+				if (!TextUtils.isEmpty(character))
+					builder.addCharacter(character);
+			}
+		}
+		if (matcher.group(5) != null) builder.setChapterLength(Parser.parseInt(matcher.group(5)));
+		builder.setWordLength(Parser.parseInt(matcher.group(6)));
+		if (matcher.group(7) != null) builder.setReviews(Parser.parseInt(matcher.group(7)));
+		if (matcher.group(8) != null) builder.setFavorites(Parser.parseInt(matcher.group(8)));
+		if (matcher.group(9) != null) builder.setFollows(Parser.parseInt(matcher.group(9)));
 		builder.setUpdateDate(updateDate);		
 		builder.setPublishDate(publishDate);
 		builder.setCompleted(attribs.text().contains("Complete"));
@@ -279,12 +300,19 @@ public class LibraryDownloader extends IntentService{
 			storiesDownloaded.clear();
 			return;
 		}
-		
+
 		storyId = intent.getLongExtra(EXTRA_STORY_ID, -1);
 		lastPage = intent.getIntExtra(EXTRA_LAST_PAGE, 1);
 		offset = intent.getIntExtra(EXTRA_OFFSET, 0);
+		if(totalStories == 0) {
+			totalStories = intent.getIntExtra(EXTRA_TOTAL_STORIES, 1);
+		}
+		int currentStoryPosition = intent.getIntExtra(EXTRA_CURRENT_STORY_POSITION, 0);
+		if(currentStoryPosition > 0)
+			showNotificationUpdate(currentStoryPosition, totalStories);
+		else
+			showNotification("",0,0);
 
-		showNotification("", 0 , 0);
 
 		Log.d(this.getClass().getName(), "Starting Download");
 		switch (download()) {
@@ -301,8 +329,11 @@ public class LibraryDownloader extends IntentService{
 			showErrorNotification(R.string.error_parsing);
 			break;
 		case NO_CHANGE: default:
-			removeNoification();
+			//removeNoification();
 			break;
+		}
+		if((currentStoryPosition+1) == totalStories){
+			removeNoification();
 		}
 		Log.d(this.getClass().getName(), "Ending Download");
 	}
@@ -314,12 +345,43 @@ public class LibraryDownloader extends IntentService{
 	 * @param currentPage The current page
 	 * @param offset The current offset
 	 */
+	public static void download(Context context, long StoryId, int currentPage, int offset, int currentstory, int totalstory){
+		Intent i = new Intent(context, LibraryDownloader.class);
+		i.putExtra(EXTRA_STORY_ID, StoryId);
+		i.putExtra(EXTRA_CURRENT_STORY_POSITION, currentstory);
+		i.putExtra(EXTRA_TOTAL_STORIES, totalstory);
+		i.putExtra(EXTRA_LAST_PAGE, currentPage);
+		i.putExtra(EXTRA_OFFSET, offset);
+		context.startService(i);
+	}
+	public static void download(Context context, long StoryId, int currentPage, int offset, int currentstory){
+		Intent i = new Intent(context, LibraryDownloader.class);
+		i.putExtra(EXTRA_STORY_ID, StoryId);
+		i.putExtra(EXTRA_CURRENT_STORY_POSITION, currentstory);
+		i.putExtra(EXTRA_LAST_PAGE, currentPage);
+		i.putExtra(EXTRA_OFFSET, offset);
+		context.startService(i);
+	}
 	public static void download(Context context, long StoryId, int currentPage, int offset){
 		Intent i = new Intent(context, LibraryDownloader.class);
 		i.putExtra(EXTRA_STORY_ID, StoryId);
 		i.putExtra(EXTRA_LAST_PAGE, currentPage);
 		i.putExtra(EXTRA_OFFSET, offset);
 		context.startService(i);
+	}
+	private void showNotificationUpdate(int currentStoryPosition, int totalStories)
+	{
+		double percent  = (((double)currentStoryPosition)/totalStories) * 100;
+
+		NotificationCompat.Builder notBuilder = new NotificationCompat.Builder(this);
+		notBuilder.setContentTitle(getString(R.string.downloader_checking_updates));
+		notBuilder.setContentText(String.format(Locale.US, "%.2f", percent) + "%");
+		notBuilder.setProgress(totalStories, currentStoryPosition, currentStoryPosition == totalStories);
+		notBuilder.setSmallIcon(android.R.drawable.stat_sys_download);
+		notBuilder.setAutoCancel(false);
+		NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		manager.notify(NOTIFICATION_ID, notBuilder.build());
+
 	}
 	
 	private void showNotification(String storyTitle, int currentPage, int TotalPage){

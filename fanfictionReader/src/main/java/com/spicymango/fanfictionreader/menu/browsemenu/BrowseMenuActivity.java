@@ -9,6 +9,7 @@ import com.spicymango.fanfictionreader.menu.BaseLoader;
 import com.spicymango.fanfictionreader.menu.browsemenu.BrowseMenuLoaders.*;
 import com.spicymango.fanfictionreader.menu.categorymenu.CategoryMenuActivity;
 import com.spicymango.fanfictionreader.menu.communitymenu.CommunityMenuActivity;
+import com.spicymango.fanfictionreader.menu.storymenu.StoryMenuActivity;
 import com.spicymango.fanfictionreader.util.Sites;
 
 import android.content.Intent;
@@ -188,6 +189,15 @@ public class BrowseMenuActivity extends AppCompatActivity {
 						return new FictionPressPoetryPressBrowseLoader(getActivity(), args);
 					}
 				};
+				mListView.setOnItemClickListener(new OnItemClickListener() {
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view, int position,
+											long id) {
+						Intent i = new Intent(getActivity(), StoryMenuActivity.class);
+						i.setData(getItem(position).uri);
+						startActivity(i);
+					}
+				});
 				enableToggleButton(R.string.toggle_fiction, R.string.toggle_poetry, savedInstanceState);
 				break;
 			case SITE_FICTIONPRESS_COMMUNITY:
@@ -277,8 +287,8 @@ public class BrowseMenuActivity extends AppCompatActivity {
 		}
 
 		@Override
-		protected BaseAdapter adapter(List<BrowseMenuItem> dataset) {
-			return new BrowseMenuAdapter(getActivity(), dataset);
+		protected BaseAdapter adapter(List<BrowseMenuItem> dataSet) {
+			return new BrowseMenuAdapter(getActivity(), dataSet);
 		}
 	}
 }

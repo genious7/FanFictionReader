@@ -218,6 +218,12 @@ public class StoryMenuActivity extends AppCompatActivity implements FilterListen
 			case URI_FP_NORMAL_MENU:
 				setTitle(R.string.menu_navigation_title_regular);
 				subTitle = uri.getLastPathSegment();
+				mLoaderAdapter = new LoaderAdapter<Story>() {
+					@Override
+					public BaseLoader<Story> getNewLoader(Bundle args) {
+						return new FPRegularStoryLoader(getActivity(), args, uri);
+					}
+				};
 				break;
 			case URI_FP_JUST_IN_MENU:
 				setTitle(R.string.menu_story_title_just_in);
@@ -296,8 +302,8 @@ public class StoryMenuActivity extends AppCompatActivity implements FilterListen
 		}
 
 		@Override
-		protected BaseAdapter adapter(List<Story> dataset) {
-			return new StoryMenuAdapter(getActivity(), dataset);
+		protected BaseAdapter adapter(List<Story> dataSet) {
+			return new StoryMenuAdapter(getActivity(), dataSet);
 		}
 
 		@Override

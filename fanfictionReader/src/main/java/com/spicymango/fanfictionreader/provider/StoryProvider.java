@@ -53,7 +53,7 @@ public class StoryProvider extends ContentProvider implements SqlConstants {
 	 * Gets a UriMatcher for the provider
 	 * @return
 	 */
-	private final static UriMatcher getUriMatcher() {
+	private static UriMatcher getUriMatcher() {
 		UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
 		matcher.addURI(AUTHORITY, BASE_PATH_FF, GET_ALL | FANFICTION);
 		matcher.addURI(AUTHORITY, BASE_PATH_FF + "/#", GET_ONE | FANFICTION);
@@ -65,7 +65,7 @@ public class StoryProvider extends ContentProvider implements SqlConstants {
 
 	private DatabaseHelper db;
 
-	private final static String getTable(int id){
+	private static String getTable(int id){
 		switch (id & ~0x01) {
 		case FANFICTION:
 			return DatabaseHelper.FANFICTION_TABLE;

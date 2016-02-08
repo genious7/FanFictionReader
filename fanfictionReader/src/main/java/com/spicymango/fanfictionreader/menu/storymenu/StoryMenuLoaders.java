@@ -103,7 +103,7 @@ final class StoryMenuLoaders {
 				// Add characters if they exist
 				Elements characters = story.select("li.characters > a");
 				for (Element character : characters) {
-					builder.addCharacters(character.ownText());
+					builder.addCharacter(character.ownText());
 				}
 
 				// Fetch the language
@@ -114,14 +114,14 @@ final class StoryMenuLoaders {
 				// Fetch the number of words
 				Element words = story.select("dd.words").first();
 				if (words == null) return false;
-				builder.setWordLenght(Parser.parseInt(words.ownText()));
+				builder.setWordLength(Parser.parseInt(words.ownText()));
 
 				// Fetch the number of chapters
 				Element chapters = story.select("dd.chapters").first();
 				if (chapters == null) return false;
 				String chapterNo = chapters.text();
 				chapterNo = chapterNo.substring(0, chapterNo.indexOf('/'));
-				builder.setChapterLenght(Integer.parseInt(chapterNo));
+				builder.setChapterLength(Integer.parseInt(chapterNo));
 
 				// Fetch the number of hits (follows)
 				Element follows = story.select("dd.hits").first();
@@ -133,6 +133,12 @@ final class StoryMenuLoaders {
 				Element favorites = story.select("dd.kudos").first();
 				if (favorites != null) {
 					builder.setFollows(Parser.parseInt(favorites.text()));
+				}
+
+				// Fetch the number of comments (reviews)
+				Element comments = story.select("dd.comments").first();
+				if (comments != null){
+					builder.setReviews(Parser.parseInt(comments.text()));
 				}
 
 				// Fetch the update date
@@ -546,5 +552,142 @@ final class StoryMenuLoaders {
 	}
 
 	// FictionPress Loaders
+	/**
+	 * Creates a new loader that can be used for FictionPress regular stories
+	 *
+	 * @author Michael Chen
+	 *
+	 */
+	public final static class FPRegularStoryLoader extends BaseLoader<Story>implements Filterable {
+		private final static String STATE_FILTER = "STATE_FILTER";
+		private ArrayList<SpinnerData> mSpinnerData;
+		private final Uri mUri;
+
+		/**
+		 * Creates a new FanFiction loader
+		 *
+		 * @param context
+		 *            The current context
+		 * @param savedInstanceState
+		 *            The savedInstanceState
+		 * @param uri
+		 *            The {@link Uri} to load
+		 */
+		public FPRegularStoryLoader(Context context, Bundle savedInstanceState, Uri uri) {
+			super(context, savedInstanceState);
+
+			// Set the authority to the mobile version
+			Uri.Builder builder = uri.buildUpon();
+			builder.authority(Sites.FICTIONPRESS.AUTHORITY);
+			mUri = builder.build();
+
+			// Restore the saved filters
+			if (savedInstanceState != null) {
+				mSpinnerData = savedInstanceState.getParcelableArrayList(STATE_FILTER);
+			}
+		}
+
+		@Override
+		public void filter(int[] filterSelected) {
+			for (int i = 0; i < filterSelected.length; i++) {
+				mSpinnerData.get(i).setSelected(filterSelected[i]);
+			}
+			resetState();
+			startLoading();
+		}
+
+		@Override
+		protected int getTotalPages(Document document) {
+			return Math.max(Parser.getPageNumber(document), getCurrentPage());
+		}
+
+		@Override
+		protected Uri getUri(int currentPage) {
+			Uri.Builder builder = mUri.buildUpon();
+			builder.appendQueryParameter("p", currentPage + ""); // Current Page
+
+			// Adds the filter, if available
+			if (isFilterAvailable()) {
+				for (SpinnerData spinnerData : mSpinnerData) {
+					final String key = spinnerData.getName();
+					final String value = spinnerData.getCurrentFilter();
+					if (key == null) continue;
+					builder.appendQueryParameter(key, value);
+				}
+			} else {
+				// Default rating = all
+				builder.appendQueryParameter("r", "10");
+			}
+
+			return builder.build();
+		}
+
+		@Override
+		public boolean isFilterAvailable() {
+			return mSpinnerData != null;
+		}
+
+		@Override
+		protected boolean load(Document document, List<Story> list) {
+			// Load the filters if they aren't already loaded.
+			if (!isFilterAvailable()) {
+				loadFilter(document);
+			}
+			return Parser.Stories(document, list);
+		}
+
+		/**
+		 * Parses the filter
+		 * @param document The HTML document
+		 */
+		public void loadFilter(Document document){
+			Elements form = document.select("div#content div#d_menu form > select");
+			Elements[] filter = { form.select("[title=sort options]"),
+								  form.select("[title=time range options]"),
+								  form.select("[title=genre 1 filter],[title=genre filter]"),
+								  form.select("[title=genre 2 filter]"),
+								  form.select("[title=rating filter]"),
+								  form.select("[title=language filter],[name=l]"),
+								  form.select("[title=length in words filter]"),
+								  form.select("[title=story status]")};
+
+			mSpinnerData = new ArrayList<>();
+			for (Elements j : filter) {
+				final ArrayList<String> label = new ArrayList<>();
+				final ArrayList<String> filterKey = new ArrayList<>();
+
+				String name = null;
+				if (!j.isEmpty()) {
+					name = j.attr("name");
+					Element item = j.first();
+					Elements options = item.children();
+					for (Element k : options) {
+						label.add(k.ownText());
+						filterKey.add(k.attr("value"));
+					}
+				}
+				mSpinnerData.add(new SpinnerData(name, label, filterKey, 0));
+			}
+		}
+
+		@Override
+		public void onFilterClick(FragmentActivity activity) {
+			final FilterDialog.Builder builder = new FilterDialog.Builder();
+			builder.addSingleSpinner(activity.getString(R.string.filter_sort), mSpinnerData.get(0));
+			builder.addSingleSpinner(activity.getString(R.string.filter_date), mSpinnerData.get(1));
+			builder.addDoubleSpinner(activity.getString(R.string.filter_genre), mSpinnerData.get(2),
+									 mSpinnerData.get(3));
+			builder.addSingleSpinner(activity.getString(R.string.filter_rating), mSpinnerData.get(4));
+			builder.addSingleSpinner(activity.getString(R.string.filter_language), mSpinnerData.get(5));
+			builder.addSingleSpinner(activity.getString(R.string.filter_length), mSpinnerData.get(6));
+			builder.addSingleSpinner(activity.getString(R.string.filter_status), mSpinnerData.get(7));
+			builder.show((StoryMenuActivity) activity);
+		}
+
+		@Override
+		protected void onSaveInstanceState(Bundle savedInstanceState) {
+			savedInstanceState.putParcelableArrayList(STATE_FILTER, mSpinnerData);
+		}
+	}
 
 }

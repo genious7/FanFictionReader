@@ -21,7 +21,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.os.EnvironmentCompat;
 import android.text.Html;
-import android.text.Spanned;
 import android.text.SpannedString;
 import android.util.Log;
 
@@ -314,10 +313,7 @@ public class FileHandler {
 			// If the external directory exists, an SD card is present.
 			// If it doesn't, try to create the folder. Success indicates that
 			// the SD card is writable
-			if (sd.exists() || sd.mkdirs())
-				return true;
-			else
-				return false;
+			return sd.exists() || sd.mkdirs();
 		}
 		return false;
 	}

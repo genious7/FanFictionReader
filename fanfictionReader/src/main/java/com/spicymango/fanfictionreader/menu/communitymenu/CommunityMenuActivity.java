@@ -39,7 +39,7 @@ public class CommunityMenuActivity extends AppCompatActivity {
 		 *
 		 */
 		interface Sortable{
-			public void sort(SortBy sortKey);
+			void sort(SortBy sortKey);
 		}
 		
 		private static final int ARCHIVE_OF_OUR_OWN_COLLECTION = 2;
@@ -70,8 +70,8 @@ public class CommunityMenuActivity extends AppCompatActivity {
 		private LoaderAdapter<CommunityMenuItem> mLoaderAdapter;
 
 		@Override
-		protected BaseAdapter adapter(List<CommunityMenuItem> dataset) {
-			return new CommunityAdapter(getActivity(), dataset);
+		protected BaseAdapter adapter(List<CommunityMenuItem> dataSet) {
+			return new CommunityAdapter(getActivity(), dataSet);
 		}
 
 		@Override

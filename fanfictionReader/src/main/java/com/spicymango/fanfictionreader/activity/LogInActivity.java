@@ -54,11 +54,7 @@ public class LogInActivity extends AppCompatActivity {
 		String cookies = pref.getString(PREF_COOKIE, null);
 
 		// If there are no cookies available, return null
-		if (cookies == null) {
-			return false;
-		} else {
-			return true;
-		}
+		return cookies != null;
 	}
 
 	/**

@@ -1,7 +1,6 @@
 package com.spicymango.fanfictionreader.util;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,7 +12,6 @@ import org.jsoup.select.Elements;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
-import android.util.Log;
 
 public class Parser {
 	
@@ -36,24 +34,33 @@ public class Parser {
 			element.select("b").unwrap();
 			Element title = element.select("a[href~=(?i)/s/\\d+/1/.*]").first();
 			Element author = element.select("a[href^=/u/]").first();
-			Element attribs = element.select("div.gray").first();
+			Element attributes = element.select("div.gray").first();
 			Elements dates = element.select("span[data-xutime]");
+
+			// Check that all the elements are valid. If at least one of them is invalid, return false
+			if (title == null || author == null || attributes == null || dates.isEmpty())
+				return false;
 			
 			storyIdMatcher.reset(title.attr("href"));
 			authorIdMatcher.reset(author.attr("href"));
 			
-			storyIdMatcher.find();
-			authorIdMatcher.find();
-				
-			long updateDate = 0;
-			long publishDate = 0;
+			if (!(storyIdMatcher.find() & authorIdMatcher.find()))
+				return false;
 
-			updateDate = Long.parseLong(dates.first().attr("data-xutime")) * 1000;
-			publishDate = Long.parseLong(dates.last().attr("data-xutime")) * 1000;
-			
-			boolean complete;	
-			Elements imgs = element.select("img.mm");
-			complete = !imgs.isEmpty();
+			long updateDate = Long.parseLong(dates.first().attr("data-xutime")) * 1000;
+			long publishDate = Long.parseLong(dates.last().attr("data-xutime")) * 1000;
+
+			Elements completeIcon = element.select("img.mm");
+			boolean complete = !completeIcon.isEmpty();
+
+			Elements reviewIcon = element.select("a > img.mt");
+			final int reviews;
+			if (reviewIcon.isEmpty()) {
+				reviews = 0;
+			} else {
+				Element reviewLink = reviewIcon.first().parent();
+				reviews = parseInt(reviewLink.ownText());
+			}
 			
 			Story.Builder builder = new Story.Builder();
 			builder.setId(Long.parseLong(storyIdMatcher.group(1)));
@@ -61,75 +68,17 @@ public class Parser {
 			builder.setAuthor(author.text());
 			builder.setAuthorId(Long.parseLong(authorIdMatcher.group(1)));
 			builder.setSummary(element.ownText().replaceFirst("(?i)by\\s*", ""));
-			builder.setFanFicAttribs(attribs.text());
+			builder.setFanFicAttributes(attributes.text());
 			builder.setUpdateDate(updateDate);
 			builder.setPublishDate(publishDate);
 			builder.setCompleted(complete);
+			builder.setReviews(reviews);
 
 			list.add(builder.build());
 		}
 		return true;
 	}
-		
-	
-	public static ArrayList<LinkedHashMap<String, Integer>> Filter(Document document){
-		Elements form = document.select("div#content div#d_menu form > select");
-		
-		Elements[] filter = {
-				form.select("[title=sort options] > option"),
-				form.select("[title=time range options] > option"),
-				form.select("[title=genre 1 filter] > option,[title=genre filter] > option"),
-				form.select("[title=genre 2 filter] > option"),
-				form.select("[title=rating filter] > option"),
-				form.select("[title=language filter] > option,[name=l] > option"),
-				form.select("[title=length in words filter] > option"),
-				form.select("[title=story status] > option"),
-				form.select("[title=character 1 filter] > option"),
-				form.select("[title=character 2 filter] > option"),
-				form.select("[title=character 3 filter] > option"),
-				form.select("[title=character 4 filter] > option"),
-				form.select("[name=s]:not([title]) > option"),
-				form.select("[title=Filter by Category] > option")
-				};
-		
-		ArrayList<LinkedHashMap<String, Integer>> list = new ArrayList<LinkedHashMap<String,Integer>>();		
-		LinkedHashMap<String, Integer> TempMap = new LinkedHashMap<String, Integer>();
-		
-		for (Elements j : filter) {
-			for (Element k : j) {
-				TempMap.put(k.ownText(), Integer.valueOf(k.attr("value")));
-			}
-			list.add(TempMap);
-			TempMap = new LinkedHashMap<String,Integer>();
-		}
-		return list;
-		
-	}
-		
-	/**
-	 * Total number of pages in the story.
-	 * @param url The Url of the fanfiction page.
-	 * @param document The document representing the page.
-	 * @return The total number of pages.
-	 */	
-	public static int Pages(Document document){
-		try {
-			Elements number = document.select("div#content center a:contains(last)");
-			if (number.size() < 1) {
-				if (document.select("div#content center a:contains(next)").isEmpty()) {
-					return 1; //For searches with only one page.
-				}else{
-					return 2;
-				}
-			}
-			String text = number.first().attr("href");
-			return Integer.valueOf(text.replaceAll("\\A(/[^/]*){4}/(?=\\d+)|/", ""));
-		} catch (NumberFormatException e) {
-			Log.e("Parser - PagesCommunity", Log.getStackTraceString(e));
-			return 1;		
-		}
-	}
-	
+
 	private static final  Pattern pattern2 = Pattern.compile(
 			"(?:&p=)(\\d{1,4}+)"//Normal
 			+ "|(?:communit[^/]*+/(?:[^/]*+/){4})(\\d{1,4}+)"//Communities
@@ -140,7 +89,7 @@ public class Parser {
 	 * @param document The parsed document
 	 * @return The number of pages in the document
 	 */
-	public final static int getPageNumber(Document document){
+	public static int getPageNumber(Document document){
 		Elements elements = document.select("div#content a:matchesOwn(\\A(?i)last\\Z)");
 		if (elements.isEmpty()){
 			if (document.select("div#content a:matchesOwn(\\A(?i)next)").isEmpty())
@@ -156,7 +105,7 @@ public class Parser {
 	 * @param url The url to parse
 	 * @return The current page
 	 */
-	private final static int getPageNumber(String url){
+	private static int getPageNumber(String url){
 		Matcher matcher = pattern2.matcher(url);
 		if (matcher.find()) {
 			for (int i = 1; i < matcher.groupCount(); i++) {
@@ -166,8 +115,15 @@ public class Parser {
 		}
 		return 1;
 	}
-	
-	public final static int parseInt(String string){
+
+	/**
+	 * Parses an integer into a string. This implementation will recognize when the character 'k' is
+	 * used to denote thousands.
+	 *
+	 * @param string The string that should be parsed
+	 * @return The integer representation of the string.
+	 */
+	public static int parseInt(String string){
 		if (string.length() == 0) {
 			return 0;
 		} else {
@@ -179,22 +135,22 @@ public class Parser {
 		}
 	}
 	
-	public static final String withSuffix(int count) {
+	public static String withSuffix(int count) {
 	    if (count < 1000) return "" + count;
 	    return count/1000 + "k+";
 	}
 	
-	public static final List<Spanned> split(Spanned spanned){
+	public static List<Spanned> split(Spanned spanned){
 		String[] list = spanned.toString().split("\n");
 		
 		int i = 0;
-		List<Spanned> result = new ArrayList<Spanned>(list.length);
-		
-		for (int j = 0; j < list.length; j++) {
-			SpannableString line = new SpannableString(list[j]);
-			TextUtils.copySpansFrom(spanned, i, i + list[j].length(), null, line, 0);
-			i += list[j].length() + 1;
-			result.add(line);
+		List<Spanned> result = new ArrayList<>(list.length);
+
+		for (String paragraph : list) {
+			SpannableString styledParagraph = new SpannableString(paragraph);
+			TextUtils.copySpansFrom(spanned, i, i + paragraph.length(), null, styledParagraph, 0);
+			i += paragraph.length() + 1;
+			result.add(styledParagraph);
 		}
 		return result;
 	}

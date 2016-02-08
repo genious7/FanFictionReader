@@ -42,7 +42,7 @@ public enum Sites {
 	 */
 	public final int TITLE;
 
-	private Sites(@NonNull final String scheme, @NonNull final String authority, @StringRes final int name) {
+	Sites(@NonNull final String scheme, @NonNull final String authority, @StringRes final int name) {
 		this(scheme, authority, null, name);
 	}
 
@@ -58,8 +58,8 @@ public enum Sites {
 	 * @param name
 	 *            The site's user friendly name
 	 */
-	private Sites(@NonNull final String scheme, @NonNull final String authority,
-			@Nullable final String desktopAuthority, @StringRes final int name) {
+	Sites(@NonNull final String scheme, @NonNull final String authority,
+		  @Nullable final String desktopAuthority, @StringRes final int name) {
 
 		// Generates the base Uri
 		Uri.Builder builder = new Uri.Builder();
