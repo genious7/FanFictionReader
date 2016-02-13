@@ -25,31 +25,46 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * A class containing the story loaders for the author activity
- * Created by Michael Chen on 01/30/2016.
+ * A class containing the story loaders for the author activity Created by Michael Chen on
+ * 01/30/2016.
  */
 class AuthorStoryLoader {
 
-	public static class FanFictionAuthorStoryLoader extends BaseLoader<Story> implements BaseLoader.Filterable, AuthorStoryFragment.SubTitleGetter{
+	/*
+	FanFiction Loaders
+	 */
+
+	static abstract class BaseFanFictionAuthorStoryLoader extends BaseLoader<Story> implements BaseLoader.Filterable, AuthorStoryFragment.SubTitleGetter {
 		private static final String STATE_FILTER = "Filters";
 		private static final String STATE_AUTHOR = "Author";
 
-		/** The author's id.*/
-		private final long mAuthorId;
-
-		/** The author's name*/
+		/**
+		 * The author's name
+		 */
 		private String mAuthor;
 
-		private ArrayList<SpinnerData> mFilter;
+		/**
+		 * The author's id.
+		 */
+		protected final long mAuthorId;
 
-		public FanFictionAuthorStoryLoader(Context context, Bundle savedInstanceState, Uri uri) {
+		protected ArrayList<SpinnerData> mFilter;
+
+		/**
+		 * Creates a new loader to obtain an author's stories
+		 * @param context The current context
+		 * @param savedInstanceState The SavedInstanceState, or null if the activity is not being recreated
+		 * @param uri The uri of the author that should be loaded
+		 */
+		public BaseFanFictionAuthorStoryLoader(Context context, Bundle savedInstanceState,
+											   Uri uri) {
 			super(context, savedInstanceState);
 
 			// Get the author id
 			String segment = uri.getPathSegments().get(1);
 			mAuthorId = Long.parseLong(segment);
 
-			if (savedInstanceState != null){
+			if (savedInstanceState != null) {
 				mFilter = savedInstanceState.getParcelableArrayList(STATE_FILTER);
 				mAuthor = savedInstanceState.getString(STATE_AUTHOR);
 			}
@@ -93,39 +108,19 @@ class AuthorStoryLoader {
 			return Parser.getPageNumber(document);
 		}
 
-		@Nullable
-		@Override
-		protected Uri getUri(int currentPage) {
-			// Create the link based on the author id
-			Uri.Builder builder = Sites.FANFICTION.BASE_URI.buildUpon();
-			builder.appendPath("u")							// Author
-					.appendPath(Long.toString(mAuthorId))	// Author ID
-					.appendPath("");						// The slash at the end of the path.
-
-			builder.appendQueryParameter("a", "s")			// Show the author's stories
-					.appendQueryParameter("p", Integer.toString(currentPage));	// Page Number
-
-			if (isFilterAvailable()){
-				builder.appendQueryParameter("s", mFilter.get(0).getCurrentFilter())	// Sort order
-						.appendQueryParameter("cid", mFilter.get(1).getCurrentFilter());    // The filtered category
-			}
-
-			return builder.build();
-		}
-
 		private static final Pattern PATTERN_STORY_ID = Pattern.compile("/s/([\\d]++)/");
 
 		@Override
 		protected boolean load(Document document, List<Story> list) {
 			// Get the author's name
-			if (mAuthor == null){
+			if (mAuthor == null) {
 				mAuthor = getAuthor(document);
 			}
 
 			// Load the filter
-			if (mFilter == null){
+			if (mFilter == null) {
 				Elements form = document.select("div#content div#d_menu form > select");
-				Elements[] filter = { form.select("[name=s]"), form.select("[name=cid]") };
+				Elements[] filter = {form.select("[name=s]"), form.select("[name=cid]")};
 
 				mFilter = new ArrayList<>();
 				for (Elements j : filter) {
@@ -151,7 +146,7 @@ class AuthorStoryLoader {
 
 			// For each story in the list
 			for (Element element : summaries) {
-				element.select("b").unwrap();	// Fixes a bug that occurs if the text is bold. Occurs in a few authors
+				element.select("b").unwrap();    // Fixes a bug that occurs if the text is bold. Occurs in a few authors
 
 				final Elements links = element.select("a");
 
@@ -164,7 +159,7 @@ class AuthorStoryLoader {
 
 				// Get the story attributes
 				final Element attributes = element.select("div.gray").first();
-				if (attributes == null)	return false;
+				if (attributes == null) return false;
 
 				// Get the story publish and update date
 				final Elements dates = element.select("span[data-xutime]");
@@ -205,6 +200,7 @@ class AuthorStoryLoader {
 
 		/**
 		 * Gets the author's name.
+		 *
 		 * @param document The FanFiction web site
 		 * @return The author's name on success; otherwise, an empty string is returned.
 		 */
@@ -216,6 +212,80 @@ class AuthorStoryLoader {
 			} else {
 				return author.first().ownText();
 			}
+		}
+	}
+
+	/**
+	 * A loader used to obtain the stories written by a certain author
+	 */
+	static class FanFictionAuthorStoryLoader extends BaseFanFictionAuthorStoryLoader {
+
+		/**
+		 * Creates a new loader to obtain an author's stories
+		 * @param context The current context
+		 * @param savedInstanceState The SavedInstanceState, or null if the activity is not being recreated
+		 * @param uri The uri of the author that should be loaded
+		 */
+		public FanFictionAuthorStoryLoader(Context context, Bundle savedInstanceState,
+										   Uri uri) {
+			super(context, savedInstanceState, uri);
+		}
+
+		@Nullable
+		@Override
+		protected Uri getUri(int currentPage) {
+			// Create the link based on the author id
+			Uri.Builder builder = Sites.FANFICTION.BASE_URI.buildUpon();
+			builder.appendPath("u")                            // Author
+					.appendPath(Long.toString(mAuthorId))    // Author ID
+					.appendPath("");                        // The slash at the end of the path.
+
+			builder.appendQueryParameter("a", "s")            // Show the author's stories
+					.appendQueryParameter("p", Integer.toString(currentPage));    // Page Number
+
+			if (isFilterAvailable()) {
+				builder.appendQueryParameter("s", mFilter.get(0).getCurrentFilter())    // Sort order
+						.appendQueryParameter("cid", mFilter.get(1).getCurrentFilter());    // The filtered category
+			}
+
+			return builder.build();
+		}
+	}
+
+	/**
+	 * A loader used to obtain the stories that have been added to a certain author's favorites
+	 */
+	static class FanFictionAuthorFavoriteLoader extends BaseFanFictionAuthorStoryLoader {
+
+		/**
+		 * Creates a new loader to obtain an author's favorite stories
+		 * @param context The current context
+		 * @param savedInstanceState The SavedInstanceState, or null if the activity is not being recreated
+		 * @param uri The uri of the author that should be loaded
+		 */
+		public FanFictionAuthorFavoriteLoader(Context context, Bundle savedInstanceState,
+										   Uri uri) {
+			super(context, savedInstanceState, uri);
+		}
+
+		@Nullable
+		@Override
+		protected Uri getUri(int currentPage) {
+			// Create the link based on the author id
+			Uri.Builder builder = Sites.FANFICTION.BASE_URI.buildUpon();
+			builder.appendPath("u")                            // Author
+					.appendPath(Long.toString(mAuthorId))    // Author ID
+					.appendPath("");                        // The slash at the end of the path.
+
+			builder.appendQueryParameter("a", "fs")            // Show the author's stories
+					.appendQueryParameter("p", Integer.toString(currentPage));    // Page Number
+
+			if (isFilterAvailable()) {
+				builder.appendQueryParameter("s", mFilter.get(0).getCurrentFilter())    // Sort order
+						.appendQueryParameter("cid", mFilter.get(1).getCurrentFilter());    // The filtered category
+			}
+
+			return builder.build();
 		}
 	}
 }

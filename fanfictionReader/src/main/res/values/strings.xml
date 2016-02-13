@@ -258,6 +258,7 @@
     <!-- Author Menu Activity -->
     <string name="menu_author_stories">Stories</string>
     <string name="menu_author_profile">Profile</string>
+    <string name="menu_author_favorites">Author\'s Favorites</string>
     <string name="menu_author_no_profile">No profile found</string>
 
     <!-- Favorite and Follows Activity -->
