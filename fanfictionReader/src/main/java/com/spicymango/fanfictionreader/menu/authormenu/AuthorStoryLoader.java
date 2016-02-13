@@ -41,7 +41,7 @@ class AuthorStoryLoader {
 		/**
 		 * The author's name
 		 */
-		private String mAuthor;
+		protected String mAuthor;
 
 		/**
 		 * The author's id.
@@ -108,7 +108,7 @@ class AuthorStoryLoader {
 			return Parser.getPageNumber(document);
 		}
 
-		private static final Pattern PATTERN_STORY_ID = Pattern.compile("/s/([\\d]++)/");
+		protected static final Pattern PATTERN_STORY_ID = Pattern.compile("/s/([\\d]++)/");
 
 		@Override
 		protected boolean load(Document document, List<Story> list) {
@@ -205,7 +205,7 @@ class AuthorStoryLoader {
 		 * @return The author's name on success; otherwise, an empty string is returned.
 		 */
 		@NonNull
-		private String getAuthor(Document document) {
+		protected String getAuthor(Document document) {
 			Elements author = document.select("div#content div b");
 			if (author.isEmpty()) {
 				return "";
@@ -287,5 +287,104 @@ class AuthorStoryLoader {
 
 			return builder.build();
 		}
+
+		private static final Pattern PATTERN_AUTHOR_ID = Pattern.compile("/u/([\\d]++)/");
+
+		@Override
+		protected boolean load(Document document, List<Story> list) {
+			// Get the author's name
+			if (mAuthor == null) {
+				mAuthor = getAuthor(document);
+			}
+
+			// Load the filter
+			if (mFilter == null) {
+				Elements form = document.select("div#content div#d_menu form > select");
+				Elements[] filter = {form.select("[name=s]"), form.select("[name=cid]")};
+
+				mFilter = new ArrayList<>();
+				for (Elements j : filter) {
+					final ArrayList<String> label = new ArrayList<>();
+					final ArrayList<String> filterKey = new ArrayList<>();
+
+					String name = null;
+					if (!j.isEmpty()) {
+						name = j.attr("name");
+						Element item = j.first();
+						Elements options = item.children();
+						for (Element k : options) {
+							label.add(k.ownText());
+							filterKey.add(k.attr("value"));
+						}
+					}
+					mFilter.add(new SpinnerData(name, label, filterKey, 0));
+				}
+			}
+
+			final Matcher storyIdMatcher = PATTERN_STORY_ID.matcher("");
+			final Matcher authorIdMatcher = PATTERN_AUTHOR_ID.matcher("");
+			final Elements summaries = document.select("div#content div.bs");
+
+			// For each story in the list
+			for (Element element : summaries) {
+				element.select("b").unwrap();    // Fixes a bug that occurs if the text is bold. Occurs in a few authors
+
+				final Elements links = element.select("a");
+
+				// Get the story title and id
+				final Element titleElement = links.select("a[href~=(?i)/s/\\d+/1/.*]").first();
+				if (titleElement == null) return false;
+				storyIdMatcher.reset(titleElement.attr("href"));
+				if (!storyIdMatcher.find()) return false;
+				final String storyTitle = titleElement.ownText();
+
+				// Get the story author
+				final Element authorElement = links.last();
+				if (authorElement == null) return false;
+				authorIdMatcher.reset(authorElement.attr("href"));
+				if (!authorIdMatcher.find()) return false;
+				final String authorName = authorElement.ownText();
+
+				// Get the story attributes
+				final Element attributes = element.select("div.gray").first();
+				if (attributes == null) return false;
+
+				// Get the story publish and update date
+				final Elements dates = element.select("span[data-xutime]");
+				if (dates.isEmpty()) return false;
+				final long updateDate = Long.parseLong(dates.first().attr("data-xutime")) * 1000;
+				final long publishDate = Long.parseLong(dates.last().attr("data-xutime")) * 1000;
+
+				// Determine if the story is complete
+				final Elements completeImageElements = element.select("img.mm");
+				final boolean complete = !completeImageElements.isEmpty();
+
+				// Determine the number of reviews of the story
+				final Elements reviewIcon = element.select("a > img.mt");
+				final int reviews;
+				if (reviewIcon.isEmpty()) {
+					reviews = 0;
+				} else {
+					final Element reviewLink = reviewIcon.first().parent();
+					reviews = Parser.parseInt(reviewLink.ownText());
+				}
+
+				Story.Builder builder = new Story.Builder();
+				builder.setId(Long.parseLong(storyIdMatcher.group(1)));
+				builder.setName(storyTitle);
+				builder.setAuthor(authorName);
+				builder.setAuthorId(Long.parseLong(authorIdMatcher.group(1)));
+				builder.setSummary(element.ownText().replaceFirst("(?i)by\\s*", ""));
+				builder.setFanFicAttributes(attributes.text());
+				builder.setUpdateDate(updateDate);
+				builder.setPublishDate(publishDate);
+				builder.setCompleted(complete);
+				builder.setReviews(reviews);
+
+				list.add(builder.build());
+			}
+			return true;
+		}
+
 	}
 }
