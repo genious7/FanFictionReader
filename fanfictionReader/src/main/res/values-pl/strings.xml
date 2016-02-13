@@ -193,16 +193,13 @@
     <string name="menu_library_words">Słowa: %,d</string>
     <string name="menu_library_chapters">Rozdziały: %d</string>
 
-    <string-array name="menu_library_sort_by">
-        <item>Data aktualizacji</item>
-        <item>Data publikacji</item>
-        <item>Tytuł</item>
-        <item>Autor</item>
-        <item>Ulubione</item>
-        <item>Obserwujący</item>
-        <item>Reviews</item>
-        <item>Postęp czytania</item>
-    </string-array>
+    <string name="menu_library_sort_by_update">Data aktualizacji</string>
+    <string name="menu_library_sort_by_publish">Data publikacji</string>
+    <string name="menu_library_sort_by_title">Tytuł</string>
+    <string name="menu_library_sort_by_author">Autor</string>
+    <string name="menu_library_sort_by_favorite">Ulubione</string>
+    <string name="menu_library_sort_by_follow">Obserwujący</string>
+    <string name="menu_library_sort_by_percentage">Postęp czytania</string>
 
     <string-array name="menu_library_filter_words">
         <item>All</item>
