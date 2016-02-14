@@ -7,10 +7,13 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.BaseAdapter;
+import android.widget.TextView;
 
 import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.Settings;
@@ -35,6 +38,7 @@ public class ReviewMenuActivity extends AppCompatActivity{
 
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
+		assert getSupportActionBar() != null;	// Make IntelliJ null check happy
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		if (savedInstanceState == null) {
@@ -85,6 +89,13 @@ public class ReviewMenuActivity extends AppCompatActivity{
 			super.onActivityCreated(savedInstanceState);
 			setTitle(R.string.menu_reviews_title);
 			setHasOptionsMenu(true);
+
+			// Display a textView if no reviews are found. This can occur when filtering by chapter
+			final TextView empty = new TextView(getActivity());
+			empty.setText(R.string.menu_reviews_no_reviews);
+			empty.setGravity(Gravity.CENTER);
+			empty.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+			setEmptyView(empty);
 
 			final Uri uri = getActivity().getIntent().getData();
 			final int match = URI_MATCHER.match(uri);

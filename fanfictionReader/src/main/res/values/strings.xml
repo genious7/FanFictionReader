@@ -260,6 +260,7 @@
     <string name="menu_author_profile">Profile</string>
     <string name="menu_author_favorites">Author\'s Favorites</string>
     <string name="menu_author_no_profile">No profile found</string>
+    <string name="menu_author_no_stories">No stories found</string>
 
     <!-- Favorite and Follows Activity -->
     <string name="dialog_log_in">Log In</string>
@@ -273,7 +274,7 @@
     <string name="toast_added_favs">Story added to favorites</string>
     <string name="toast_removed">Story removed</string>
 
-    <!-- Browse Menu Items Fanfiction -->
+    <!-- Browse Menu Items FanFiction -->
     <string name="general_anime">Anime</string>
     <string name="general_books">Books</string>
     <string name="general_cartoons">Cartoons</string>
@@ -287,4 +288,5 @@
     <!-- Reviews -->
     <string name="menu_reviews_title">Reviews</string>
     <string name="menu_reviews_chapter_posted">Chapter %d</string>
+    <string name="menu_reviews_no_reviews">No reviews found</string>
 </resources>

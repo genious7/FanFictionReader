@@ -2,12 +2,15 @@ package com.spicymango.fanfictionreader.menu.authormenu;
 
 import android.os.Bundle;
 import android.support.v4.content.Loader;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.TextView;
 
 import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.activity.Site;
@@ -41,6 +44,13 @@ public class AuthorStoryFragment extends BaseFragment<Story> implements FilterDi
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+
+		// Display a textView if no stories are found
+		final TextView empty = new TextView(getActivity());
+		empty.setText(R.string.menu_author_no_stories);
+		empty.setGravity(Gravity.CENTER);
+		empty.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+		setEmptyView(empty);
 
 		// The options menu for this fragment is the filter button
 		setHasOptionsMenu(true);
