@@ -62,7 +62,7 @@ public class LibraryDownloader extends IntentService{
 	private final static String EXTRA_STORY_ID = "Story id";
 
 	/**
-	 * Key for the current psoition the update is upto
+	 * Key for the current position the update is up to
 	 */
 	private final static String EXTRA_CURRENT_STORY_POSITION = "Current story position";
 	/**
@@ -77,7 +77,7 @@ public class LibraryDownloader extends IntentService{
 			+ "(?i)\\ARated: Fiction ([KTM]\\+?) - "//Rating
 			+ "([^-]+) - "//language
 			+ "(?:([^ ]+) - )?"//Genre
-			+ "(?:(?!Chapters)((?:(?! - ).)+?(?:(?<=Jenny) - [^-]+)?) - )?"//characters (non capturing)
+			+ "(?:(?!Chapters)((?:(?! - ).)+?(?:(?<=Jenny) - [^-]+)?) - )?"//characters
 			+ "(?>Chapters: (\\d+) - )?" //Chapters
 			+ "Words: ([\\d,]+) - " //Words
 			+ "(?>Reviews: ([\\d,]+) - )?"//Reviews (non capturing)
@@ -99,11 +99,11 @@ public class LibraryDownloader extends IntentService{
 	private int offset;
 	
 	private long storyId;
-	
+
 	/**
 	 * Used to keep track for notification purposes
 	 */
-	private static List<String> storiesDownloaded = new ArrayList<String>();
+	private static List<String> storiesDownloaded = new ArrayList<>();
 
 	private int totalStories = 0;
 
@@ -111,12 +111,15 @@ public class LibraryDownloader extends IntentService{
 		super("Story Downloader");
 		setIntentRedelivery(true);
 	}
-	
+
 	/**
-	 * Downloads the story if a newer version is available 
-	 * @return True if the operation succeeds, false otherwise
+	 * Downloads the story if a newer version is available. If the latest version of the story is
+	 * currently in the library, returns NO_CHANGE. If the story is updated, returns SUCCESS. If an
+	 * error occurs, it may return ERROR_CONNECTION, ERROR_PARSE, or ERROR_SD, as required.
+	 *
+	 * @return The {@link Result} of the operation
 	 */
-	private Result download(){
+	private Result download() {
 		Story story = null;
 
 		int totalPages = 1;
@@ -135,9 +138,9 @@ public class LibraryDownloader extends IntentService{
 					//Parse the details
 					story = parseDetails(document);
 
-					//If an error occurs while parsing, quit
+					// If an error occurs while parsing, quit
 					if (story == null) {
-
+						// If the story was deleted from the web site, fail silently.
 						if (document.body().text().contains("Story Not Found")) {
 							return Result.NO_CHANGE;
 						}
@@ -147,7 +150,8 @@ public class LibraryDownloader extends IntentService{
 						return Result.ERROR_PARSE;
 					}
 
-					//If no updates have been made to the story, skip
+					// If no updates have been made to the story, do not load the rest of the pages.
+					// The story properties should still be updated in the content provider.
 					if (story.getUpdated().getTime() == lastUpdated()) {
 						ContentResolver resolver = this.getContentResolver();
 						resolver.insert(StoryProvider.FF_CONTENT_URI, story.toContentValues(lastPage, offset));
@@ -169,15 +173,17 @@ public class LibraryDownloader extends IntentService{
 					}
 
 				}
-				showNotification(story.getName(), currentPage, totalPages);
-				String span = document.select("div#storytext").html();
 
+				// If the story needs to be updated, display the notification
+				showNotification(story.getName(), currentPage, totalPages);
+
+				// Load the chapter itself
+				String span = document.select("div#storytext").html();
 				if (span == null || span.length() == 0) {
 					Log.d(this.getClass().getName(), "Error downloading story text");
 					sendReport(url);
 					return Result.ERROR_PARSE;
 				}
-
 				array.append(currentPage - 1, span);
 			}
 		} catch (IOException e) {
@@ -188,8 +194,11 @@ public class LibraryDownloader extends IntentService{
 				return Result.ERROR_SD;
 		}
 
+		// Update the content provider
 		ContentResolver resolver = this.getContentResolver();
 		resolver.insert(StoryProvider.FF_CONTENT_URI, story.toContentValues(lastPage, offset));
+
+		// Add the name of the story to the list of stories successfully updated
 		storiesDownloaded.add(story.getName());
 
 		return Result.SUCCESS;
@@ -197,14 +206,13 @@ public class LibraryDownloader extends IntentService{
 	
 	/**
 	 * Writes a log with the latest error
-	 * @param txt
+	 * @param txt The String on the error report
 	 */
 	private void sendReport(String txt){
 		String message = "The story on " + txt + " cannot be parsed";
 		Crashlytics.logException(new Throwable(message));
 	}
-	
-	
+
 	/**
 	 * Obtains the last time the story was updated, as a long
 	 * 
@@ -212,17 +220,24 @@ public class LibraryDownloader extends IntentService{
 	 *         if the story is not present in the library.
 	 */
 	private long lastUpdated() {
-		ContentResolver resolver = getContentResolver();
-		Cursor c = resolver.query(StoryProvider.FF_CONTENT_URI,
+		// Get the cursor
+		final ContentResolver resolver = getContentResolver();
+		final Cursor c = resolver.query(StoryProvider.FF_CONTENT_URI,
 				new String[] { SqlConstants.KEY_UPDATED },
 				SqlConstants.KEY_STORY_ID + " = ?",
 				new String[] { String.valueOf(storyId) }, null);
-		if (c == null || !c.moveToFirst()) {
+
+		// Validate the cursor
+		if (c == null){
+			return -1;
+		} else if (!c.moveToFirst()) {
 			c.close();
 			return -1;
 		}
-		int index = c.getColumnIndex(SqlConstants.KEY_UPDATED);
-		long last = c.getLong(index);
+
+		// Determine the last time the story was updated
+		final int index = c.getColumnIndex(SqlConstants.KEY_UPDATED);
+		final long last = c.getLong(index);
 		c.close();	
 		return last;
 	}
@@ -230,7 +245,7 @@ public class LibraryDownloader extends IntentService{
 	/**
 	 * Obtains the story object from the one available online
 	 * @param document The web page
-	 * @return The story object
+	 * @return The story object, or null if a parsing error occurs
 	 */
 	private Story parseDetails(Document document){
 		
@@ -296,14 +311,18 @@ public class LibraryDownloader extends IntentService{
 
 	@Override
 	protected void onHandleIntent(Intent intent) {
+		// This key is only present when the notification is dismissed
 		if (intent.getBooleanExtra(EXTRA_UPDATE_NOT, false)) {
 			storiesDownloaded.clear();
 			return;
 		}
 
+		// Get the story id, the currently selected chapter, and the current scroll position.
 		storyId = intent.getLongExtra(EXTRA_STORY_ID, -1);
 		lastPage = intent.getIntExtra(EXTRA_LAST_PAGE, 1);
 		offset = intent.getIntExtra(EXTRA_OFFSET, 0);
+
+
 		if(totalStories == 0) {
 			totalStories = intent.getIntExtra(EXTRA_TOTAL_STORIES, 1);
 		}
@@ -329,11 +348,11 @@ public class LibraryDownloader extends IntentService{
 			showErrorNotification(R.string.error_parsing);
 			break;
 		case NO_CHANGE: default:
-			//removeNoification();
+			//removeNotification();
 			break;
 		}
 		if((currentStoryPosition+1) == totalStories){
-			removeNoification();
+			removeNotification();
 		}
 		Log.d(this.getClass().getName(), "Ending Download");
 	}
@@ -345,19 +364,19 @@ public class LibraryDownloader extends IntentService{
 	 * @param currentPage The current page
 	 * @param offset The current offset
 	 */
-	public static void download(Context context, long StoryId, int currentPage, int offset, int currentstory, int totalstory){
+	public static void download(Context context, long StoryId, int currentPage, int offset, int currentStory, int totalStory){
 		Intent i = new Intent(context, LibraryDownloader.class);
 		i.putExtra(EXTRA_STORY_ID, StoryId);
-		i.putExtra(EXTRA_CURRENT_STORY_POSITION, currentstory);
-		i.putExtra(EXTRA_TOTAL_STORIES, totalstory);
+		i.putExtra(EXTRA_CURRENT_STORY_POSITION, currentStory);
+		i.putExtra(EXTRA_TOTAL_STORIES, totalStory);
 		i.putExtra(EXTRA_LAST_PAGE, currentPage);
 		i.putExtra(EXTRA_OFFSET, offset);
 		context.startService(i);
 	}
-	public static void download(Context context, long StoryId, int currentPage, int offset, int currentstory){
+	public static void download(Context context, long StoryId, int currentPage, int offset, int currentStory){
 		Intent i = new Intent(context, LibraryDownloader.class);
 		i.putExtra(EXTRA_STORY_ID, StoryId);
-		i.putExtra(EXTRA_CURRENT_STORY_POSITION, currentstory);
+		i.putExtra(EXTRA_CURRENT_STORY_POSITION, currentStory);
 		i.putExtra(EXTRA_LAST_PAGE, currentPage);
 		i.putExtra(EXTRA_OFFSET, offset);
 		context.startService(i);
@@ -418,7 +437,7 @@ public class LibraryDownloader extends IntentService{
 		manager.notify(NOTIFICATION_ID, notBuilder.build());
 	}
 	
-	private void removeNoification(){
+	private void removeNotification(){
 		if (storiesDownloaded.size() == 0) {
 			NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 			manager.cancel(NOTIFICATION_ID);
@@ -434,16 +453,7 @@ public class LibraryDownloader extends IntentService{
 		notBuilder.setSmallIcon(R.drawable.ic_action_accept);
 		notBuilder.setAutoCancel(true);
 
-        String text = null;
-
-        for(int i = 0; i < storiesDownloaded.size(); i++)
-        {
-            if (i == 0) {
-                text = storiesDownloaded.get(i);
-            }else{
-                text += ", " + storiesDownloaded.get(i);
-            }
-        }
+        String text = TextUtils.join(", ", storiesDownloaded);
 
         notBuilder.setContentText(text);
 		
