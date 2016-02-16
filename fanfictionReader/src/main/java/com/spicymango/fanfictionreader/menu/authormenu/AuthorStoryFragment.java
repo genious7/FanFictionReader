@@ -2,12 +2,15 @@ package com.spicymango.fanfictionreader.menu.authormenu;
 
 import android.os.Bundle;
 import android.support.v4.content.Loader;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.TextView;
 
 import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.activity.Site;
@@ -23,11 +26,16 @@ import com.spicymango.fanfictionreader.util.adapters.StoryMenuAdapter;
 import java.util.List;
 
 /**
- * Displays the stories written by an author.
- *
+ * Displays the stories written by an author or in the author's favorites. Requires as an argument
+ * the type of loader that should be used, as either the author favorites or the author's own
+ * stories may be displayed.
+ * <p/>
  * Created by Michael Chen on 01/30/2016.
  */
 public class AuthorStoryFragment extends BaseFragment<Story> implements FilterDialog.FilterListener{
+	public static final String EXTRA_LOADER_ID = "Loader ID";
+	public static final int LOADER_STORIES = 0;
+	public static final int LOADER_FAVORITES = 1;
 
 	interface SubTitleGetter {
 		String getSubTitle();
@@ -36,6 +44,13 @@ public class AuthorStoryFragment extends BaseFragment<Story> implements FilterDi
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+
+		// Display a textView if no stories are found
+		final TextView empty = new TextView(getActivity());
+		empty.setText(R.string.menu_author_no_stories);
+		empty.setGravity(Gravity.CENTER);
+		empty.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+		setEmptyView(empty);
 
 		// The options menu for this fragment is the filter button
 		setHasOptionsMenu(true);
@@ -56,8 +71,15 @@ public class AuthorStoryFragment extends BaseFragment<Story> implements FilterDi
 			}
 		});
 
+
+		// Try to get the loader id
+		final Bundle arguments = getArguments();
+		if (arguments == null || !arguments.containsKey(EXTRA_LOADER_ID))
+			throw new IllegalArgumentException("The argument EXTRA_LOADER_ID is mandatory");
+		final int loaderId = arguments.getInt(EXTRA_LOADER_ID);
+
 		// Initiate the loaders
-		getLoaderManager().initLoader(0, savedInstanceState, this);
+		getLoaderManager().initLoader(loaderId, savedInstanceState, this);
 	}
 
 	@Override
@@ -76,7 +98,20 @@ public class AuthorStoryFragment extends BaseFragment<Story> implements FilterDi
 
 	@Override
 	public Loader<List<Story>> onCreateLoader(int id, Bundle args) {
-		return new AuthorStoryLoader.FanFictionAuthorStoryLoader(getActivity(), args, getActivity().getIntent().getData());
+		final BaseLoader<Story> loader;
+		switch (id){
+			case LOADER_STORIES:
+				loader = new AuthorStoryLoader.
+						FanFictionAuthorStoryLoader(getActivity(), args, getActivity().getIntent().getData());
+				break;
+			case LOADER_FAVORITES:
+				loader = new AuthorStoryLoader.
+						FanFictionAuthorFavoriteLoader(getActivity(), args, getActivity().getIntent().getData());
+				break;
+			default:
+				throw new IllegalArgumentException("The EXTRA_LOADER_ID '" + id + "' is invalid");
+		}
+		return loader;
 	}
 
 	@Override

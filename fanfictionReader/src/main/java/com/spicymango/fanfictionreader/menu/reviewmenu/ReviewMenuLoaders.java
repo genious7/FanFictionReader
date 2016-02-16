@@ -203,6 +203,10 @@ final class ReviewMenuLoaders {
 
 				// Get the text, adding newlines at <br>.
 				final Element reviewElement = review.select("div").first();
+
+				// At this point, a null may indicate that there are no reviews available; it is not
+				// necessarily an error.
+				if (reviewElement == null) continue;
 				final List<TextNode> nodes = reviewElement.textNodes();
 				final StringBuilder reviewText = new StringBuilder();
 				for (TextNode paragraph : nodes) {
