@@ -106,6 +106,17 @@
         <item>@string/complete_false</item>
     </string-array>
 
+    <string-array name="menu_library_sort_by">
+        <item>@string/menu_library_sort_by_update</item>
+        <item>@string/menu_library_sort_by_publish</item>
+        <item>@string/menu_library_sort_by_title</item>
+        <item>@string/menu_library_sort_by_author</item>
+        <item>@string/menu_library_sort_by_favorite</item>
+        <item>@string/menu_library_sort_by_follow</item>
+        <item>@string/menu_library_sort_by_reviews</item>
+        <item>@string/menu_library_sort_by_percentage</item>
+    </string-array>
+
     <!-- Story Displayer Activity -->
     <string name="read_story_first" translatable="false">&lt;&lt;</string>
     <string name="read_story_prev" translatable="false">&lt;</string>

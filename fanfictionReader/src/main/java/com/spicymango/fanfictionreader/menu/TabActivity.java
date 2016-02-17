@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * An activity that automatically adds a tab layout; each tab will be linked to a single fragment.
  * Created by Michael Chen on 01/26/2016.
  */
 public abstract class TabActivity extends AppCompatActivity{
@@ -46,6 +47,7 @@ public abstract class TabActivity extends AppCompatActivity{
 		// Set the action bar
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
+		assert getSupportActionBar() != null; // Make IntelliJ null check happy
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		// Set the tab properties
@@ -104,6 +106,7 @@ public abstract class TabActivity extends AppCompatActivity{
 		// Select the tab that was previously selected
 		final int selectedTabIndex = savedInstanceState.getInt(STATE_SELECTED_TAB);
 		final TabLayout.Tab selectedTab = mTabLayout.getTabAt(selectedTabIndex);
+		if (selectedTab == null) throw new IllegalStateException("The number of tabs cannot change");
 		selectedTab.select();
 
 		// When the activity is recreated, all hidden fragments are shown again. To fix this, hide
@@ -154,6 +157,10 @@ public abstract class TabActivity extends AppCompatActivity{
 		}
 	}
 
+	/**
+	 * A simple {@link TabLayout.OnTabSelectedListener} that will change the currently shown
+	 * fragment whenever a tab is selected.
+	 */
 	private final TabLayout.OnTabSelectedListener mTabListener = new TabLayout.OnTabSelectedListener() {
 		@Override
 		public void onTabSelected(TabLayout.Tab tab) {

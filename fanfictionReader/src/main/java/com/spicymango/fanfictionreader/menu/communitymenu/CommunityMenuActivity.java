@@ -108,7 +108,7 @@ public class CommunityMenuActivity extends AppCompatActivity {
 
 				break;
 			default:
-				break;
+				throw new IllegalStateException("CommunityMenuActivity: Invalid Uri" + uri);
 			}
 			
 			mListView.setOnItemClickListener(new OnItemClickListener() {

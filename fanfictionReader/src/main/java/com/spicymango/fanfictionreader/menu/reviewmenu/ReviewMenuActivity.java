@@ -7,14 +7,18 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.TypedValue;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.BaseAdapter;
+import android.widget.TextView;
 
 import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.Settings;
 import com.spicymango.fanfictionreader.menu.BaseFragment;
 import com.spicymango.fanfictionreader.menu.BaseLoader;
-import com.spicymango.fanfictionreader.util.Result;
 import com.spicymango.fanfictionreader.util.Sites;
 
 import java.util.List;
@@ -34,6 +38,7 @@ public class ReviewMenuActivity extends AppCompatActivity{
 
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
+		assert getSupportActionBar() != null;	// Make IntelliJ null check happy
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		if (savedInstanceState == null) {
@@ -83,6 +88,14 @@ public class ReviewMenuActivity extends AppCompatActivity{
 		public void onActivityCreated(Bundle savedInstanceState) {
 			super.onActivityCreated(savedInstanceState);
 			setTitle(R.string.menu_reviews_title);
+			setHasOptionsMenu(true);
+
+			// Display a textView if no reviews are found. This can occur when filtering by chapter
+			final TextView empty = new TextView(getActivity());
+			empty.setText(R.string.menu_reviews_no_reviews);
+			empty.setGravity(Gravity.CENTER);
+			empty.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+			setEmptyView(empty);
 
 			final Uri uri = getActivity().getIntent().getData();
 			final int match = URI_MATCHER.match(uri);
@@ -108,6 +121,7 @@ public class ReviewMenuActivity extends AppCompatActivity{
 		@Override
 		public void onLoadFinished(Loader<List<ReviewMenuItem>> loader, List<ReviewMenuItem> data) {
 			super.onLoadFinished(loader, data);
+			getActivity().supportInvalidateOptionsMenu();
 
 			// If the loader succeeded,  update the subtitle
 			if (mLoader instanceof ReviewMenuLoaders.TitleLoader) {
@@ -116,6 +130,42 @@ public class ReviewMenuActivity extends AppCompatActivity{
 				if (subTitle != null){
 					setSubTitle(subTitle);
 				}
+			}
+		}
+
+		@Override
+		public boolean onOptionsItemSelected(MenuItem item) {
+			switch (item.getItemId()) {
+				case R.id.filter:
+					BaseLoader.Filterable filterable = (BaseLoader.Filterable) mLoader;
+					filterable.onFilterClick(getActivity());
+					return true;
+				default:
+					return super.onOptionsItemSelected(item);
+			}
+		}
+
+		@Override
+		public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+			inflater.inflate(R.menu.story_menu, menu);
+		}
+
+		@Override
+		public void onPrepareOptionsMenu(Menu menu) {
+			MenuItem filter = menu.findItem(R.id.filter);
+			if (mLoader instanceof BaseLoader.Filterable) {
+				// If the menu can be filtered, enable the icon if ready
+				filter.setVisible(true);
+				if (((BaseLoader.Filterable) mLoader).isFilterAvailable()) {
+					filter.setEnabled(true);
+					filter.getIcon().setAlpha(255);
+				} else {
+					filter.setEnabled(false);
+					filter.getIcon().setAlpha(64);
+				}
+			} else {
+				// If the menu cannot be filtered, hide the icon.
+				filter.setVisible(false);
 			}
 		}
 

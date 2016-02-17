@@ -178,17 +178,13 @@
     <string name="menu_library_words">Wörter: %,d</string>
     <string name="menu_library_chapters">Kapitel: %d</string>
 
-    <string-array name="menu_library_sort_by">
-        <item>Aktualisiert</item>
-        <item>Veröffentlichung</item>
-        <item>Titel</item>
-        <item>Autor</item>
-        <item>Favoriten</item>
-        <item>Follows</item>
-        <item>Reviews</item>
-        <item >Read Percentage</item>
-    </string-array>
-    
+    <string name="menu_library_sort_by_update">Aktualisiert</string>
+    <string name="menu_library_sort_by_publish">Veröffentlichung</string>
+    <string name="menu_library_sort_by_title">Titel</string>
+    <string name="menu_library_sort_by_author">Autor</string>
+    <string name="menu_library_sort_by_favorite">Favoriten</string>
+    <string name="menu_library_sort_by_follow">Follows</string>
+
     <string-array name="menu_library_filter_words">
         <item>Alle</item>
         <item>&lt; 1.000 Wörter</item>
