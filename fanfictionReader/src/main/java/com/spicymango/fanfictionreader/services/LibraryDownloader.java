@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -12,10 +13,12 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.text.TextUtils;
 
+import com.crashlytics.android.Crashlytics;
 import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.activity.LibraryMenuActivity;
-import com.spicymango.fanfictionreader.util.Result;
 
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -28,6 +31,15 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @author Michael Chen
  */
 public class LibraryDownloader extends Service {
+	/**
+	 * Key for the offset desired
+	 */
+	final static String EXTRA_OFFSET = "Offset";
+
+	/**
+	 * Key for the last chapter read.
+	 */
+	final static String EXTRA_LAST_PAGE = "Last page";
 
 	/**
 	 * ID for the notifications generated.
@@ -56,6 +68,24 @@ public class LibraryDownloader extends Service {
 	public LibraryDownloader() {
 		super();
 		mTaskQueue = new LinkedBlockingQueue<>();
+	}
+
+	/**
+	 * Downloads a story into the device. The reader's current location in the story is saved with
+	 * the rest of the story properties. If the story already exists, the downloader will update the
+	 * story details.
+	 *
+	 * @param context     The current context
+	 * @param uri         The url that points to any chapter in the story
+	 * @param currentPage The reader's current page
+	 * @param offset      The reader's current scroll offset
+	 */
+	public static void download(Context context, Uri uri, int currentPage, int offset) {
+		Intent i = new Intent(context, LibraryDownloader.class);
+		i.setData(uri);
+		i.putExtra(EXTRA_LAST_PAGE, currentPage);
+		i.putExtra(EXTRA_OFFSET, offset);
+		context.startService(i);
 	}
 
 	@Nullable
@@ -99,7 +129,7 @@ public class LibraryDownloader extends Service {
 			for (; !mTaskQueue.isEmpty(); currentProgress++) {
 
 				// The total number of stories in this update sequence. This includes both queued and
-				// already checked stories.
+				// already checked (regardless of whether they were modified) stories.
 				final int totalNumberOfStories = currentProgress + mTaskQueue.size();
 
 				// Display the updating notification. If there is more than one story in total the
@@ -112,47 +142,65 @@ public class LibraryDownloader extends Service {
 
 				// Get the story uri
 				final Intent i = mTaskQueue.remove();
-				DownloaderFactory.Downloader downloader = DownloaderFactory.getInstance(i, LibraryDownloader.this);
+				final DownloaderFactory.Downloader downloader = DownloaderFactory.getInstance(i, LibraryDownloader.this);
 
 				// Get the story details
-				Result detailResult = downloader.getStoryState();
-
-				if (detailResult == Result.ERROR_PARSE){
-					hasParsingError = true;	// If a parsing error occurs, go to the next story
-					continue;
-				} else if (detailResult == Result.ERROR_CONNECTION){
-					hasConnectionError = true;	// If a connection error occurs, cancel the whole operation
+				try {
+					downloader.getStoryState();
+				} catch (IOException e) {
+					hasConnectionError = true;    // If a connection error occurs, cancel the whole operation
 					break;
+				} catch (StoryNotFoundException e) {
+					continue;                    // Disregard missing stories
+				} catch (ParseException e) {
+					// Parsing errors should be logged
+					Crashlytics.logException(e);
+					hasParsingError = true;    // If a parsing error occurs, go to the next story
+					continue;
 				}
 
 				// If an update is required, begin the process
-				if (downloader.isUpdateNeeded()){
+				if (downloader.isUpdateNeeded()) {
 					final String storyTitle = downloader.getStoryTitle();
 
 					// Download each chapter, updating the notification as required
-					while (downloader.hasNextChapter()){
-						showUpdateNotification(storyTitle, downloader.currentChapter(), downloader.totalChapters());
-
-						detailResult = downloader.downloadChapter();
-
-						// Exit the inner while loop on any error
-						if (detailResult != Result.SUCCESS){
-							break;
+					try {
+						while (downloader.hasNextChapter()) {
+							showUpdateNotification(storyTitle, downloader.getCurrentChapter(), downloader.getTotalChapters());
+							downloader.downloadChapter();
 						}
-					}
-
-					if (detailResult == Result.ERROR_PARSE){
-						hasParsingError = true;	// If a parsing error occurs, go to the next story
+					} catch (StoryNotFoundException e) {
+						// Disregard missing stories
 						continue;
-					} else if (detailResult == Result.ERROR_CONNECTION){
-						hasConnectionError = true;	// If a connection error occurs, cancel the whole operation
+					} catch (IOException e) {
+						// If a connection error occurs, cancel the whole operation
+						hasConnectionError = true;
 						break;
+					} catch (ParseException e) {
+						// If a parsing error occurs, go to the next story
+						// Parsing errors should be logged
+						Crashlytics.logException(e);
+						hasParsingError = true;
+						continue;
 					}
 
-					// Upon success, commit save the results to the disk and add the story to the
-					// list of successful updates.
-					downloader.saveStory();
-					storiesUpdated.add(storyTitle);
+					// Update the files and the sql database.
+					try {
+						downloader.saveStory();
+
+						// Upon success, add the title of the story to the list so that it is displayed
+						// in the complete notification
+						storiesUpdated.add(storyTitle);
+					} catch (IOException e) {
+						hasSdError = true;
+					}
+				} else {
+					try {
+						downloader.saveStory();
+					} catch (IOException e) {
+						// This shouldn't happen. Log the exception if it occurs
+						Crashlytics.logException(new IOException("Exception while saving sql parameters", e));
+					}
 				}
 			}
 
@@ -176,7 +224,6 @@ public class LibraryDownloader extends Service {
 			// Stop the service
 			stopSelf(mStartId);
 		}
-
 
 		/**
 		 * Removes the notification from the screen
