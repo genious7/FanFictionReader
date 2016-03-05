@@ -39,7 +39,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.spicymango.fanfictionreader.LibraryDownloader;
 import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.Settings;
 import com.spicymango.fanfictionreader.activity.reader.StoryDisplayActivity;
@@ -51,7 +50,9 @@ import com.spicymango.fanfictionreader.menu.storymenu.FilterDialog.FilterDialog.
 import com.spicymango.fanfictionreader.menu.storymenu.FilterDialog.SpinnerData;
 import com.spicymango.fanfictionreader.provider.SqlConstants;
 import com.spicymango.fanfictionreader.provider.StoryProvider;
+import com.spicymango.fanfictionreader.services.LibraryDownloader;
 import com.spicymango.fanfictionreader.util.FileHandler;
+import com.spicymango.fanfictionreader.util.Sites;
 import com.spicymango.fanfictionreader.util.Story;
 
 /**
@@ -256,10 +257,11 @@ public class LibraryMenuActivity extends AppCompatActivity implements LoaderCall
 			int columnOffset = c.getColumnIndex(KEY_OFFSET);
 			if (c.moveToFirst()) {
 				do {
-					if (c.getPosition() == 0)
-						LibraryDownloader.download(this, c.getLong(columnId), c.getInt(columnLast), c.getInt(columnOffset), c.getPosition(), c.getCount());
-					else
-						LibraryDownloader.download(this, c.getLong(columnId), c.getInt(columnLast), c.getInt(columnOffset), c.getPosition());
+					final Uri.Builder storyUri = Sites.FANFICTION.BASE_URI.buildUpon();
+					storyUri.appendPath("s");
+					storyUri.appendPath(Long.toString(c.getLong(columnId)));
+					storyUri.appendPath("");
+					LibraryDownloader.download(this, storyUri.build(), c.getInt(columnLast), c.getInt(columnOffset));
 				} while (c.moveToNext());
 			}
 			return true;
@@ -324,7 +326,11 @@ public class LibraryMenuActivity extends AppCompatActivity implements LoaderCall
 				Editable value = input.getText();
 				try {
 					long id = Long.parseLong(value.toString());
-					LibraryDownloader.download(LibraryMenuActivity.this, id, 1, 0);
+					final Uri.Builder storyUri = Sites.FANFICTION.BASE_URI.buildUpon();
+					storyUri.appendPath("s");
+					storyUri.appendPath(Long.toString(id));
+					storyUri.appendPath("");
+					LibraryDownloader.download(LibraryMenuActivity.this, storyUri.build(), 1, 0);
 				} catch (Exception e) {
 					Toast toast = Toast.makeText(LibraryMenuActivity.this, R.string.menu_library_by_id_error, Toast.LENGTH_SHORT);
 					toast.show();

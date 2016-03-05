@@ -37,7 +37,7 @@
         <activity android:name=".menu.communitymenu.CommunityMenuActivity" />
         <activity android:name="Settings" />
 
-        <service android:name="LibraryDownloader" />
+        <service android:name=".services.LibraryDownloader" />
 
         <activity android:name="com.spicymango.fanfictionreader.activity.reader.StoryDisplayActivity">
             <intent-filter>

@@ -46,7 +46,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.spicymango.fanfictionreader.LibraryDownloader;
 import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.Settings;
 import com.spicymango.fanfictionreader.activity.LogInActivity;
@@ -55,8 +54,10 @@ import com.spicymango.fanfictionreader.dialogs.ReviewDialog;
 import com.spicymango.fanfictionreader.menu.mainmenu.MainActivity;
 import com.spicymango.fanfictionreader.provider.SqlConstants;
 import com.spicymango.fanfictionreader.provider.StoryProvider;
+import com.spicymango.fanfictionreader.services.LibraryDownloader;
 import com.spicymango.fanfictionreader.util.AsyncPost;
 import com.spicymango.fanfictionreader.util.FileHandler;
+import com.spicymango.fanfictionreader.util.Sites;
 import com.spicymango.fanfictionreader.util.adapters.TextAdapter;
 
 public class StoryDisplayActivity extends AppCompatActivity implements LoaderCallbacks<StoryChapter>, OnClickListener{
@@ -218,7 +219,11 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 			
 			if (fromBrowser && data.isInLibrary() && !mHasUpdated) {				//Update the story if required
 				mHasUpdated = true;
-				LibraryDownloader.download(this, mStoryId, mCurrentPage, getOffset());
+				final Uri.Builder storyUri = Sites.FANFICTION.BASE_URI.buildUpon();
+				storyUri.appendPath("s");
+				storyUri.appendPath(Long.toString(mStoryId));
+				storyUri.appendPath("");
+				LibraryDownloader.download(this, storyUri.build(), mCurrentPage, getOffset());
 			}
 			
 			supportInvalidateOptionsMenu();												//Required upon update to disable "update" button
@@ -232,7 +237,14 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 		switch (item.getItemId()) {
 		case R.id.read_story_menu_add:
 			mHasUpdated = true;
-			LibraryDownloader.download(this, mStoryId, mCurrentPage, getOffset());  
+
+			// Download
+			final Uri.Builder storyUri = Sites.FANFICTION.BASE_URI.buildUpon();
+			storyUri.appendPath("s");
+			storyUri.appendPath(Long.toString(mStoryId));
+			storyUri.appendPath("");
+			LibraryDownloader.download(this, storyUri.build(), mCurrentPage, getOffset());
+
 			supportInvalidateOptionsMenu();
 			return true;
 		case R.id.read_story_go_to:
