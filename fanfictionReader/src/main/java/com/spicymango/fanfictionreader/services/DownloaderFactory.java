@@ -252,7 +252,7 @@ public class DownloaderFactory {
 
 		@Override
 		public boolean hasNextChapter() {
-			return mCurrentPage < getTotalChapters();
+			return mCurrentPage <= getTotalChapters();
 		}
 
 		@Override
