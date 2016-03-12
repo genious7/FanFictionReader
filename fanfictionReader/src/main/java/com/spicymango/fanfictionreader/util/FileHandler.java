@@ -21,7 +21,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.os.EnvironmentCompat;
 import android.text.Html;
-import android.text.Spanned;
 import android.text.SpannedString;
 import android.util.Log;
 
@@ -314,10 +313,7 @@ public class FileHandler {
 			// If the external directory exists, an SD card is present.
 			// If it doesn't, try to create the folder. Success indicates that
 			// the SD card is writable
-			if (sd.exists() || sd.mkdirs())
-				return true;
-			else
-				return false;
+			return sd.exists() || sd.mkdirs();
 		}
 		return false;
 	}
@@ -328,10 +324,10 @@ public class FileHandler {
 	 * @param storyId
 	 * @param currentPage
 	 * @param html
-	 * @return True if the operation succeeded, false otherwise
+	 * @throws IOException If saving the file failed
 	 */
-	public static boolean writeFile(Context context, long storyId,
-			int currentPage, String html) {
+	public static void writeFile(Context context, long storyId,
+			int currentPage, String html) throws IOException {
 		FileOutputStream fos = null;
 		try {
 			final File file;
@@ -357,11 +353,12 @@ public class FileHandler {
 			fos = new FileOutputStream(file);
 			fos.write(html.getBytes());
 		} catch (IOException e) {
-			return false;
+			// Pass the exception to the next level.
+			// The catch is here in order to ensure that the final block executes
+			throw e;
 		} finally {
 			closeStream(fos);
 		}
-		return true;
 	}
 
 	/**

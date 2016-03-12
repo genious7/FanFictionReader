@@ -117,7 +117,18 @@ public class CategoryMenuAdapter extends ArrayAdapter<CategoryMenuItem> implemen
 
 	@Override
 	public int getPositionForSection(int sectionIndex) {
-		int position = mIndexer.get(mSections[sectionIndex]);
+		final int position;
+
+		// While sectionIndex should, in theory, always be less than the total length of the array,
+		// it sometimes equals the array length. See Android bug 33293.
+		if (sectionIndex < mSections.length){
+			position = mIndexer.get(mSections[sectionIndex]);
+		} else{
+			position = mIndexer.get(mSections[mSections.length - 1]);
+		}
+
+		// As per the android doc, if the starting position is outside the adapter bounds, the
+		// position is clipped to the adapter's size.
 		return position < getCount() ? position : getCount() - 1;
 	}
 

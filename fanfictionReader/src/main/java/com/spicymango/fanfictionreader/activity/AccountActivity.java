@@ -19,12 +19,12 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import com.spicymango.fanfictionreader.R;
-import com.spicymango.fanfictionreader.Settings;
 import com.spicymango.fanfictionreader.activity.reader.StoryDisplayActivity;
+import com.spicymango.fanfictionreader.menu.TabActivity;
+import com.spicymango.fanfictionreader.menu.authormenu.AuthorMenuActivity;
 import com.spicymango.fanfictionreader.util.AsyncPost;
 import com.spicymango.fanfictionreader.util.Result;
 import com.spicymango.fanfictionreader.util.Story;
-import com.spicymango.fanfictionreader.util.TabListener;
 import com.spicymango.fanfictionreader.util.adapters.StoryReducedAdapter;
 
 import android.app.AlertDialog;
@@ -38,9 +38,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBar.Tab;
-import android.support.v7.app.AppCompatActivity;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -56,63 +53,27 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
-public class AccountActivity extends AppCompatActivity {
-	private static final String STATE_TAB = "Tab selected";
-	private ActionBar actionbar;
-	
-	
+public class AccountActivity extends TabActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		Settings.setOrientationAndTheme(this);
 		super.onCreate(savedInstanceState);
-
-		// setup action bar tabs
-		actionbar = getSupportActionBar();
-		actionbar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-		actionbar.setDisplayHomeAsUpEnabled(true);
 
 		Bundle bundle = new Bundle();
 		bundle.putInt(AccountFragment.EXTRA_LOADER_ID,
 				AccountFragment.LOADER_FAVORITES);
 
-		Tab tab = actionbar
-				.newTab()
-				.setText(R.string.menu_favs)
-				.setTabListener(
-						new TabListener(this, AccountFragment.class, bundle));
-		actionbar.addTab(tab);
+		addTab(R.string.menu_favs, AccountFragment.class, bundle);
 
 		bundle = new Bundle();
 		bundle.putInt(AccountFragment.EXTRA_LOADER_ID,
-				AccountFragment.LOADER_FOLLOWS);
-		tab = actionbar
-				.newTab()
-				.setText(R.string.menu_follows)
-				.setTabListener(
-						new TabListener(this, AccountFragment.class, bundle, "favorites"));
-		actionbar.addTab(tab);
-	}
-
-	@Override
-	protected void onRestoreInstanceState(Bundle savedInstanceState) {
-		super.onRestoreInstanceState(savedInstanceState);
-		actionbar.setSelectedNavigationItem(savedInstanceState
-				.getInt(STATE_TAB));
-	}
-
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		outState.putInt(STATE_TAB, actionbar.getSelectedNavigationIndex());
-		super.onSaveInstanceState(outState);
+					  AccountFragment.LOADER_FOLLOWS);
+		addTab(R.string.menu_follows, AccountFragment.class, bundle);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case android.R.id.home:
-			onBackPressed();
-			return true;
 		case R.id.account_menu_log_out:
 			LogInActivity.logOut(this);
 			finish();
@@ -155,7 +116,7 @@ public class AccountActivity extends AppCompatActivity {
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
 
-			mList = new ArrayList<Story>();
+			mList = new ArrayList<>();
 			mAdapter = new StoryReducedAdapter(getActivity(), mList);
 
 			View v = inflater.inflate(R.layout.activity_list_view, container,
@@ -244,7 +205,7 @@ public class AccountActivity extends AppCompatActivity {
 				builder.scheme(getString(R.string.fanfiction_scheme))
 						.authority(getString(R.string.fanfiction_authority))
 						.appendEncodedPath("u")
-						.appendEncodedPath(story.getAuthor_id() + "")
+						.appendEncodedPath(story.getAuthorId() + "")
 						.appendEncodedPath("");
 				Intent i = new Intent(getActivity(), AuthorMenuActivity.class);
 				i.setData(builder.build());
@@ -393,7 +354,7 @@ public class AccountActivity extends AppCompatActivity {
 					mData = args.getParcelableArrayList(STATE_DATA);
 					mDataHasChanged = args.getBoolean(STATE_CHAGED);
 				} else {
-					mData = new ArrayList<Story>();
+					mData = new ArrayList<>();
 					mDataHasChanged = true;
 				}
 

@@ -11,7 +11,7 @@ import android.os.Parcelable;
  * 
  * @author Michael Chen
  */
-final class CommunityMenuItem implements Parcelable {
+public final class CommunityMenuItem implements Parcelable {
 	protected String title;
 	protected Uri uri;
 	protected String author;
@@ -73,6 +73,11 @@ final class CommunityMenuItem implements Parcelable {
 	@Override
 	public int describeContents() {
 		return 0;
+	}
+
+	public Uri getUri()
+	{
+		return uri;
 	}
 
 	@Override

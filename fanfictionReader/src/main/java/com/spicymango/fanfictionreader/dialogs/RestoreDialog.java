@@ -16,7 +16,6 @@ import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.Settings;
 import com.spicymango.fanfictionreader.util.FileHandler;
 
-import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -33,7 +32,7 @@ import android.widget.Toast;
 
 public class RestoreDialog extends DialogFragment {
 	private final static int PERMISSION_READ = 0;
-	private boolean shouldDismiss;
+	private boolean shouldRequestPermission;
 
 	private ProgressBar bar;
 
@@ -41,9 +40,10 @@ public class RestoreDialog extends DialogFragment {
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		setCancelable(false);
 
-		// By default, the dialog should not be dismissed. This variable is later changed if a call
-		// to dismiss is required from onRequestPermissionResult
-		shouldDismiss = false;
+		// By default, the dialog should attempt to request permissions. If the read permission has
+		// already been denied, do not ask again in this session and do a best-effort restore
+		// attempt from the internal memory
+		shouldRequestPermission = true;
 
 		bar = new ProgressBar(getActivity(), null,
 				android.R.attr.progressBarStyleHorizontal);
@@ -59,12 +59,7 @@ public class RestoreDialog extends DialogFragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-
-		if (shouldDismiss){
-			dismiss();
-		}else{
-			startRestore();
-		}
+		startRestore();
 	}
 
 	public static File findBackUpFile(Context context) {
@@ -93,15 +88,10 @@ public class RestoreDialog extends DialogFragment {
 	public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
 		switch (requestCode) {
 			case PERMISSION_READ:
-				// This check is required because if the request is cancelled, the result arrays are empty.
-				if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-					shouldDismiss = false;
-				} else {
-					Toast toast = Toast.makeText(getActivity(), R.string.dialog_cancelled,
-												 Toast.LENGTH_SHORT);
-					toast.show();
-					shouldDismiss = true;
-				}
+				// Regardless of the result, start the restore. If the user has granted permissions,
+				// the sd card will be checked when considering restore files. If the user has
+				// refused, only the internal memory will be checked for restore files.
+				startRestore();
 				break;
 			default:
 				super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -109,7 +99,6 @@ public class RestoreDialog extends DialogFragment {
 	}
 
 	private void startRestore() {
-
 		// Check if the restore task has already been started
 		// The ManagedAsyncTask creates the following fragment when started
 		Fragment manager = getFragmentManager().findFragmentByTag(TaskManagerFragment.DEFAULT_TAG);
@@ -118,11 +107,14 @@ public class RestoreDialog extends DialogFragment {
 			// The restore task has not been started. Check for permissions
 			int readPermission = ContextCompat.checkSelfPermission(getActivity(), "android.permission.READ_EXTERNAL_STORAGE");
 
-			if (readPermission == PackageManager.PERMISSION_GRANTED){
-				// The read permission is available. Proceed.
+			if (!shouldRequestPermission || readPermission == PackageManager.PERMISSION_GRANTED){
+				// The permission is available or the user has refused to allow read access.
+				// Regardless of the result, do a best-effort at updating the app.
 				new RestoreTask(getActivity()).execute((Void) null);
 			} else{
-				// Request the permission
+				// The app does not have the read_external_storage permission. Try to request it at
+				// least once per session.
+				shouldRequestPermission = false;
 				requestPermissions(new String[]{"android.permission.READ_EXTERNAL_STORAGE"}, PERMISSION_READ);
 			}
 		}
@@ -310,7 +302,7 @@ public class RestoreDialog extends DialogFragment {
 		 * @return True if all the files are successfully deleted, false
 		 *         otherwise
 		 */
-		private static final boolean deleteDir(File dir) {
+		private static boolean deleteDir(File dir) {
 			boolean success = true;
 			if (dir.isDirectory()) {
 				String[] children = dir.list();

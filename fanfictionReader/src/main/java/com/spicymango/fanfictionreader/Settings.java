@@ -18,6 +18,7 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
@@ -142,10 +143,20 @@ public class Settings extends AppCompatActivity {
 							getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
 							break;
 						case "H":
-							getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+							if(Build.VERSION.SDK_INT <= 8) {
+								getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+							}
+							else {
+								getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+							}
 							break;
 						default:
-							getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+							if(Build.VERSION.SDK_INT <= 8) {
+								getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+							}
+							else {
+								getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
+							}
 							break;
 					}
 					return true;
@@ -325,10 +336,20 @@ public class Settings extends AppCompatActivity {
 				activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
 				break;
 			case "H":	// Landscape orientation
-				activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+				if(Build.VERSION.SDK_INT <= 8) {
+					activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+				}
+				else {
+					activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+				}
 				break;
 			default:	// Vertical orientation
-				activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+				if(Build.VERSION.SDK_INT <= 8) {
+					activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+				}
+				else {
+					activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
+				}
 				break;
 		}
 	}

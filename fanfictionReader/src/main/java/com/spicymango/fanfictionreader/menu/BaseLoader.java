@@ -16,7 +16,6 @@ import android.os.Parcelable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.AsyncTaskLoader;
 
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 /**

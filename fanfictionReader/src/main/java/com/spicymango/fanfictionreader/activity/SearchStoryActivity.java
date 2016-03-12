@@ -3,7 +3,6 @@ package com.spicymango.fanfictionreader.activity;
 import java.util.List;
 
 import org.jsoup.nodes.Document;
-import org.w3c.dom.Text;
 
 import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.activity.reader.StoryDisplayActivity;

@@ -12,13 +12,16 @@ import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -35,6 +38,7 @@ public abstract class BaseFragment<T extends Parcelable> extends Fragment
 	private View mErrorBar;
 	private View mProgressBar;
 	private TextView mRetryLabel;
+	private FrameLayout mEmptyView;
 
 	/**
 	 * The most recently used {@link BaseLoader}
@@ -44,11 +48,12 @@ public abstract class BaseFragment<T extends Parcelable> extends Fragment
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-		View v = inflater.inflate(R.layout.activity_list_view, container, false);
-
 		mList = new ArrayList<>();
 
+		// Get the listView and the empty view
+		View v = inflater.inflate(R.layout.activity_list_view, container, false);
 		mListView = (ListView) v.findViewById(android.R.id.list);
+		mEmptyView = (FrameLayout) v.findViewById(R.id.empty);
 
 		// Set the footer and its associated variables
 		View footer = inflater.inflate(R.layout.footer_list, mListView, false);
@@ -85,43 +90,50 @@ public abstract class BaseFragment<T extends Parcelable> extends Fragment
 		// available yet.
 		Result state = mLoader.getState();
 
-		switch (state) {
-		case LOADING:
-			mProgressBar.setVisibility(View.VISIBLE);
-			mErrorBar.setVisibility(View.GONE);
-			mAddPageButton.setVisibility(View.GONE);
-			break;
-		case LOADING_HIDE_PROGRESS:
-			mProgressBar.setVisibility(View.GONE);
-			mErrorBar.setVisibility(View.GONE);
-			mAddPageButton.setVisibility(View.GONE);
-			break;
-		case ERROR_CONNECTION:
-			mProgressBar.setVisibility(View.GONE);
-			mErrorBar.setVisibility(View.VISIBLE);
-			mAddPageButton.setVisibility(View.GONE);
-			mRetryLabel.setText(R.string.error_connection);
-			break;
-		case ERROR_PARSE:
-			mProgressBar.setVisibility(View.GONE);
-			mErrorBar.setVisibility(View.VISIBLE);
-			mAddPageButton.setVisibility(View.GONE);
-			mRetryLabel.setText(R.string.error_parsing_mini);
-			break;
-		case SUCCESS:
-			mProgressBar.setVisibility(View.GONE);
-			mErrorBar.setVisibility(View.GONE);
+		// Make all the views invisible, then make the views visible as required.
+		mProgressBar.setVisibility(View.GONE);
+		mErrorBar.setVisibility(View.GONE);
+		mAddPageButton.setVisibility(View.GONE);
+		mEmptyView.setVisibility(View.GONE);
 
-			if (mLoader.hasNextPage()) {
-				String text = getString(R.string.menu_story_page_button, mLoader.getCurrentPage() + 1,
-						mLoader.getTotalPages());
-				mAddPageButton.setVisibility(View.VISIBLE);
-				mAddPageButton.setText(text);
-			} else {
-				mAddPageButton.setVisibility(View.GONE);
-			}
-		default:
-			break;
+		// Unlike the footer, the listView should be visible by default. It is only
+		// removed in order to show the empty view.
+		mListView.setVisibility(View.VISIBLE);
+
+		switch (state) {
+			case LOADING:
+				// Only the progress bar should be visible
+				mProgressBar.setVisibility(View.VISIBLE);
+				break;
+			case LOADING_HIDE_PROGRESS:
+				// No views should be visible. To be used for short local loads only
+				break;
+			case ERROR_CONNECTION:
+				// Display a connection error
+				mErrorBar.setVisibility(View.VISIBLE);
+				mRetryLabel.setText(R.string.error_connection);
+				break;
+			case ERROR_PARSE:
+				// Display a parsing error
+				mErrorBar.setVisibility(View.VISIBLE);
+				mRetryLabel.setText(R.string.error_parsing_mini);
+				break;
+			case SUCCESS:
+				// If the loader has additional pages, display the button
+				if (mLoader.hasNextPage()) {
+					String text = getString(R.string.menu_story_page_button, mLoader.getCurrentPage() + 1,
+											mLoader.getTotalPages());
+					mAddPageButton.setVisibility(View.VISIBLE);
+					mAddPageButton.setText(text);
+				}
+
+				// If an empty view has been set and the data set is empty, show the empty view.
+				if (data.isEmpty() && mEmptyView.getChildCount() > 0){
+					mListView.setVisibility(View.GONE);
+					mEmptyView.setVisibility(View.VISIBLE);
+				}
+			default:
+				break;
 		}
 
 	}
@@ -132,14 +144,32 @@ public abstract class BaseFragment<T extends Parcelable> extends Fragment
 		mLoader.saveInstanceState(outState);
 	}
 
-	protected abstract BaseAdapter adapter(List<T> dataset);
+	protected abstract BaseAdapter adapter(List<T> dataSet);
 
+	/**
+	 * Sets the subTitle of the action bar.
+	 * @param title The subTitle
+	 */
 	protected final void setSubTitle(@StringRes int title) {
-		((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(title);
+		final ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+		if (actionBar != null) {
+			actionBar.setSubtitle(title);
+		} else {
+			Log.e(this.getClass().getName(), "The subtitle cannot be changed because getSupportActionBar is null");
+		}
 	}
 
+	/**
+	 * Sets the subTitle of the action bar.
+	 * @param title The subTitle
+	 */
 	protected final void setSubTitle(String title) {
-		((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(title);
+		final ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+		if (actionBar != null) {
+			actionBar.setSubtitle(title);
+		} else {
+			Log.e(this.getClass().getName(), "The subtitle cannot be changed because getSupportActionBar is null");
+		}
 	}
 
 	protected final void setTitle(@StringRes int title) {
@@ -172,6 +202,17 @@ public abstract class BaseFragment<T extends Parcelable> extends Fragment
 	 * @param <T> The type of data handled by the loader.
 	 */
 	protected interface LoaderAdapter<T extends Parcelable> {
-		public BaseLoader<T> getNewLoader(Bundle args);
+		BaseLoader<T> getNewLoader(Bundle args);
+	}
+
+	/**
+	 * Sets a view that will be displayed in the center of the screen when the loader succeeds but
+	 * returns an empty data set.
+	 *
+	 * @param emptyView The view that should be displayed upon an empty data set.
+	 */
+	public final void setEmptyView(View emptyView){
+		mEmptyView.removeAllViews();
+		mEmptyView.addView(emptyView);
 	}
 }

@@ -41,7 +41,7 @@
     <string name="filter_type">Typ</string>
     
     <string name="detail_rating">&lt;strong&gt;Bewertung:&lt;/strong&gt; %s</string>
-    <string name="detail_languague">&lt;strong&gt;Sprache:&lt;/strong&gt; %s</string>
+    <string name="detail_language">&lt;strong&gt;Sprache:&lt;/strong&gt; %s</string>
     <string name="detail_genre">&lt;strong&gt;Genre:&lt;/strong&gt; %s</string>
     <string name="detail_chapters">&lt;strong&gt;Kapitel:&lt;/strong&gt; %s</string>
     <string name="detail_words">&lt;strong&gt;Wörter:&lt;/strong&gt; %s</string>
@@ -133,6 +133,7 @@
     <string-array name="menu_search_by">
         <item>Geschichten suchen</item>
         <item>Autoren suchen</item>
+        <item>Search communities</item>
     </string-array>
 
     <!-- Browse Menu Activity -->
@@ -177,16 +178,13 @@
     <string name="menu_library_words">Wörter: %,d</string>
     <string name="menu_library_chapters">Kapitel: %d</string>
 
-    <string-array name="menu_library_sort_by">
-        <item>Aktualisiert</item>
-        <item>Veröffentlichung</item>
-        <item>Titel</item>
-        <item>Autor</item>
-        <item>Favoriten</item>
-        <item>Follows</item>
-        <item >Read Percentage</item>
-    </string-array>
-    
+    <string name="menu_library_sort_by_update">Aktualisiert</string>
+    <string name="menu_library_sort_by_publish">Veröffentlichung</string>
+    <string name="menu_library_sort_by_title">Titel</string>
+    <string name="menu_library_sort_by_author">Autor</string>
+    <string name="menu_library_sort_by_favorite">Favoriten</string>
+    <string name="menu_library_sort_by_follow">Follows</string>
+
     <string-array name="menu_library_filter_words">
         <item>Alle</item>
         <item>&lt; 1.000 Wörter</item>
@@ -236,8 +234,7 @@
     <!-- About Page -->
     <string name="about">This application was developed by Michael Chen.
 		The author is not affiliated in anyway with Fanfiction.net.\n
-		\nPlease report any bugs or request any features using the button below.\n
-		\nTranslation by 9byte</string>
+		\nPlease report any bugs or request any features using the button below.</string>
     <string name="about_feature">Contact the developer</string>
 
     <!-- Author Menu Activity -->

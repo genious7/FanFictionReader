@@ -46,7 +46,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.spicymango.fanfictionreader.LibraryDownloader;
 import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.Settings;
 import com.spicymango.fanfictionreader.activity.LogInActivity;
@@ -55,8 +54,10 @@ import com.spicymango.fanfictionreader.dialogs.ReviewDialog;
 import com.spicymango.fanfictionreader.menu.mainmenu.MainActivity;
 import com.spicymango.fanfictionreader.provider.SqlConstants;
 import com.spicymango.fanfictionreader.provider.StoryProvider;
+import com.spicymango.fanfictionreader.services.LibraryDownloader;
 import com.spicymango.fanfictionreader.util.AsyncPost;
 import com.spicymango.fanfictionreader.util.FileHandler;
+import com.spicymango.fanfictionreader.util.Sites;
 import com.spicymango.fanfictionreader.util.adapters.TextAdapter;
 
 public class StoryDisplayActivity extends AppCompatActivity implements LoaderCallbacks<StoryChapter>, OnClickListener{
@@ -218,7 +219,11 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 			
 			if (fromBrowser && data.isInLibrary() && !mHasUpdated) {				//Update the story if required
 				mHasUpdated = true;
-				LibraryDownloader.download(this, mStoryId, mCurrentPage, getOffset());
+				final Uri.Builder storyUri = Sites.FANFICTION.BASE_URI.buildUpon();
+				storyUri.appendPath("s");
+				storyUri.appendPath(Long.toString(mStoryId));
+				storyUri.appendPath("");
+				LibraryDownloader.download(this, storyUri.build(), mCurrentPage, getOffset());
 			}
 			
 			supportInvalidateOptionsMenu();												//Required upon update to disable "update" button
@@ -232,7 +237,14 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 		switch (item.getItemId()) {
 		case R.id.read_story_menu_add:
 			mHasUpdated = true;
-			LibraryDownloader.download(this, mStoryId, mCurrentPage, getOffset());  
+
+			// Download
+			final Uri.Builder storyUri = Sites.FANFICTION.BASE_URI.buildUpon();
+			storyUri.appendPath("s");
+			storyUri.appendPath(Long.toString(mStoryId));
+			storyUri.appendPath("");
+			LibraryDownloader.download(this, storyUri.build(), mCurrentPage, getOffset());
+
 			supportInvalidateOptionsMenu();
 			return true;
 		case R.id.read_story_go_to:
@@ -358,10 +370,11 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 		switch (mSite) {
 		case FANFICTION:
 		case FICTIONPRESS:
+			// TODO: Make links work without chapter numbers
 			Pattern filePattern = Pattern.compile("/s/(\\d++)/(\\d++)/");
 			Matcher matcher = filePattern.matcher(uri.toString());
 			if (matcher.find()) {
-				fromBrowser = uri.getScheme().equals("file") ? false : true;
+				fromBrowser = !uri.getScheme().equals("file");
 				mStoryId = Integer.valueOf(matcher.group(1));
 				mCurrentPage = Integer.valueOf(matcher.group(2));
 				return true;
@@ -406,6 +419,7 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 	 * @param currentPage The currently selected page
 	 * @param totalPages The total number of pages
 	 */
+	@SuppressLint("SetTextI18n")
 	private void updatePageButtons(int currentPage, int totalPages){
 		if (currentPage == totalPages) {
 			btnNext.setEnabled(false);
@@ -451,11 +465,11 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 		Settings.setOrientationAndThemeNoActionBar(this);	//Sets the theme according to user settings
 		super.onCreate(savedInstanceState);					//Super() constructor
 		setContentView(R.layout.activity_list_toolbar);		//Set the layout
-		
+
 		mToolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(mToolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		
+
 		mList = new ArrayList<Spanned>();
 		mListView = (ListView) findViewById(android.R.id.list);
 		mListView.setKeepScreenOn(Settings.isWakeLockEnabled(this));
@@ -464,7 +478,7 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 		mListView.setDividerHeight(0);						//No line in between paragraphs
 		mAdapter = new TextAdapter(this, mList);
 		mListView.setAdapter(mAdapter);
-		
+
 		int currentApiVersion = android.os.Build.VERSION.SDK_INT;
 		if (currentApiVersion >= android.os.Build.VERSION_CODES.HONEYCOMB_MR1){
 			mListView.setOnScrollListener(new ListViewHider());
@@ -476,17 +490,17 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 		btnNext = footer.findViewById(R.id.read_story_next);
 		btnLast = footer.findViewById(R.id.read_story_last);
 		btnPage = (Button)findViewById(R.id.read_story_page_counter);
-		
+
 		btnFirst.setOnClickListener(this);
 		btnPrev.setOnClickListener(this);
 		btnNext.setOnClickListener(this);
 		btnLast.setOnClickListener(this);
 		btnPage.setOnClickListener(this);
-		
+
 		progressBar = footer.findViewById(R.id.progress_bar);
 		recconectBar = footer.findViewById(R.id.row_retry);
 		buttonBar = footer.findViewById(R.id.buttonBar);
-		
+
 		//Creates a new activity, and sets the initial page and story Id
 		if (!parseUri(getIntent().getData())) {
 			Toast toast = Toast.makeText(this, R.string.error_parsing, Toast.LENGTH_SHORT);
@@ -494,13 +508,13 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 			finish();
 			return;
 		}
-		
+
 		if(savedInstanceState == null){
 			mHasUpdated = false;
 		}else{
 			mHasUpdated = savedInstanceState.getBoolean(STATE_UPDATED);
 		}
-		
+
 		getSupportLoaderManager().initLoader(0, savedInstanceState, this);
 	}
 	

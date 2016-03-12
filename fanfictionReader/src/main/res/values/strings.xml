@@ -40,9 +40,10 @@
     <string name="filter_length">Length</string>
     <string name="filter_category">Category</string>
     <string name="filter_type">Type</string>
-    
+
+    <!-- Detail Dialog -->
     <string name="detail_rating">&lt;strong&gt;Rating:&lt;/strong&gt; %s</string>
-    <string name="detail_languague">&lt;strong&gt;Language:&lt;/strong&gt; %s</string>
+    <string name="detail_language">&lt;strong&gt;Language:&lt;/strong&gt; %s</string>
     <string name="detail_genre">&lt;strong&gt;Genre:&lt;/strong&gt; %s</string>
     <string name="detail_chapters">&lt;strong&gt;Chapters:&lt;/strong&gt; %s</string>
     <string name="detail_words">&lt;strong&gt;Words:&lt;/strong&gt; %s</string>
@@ -54,6 +55,10 @@
     <string name="detail_complete">&lt;strong&gt;Status:&lt;/strong&gt; %s</string>
     <string name="detail_author">&lt;strong&gt;Author:&lt;/strong&gt; %s</string>
     <string name="detail_story_id">&lt;strong&gt;Story ID:&lt;/strong&gt; %s</string>
+    <string name="detail_characters">&lt;strong&gt;Characters:&lt;/strong&gt; %s</string>
+    <string name="detail_reviews">&lt;strong&gt;Reviews:&lt;/strong&gt; %s</string>
+
+    <string name="detail_view_reviews">View Reviews</string>
     
     <string name="complete_true">Completed</string>
     <string name="complete_false">In progress</string>
@@ -120,6 +125,7 @@
 
     <!-- Story Downloader -->
     <string name="downloader_downloading">Downloading Story</string>
+    <string name="downloader_checking_updates">Checking For Updates</string>
     <string name="downloader_context">%1$s Chapter %2$d/%3$d</string>
 
     <plurals name="downloader_notification">
@@ -142,6 +148,7 @@
     <string-array name="menu_search_by">
         <item>Search stories</item>
         <item>Search authors</item>
+        <item>Search communities</item>
     </string-array>
 
     <!-- Browse Menu Activity -->
@@ -182,20 +189,20 @@
     <string name="menu_library_sync_all_condensed">Sync</string>
     <string name="menu_library_context_detail">Details</string>
     <string name="menu_library_context_author">Browse Author</string>
+    <string name="menu_library_context_reviews">@string/detail_view_reviews</string>
     <string name="menu_library_context_delete">Remove Story</string>
     <string name="menu_library_words">Words: %,d</string>
     <string name="menu_library_chapters">Chapters: %d</string>
 
-    <string-array name="menu_library_sort_by">
-        <item>Update Date</item>
-        <item>Publish Date</item>
-        <item>Title</item>
-        <item>Author</item>
-        <item>Favorites</item>
-        <item>Follows</item>
-        <item>Read Percentage</item>
-    </string-array>
-    
+    <string name="menu_library_sort_by_update">Update Date</string>
+    <string name="menu_library_sort_by_publish">Publish Date</string>
+    <string name="menu_library_sort_by_title">Title</string>
+    <string name="menu_library_sort_by_author">Author</string>
+    <string name="menu_library_sort_by_favorite">Favorites</string>
+    <string name="menu_library_sort_by_follow">Follows</string>
+    <string name="menu_library_sort_by_reviews">Reviews</string>
+    <string name="menu_library_sort_by_percentage">Percentage Read</string>
+
     <string-array name="menu_library_filter_words">
         <item>All</item>
         <item>&lt; 1k words</item>
@@ -251,7 +258,9 @@
     <!-- Author Menu Activity -->
     <string name="menu_author_stories">Stories</string>
     <string name="menu_author_profile">Profile</string>
+    <string name="menu_author_favorites">Author\'s Favorites</string>
     <string name="menu_author_no_profile">No profile found</string>
+    <string name="menu_author_no_stories">No stories found</string>
 
     <!-- Favorite and Follows Activity -->
     <string name="dialog_log_in">Log In</string>
@@ -265,7 +274,7 @@
     <string name="toast_added_favs">Story added to favorites</string>
     <string name="toast_removed">Story removed</string>
 
-    <!-- Browse Menu Items Fanfiction -->
+    <!-- Browse Menu Items FanFiction -->
     <string name="general_anime">Anime</string>
     <string name="general_books">Books</string>
     <string name="general_cartoons">Cartoons</string>
@@ -276,4 +285,8 @@
     <string name="general_plays">Plays &amp; Musicals</string>
     <string name="general_tv">TV Shows</string>
 
+    <!-- Reviews -->
+    <string name="menu_reviews_title">Reviews</string>
+    <string name="menu_reviews_chapter_posted">Chapter %d</string>
+    <string name="menu_reviews_no_reviews">No reviews found</string>
 </resources>

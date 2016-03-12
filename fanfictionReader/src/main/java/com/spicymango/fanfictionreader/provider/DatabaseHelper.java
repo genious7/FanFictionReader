@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHelper extends SQLiteOpenHelper  implements SqlConstants{
 	
-	private static final int DATABASE_VERSION = 7; //Database version 7
+	private static final int DATABASE_VERSION = 9; //Database version 8
 	private static final String DATABASE_NAME = "library.db";
 	
 	//The name of the FanFiction table
@@ -24,7 +24,7 @@ public class DatabaseHelper extends SQLiteOpenHelper  implements SqlConstants{
             + KEY_AUTHOR_ID + " TEXT,"
             + KEY_RATING + " TEXT,"
             + KEY_GENRE + " TEXT,"
-            + KEY_LANGUAGUE + " TEXT," 
+            + KEY_LANGUAGE + " TEXT,"
             + KEY_CATEGORY + " TEXT,"
             + KEY_CHAPTER + " INTEGER,"
             + KEY_LENGTH + " INTEGER,"
@@ -35,7 +35,9 @@ public class DatabaseHelper extends SQLiteOpenHelper  implements SqlConstants{
             + KEY_SUMMARY + " TEXT NOT NULL,"
             + KEY_LAST + " INTEGER,"
             + KEY_COMPLETE + " BOOLEAN,"
-            + KEY_OFFSET + " INTEGER"
+            + KEY_OFFSET + " INTEGER,"
+			+ KEY_CHARACTERS + " TEXT,"
+			+ KEY_REVIEWS + " INTEGER"
             + ")";
 	
 	@Override
@@ -53,6 +55,8 @@ public class DatabaseHelper extends SQLiteOpenHelper  implements SqlConstants{
 			onCreate(db);
 		}
 		if (oldVersion < 4) {
+			// In this version, the internal representation of lengths, favorites, and follows was
+			// changed from text entries to integer entries
 			db.execSQL("UPDATE " + FANFICTION_TABLE + " SET " + KEY_LENGTH + " = REPLACE(" + KEY_LENGTH+ ",',','')");
 			db.execSQL("UPDATE " + FANFICTION_TABLE + " SET " + KEY_FAVORITES + " = REPLACE(" + KEY_FAVORITES+ ",',','')");
 			db.execSQL("UPDATE " + FANFICTION_TABLE + " SET " + KEY_FOLLOWERS + " = REPLACE(" + KEY_FOLLOWERS+ ",',','')");
@@ -64,7 +68,7 @@ public class DatabaseHelper extends SQLiteOpenHelper  implements SqlConstants{
 	                + KEY_AUTHOR_ID + " TEXT,"
 	                + KEY_RATING + " TEXT,"
 	                + KEY_GENRE + " TEXT,"
-	                + KEY_LANGUAGUE + " TEXT," 
+	                + KEY_LANGUAGE + " TEXT,"
 	                + KEY_CATEGORY + " TEXT,"
 	                + KEY_CHAPTER + " INTEGER,"
 	                + KEY_LENGTH + " INTEGER,"
@@ -74,19 +78,30 @@ public class DatabaseHelper extends SQLiteOpenHelper  implements SqlConstants{
 	                + KEY_UPDATED + " INTEGER,"
 	                + KEY_SUMMARY + " TEXT NOT NULL,"
 	                + KEY_LAST + " INTEGER"
-	                + ")");
+					+ ")");
 			db.execSQL("INSERT INTO tmp SELECT * FROM " + FANFICTION_TABLE);
 			db.execSQL("DROP TABLE " + FANFICTION_TABLE);
 			db.execSQL("ALTER TABLE tmp RENAME TO " + FANFICTION_TABLE);
 		}
 		if (oldVersion < 5) {
+			// A column was added in order to remember if a story was completed or not
 			db.execSQL("ALTER TABLE " + FANFICTION_TABLE + " ADD COLUMN " + KEY_COMPLETE + " BOOLEAN DEFAULT 0");
 		}
 		if (oldVersion < 6) {
-			db.execSQL("ALTER TABLE " + FANFICTION_TABLE + " ADD COLUMN " + KEY_OFFSET + " INTEGER DEFAULT 0");
+			// A column was added in order to remember the position of the scroll bar in the story
+			db.execSQL("ALTER TABLE " + FANFICTION_TABLE + " ADD COLUMN " + KEY_OFFSET + " TEXT DEFAULT ''");
 		}
 		if (oldVersion < 7) {
+			// A FictionPress table was defined.
 			db.execSQL("CREATE TABLE " + FICTIONPRESS_TABLE + TABLE_DEF);
+		}
+		if (oldVersion < 8){
+			// A column for the different characters was added
+			db.execSQL("ALTER TABLE " + FANFICTION_TABLE + " ADD COLUMN " + KEY_CHARACTERS + " TEXT DEFAULT ''");
+		}
+		if (oldVersion < 9){
+			// A column for the different characters was added
+			db.execSQL("ALTER TABLE " + FANFICTION_TABLE + " ADD COLUMN " + KEY_REVIEWS + " INTEGER DEFAULT 0");
 		}
 	}
 

@@ -10,4 +10,8 @@
     <item name="fictionpress" type="id"></item>
     <item name="archive_of_our_own" type="id"></item>
 
+    <!-- ID's for dynamically created views in the Detail's Dialog -->
+    <item name="dialog_detail_author_btn" type="id"></item>
+    <item name="dialog_detail_review_btn" type="id"></item>
+
 </resources>
