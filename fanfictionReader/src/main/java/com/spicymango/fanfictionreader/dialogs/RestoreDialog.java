@@ -71,11 +71,11 @@ public class RestoreDialog extends DialogFragment {
 		backUpFile = null;
 		
 		if (FileHandler.isEmulatedFilesDirWritable()) {
-			backUpFile = new File(emuStorageDir, BackUpDialog.filename);
+			backUpFile = new File(emuStorageDir, BackUpDialog.FILENAME);
 		}
 		
 		if ((backUpFile == null || !backUpFile.exists()) && FileHandler.isExternalStorageWritable(context)) {
-			backUpFile = new File(extStorageDir, BackUpDialog.filename);
+			backUpFile = new File(extStorageDir, BackUpDialog.FILENAME);
 		}
 		
 		if (backUpFile == null || !backUpFile.exists()) {
