@@ -12,6 +12,7 @@ import android.support.annotation.StringRes;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.spicymango.fanfictionreader.R;
@@ -45,12 +46,6 @@ public class LibraryDownloader extends Service {
 	 * ID for the notifications generated.
 	 */
 	private final static int NOTIFICATION_ID = 0;
-
-	/**
-	 * A unique Id used to identify this particular service. This is used to start and stop the
-	 * service
-	 */
-	private int mStartId;
 
 	/**
 	 * A queue containing the intents of the stories that need to be updated
@@ -95,17 +90,18 @@ public class LibraryDownloader extends Service {
 	}
 
 	@Override
+	public void onCreate() {
+		super.onCreate();
+		mThread.start();
+	}
+
+	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		// Save the start id in order to stop the service later on
-		mStartId = startId;
+		intent.putExtra(DownloaderThread.EXTRA_START_ID, startId);
 
 		// Add the story to the queue of stories that need to be checked
 		mTaskQueue.add(intent);
-
-		// If the downloader thread is inactive, start it
-		if (!mThread.isAlive()){
-			mThread.start();
-		}
 
 		return Service.START_REDELIVER_INTENT;
 	}
@@ -114,16 +110,30 @@ public class LibraryDownloader extends Service {
 	 * A thread that sequentially downloads each story
 	 */
 	private class DownloaderThread extends Thread{
+		private static final String EXTRA_START_ID = "Start ID";
+
+		/** Keeps track of story names for update purposes*/
+		private final List<String> storiesUpdated;
+
+		/** Keeps track of errors*/
+		private boolean hasParsingError, hasConnectionError, hasSdError;
+
+		/**
+		 * Keeps track of the total number of stories that have been checked for updates; used in
+		 * the progress bar
+		 */
+		int currentProgress = 0;
+
+		public DownloaderThread(){
+			storiesUpdated = new ArrayList<>();
+			hasParsingError = false;
+			hasConnectionError = false;
+			hasSdError = false;
+		}
 
 		@Override
 		public void run() {
-			final List<String> storiesUpdated = new ArrayList<>();
-			boolean hasParsingError = false;
-			boolean hasConnectionError = false;
-			boolean hasSdError = false;
-
-			// Used to keep track of how many stories have been updated
-			int currentProgress = 0;
+			int startId = -1;
 
 			// Process each update request one by one
 			for (; !mTaskQueue.isEmpty(); currentProgress++) {
@@ -143,6 +153,11 @@ public class LibraryDownloader extends Service {
 				// Get the story uri
 				final Intent i = mTaskQueue.remove();
 				final DownloaderFactory.Downloader downloader = DownloaderFactory.getInstance(i, LibraryDownloader.this);
+
+				// Since the queue is ordered, the last start id will always be at the end of the
+				// queue. Therefore, only the last one needs to be saved, hence we can overwrite
+				// the other ones on each loop iteration.
+				startId = i.getIntExtra(EXTRA_START_ID, -1);
 
 				// Get the story details
 				try {
@@ -222,7 +237,12 @@ public class LibraryDownloader extends Service {
 			}
 
 			// Stop the service
-			stopSelf(mStartId);
+			if (!stopSelfResult(startId)) {
+				// The service was not stopped; something else was queued. Rerun the downloader.
+				run();
+			} else {
+				Log.d(DownloaderThread.class.getName(), "Thread stopped successfully");
+			}
 		}
 
 		/**
