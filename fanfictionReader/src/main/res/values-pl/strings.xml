@@ -96,13 +96,12 @@
 
     <string name="pref_loc_diag_title">Informacja</string>
     <string name="pref_loc_diag">Opowieści nie są przenoszone automatycznie. By przenieść, usuń i pobierz ponownie opowieść.</string>
-
     <string name="pref_incremental_updating">Aktualizowanie przyrostowe</string>
+    <string name="pref_volume_buttons_scroll_story">Użyj przycisków reg. głośności do przewijania</string>
     <string name="pref_incremental_summary_off">Aktualizowanie spowoduje pobranie każdego rozdziału ponownie</string>
     <string name="pref_incremental_summary_on">Aktualizowanie spowoduje pobranie tylko nowych rozdziałów. Poprawione rozdziały nie będą pobierane.</string>
     <string name="pref_wake_lock">Zawsze włączony ekran</string>
     <string name="pref_back_and_restore">Kopia zapasowa i przywracanie</string>
-
     <string name="pref_back_up">Kopiuj pliki do pamięci</string>
     <string name="pref_restore">Przywróć pliki z pamięci</string>
 
