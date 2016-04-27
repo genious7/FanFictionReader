@@ -124,6 +124,7 @@
 
     <!-- Story Downloader -->
     <string name="downloader_downloading">Pobieranie opowieści</string>
+    <string name="downloader_checking_updates">Szukanie aktualizacji</string>
     <string name="downloader_context">%1$s Rozdział %2$d z %3$d</string>
 
     <plurals name="downloader_notification">
@@ -144,9 +145,9 @@
     <string name="menu_search_title">Szukaj</string>
 
     <string-array name="menu_search_by">
-        <item>Szukaj opowieści</item>
-        <item>Szukaj autorów</item>
-        <item>Search communities</item>
+        <item>Znajdź opowieści</item>
+        <item>Znajdź autorów</item>
+        <item>Znajdź społeczności</item>
     </string-array>
 
     <!-- Browse Menu Activity -->
@@ -155,7 +156,7 @@
     <string name="toggle_regular">Regularne</string>
     <string name="toggle_crossover">Mieszane</string>
     <string name="toggle_fiction">Fikcja</string>
-    <string name="toggle_poetry">Liryka</string>
+    <string name="toggle_poetry">Poezja</string>
 
     <!-- Navigation Menu Activity -->
     <string name="menu_navigation_sort_by">Sortuj wg</string>
@@ -257,7 +258,9 @@
     <!-- Author Menu Activity -->
     <string name="menu_author_stories">Opowieści</string>
     <string name="menu_author_profile">Profil</string>
+    <string name="menu_author_favorites">Ulubione</string>
     <string name="menu_author_no_profile">Nie znaleziono profilu</string>
+    <string name="menu_author_no_stories">Brak opowieści</string>
 
     <!-- Favorite and Follows Activity -->
     <string name="dialog_log_in">Zaloguj się</string>
@@ -285,4 +288,5 @@
     <!-- Reviews -->
     <string name="menu_reviews_title">Recenzje</string>
     <string name="menu_reviews_chapter_posted">Rozdział %d</string>
+    <string name="menu_reviews_no_reviews">Brak recenzji</string>
 </resources>
