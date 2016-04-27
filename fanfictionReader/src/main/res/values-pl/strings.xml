@@ -54,6 +54,8 @@
     <string name="detail_complete">&lt;strong&gt;Stan:&lt;/strong&gt; %s</string>
     <string name="detail_author">&lt;strong&gt;Autor:&lt;/strong&gt; %s</string>
     <string name="detail_story_id">&lt;strong&gt;ID:&lt;/strong&gt; %s</string>
+    <string name="detail_characters">&lt;strong&gt;Postacie:&lt;/strong&gt; %s</string>
+    <string name="detail_reviews">&lt;strong&gt;Recenzje:&lt;/strong&gt; %s</string>
 
     <string name="detail_view_reviews">Zobacz recenzje</string>
 
@@ -85,7 +87,7 @@
         <item>Karta SD</item>
     </string-array>
 
-    <!-- Don't translate language chooser -->
+    <!-- Don't translate language chooser for better accessibility -->
     <string name="pref_locale">Language</string>
     <string-array name="pref_locale_entries">
         <item>Default</item>
@@ -248,7 +250,7 @@
     <string name="dialog_review_posted">Recenzja opublikowana pomyślnie</string>
 
     <!-- About Page -->
-	<string name="about">This application was developed by Michael Chen.
+    <string name="about">This application was developed by Michael Chen.
 		The author is not affiliated in anyway with Fanfiction.net.\n
 		\nPlease report any bugs or request any features using the button below.\n
 		\nTłumaczenie na język polski: Paweł Zmarzły (pawo2500+ffreader@gmail.com)</string>
