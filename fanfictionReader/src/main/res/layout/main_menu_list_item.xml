@@ -21,7 +21,7 @@
         android:paddingLeft="0dp"
         android:paddingRight="@dimen/main_menu_icon_padding"
         android:paddingStart="0dp"
-        android:src="@drawable/ic_storage"
+        android:src="@drawable/ic_menu_browse"
         android:tint="?android:attr/textColorPrimary"
         android:tintMode="src_in" />
 

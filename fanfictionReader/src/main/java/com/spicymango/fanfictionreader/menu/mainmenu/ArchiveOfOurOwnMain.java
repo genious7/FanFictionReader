@@ -14,7 +14,7 @@ import android.widget.ListView;
 public class ArchiveOfOurOwnMain extends ListFragment {
 
 	private final static MainMenuItem menuItems[] = new MainMenuItem[] {
-			new MainMenuItem(R.drawable.ic_folder_open, R.string.menu_button_browse_stories, 0) };
+			new MainMenuItem(R.drawable.ic_menu_browse, R.string.menu_button_browse_stories, 0) };
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
