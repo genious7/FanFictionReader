@@ -4,7 +4,7 @@
 
     <item
         android:id="@id/filter"
-        android:icon="@drawable/ic_filter"
+        android:icon="@drawable/ic_menu_filter"
         android:title="@string/read_story_filter"
         android:titleCondensed="@string/read_story_filter"
         spicymango:showAsAction="ifRoom" android:enabled="false">

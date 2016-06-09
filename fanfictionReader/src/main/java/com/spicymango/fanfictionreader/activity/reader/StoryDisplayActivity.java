@@ -293,11 +293,11 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		MenuItem item = menu.findItem(R.id.read_story_menu_add);
 		if ( mData != null && mData.isInLibrary()) {
-			item.setIcon(R.drawable.ic_action_refresh);
+			item.setIcon(R.drawable.ic_refresh);
 			item.setTitle(R.string.read_story_update);
 			item.setTitleCondensed(getString(R.string.read_story_update_condensed));
 		} else {
-			item.setIcon(R.drawable.ic_action_download);
+			item.setIcon(R.drawable.ic_download);
 			item.setTitle(R.string.read_story_add);
 			item.setTitleCondensed(getString(R.string.read_story_add_condensed));
 		}

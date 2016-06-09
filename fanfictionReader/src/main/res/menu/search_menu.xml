@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/search"
-        android:icon="@drawable/ic_action_search"
+        android:icon="@drawable/ic_menu_search"
         android:title="@string/menu_search_title"
         android:titleCondensed="@string/menu_search_title"
         spicymango:actionViewClass="android.support.v7.widget.SearchView"
@@ -13,7 +13,7 @@
     <item
         android:id="@id/filter"
         android:enabled="false"
-        android:icon="@drawable/ic_filter"
+        android:icon="@drawable/ic_menu_filter"
         android:title="@string/menu_navigation_filter_by"
         android:titleCondensed="@string/menu_navigation_filter_by"
         spicymango:showAsAction="ifRoom">
