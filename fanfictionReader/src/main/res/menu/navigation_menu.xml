@@ -4,14 +4,14 @@
 
     <item
         android:id="@id/filter"
-        android:icon="@drawable/ic_filter"
+        android:icon="@drawable/ic_menu_filter"
         android:title="@string/menu_navigation_filter_by"
         android:titleCondensed="@string/menu_navigation_filter_by"
         spicymango:showAsAction="ifRoom">
     </item>
     <item
         android:id="@id/sort_by"
-        android:icon="@drawable/ic_action_sort_by_size"
+        android:icon="@drawable/ic_sort"
         android:title="@string/menu_navigation_sort_by"
         android:titleCondensed="@string/menu_navigation_sort_by_condensed"
         spicymango:showAsAction="ifRoom">

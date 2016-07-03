@@ -318,7 +318,7 @@ public class LibraryDownloader extends IntentService {
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(LibraryDownloader.this);
 		builder.setContentTitle(getString(R.string.downloader_error));
 		builder.setContentText(getString(errorString));
-		builder.setSmallIcon(R.drawable.ic_action_cancel);
+		builder.setSmallIcon(R.drawable.ic_not_close);
 		builder.setAutoCancel(true);
 
 		// Set an empty intent
@@ -345,7 +345,7 @@ public class LibraryDownloader extends IntentService {
 		// Create the notification
 		final NotificationCompat.Builder notBuilder = new NotificationCompat.Builder(LibraryDownloader.this);
 		notBuilder.setContentTitle(title);
-		notBuilder.setSmallIcon(R.drawable.ic_action_accept);
+		notBuilder.setSmallIcon(R.drawable.ic_not_check);
 		notBuilder.setAutoCancel(true);
 		notBuilder.setContentText(text);
 

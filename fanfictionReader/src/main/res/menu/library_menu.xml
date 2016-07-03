@@ -5,14 +5,14 @@
     <item
         android:id="@+id/library_menu_sync_all"
         android:enabled="false"
-        android:icon="@drawable/ic_action_refresh"
+        android:icon="@drawable/ic_refresh"
         android:title="@string/menu_library_sync_all"
         android:titleCondensed="@string/menu_library_sync_all_condensed"
         spicymango:showAsAction="ifRoom"/>
     <item
         android:id="@id/filter"
         android:enabled="false"
-        android:icon="@drawable/ic_filter"
+        android:icon="@drawable/ic_menu_filter"
         android:title="@string/menu_navigation_filter_by"
         android:titleCondensed="@string/menu_navigation_filter_by"
         spicymango:showAsAction="ifRoom">

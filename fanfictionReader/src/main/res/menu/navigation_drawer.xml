@@ -23,12 +23,12 @@
         <menu>
             <item
                 android:id="@+id/settings"
-                android:icon="@drawable/ic_action_settings"
+                android:icon="@drawable/ic_menu_settings"
                 android:title="@string/menu_button_settings">
             </item>
             <item
                 android:id="@+id/about"
-                android:icon="@drawable/ic_action_about"
+                android:icon="@drawable/ic_menu_about"
                 android:title="@string/menu_button_about">
             </item>
         </menu>
