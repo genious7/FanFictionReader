@@ -3,7 +3,7 @@
 
     <string name="app_name">FanFiction Reader</string>
 
-    <!-- Generic Error Messages -->
+    <!-- Error Messages -->
     <string name="error_connection">Nie udało się połączyć z serwerem</string>
     <string name="error_sd">Nie znaleziono pliku</string>
     <string name="error_parsing_mini">Błąd parsowania</string>
@@ -41,6 +41,7 @@
     <string name="filter_category">Kategoria</string>
     <string name="filter_type">Typ</string>
 
+    <!-- Detail Dialog -->
     <string name="detail_rating">&lt;strong&gt;Kategoria wiekowa:&lt;/strong&gt; %s</string>
     <string name="detail_language">&lt;strong&gt;Język:&lt;/strong&gt; %s</string>
     <string name="detail_genre">&lt;strong&gt;Gatunek:&lt;/strong&gt; %s</string>
@@ -87,13 +88,12 @@
         <item>Karta SD</item>
     </string-array>
 
-    <!-- Don't translate language chooser for better accessibility -->
-    <string name="pref_locale">Language</string>
+    <string name="pref_locale">Language (język)</string>
     <string-array name="pref_locale_entries">
-        <item>Default</item>
-        <item>English</item>
-        <item>German</item>
-        <item>Polish</item>
+        <item>Default (domyślny)</item>
+        <item>English (angielski)</item>
+        <item>German (niemiecki)</item>
+        <item>Polish (polski)</item>
     </string-array>
 
     <string name="pref_loc_diag_title">Informacja</string>
@@ -191,7 +191,6 @@
     <string name="menu_library_context_author">Profil autora</string>
     <string name="menu_library_context_reviews">@string/detail_view_reviews</string>
     <string name="menu_library_context_delete">Usuń opowieść</string>
-
     <string name="menu_library_words">Słowa: %,d</string>
     <string name="menu_library_chapters">Rozdziały: %d</string>
 
@@ -201,10 +200,11 @@
     <string name="menu_library_sort_by_author">Autor</string>
     <string name="menu_library_sort_by_favorite">Ulubione</string>
     <string name="menu_library_sort_by_follow">Obserwujący</string>
+    <string name="menu_library_sort_by_reviews">Recenzje</string>
     <string name="menu_library_sort_by_percentage">Postęp czytania</string>
 
     <string-array name="menu_library_filter_words">
-        <item>All</item>
+        <item>Dowolna</item>
         <item>&lt; tysiąc słów</item>
         <item>&lt; 5 tysięcy słów</item>
         <item>&gt; tysiąc słów</item>
@@ -271,8 +271,8 @@
     <!-- Account Management -->
     <string name="menu_favs">Ulubione</string>
     <string name="menu_follows">Obserwowane</string>
-    <string name="toast_added_follows">Opowieść została dodana do obserwowanych</string>
-    <string name="toast_added_favs">Opowieść została dodana do ulubionych</string>
+    <string name="toast_added_follows">Dodano do obserwowanych</string>
+    <string name="toast_added_favs">Dodano do ulubionych</string>
     <string name="toast_removed">Opowieść została usunięta</string>
 
     <!-- General Items and Strings -->
