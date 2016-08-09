@@ -3,7 +3,7 @@
 
     <string name="app_name">FanFiction Reader</string>
 
-    <!-- Generic Error Messages -->
+    <!-- Error Messages -->
     <string name="error_connection">Nie udało się połączyć z serwerem</string>
     <string name="error_sd">Nie znaleziono pliku</string>
     <string name="error_parsing_mini">Błąd parsowania</string>
@@ -41,6 +41,7 @@
     <string name="filter_category">Kategoria</string>
     <string name="filter_type">Typ</string>
 
+    <!-- Detail Dialog -->
     <string name="detail_rating">&lt;strong&gt;Kategoria wiekowa:&lt;/strong&gt; %s</string>
     <string name="detail_language">&lt;strong&gt;Język:&lt;/strong&gt; %s</string>
     <string name="detail_genre">&lt;strong&gt;Gatunek:&lt;/strong&gt; %s</string>
@@ -54,6 +55,8 @@
     <string name="detail_complete">&lt;strong&gt;Stan:&lt;/strong&gt; %s</string>
     <string name="detail_author">&lt;strong&gt;Autor:&lt;/strong&gt; %s</string>
     <string name="detail_story_id">&lt;strong&gt;ID:&lt;/strong&gt; %s</string>
+    <string name="detail_characters">&lt;strong&gt;Postacie:&lt;/strong&gt; %s</string>
+    <string name="detail_reviews">&lt;strong&gt;Recenzje:&lt;/strong&gt; %s</string>
 
     <string name="detail_view_reviews">Zobacz recenzje</string>
 
@@ -85,24 +88,22 @@
         <item>Karta SD</item>
     </string-array>
 
-    <!-- Don't translate language chooser -->
-    <string name="pref_locale">Language</string>
+    <string name="pref_locale">Language (język)</string>
     <string-array name="pref_locale_entries">
-        <item>Default</item>
-        <item>English</item>
-        <item>German</item>
-        <item>Polish</item>
+        <item>Default (domyślny)</item>
+        <item>English (angielski)</item>
+        <item>German (niemiecki)</item>
+        <item>Polish (polski)</item>
     </string-array>
 
     <string name="pref_loc_diag_title">Informacja</string>
     <string name="pref_loc_diag">Opowieści nie są przenoszone automatycznie. By przenieść, usuń i pobierz ponownie opowieść.</string>
-
     <string name="pref_incremental_updating">Aktualizowanie przyrostowe</string>
+    <string name="pref_volume_buttons_scroll_story">Użyj przycisków reg. głośności do przewijania</string>
     <string name="pref_incremental_summary_off">Aktualizowanie spowoduje pobranie każdego rozdziału ponownie</string>
     <string name="pref_incremental_summary_on">Aktualizowanie spowoduje pobranie tylko nowych rozdziałów. Poprawione rozdziały nie będą pobierane.</string>
     <string name="pref_wake_lock">Zawsze włączony ekran</string>
     <string name="pref_back_and_restore">Kopia zapasowa i przywracanie</string>
-
     <string name="pref_back_up">Kopiuj pliki do pamięci</string>
     <string name="pref_restore">Przywróć pliki z pamięci</string>
 
@@ -124,6 +125,7 @@
 
     <!-- Story Downloader -->
     <string name="downloader_downloading">Pobieranie opowieści</string>
+    <string name="downloader_checking_updates">Szukanie aktualizacji</string>
     <string name="downloader_context">%1$s Rozdział %2$d z %3$d</string>
 
     <plurals name="downloader_notification">
@@ -144,9 +146,9 @@
     <string name="menu_search_title">Szukaj</string>
 
     <string-array name="menu_search_by">
-        <item>Szukaj opowieści</item>
-        <item>Szukaj autorów</item>
-        <item>Search communities</item>
+        <item>Znajdź opowieści</item>
+        <item>Znajdź autorów</item>
+        <item>Znajdź społeczności</item>
     </string-array>
 
     <!-- Browse Menu Activity -->
@@ -155,7 +157,7 @@
     <string name="toggle_regular">Regularne</string>
     <string name="toggle_crossover">Mieszane</string>
     <string name="toggle_fiction">Fikcja</string>
-    <string name="toggle_poetry">Liryka</string>
+    <string name="toggle_poetry">Poezja</string>
 
     <!-- Navigation Menu Activity -->
     <string name="menu_navigation_sort_by">Sortuj wg</string>
@@ -189,7 +191,6 @@
     <string name="menu_library_context_author">Profil autora</string>
     <string name="menu_library_context_reviews">@string/detail_view_reviews</string>
     <string name="menu_library_context_delete">Usuń opowieść</string>
-
     <string name="menu_library_words">Słowa: %,d</string>
     <string name="menu_library_chapters">Rozdziały: %d</string>
 
@@ -199,10 +200,11 @@
     <string name="menu_library_sort_by_author">Autor</string>
     <string name="menu_library_sort_by_favorite">Ulubione</string>
     <string name="menu_library_sort_by_follow">Obserwujący</string>
+    <string name="menu_library_sort_by_reviews">Recenzje</string>
     <string name="menu_library_sort_by_percentage">Postęp czytania</string>
 
     <string-array name="menu_library_filter_words">
-        <item>All</item>
+        <item>Dowolna</item>
         <item>&lt; tysiąc słów</item>
         <item>&lt; 5 tysięcy słów</item>
         <item>&gt; tysiąc słów</item>
@@ -248,7 +250,7 @@
     <string name="dialog_review_posted">Recenzja opublikowana pomyślnie</string>
 
     <!-- About Page -->
-	<string name="about">This application was developed by Michael Chen.
+    <string name="about">This application was developed by Michael Chen.
 		The author is not affiliated in anyway with Fanfiction.net.\n
 		\nPlease report any bugs or request any features using the button below.\n
 		\nTłumaczenie na język polski: Paweł Zmarzły (pawo2500+ffreader@gmail.com)</string>
@@ -257,7 +259,9 @@
     <!-- Author Menu Activity -->
     <string name="menu_author_stories">Opowieści</string>
     <string name="menu_author_profile">Profil</string>
+    <string name="menu_author_favorites">Ulubione</string>
     <string name="menu_author_no_profile">Nie znaleziono profilu</string>
+    <string name="menu_author_no_stories">Brak opowieści</string>
 
     <!-- Favorite and Follows Activity -->
     <string name="dialog_log_in">Zaloguj się</string>
@@ -267,8 +271,8 @@
     <!-- Account Management -->
     <string name="menu_favs">Ulubione</string>
     <string name="menu_follows">Obserwowane</string>
-    <string name="toast_added_follows">Opowieść została dodana do obserwowanych</string>
-    <string name="toast_added_favs">Opowieść została dodana do ulubionych</string>
+    <string name="toast_added_follows">Dodano do obserwowanych</string>
+    <string name="toast_added_favs">Dodano do ulubionych</string>
     <string name="toast_removed">Opowieść została usunięta</string>
 
     <!-- General Items and Strings -->
@@ -285,4 +289,5 @@
     <!-- Reviews -->
     <string name="menu_reviews_title">Recenzje</string>
     <string name="menu_reviews_chapter_posted">Rozdział %d</string>
+    <string name="menu_reviews_no_reviews">Brak recenzji</string>
 </resources>

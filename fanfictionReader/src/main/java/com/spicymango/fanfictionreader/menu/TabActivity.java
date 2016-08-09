@@ -53,7 +53,7 @@ public abstract class TabActivity extends AppCompatActivity{
 		// Set the tab properties
 		mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
 		mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-		mTabLayout.setOnTabSelectedListener(mTabListener);
+		mTabLayout.addOnTabSelectedListener(mTabListener);
 
 		// Instantiate Fields
 		mFragmentClasses = new ArrayList<>();
@@ -190,6 +190,12 @@ public abstract class TabActivity extends AppCompatActivity{
 
 		@Override
 		public void onTabUnselected(TabLayout.Tab tab) {
+			// If something is not being unselected, do nothing. Note that tab may be null if opening
+			// an activity.
+			if (tab == null) {
+				return;
+			}
+
 			// Hide the existing fragment
 			final int tabPosition = tab.getPosition();
 			final String fragmentTag = Integer.toString(tabPosition);
