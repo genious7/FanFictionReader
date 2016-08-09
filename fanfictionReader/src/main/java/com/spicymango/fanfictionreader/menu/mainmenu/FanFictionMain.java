@@ -17,7 +17,7 @@ import android.widget.Toast;
 import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.Settings;
 import com.spicymango.fanfictionreader.activity.AccountActivity;
-import com.spicymango.fanfictionreader.activity.LibraryMenuActivity;
+import com.spicymango.fanfictionreader.menu.librarymenu.LibraryMenuActivity;
 import com.spicymango.fanfictionreader.activity.SearchAuthorActivity;
 import com.spicymango.fanfictionreader.activity.SearchCommunityActivity;
 import com.spicymango.fanfictionreader.activity.SearchStoryActivity;

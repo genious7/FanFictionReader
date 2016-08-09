@@ -226,6 +226,7 @@
     <string name="menu_library_by_id_condensed">Add by Id</string>
     <string name="menu_library_filter_all">All</string>
     <string name="menu_library_by_id_error">Please enter a valid id</string>
+    <string name="menu_library_no_stories">No stories found</string>
 
     <!-- Download By Id -->
     <string name="diag_by_id_title">Download by Id</string>

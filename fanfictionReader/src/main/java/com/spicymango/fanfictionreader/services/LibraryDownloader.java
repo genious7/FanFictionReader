@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.support.annotation.StringRes;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
@@ -14,7 +15,7 @@ import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.spicymango.fanfictionreader.R;
-import com.spicymango.fanfictionreader.activity.LibraryMenuActivity;
+import com.spicymango.fanfictionreader.menu.librarymenu.LibraryMenuActivity;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -203,7 +204,11 @@ public class LibraryDownloader extends IntentService {
 				downloader.saveStory();
 			} catch (IOException e) {
 				// This shouldn't happen. Log the exception if it occurs
-				Crashlytics.logException(new IOException("Exception while saving sql parameters", e));
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+					Crashlytics.logException(new IOException("Exception while saving sql parameters", e));
+				} else {
+					Crashlytics.logException(new Exception("Exception while saving sql parameters", e));
+				}
 			}
 		}
 	}
