@@ -335,27 +335,20 @@ public class LibraryMenuActivity extends AppCompatActivity implements FilterList
 
 		@Override
 		public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+			mLoader = (LibraryLoader) loader;
+			mAdapter.swapCursor(data);
+
 			mProgressBar.setVisibility(View.GONE);
 			mEmptyView.setVisibility(View.GONE);
 			mListView.setVisibility(View.VISIBLE);
 
-			mLoader = (LibraryLoader) loader;
-
-			switch (((LibraryLoader) loader).getState()) {
-				case SUCCESS:
-					mAdapter.swapCursor(data);
-
-					if (mAdapter.isEmpty()) {
-						mEmptyView.setVisibility(View.VISIBLE);
-						mListView.setVisibility(View.GONE);
-					}
-
-					getActivity().supportInvalidateOptionsMenu();
-					break;
-				case LOADING:
-					mProgressBar.setVisibility(View.VISIBLE);
-					break;
+			// Display the "No Stories Found" message if the list is empty
+			if (mAdapter.isEmpty()) {
+				mEmptyView.setVisibility(View.VISIBLE);
+				mListView.setVisibility(View.GONE);
 			}
+
+			getActivity().supportInvalidateOptionsMenu();
 		}
 
 		public void onFilter(int[] selected) {
