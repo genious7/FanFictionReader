@@ -287,7 +287,8 @@ public class LibraryMenuActivity extends AppCompatActivity implements FilterList
 			switch (id) {
 				case LOADER_LIBRARY:
 					mProgressBar.setVisibility(View.VISIBLE);
-					return new LibraryLoader(getContext(), StoryProvider.FF_CONTENT_URI, GET_PROJECTION, args);
+					mLoader = new LibraryLoader(getContext(), StoryProvider.FF_CONTENT_URI, GET_PROJECTION, args);
+					return mLoader;
 				default:
 					return null;
 			}
