@@ -43,9 +43,6 @@ class LibraryLoader extends CursorLoader implements SqlConstants, BaseLoader.Fil
 	private boolean mFandomsLoaded;
 	private static final String STATE_FANDOMS = "STATE FANDOMS";
 
-	private Result mState;
-	private static final String STATE_STATE = "STATE STATE";
-
 	private String mQuery;
 	private static final String STATE_QUERY = "STATE QUERY";
 
@@ -56,20 +53,16 @@ class LibraryLoader extends CursorLoader implements SqlConstants, BaseLoader.Fil
 		if (saveInstanceState != null && saveInstanceState.containsKey(STATE_FILTER)){
 			mFilterData = saveInstanceState.getParcelableArrayList(STATE_FILTER);
 			mFandomsLoaded = saveInstanceState.getBoolean(STATE_FANDOMS);
-			mState = (Result) saveInstanceState.getSerializable(STATE_STATE);
 			mQuery = saveInstanceState.getString(STATE_QUERY);
 		} else{
 			createFilter();
 			mFandomsLoaded = false;
-			mState = Result.LOADING;
 			mQuery = null;
 		}
 
 		setSqlWhere();
 		setSortOrder(getSqlOrderBy());
 	}
-
-	public Result getState(){return mState;}
 
 	@Override
 	public Cursor loadInBackground() {
@@ -104,25 +97,13 @@ class LibraryLoader extends CursorLoader implements SqlConstants, BaseLoader.Fil
 			mFandomsLoaded = true;
 		}
 
-		mState = Result.SUCCESS;
 		return c;
 	}
 
 	public void onSaveInstanceState(Bundle in){
 		in.putParcelableArrayList(STATE_FILTER, mFilterData);
 		in.putBoolean(STATE_FANDOMS, mFandomsLoaded);
-		in.putSerializable(STATE_STATE, mState);
 		in.putString(STATE_QUERY, mQuery);
-	}
-
-	@Override
-	protected void onStartLoading() {
-		if (takeContentChanged()){
-			mState = Result.LOADING;
-			deliverResult(new DummyCursor());
-		}
-
-		super.onStartLoading();
 	}
 
 	@Override
