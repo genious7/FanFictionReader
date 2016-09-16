@@ -15,6 +15,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 /**
@@ -42,31 +44,27 @@ public class StoryProvider extends ContentProvider implements SqlConstants {
 	private static final String STORIES_MIME_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.com.spicymango.fanfictionreader.stories";
 	private static final String STORY_MIME_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.com.spicymango.fanfictionreader.story";
 	
-	private static final int GET_ALL = 0x0;
-	private static final int GET_ONE = 0x1;
-	private static final int FANFICTION = 0x0;
-	private static final int FICTIONPRESS = 0x2;
+	private static final int GET_ALL = 			0b00;
+	private static final int GET_ONE = 			0b01;
+	private static final int GET_MASK = 		0b01;
+	private static final int FANFICTION = 		0b00;
+	private static final int FICTIONPRESS = 	0b10;
+	private static final int SITE_MASK = 		0b10;
 	
-	private static final UriMatcher uriMatcher = getUriMatcher();
-	
-	/**
-	 * Gets a UriMatcher for the provider
-	 * @return
-	 */
-	private static UriMatcher getUriMatcher() {
-		UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
-		matcher.addURI(AUTHORITY, BASE_PATH_FF, GET_ALL | FANFICTION);
-		matcher.addURI(AUTHORITY, BASE_PATH_FF + "/#", GET_ONE | FANFICTION);
+	private static final UriMatcher URI_MATCHER;
 
-		matcher.addURI(AUTHORITY, BASE_PATH_FP, GET_ALL | FICTIONPRESS);
-		matcher.addURI(AUTHORITY, BASE_PATH_FP + "/#", GET_ONE | FICTIONPRESS);
-		return matcher;
+	static{
+		URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
+		URI_MATCHER.addURI(AUTHORITY, BASE_PATH_FF, GET_ALL | FANFICTION);
+		URI_MATCHER.addURI(AUTHORITY, BASE_PATH_FF + "/#", GET_ONE | FANFICTION);
+		URI_MATCHER.addURI(AUTHORITY, BASE_PATH_FP, GET_ALL | FICTIONPRESS);
+		URI_MATCHER.addURI(AUTHORITY, BASE_PATH_FP + "/#", GET_ONE | FICTIONPRESS);
 	}
 
 	private DatabaseHelper db;
 
 	private static String getTable(int id){
-		switch (id & ~0x01) {
+		switch (id & SITE_MASK) {
 		case FANFICTION:
 			return DatabaseHelper.FANFICTION_TABLE;
 		case FICTIONPRESS:
@@ -75,32 +73,61 @@ public class StoryProvider extends ContentProvider implements SqlConstants {
 			throw new IllegalArgumentException("StoryProvider - getTable: Table does not exist");
 		}
 	}
-	
-	@Override
-	public int delete(Uri uri, String selection, String[] selectionArgs) {
-		final SQLiteDatabase sqlDB = db.getWritableDatabase();
-		final String tableId = getTable(uriMatcher.match(uri));
-		final int rowsDeleted;
-		
-		switch (uriMatcher.match(uri)) {
-		case GET_ALL:
-			rowsDeleted = sqlDB.delete(tableId, selection,
-					selectionArgs);
-			break;
-		case GET_ONE:
-			String id = uri.getLastPathSegment();
-			if (TextUtils.isEmpty(selection)) {
-				rowsDeleted = sqlDB
-						.delete(tableId, KEY_STORY_ID + "=" + id, null);
-			} else {
-				rowsDeleted = sqlDB.delete(tableId, KEY_STORY_ID + "=" + id
-						+ " and " + selection, selectionArgs);
-			}
-			break;
-		default:
-			throw new IllegalArgumentException("Unknown URI: " + uri);
+
+	/**
+	 * Gets the name of the full text search table
+	 * @param id The name of the site being searched
+	 * @return The name of the full text search table
+	 */
+	private static String getFtsTable(int id){
+		switch (id & SITE_MASK) {
+			case FANFICTION:
+				return DatabaseHelper.FANFICTION_TABLE_FTS;
+			default:
+				throw new IllegalArgumentException("StoryProvider - getTable: Table does not exist");
 		}
+	}
+
+	@Override
+	public int delete(@NonNull Uri uri, @Nullable String selection,
+					  @Nullable String[] selectionArgs) {
+
+		final int uriType = URI_MATCHER.match(uri);
+		final SQLiteDatabase sqlDB = db.getWritableDatabase();
+		final String tableId = getTable(URI_MATCHER.match(uri));
+		final int rowsDeleted;
+
+		if ((uriType & GET_MASK) == GET_ALL) {
+			// When deleting multiple records, simply use the selection and selectionArgs
+			rowsDeleted = sqlDB.delete(tableId, selection, selectionArgs);
+		} else {
+			final String id = uri.getLastPathSegment();
+
+			if (selectionArgs == null) {
+				// If the selectionArgs is empty, just set it to the id
+				selectionArgs = new String[]{id};
+			} else {
+				// If the selectionArgs is not empty, add the id parameter to the end
+				final String[] tmp = new String[selectionArgs.length + 1];
+				System.arraycopy(selectionArgs, 0, tmp, 0, selectionArgs.length);
+				selectionArgs = tmp;
+				selectionArgs[selectionArgs.length - 1] = id;
+			}
+
+			if (TextUtils.isEmpty(selection)) {
+				// If there is no where clause, set it to search by id
+				selection = KEY_STORY_ID + "= ?";
+			} else {
+				// If there is a where clause, append the id comparison to the end of the query
+				selection = selection + " AND " + KEY_STORY_ID + "= ?";
+			}
+
+			rowsDeleted = sqlDB.delete(tableId, selection, selectionArgs);
+		}
+
 		if (rowsDeleted > 0) {
+			// If the dataSet changed, notify any observers
+			assert getContext() != null;    // Keeps Android Studio warnings happy
 			getContext().getContentResolver().notifyChange(uri, null);
 		}
 
@@ -108,9 +135,9 @@ public class StoryProvider extends ContentProvider implements SqlConstants {
 	}
 
 	@Override
-	public String getType(Uri uri) {
-		final int uriType = uriMatcher.match(uri);
-		switch (uriType & 0x01) {
+	public String getType(@NonNull Uri uri) {
+		final int uriType = URI_MATCHER.match(uri);
+		switch (uriType & GET_MASK) {
 		case GET_ALL:
 			return STORIES_MIME_TYPE;
 		case GET_ONE:
@@ -121,23 +148,25 @@ public class StoryProvider extends ContentProvider implements SqlConstants {
 	}
 
 	@Override
-	public Uri insert(Uri uri, ContentValues values) {
-		final int uriType = uriMatcher.match(uri);
+	public Uri insert(@NonNull Uri uri, ContentValues values) {
+		final int uriType = URI_MATCHER.match(uri);
 		final String tableId = getTable(uriType);
 		final SQLiteDatabase sqlDB = db.getWritableDatabase();
-		
-		final long id;
-		
-		switch (uriType & 0x1) {
-		case GET_ALL:
-			id = sqlDB.insert(tableId, null, values);
-			break;
-		default:
+
+		if ((uriType & GET_MASK) == GET_ONE){
+			// Insert operations cannot be applied to URI's that select a single record
 			throw new IllegalArgumentException("Unknown URI: " + uri);
 		}
-		
-		Uri itemUri = ContentUris.withAppendedId(uri, id);
+
+		final long id = sqlDB.insert(tableId, null, values);
+
+		// Generate the uri of the new item
+		final Uri itemUri = ContentUris.withAppendedId(uri, id);
+
+		// Notify that the data set changed
+		assert getContext() != null;	// Keeps Android Studio warnings happy
 		getContext().getContentResolver().notifyChange(itemUri, null);
+
 		return itemUri;
 	}
 
@@ -147,46 +176,64 @@ public class StoryProvider extends ContentProvider implements SqlConstants {
 		return true;
 	}
 
+	/**
+	 * Queries the database. If a full text search is performed, the query is modified as required.
+	 * @param uri The content provider uri for the base (non-full text search) table
+	 * @param projection The required table columns
+	 * @param selection The Where statement
+	 * @param selectionArgs The Where arguments
+	 * @param sortOrder The sort order
+	 * @return A cursor containing the requested columns
+	 */
 	@Override
-	public Cursor query(Uri uri, String[] projection, String selection,
-			String[] selectionArgs, String sortOrder) {
-
-		final Cursor c;
+	public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection,
+						@Nullable String[] selectionArgs, @Nullable String sortOrder) {
 		final SQLiteDatabase data = db.getReadableDatabase();
 		final SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-		
-		final int uriType = uriMatcher.match(uri);
-		queryBuilder.setTables(getTable(uriType));
+		final int uriType = URI_MATCHER.match(uri);
+		final String baseTable = getTable(uriType);
 
-		switch (uriMatcher.match(uri) & 0x01) {
-		case GET_ALL:
-			if (TextUtils.isEmpty(sortOrder)) {	//Default sort order
-				sortOrder = KEY_TITLE + " COLLATE NOCASE ASC";
-			}
-			break;
-		case GET_ONE:
-			queryBuilder.appendWhere(KEY_STORY_ID + "="
-					+ uri.getLastPathSegment());
-			break;
-		default:
-			throw new IllegalArgumentException("Unknown URI" + uri);
+		// If only one element is being fetched, add the appropriate check to the WHERE clause
+		if ((uriType & GET_MASK) == GET_ONE) {
+			queryBuilder.appendWhere(KEY_STORY_ID + "=");
+			queryBuilder.appendWhereEscapeString(uri.getLastPathSegment());
 		}
-		c = queryBuilder.query(data, projection, selection, selectionArgs,
-				null, null, sortOrder);
+
+		// If multiple elements are being fetched, set the default sort order if none are specified
+		if ((uriType & GET_MASK) == GET_ALL && TextUtils.isEmpty(sortOrder)) {
+			sortOrder = KEY_TITLE + " COLLATE NOCASE ASC";
+		}
+
+		if (selection != null && selection.contains("MATCH")) {
+			// Join the full text search table to the regular table since a full text search is being performed
+			final String ftsTable = getFtsTable(uriType);
+			queryBuilder.setTables(baseTable + " JOIN " + ftsTable + " ON " + KEY_STORY_ID + "=" + ftsTable + "." + KEY_FTS_ID);
+
+			// Replace the full text search keyword on the WHERE statement by the table's actual name
+			selection = selection.replace(FTS_TABLE, ftsTable);
+		} else {
+			// Use the base table only since a full text search is not required
+			queryBuilder.setTables(baseTable);
+		}
+
+		final Cursor c = queryBuilder.query(data, projection, selection, selectionArgs,
+											null, null, sortOrder);
+
+		assert getContext() != null;// Keeps Android Studio warnings happy
 		c.setNotificationUri(getContext().getContentResolver(), uri);
 		return c;
 	}
 
 	@Override
-	public int update(Uri uri, ContentValues values, String selection,
-			String[] selectionArgs) {
+	public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection,
+					  @Nullable String[] selectionArgs) {
 
 		final SQLiteDatabase sqlDB = db.getWritableDatabase();
 		final int rowsUpdated;
-		final int uriType = uriMatcher.match(uri);
+		final int uriType = URI_MATCHER.match(uri);
 		final String tableId = getTable(uriType);
 		
-		switch (uriType & 0x01) {
+		switch (uriType & GET_MASK) {
 		case GET_ALL:
 			rowsUpdated = sqlDB.update(tableId, values, selection,
 					selectionArgs);
@@ -204,11 +251,12 @@ public class StoryProvider extends ContentProvider implements SqlConstants {
 			throw new IllegalArgumentException("Unknown URI: " + uri);
 		}
 		if (rowsUpdated > 0) {
+			assert getContext() != null;	// Keeps Android Studio warnings happy
 			getContext().getContentResolver().notifyChange(uri, null);
 		}
 		return rowsUpdated;
 	}
-	
+
 	/**
 	 * Obtains the last chapter read by the user
 	 * @param context The current context
@@ -219,7 +267,7 @@ public class StoryProvider extends ContentProvider implements SqlConstants {
 	public static int lastChapterRead(Context context, Site site, long storyId) {
 		return getIntField(context, site, storyId, SqlConstants.KEY_LAST, 1);
 	}
-	
+
 	/**
 	 * Obtains the total number of chapters
 	 * @param context The current context

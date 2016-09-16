@@ -17,7 +17,7 @@ import android.widget.Toast;
 import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.Settings;
 import com.spicymango.fanfictionreader.activity.AccountActivity;
-import com.spicymango.fanfictionreader.activity.LibraryMenuActivity;
+import com.spicymango.fanfictionreader.menu.librarymenu.LibraryMenuActivity;
 import com.spicymango.fanfictionreader.activity.SearchAuthorActivity;
 import com.spicymango.fanfictionreader.activity.SearchCommunityActivity;
 import com.spicymango.fanfictionreader.activity.SearchStoryActivity;
@@ -31,15 +31,15 @@ import com.spicymango.fanfictionreader.util.Sites;
 public final class FanFictionMain extends ListFragment implements OnClickListener{
 
 	private final static MainMenuItem menuItems[] = new MainMenuItem[] {
-			new MainMenuItem(R.drawable.ic_storage, R.string.menu_button_my_library, 0),
-			new MainMenuItem(R.drawable.ic_action_replay, R.string.menu_button_resume, 7),
-			new MainMenuItem(R.drawable.ic_action_important, R.string.menu_button_favs_folls, 8),
-			new MainMenuItem(R.drawable.ic_folder_open, R.string.menu_button_browse_stories, 1),
-			new MainMenuItem(R.drawable.ic_action_view_as_list, R.string.menu_button_just_in, 2),
-			new MainMenuItem(R.drawable.ic_action_search, R.string.menu_button_search, 3),
-			new MainMenuItem(R.drawable.ic_action_group, R.string.menu_button_communities, 4),
-			new MainMenuItem(R.drawable.ic_action_settings, R.string.menu_button_settings, 5),
-			new MainMenuItem(R.drawable.ic_action_about, R.string.menu_button_about, 6) };
+			new MainMenuItem(R.drawable.ic_menu_library, R.string.menu_button_my_library, 0),
+			new MainMenuItem(R.drawable.ic_menu_resume, R.string.menu_button_resume, 7),
+			new MainMenuItem(R.drawable.ic_menu_favorite, R.string.menu_button_favs_folls, 8),
+			new MainMenuItem(R.drawable.ic_menu_browse, R.string.menu_button_browse_stories, 1),
+			new MainMenuItem(R.drawable.ic_menu_just_in, R.string.menu_button_just_in, 2),
+			new MainMenuItem(R.drawable.ic_menu_search, R.string.menu_button_search, 3),
+			new MainMenuItem(R.drawable.ic_menu_community, R.string.menu_button_communities, 4),
+			new MainMenuItem(R.drawable.ic_menu_settings, R.string.menu_button_settings, 5),
+			new MainMenuItem(R.drawable.ic_menu_about, R.string.menu_button_about, 6) };
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

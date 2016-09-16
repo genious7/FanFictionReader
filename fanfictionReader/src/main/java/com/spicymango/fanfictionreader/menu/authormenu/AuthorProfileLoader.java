@@ -137,8 +137,11 @@ class AuthorProfileLoader {
 			}
 
 			Element txtElement = summaries.get(2);
+			Element dateElement = summaries.get(1);
 			Spanned txt = Html.fromHtml(txtElement.html());
+			Spanned date = Html.fromHtml(dateElement.html());
 			list.addAll(Parser.split(txt));
+			list.addAll(Parser.split(date));
 
 			return true;
 		}

@@ -57,7 +57,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.LibraryMenuActivity"/>
+            android:name=".menu.librarymenu.LibraryMenuActivity"/>
 
         <provider
             android:name="com.spicymango.fanfictionreader.provider.StoryProvider"
