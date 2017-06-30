@@ -77,10 +77,6 @@
         <activity android:name=".activity.AccountActivity" />
         <activity android:name=".activity.LogInActivity" />
         <activity android:name=".menu.reviewmenu.ReviewMenuActivity"/>
-
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="61aab708a9e345f4b2277b7b4503d011bb5ecf2a" />
     </application>
 
 </manifest>
