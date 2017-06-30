@@ -199,6 +199,7 @@ public class LibraryDownloader extends IntentService {
 
 			// Update the files and the sql database.
 			try {
+				showUpdateNotification(storyTitle, downloadStartTime);
 				downloader.saveStory();
 
 				// Upon success, add the title of the story to the list so that it is displayed
@@ -325,6 +326,25 @@ public class LibraryDownloader extends IntentService {
 		manager.notify(NOTIFICATION_ID, builder.build());
 	}
 
+	private void showUpdateNotification(String storyTitle, long downloadStartTime) {
+		// Create the notification
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(LibraryDownloader.this);
+		builder.setContentTitle(getString(R.string.downloader_saving));
+		builder.setContentText(getString(R.string.downloader_context_saving, storyTitle));
+		builder.setWhen(downloadStartTime);
+		builder.setUsesChronometer(true);
+		builder.setSmallIcon(android.R.drawable.stat_sys_download);
+		builder.setAutoCancel(false);
+
+		// Set an empty Pending Intent on the notification
+		PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, new Intent(), PendingIntent.FLAG_UPDATE_CURRENT);
+		builder.setContentIntent(pendingIntent);
+
+		// Show or update the notification
+		NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		manager.notify(NOTIFICATION_ID, builder.build());
+	}
+
 	/**
 	 * Show a notification that displays an error
 	 *
@@ -353,6 +373,7 @@ public class LibraryDownloader extends IntentService {
 	 */
 	private void showUpdateCompleteNotification(List<String> storyTitles, long updateCompleteTime) {
 		// The title of the notification contains the total number of stories updated
+		// TODO: Add "in" to strings.xml; use String.format()
 		final String title = getResources().getQuantityString(R.plurals.downloader_notification,
 															  storyTitles.size(), storyTitles.size())
 				+ " in " + DateUtils.formatElapsedTime((updateCompleteTime - updateStartTime) / 1000l);

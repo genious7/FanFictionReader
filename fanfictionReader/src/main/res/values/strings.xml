@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">FanFiction Reader</string>
+    <string name="app_name">Reader</string>
 
     <!-- Error Messages -->
     <string name="error_connection">Failed to connect to server</string>
@@ -125,12 +125,14 @@
 
     <!-- Story Downloader -->
     <string name="downloader_downloading">Downloading Story</string>
+    <string name="downloader_saving">Saving Story</string>
     <string name="downloader_checking_updates">Checking For Updates</string>
     <string name="downloader_context">%1$s Chapter %2$d/%3$d</string>
+    <string name="downloader_context_saving">%1$s</string>
 
     <plurals name="downloader_notification">
-        <item quantity="one"> One story successfully added</item>
-        <item quantity="other">%d stories successfully added</item>
+        <item quantity="one"> One story added</item>
+        <item quantity="other">%d stories added</item>
     </plurals>
 
     <string name="downloader_error">Error downloading story</string>
