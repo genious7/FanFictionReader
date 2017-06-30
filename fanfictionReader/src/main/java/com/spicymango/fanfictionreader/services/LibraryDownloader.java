@@ -11,6 +11,7 @@ import android.support.annotation.StringRes;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -54,6 +55,11 @@ public class LibraryDownloader extends IntentService {
 	private boolean hasParsingError, hasConnectionError, hasIoError;
 
 	/**
+	 * Used to show time since library update was started.
+	 */
+	private long updateStartTime;
+
+	/**
 	 * Counts how many more stories need to be parsed before the complete notification is
 	 * shown.
 	 */
@@ -91,6 +97,7 @@ public class LibraryDownloader extends IntentService {
 		hasConnectionError = false;
 		hasIoError = false;
 		mStoryQueueLength = new AtomicInteger(0);
+		updateStartTime = System.currentTimeMillis();
 	}
 
 	@Override
@@ -169,11 +176,12 @@ public class LibraryDownloader extends IntentService {
 		// If an update is required, begin the process
 		if (downloader.isUpdateNeeded()) {
 			final String storyTitle = downloader.getStoryTitle();
+			final long downloadStartTime = System.currentTimeMillis();
 
 			// Download each chapter, updating the notification as required
 			try {
 				while (downloader.hasNextChapter()) {
-					showUpdateNotification(storyTitle, downloader.getCurrentChapter(), downloader.getTotalChapters());
+					showUpdateNotification(storyTitle, downloader.getCurrentChapter(), downloader.getTotalChapters(), downloadStartTime);
 					downloader.downloadChapter();
 				}
 			} catch (StoryNotFoundException e) {
@@ -222,7 +230,7 @@ public class LibraryDownloader extends IntentService {
 		// was done, remove the notification.
 		if (storiesUpdated.size() > 0) {
 			// At least one story was updated. Show the title of the updated stories.
-			showUpdateCompleteNotification(storiesUpdated);
+			showUpdateCompleteNotification(storiesUpdated, System.currentTimeMillis());
 		} else if (hasConnectionError) {
 			showErrorNotification(R.string.error_connection);
 		} else if (hasParsingError) {
@@ -258,8 +266,10 @@ public class LibraryDownloader extends IntentService {
 		// Create the notification
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(LibraryDownloader.this);
 		builder.setContentTitle(getString(R.string.downloader_checking_updates));
-		builder.setContentText(String.format(Locale.US, "%.2f", percent) + "%");
+		builder.setContentText(String.format(Locale.US, "%.2f%% (%d/%d)", percent, currentStory + 1, totalStories));
 		builder.setProgress(totalStories, currentStory, currentStory == totalStories);
+		builder.setWhen(updateStartTime);
+		builder.setUsesChronometer(true);
 		builder.setSmallIcon(android.R.drawable.stat_sys_download);
 		builder.setAutoCancel(false);
 
@@ -296,11 +306,13 @@ public class LibraryDownloader extends IntentService {
 	 * @param currentPage The chapter being downloaded
 	 * @param TotalPage   The total number of chapters
 	 */
-	private void showUpdateNotification(String storyTitle, int currentPage, int TotalPage) {
+	private void showUpdateNotification(String storyTitle, int currentPage, int TotalPage, long downloadStartTime) {
 		// Create the notification
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(LibraryDownloader.this);
 		builder.setContentTitle(getString(R.string.downloader_downloading));
 		builder.setContentText(getString(R.string.downloader_context, storyTitle, currentPage, TotalPage));
+		builder.setWhen(downloadStartTime);
+		builder.setUsesChronometer(true);
 		builder.setSmallIcon(android.R.drawable.stat_sys_download);
 		builder.setAutoCancel(false);
 
@@ -339,10 +351,11 @@ public class LibraryDownloader extends IntentService {
 	 * Shows the notification at the end of an update cycle.
 	 * @param storyTitles The titles of the updated stories
 	 */
-	private void showUpdateCompleteNotification(List<String> storyTitles) {
+	private void showUpdateCompleteNotification(List<String> storyTitles, long updateCompleteTime) {
 		// The title of the notification contains the total number of stories updated
 		final String title = getResources().getQuantityString(R.plurals.downloader_notification,
-															  storyTitles.size(), storyTitles.size());
+															  storyTitles.size(), storyTitles.size())
+				+ " in " + DateUtils.formatElapsedTime((updateCompleteTime - updateStartTime) / 1000l);
 
 		// The content of the notification contains the comma separated list of the titles of the stories updated
 		final String text = TextUtils.join(", ", storyTitles);
