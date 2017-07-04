@@ -124,10 +124,11 @@ public class Parser {
 	 * @return The integer representation of the string.
 	 */
 	public static int parseInt(String string){
-		if (string.length() == 0) {
+		final String tmp = string.replaceAll("[^\\d.]", "");
+		if (tmp.length() == 0) {
 			return 0;
 		} else {
-			double digits = Double.parseDouble(string.replaceAll("[^\\d.]", ""));
+			double digits = Double.parseDouble(tmp);
 			if (string.contains("k") || string.contains("K")) {
 				digits = digits * 1000;
 			}
