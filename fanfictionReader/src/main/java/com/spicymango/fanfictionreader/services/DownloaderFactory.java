@@ -25,6 +25,7 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -352,7 +353,7 @@ public class DownloaderFactory {
 
 			// Update the content provider
 			ContentResolver resolver = mContext.getContentResolver();
-			resolver.insert(StoryProvider.FF_CONTENT_URI, mStory.toContentValues(mLastPage, mOffset));
+			resolver.insert(StoryProvider.FF_CONTENT_URI, mStory.toContentValues(mLastPage, mOffset, new Date()));
 		}
 
 		/**

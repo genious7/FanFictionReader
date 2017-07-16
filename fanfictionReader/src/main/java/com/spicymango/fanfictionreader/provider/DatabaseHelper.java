@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 class DatabaseHelper extends SQLiteOpenHelper implements SqlConstants {
 
-	private static final int DATABASE_VERSION = 11; //Database version 11
+	private static final int DATABASE_VERSION = 12; //Database version 11
 	private static final String DATABASE_NAME = "library.db";
 
 	//The name of the FanFiction table and the full text search virtual table
@@ -44,7 +44,9 @@ class DatabaseHelper extends SQLiteOpenHelper implements SqlConstants {
 			+ KEY_COMPLETE + " BOOLEAN,"
 			+ KEY_OFFSET + " INTEGER,"
 			+ KEY_CHARACTERS + " TEXT,"
-			+ KEY_REVIEWS + " INTEGER"
+			+ KEY_REVIEWS + " INTEGER,"
+			+ KEY_ADDED + " INTEGER,"
+			+ KEY_LAST_READ + " INTEGER"
 			+ ")";
 
 	private static final String FTS_TABLE_DEF =
@@ -242,6 +244,11 @@ class DatabaseHelper extends SQLiteOpenHelper implements SqlConstants {
 					+ " WHERE " + KEY_FTS_ID + " = " + "NEW." + KEY_STORY_ID
 					+ "; END";
 			db.execSQL(fanFicUpdTrigger);
+		}
+		if (oldVersion < 12) {
+			// Columns for last read and time added to library were added
+            db.execSQL("ALTER TABLE " + FANFICTION_TABLE + " ADD COLUMN " + KEY_ADDED + " INTEGER DEFAULT 0");
+            db.execSQL("ALTER TABLE " + FANFICTION_TABLE + " ADD COLUMN " + KEY_LAST_READ + " INTEGER DEFAULT 0");
 		}
 	}
 }
