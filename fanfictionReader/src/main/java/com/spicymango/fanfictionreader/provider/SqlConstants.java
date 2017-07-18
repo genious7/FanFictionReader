@@ -25,6 +25,8 @@ public interface SqlConstants {
 	String KEY_OFFSET = "characterOffset";
 	String KEY_CHARACTERS = "characters";
 	String KEY_REVIEWS = "reviews";
+	String KEY_ADDED = "added";
+	String KEY_LAST_READ = "lastRead";
 
 	// Full text search columns
 	String FTS_TABLE = "full_text_search";
