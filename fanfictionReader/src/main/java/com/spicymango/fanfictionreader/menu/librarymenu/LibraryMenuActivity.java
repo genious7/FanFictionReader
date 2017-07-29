@@ -126,7 +126,7 @@ public class LibraryMenuActivity extends AppCompatActivity implements FilterList
 
 		private static final String[] GET_PROJECTION = {KEY_STORY_ID, KEY_TITLE,
 														KEY_SUMMARY, KEY_AUTHOR, KEY_CHAPTER, KEY_LENGTH, KEY_UPDATED,
-														KEY_LAST, KEY_CATEGORY, KEY_OFFSET, KEY_ADDED};
+														KEY_LAST, KEY_CATEGORY, KEY_OFFSET};
 
 		private static final String[] TO_PROJECTION = {KEY_TITLE, KEY_SUMMARY,
 													   KEY_AUTHOR, KEY_CHAPTER, KEY_LENGTH, KEY_UPDATED, KEY_LAST};
