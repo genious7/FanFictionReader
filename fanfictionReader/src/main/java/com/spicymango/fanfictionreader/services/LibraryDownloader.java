@@ -175,6 +175,8 @@ public class LibraryDownloader extends IntentService {
 			return;
 		}
 
+        removeNotification(NOTIFICATION_DOWNLOAD_ID);
+
 		// If an update is required, begin the process
 		if (downloader.isUpdateNeeded()) {
 			final String storyTitle = downloader.getStoryTitle();
@@ -183,7 +185,6 @@ public class LibraryDownloader extends IntentService {
 			// Download each chapter, updating the notification as required
 			try {
 				while (downloader.hasNextChapter()) {
-					removeNotification(NOTIFICATION_DOWNLOAD_ID);
 					showUpdateNotification(storyTitle, downloader.getCurrentChapter(), downloader.getTotalChapters(), downloadStartTime);
 					downloader.downloadChapter();
 				}
@@ -202,7 +203,6 @@ public class LibraryDownloader extends IntentService {
 
 			// Update the files and the sql database.
 			try {
-				removeNotification(NOTIFICATION_DOWNLOAD_ID);
 				showUpdateNotification(storyTitle, downloadStartTime);
 				downloader.saveStory();
 
