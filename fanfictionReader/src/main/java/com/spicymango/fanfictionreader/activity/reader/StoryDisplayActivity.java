@@ -537,6 +537,7 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 			ContentValues values = new ContentValues(1);
 			values.put(SqlConstants.KEY_LAST, mCurrentPage);
 			values.put(SqlConstants.KEY_OFFSET, offset);
+			values.put(SqlConstants.KEY_LAST_READ, System.currentTimeMillis());
 			handler.startUpdate(0, null, StoryProvider.FF_CONTENT_URI, values,
 					SqlConstants.KEY_STORY_ID + " = ?",
 					new String[] { String.valueOf(mStoryId) });

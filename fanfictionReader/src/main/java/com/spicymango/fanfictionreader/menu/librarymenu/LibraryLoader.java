@@ -156,7 +156,9 @@ class LibraryLoader extends CursorLoader implements SqlConstants, BaseLoader.Fil
 				//Sort by percentage read, including progress within a chapter
 				//When the percentage is the same we will use the default sort behavior(update date). (Read Percentage Filter)
 				"((CAST(" + KEY_LAST + " - 1 AS FLOAT) + (" + KEY_OFFSET + " / " + KEY_LENGTH
-						+ ")) / " + KEY_CHAPTER + ") ASC, " + KEY_UPDATED + " DESC"
+						+ ")) / " + KEY_CHAPTER + ") ASC, " + KEY_UPDATED + " DESC",
+				KEY_ADDED + " DESC",
+				KEY_LAST_READ + " DESC"
 		};
 		mFilterData.add(new SpinnerData("SortBy", sortByLabel, sortBySQL, 0));
 
