@@ -314,9 +314,11 @@ public class LibraryDownloader extends IntentService {
 	 */
 	private void showUpdateNotification(String storyTitle, int currentPage, int TotalPage, long downloadStartTime) {
 		// Create the notification
+		final String text = getString(R.string.downloader_context, storyTitle, currentPage, TotalPage);
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(LibraryDownloader.this);
 		builder.setContentTitle(getString(R.string.downloader_downloading));
-		builder.setContentText(getString(R.string.downloader_context, storyTitle, currentPage, TotalPage));
+		builder.setStyle(new NotificationCompat.BigTextStyle().bigText(text));
+		builder.setContentText(text);
 		builder.setWhen(downloadStartTime);
 		builder.setUsesChronometer(true);
 		builder.setSmallIcon(android.R.drawable.stat_sys_download);
@@ -333,9 +335,11 @@ public class LibraryDownloader extends IntentService {
 
 	private void showUpdateNotification(String storyTitle, long downloadStartTime) {
 		// Create the notification
+		final String text = getString(R.string.downloader_context_saving, storyTitle);
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(LibraryDownloader.this);
 		builder.setContentTitle(getString(R.string.downloader_saving));
-		builder.setContentText(getString(R.string.downloader_context_saving, storyTitle));
+		builder.setStyle(new NotificationCompat.BigTextStyle().bigText(text));
+		builder.setContentText(text);
 		builder.setWhen(downloadStartTime);
 		builder.setUsesChronometer(true);
 		builder.setSmallIcon(android.R.drawable.stat_sys_download);
@@ -391,6 +395,7 @@ public class LibraryDownloader extends IntentService {
 		notBuilder.setContentTitle(title);
 		notBuilder.setSmallIcon(R.drawable.ic_not_check);
 		notBuilder.setAutoCancel(true);
+        notBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(text));
 		notBuilder.setContentText(text);
 
 		// If the notification is clicked, open the library
