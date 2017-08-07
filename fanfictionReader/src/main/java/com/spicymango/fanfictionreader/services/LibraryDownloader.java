@@ -395,7 +395,7 @@ public class LibraryDownloader extends IntentService {
 		notBuilder.setContentTitle(title);
 		notBuilder.setSmallIcon(R.drawable.ic_not_check);
 		notBuilder.setAutoCancel(true);
-        notBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(text));
+		notBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(text));
 		notBuilder.setContentText(text);
 
 		// If the notification is clicked, open the library

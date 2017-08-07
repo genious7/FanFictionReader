@@ -51,6 +51,8 @@
     <string name="detail_follows">&lt;strong&gt;Follows:&lt;/strong&gt; %s</string>
     <string name="detail_updated">&lt;strong&gt;Updated:&lt;/strong&gt; %s</string>
     <string name="detail_published">&lt;strong&gt;Published:&lt;/strong&gt; %s</string>
+    <string name="detail_added">&lt;strong&gt;Downloaded:&lt;/strong&gt; %s</string>
+    <string name="detail_last_read">&lt;strong&gt;Last Read:&lt;/strong&gt; %s</string>
     <string name="detail_category">&lt;strong&gt;Category:&lt;/strong&gt; %s</string>
     <string name="detail_complete">&lt;strong&gt;Status:&lt;/strong&gt; %s</string>
     <string name="detail_author">&lt;strong&gt;Author:&lt;/strong&gt; %s</string>
