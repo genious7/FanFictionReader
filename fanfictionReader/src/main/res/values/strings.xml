@@ -61,8 +61,6 @@
     <string name="detail_reviews">&lt;strong&gt;Reviews:&lt;/strong&gt; %s</string>
 
     <string name="detail_view_reviews">View Reviews</string>
-
-    <string name="date_unknown">Unknown</string>
     
     <string name="complete_true">Completed</string>
     <string name="complete_false">In progress</string>
@@ -135,8 +133,8 @@
     <string name="downloader_context_saving">%1$s</string>
 
     <plurals name="downloader_notification">
-        <item quantity="one"> One story added</item>
-        <item quantity="other">%d stories added</item>
+        <item quantity="one">One story added in %2$s</item>
+        <item quantity="other">%1$d stories added in %2$s</item>
     </plurals>
 
     <string name="downloader_error">Error downloading story</string>

@@ -67,7 +67,7 @@ public class DetailDialog extends DialogFragment implements OnClickListener{
 
 	private final String asString(Date time)
 	{
-        return (time.getTime() <= 0l ? getString(R.string.date_unknown) : DateFormat.getDateInstance().format(time));
+        return (time.getTime() <= 0l ? "" : DateFormat.getDateInstance().format(time));
 	}
 	
 	@SuppressLint("InflateParams")

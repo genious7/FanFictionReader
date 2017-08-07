@@ -382,10 +382,9 @@ public class LibraryDownloader extends IntentService {
 	 */
 	private void showUpdateCompleteNotification(List<String> storyTitles, long updateCompleteTime) {
 		// The title of the notification contains the total number of stories updated
-		// TODO: Add "in" to strings.xml; use String.format()
 		final String title = getResources().getQuantityString(R.plurals.downloader_notification,
-															  storyTitles.size(), storyTitles.size())
-				+ " in " + DateUtils.formatElapsedTime((updateCompleteTime - updateStartTime) / 1000l);
+				storyTitles.size(), storyTitles.size(),
+				DateUtils.formatElapsedTime((updateCompleteTime - updateStartTime) / 1000l));
 
 		// The content of the notification contains the comma separated list of the titles of the stories updated
 		final String text = TextUtils.join(", ", storyTitles);

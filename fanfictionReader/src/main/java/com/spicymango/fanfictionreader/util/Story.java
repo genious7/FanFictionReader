@@ -440,7 +440,7 @@ public class Story implements Parcelable, SqlConstants {
 			characters = new ArrayList<>();
 			reviews = 0;
 			lastRead = new Date(0);
-			added = new Date();
+			added = new Date(0);
 		}
 
 		public Story build() {
