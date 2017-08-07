@@ -61,6 +61,8 @@
     <string name="detail_reviews">&lt;strong&gt;Reviews:&lt;/strong&gt; %s</string>
 
     <string name="detail_view_reviews">View Reviews</string>
+
+    <string name="date_unknown">Unknown</string>
     
     <string name="complete_true">Completed</string>
     <string name="complete_false">In progress</string>
