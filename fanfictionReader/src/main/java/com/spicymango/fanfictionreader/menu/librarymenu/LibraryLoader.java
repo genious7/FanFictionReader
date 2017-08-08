@@ -155,7 +155,9 @@ class LibraryLoader extends CursorLoader implements SqlConstants, BaseLoader.Fil
 				KEY_REVIEWS + " DESC",
 				//We subtract 1 from the last chapter and chapter so chapter 1 always starts at 0 and the last chapter always ends at 1
 				//When the percentage is the same we will use the default sort behavior(update date). (Read Percentage Filter)
-				"(CAST(" + KEY_LAST + " - 1 AS FLOAT) / (" + KEY_CHAPTER + " - 1)) ASC, " + KEY_UPDATED + " DESC"
+				"(CAST(" + KEY_LAST + " - 1 AS FLOAT) / (" + KEY_CHAPTER + " - 1)) ASC, " + KEY_UPDATED + " DESC",
+				KEY_ADDED + " DESC",
+				KEY_LAST_READ + " DESC"
 		};
 		mFilterData.add(new SpinnerData("SortBy", sortByLabel, sortBySQL, 0));
 

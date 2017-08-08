@@ -202,6 +202,8 @@
     <string name="menu_library_sort_by_follow">Follows</string>
     <string name="menu_library_sort_by_reviews">Reviews</string>
     <string name="menu_library_sort_by_percentage">Percentage Read</string>
+    <string name="menu_library_sort_by_added">Date Added</string>
+    <string name="menu_library_sort_by_last_read">Last Read</string>
 
     <string-array name="menu_library_filter_words">
         <item>All</item>
