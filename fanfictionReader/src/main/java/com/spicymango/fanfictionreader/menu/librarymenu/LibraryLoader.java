@@ -155,6 +155,7 @@ class LibraryLoader extends CursorLoader implements SqlConstants, BaseLoader.Fil
 				KEY_REVIEWS + " DESC",
 				//Sort by percentage read, including progress within a chapter
 				//When the percentage is the same we will use the default sort behavior(update date). (Read Percentage Filter)
+                // TODO: KEY_LENGTH is the wrong metric; add a database entry for current chapter length?
 				"((CAST(" + KEY_LAST + " - 1 AS FLOAT) + (" + KEY_OFFSET + " / " + KEY_LENGTH
 						+ ")) / " + KEY_CHAPTER + ") ASC, " + KEY_UPDATED + " DESC",
 				KEY_ADDED + " DESC",
