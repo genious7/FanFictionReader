@@ -11,6 +11,7 @@ import android.support.annotation.StringRes;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -41,9 +42,10 @@ public class LibraryDownloader extends IntentService {
 	final static String EXTRA_LAST_PAGE = "Last page";
 
 	/**
-	 * ID for the notifications generated.
+	 * IDs for the notifications generated.
 	 */
-	private final static int NOTIFICATION_ID = 0;
+	private final static int NOTIFICATION_UPDATE_ID = 0;
+	private final static int NOTIFICATION_DOWNLOAD_ID = 1;
 
 	/**
 	 * The number of stories that have been checked for updates
@@ -52,6 +54,11 @@ public class LibraryDownloader extends IntentService {
 
 	/** Keeps track of errors*/
 	private boolean hasParsingError, hasConnectionError, hasIoError;
+
+	/**
+	 * Used to show time since library update was started.
+	 */
+	private long updateStartTime;
 
 	/**
 	 * Counts how many more stories need to be parsed before the complete notification is
@@ -91,6 +98,7 @@ public class LibraryDownloader extends IntentService {
 		hasConnectionError = false;
 		hasIoError = false;
 		mStoryQueueLength = new AtomicInteger(0);
+		updateStartTime = System.currentTimeMillis();
 	}
 
 	@Override
@@ -102,11 +110,12 @@ public class LibraryDownloader extends IntentService {
 
 	@Override
 	public void onDestroy() {
-		// By this point, the notification been shown should be the completetion notification.
+		// By this point, the notification been shown should be the completion notification.
 		// If not, something went wrong. Remove the notification in order to avoid leaving a
 		// non-cancelable notification.
 		if (mStoryQueueLength.get() != 0){
-			removeNotification();
+			removeNotification(NOTIFICATION_UPDATE_ID);
+			removeNotification(NOTIFICATION_DOWNLOAD_ID);
 		}
 		Log.d("LibraryDownloader", "Destroyed");
 
@@ -166,14 +175,17 @@ public class LibraryDownloader extends IntentService {
 			return;
 		}
 
+        removeNotification(NOTIFICATION_DOWNLOAD_ID);
+
 		// If an update is required, begin the process
 		if (downloader.isUpdateNeeded()) {
 			final String storyTitle = downloader.getStoryTitle();
+			final long downloadStartTime = System.currentTimeMillis();
 
 			// Download each chapter, updating the notification as required
 			try {
 				while (downloader.hasNextChapter()) {
-					showUpdateNotification(storyTitle, downloader.getCurrentChapter(), downloader.getTotalChapters());
+					showUpdateNotification(storyTitle, downloader.getCurrentChapter(), downloader.getTotalChapters(), downloadStartTime);
 					downloader.downloadChapter();
 				}
 			} catch (StoryNotFoundException e) {
@@ -191,6 +203,7 @@ public class LibraryDownloader extends IntentService {
 
 			// Update the files and the sql database.
 			try {
+				showUpdateNotification(storyTitle, downloadStartTime);
 				downloader.saveStory();
 
 				// Upon success, add the title of the story to the list so that it is displayed
@@ -220,9 +233,10 @@ public class LibraryDownloader extends IntentService {
 		// Once every intent has been processed, display a "download complete" notification
 		// if a story was updated. If an error occurred, show an error notification. If nothing
 		// was done, remove the notification.
+		removeNotification(NOTIFICATION_DOWNLOAD_ID);
 		if (storiesUpdated.size() > 0) {
 			// At least one story was updated. Show the title of the updated stories.
-			showUpdateCompleteNotification(storiesUpdated);
+			showUpdateCompleteNotification(storiesUpdated, System.currentTimeMillis());
 		} else if (hasConnectionError) {
 			showErrorNotification(R.string.error_connection);
 		} else if (hasParsingError) {
@@ -231,16 +245,16 @@ public class LibraryDownloader extends IntentService {
 			showErrorNotification(R.string.error_sd);
 		} else {
 			// The story did not require any updates; no changes were made.
-			removeNotification();
+			removeNotification(NOTIFICATION_UPDATE_ID);
 		}
 	}
 
 	/**
 	 * Removes the notification from the screen
 	 */
-	private void removeNotification() {
+	private void removeNotification(int notificationId) {
 		NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		manager.cancel(NOTIFICATION_ID);
+		manager.cancel(notificationId);
 	}
 
 	/**
@@ -258,9 +272,11 @@ public class LibraryDownloader extends IntentService {
 		// Create the notification
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(LibraryDownloader.this);
 		builder.setContentTitle(getString(R.string.downloader_checking_updates));
-		builder.setContentText(String.format(Locale.US, "%.2f", percent) + "%");
+		builder.setContentText(String.format(Locale.US, "%.2f%% (%d/%d)", percent, currentStory + 1, totalStories));
 		builder.setProgress(totalStories, currentStory, currentStory == totalStories);
-		builder.setSmallIcon(android.R.drawable.stat_sys_download);
+		builder.setWhen(updateStartTime);
+		builder.setUsesChronometer(true);
+		builder.setSmallIcon(android.R.drawable.stat_notify_sync);
 		builder.setAutoCancel(false);
 
 		// Set an empty Pending Intent on the notification
@@ -269,7 +285,7 @@ public class LibraryDownloader extends IntentService {
 
 		// Show or update the notification
 		NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		manager.notify(NOTIFICATION_ID, builder.build());
+		manager.notify(NOTIFICATION_UPDATE_ID, builder.build());
 	}
 
 	private void showUpdateNotification(){
@@ -285,7 +301,7 @@ public class LibraryDownloader extends IntentService {
 
 		// Show or update the notification
 		NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		manager.notify(NOTIFICATION_ID, builder.build());
+		manager.notify(NOTIFICATION_DOWNLOAD_ID, builder.build());
 	}
 
 	/**
@@ -296,11 +312,15 @@ public class LibraryDownloader extends IntentService {
 	 * @param currentPage The chapter being downloaded
 	 * @param TotalPage   The total number of chapters
 	 */
-	private void showUpdateNotification(String storyTitle, int currentPage, int TotalPage) {
+	private void showUpdateNotification(String storyTitle, int currentPage, int TotalPage, long downloadStartTime) {
 		// Create the notification
+		final String text = getString(R.string.downloader_context, storyTitle, currentPage, TotalPage);
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(LibraryDownloader.this);
 		builder.setContentTitle(getString(R.string.downloader_downloading));
-		builder.setContentText(getString(R.string.downloader_context, storyTitle, currentPage, TotalPage));
+		builder.setStyle(new NotificationCompat.BigTextStyle().bigText(text));
+		builder.setContentText(text);
+		builder.setWhen(downloadStartTime);
+		builder.setUsesChronometer(true);
 		builder.setSmallIcon(android.R.drawable.stat_sys_download);
 		builder.setAutoCancel(false);
 
@@ -310,7 +330,28 @@ public class LibraryDownloader extends IntentService {
 
 		// Show or update the notification
 		NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		manager.notify(NOTIFICATION_ID, builder.build());
+		manager.notify(NOTIFICATION_DOWNLOAD_ID, builder.build());
+	}
+
+	private void showUpdateNotification(String storyTitle, long downloadStartTime) {
+		// Create the notification
+		final String text = getString(R.string.downloader_context_saving, storyTitle);
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(LibraryDownloader.this);
+		builder.setContentTitle(getString(R.string.downloader_saving));
+		builder.setStyle(new NotificationCompat.BigTextStyle().bigText(text));
+		builder.setContentText(text);
+		builder.setWhen(downloadStartTime);
+		builder.setUsesChronometer(true);
+		builder.setSmallIcon(android.R.drawable.stat_sys_download);
+		builder.setAutoCancel(false);
+
+		// Set an empty Pending Intent on the notification
+		PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, new Intent(), PendingIntent.FLAG_UPDATE_CURRENT);
+		builder.setContentIntent(pendingIntent);
+
+		// Show or update the notification
+		NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		manager.notify(NOTIFICATION_DOWNLOAD_ID, builder.build());
 	}
 
 	/**
@@ -332,17 +373,18 @@ public class LibraryDownloader extends IntentService {
 
 		// Show or update the notification
 		NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		manager.notify(NOTIFICATION_ID, builder.build());
+		manager.notify(NOTIFICATION_UPDATE_ID, builder.build());
 	}
 
 	/**
 	 * Shows the notification at the end of an update cycle.
 	 * @param storyTitles The titles of the updated stories
 	 */
-	private void showUpdateCompleteNotification(List<String> storyTitles) {
+	private void showUpdateCompleteNotification(List<String> storyTitles, long updateCompleteTime) {
 		// The title of the notification contains the total number of stories updated
 		final String title = getResources().getQuantityString(R.plurals.downloader_notification,
-															  storyTitles.size(), storyTitles.size());
+				storyTitles.size(), storyTitles.size(),
+				DateUtils.formatElapsedTime((updateCompleteTime - updateStartTime) / 1000l));
 
 		// The content of the notification contains the comma separated list of the titles of the stories updated
 		final String text = TextUtils.join(", ", storyTitles);
@@ -352,6 +394,7 @@ public class LibraryDownloader extends IntentService {
 		notBuilder.setContentTitle(title);
 		notBuilder.setSmallIcon(R.drawable.ic_not_check);
 		notBuilder.setAutoCancel(true);
+		notBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(text));
 		notBuilder.setContentText(text);
 
 		// If the notification is clicked, open the library
@@ -364,7 +407,7 @@ public class LibraryDownloader extends IntentService {
 
 		// Show or update the notification
 		NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		manager.notify(NOTIFICATION_ID, notBuilder.build());
+		manager.notify(NOTIFICATION_UPDATE_ID, notBuilder.build());
 	}
 
 }

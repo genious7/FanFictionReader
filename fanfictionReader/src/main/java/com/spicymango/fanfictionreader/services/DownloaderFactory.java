@@ -352,8 +352,9 @@ public class DownloaderFactory {
 			}
 
 			// Update the content provider
-			ContentResolver resolver = mContext.getContentResolver();
-			resolver.insert(StoryProvider.FF_CONTENT_URI, mStory.toContentValues(mLastPage, mOffset, new Date()));
+			final ContentResolver resolver = mContext.getContentResolver();
+			final Date added = (mStory.getAdded().getTime() > 0L ? mStory.getAdded() : new Date());
+			resolver.insert(StoryProvider.FF_CONTENT_URI, mStory.toContentValues(mLastPage, mOffset, added));
 		}
 
 		/**
