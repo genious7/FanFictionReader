@@ -276,7 +276,7 @@ public class LibraryDownloader extends IntentService {
 		builder.setProgress(totalStories, currentStory, currentStory == totalStories);
 		builder.setWhen(updateStartTime);
 		builder.setUsesChronometer(true);
-		builder.setSmallIcon(android.R.drawable.stat_notify_sync);
+		builder.setSmallIcon(android.R.drawable.ic_popup_sync);
 		builder.setAutoCancel(false);
 
 		// Set an empty Pending Intent on the notification
@@ -342,7 +342,7 @@ public class LibraryDownloader extends IntentService {
 		builder.setContentText(text);
 		builder.setWhen(downloadStartTime);
 		builder.setUsesChronometer(true);
-		builder.setSmallIcon(android.R.drawable.stat_sys_download);
+		builder.setSmallIcon(android.R.drawable.stat_sys_download_done);
 		builder.setAutoCancel(false);
 
 		// Set an empty Pending Intent on the notification
