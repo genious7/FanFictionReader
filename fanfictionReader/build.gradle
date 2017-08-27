@@ -24,7 +24,7 @@ android {
         applicationId "com.spicymango.fanfictionreader"
         minSdkVersion 9
         targetSdkVersion 25
-        versionCode 78
+        versionCode 79
         versionName "1.53"
     }
     lintOptions {

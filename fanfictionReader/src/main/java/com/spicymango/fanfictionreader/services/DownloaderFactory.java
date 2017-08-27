@@ -314,10 +314,29 @@ class DownloaderFactory {
 			// By default, the Story object has a date added equal to 0 upon creation. If this value
 			// is found, then the story is newly added and the date added should be set to the current
 			// date. Otherwise, the date added should be conserved.
-			final Date dateAdded = (mStory.getAdded().getTime() > 0L ? mStory.getAdded() : new Date());
+			final Date dateDownloaded;
+			final ContentResolver resolver = mContext.getContentResolver();
+			final Cursor c = resolver.query(StoryProvider.FF_CONTENT_URI,
+											new String[] { SqlConstants.KEY_ADDED },
+											SqlConstants.KEY_STORY_ID + " = ?",
+											new String[] { String.valueOf(mStoryId) }, null);
+
+			if (c == null){
+				// Validate the cursor
+				dateDownloaded = null;
+			} else if (!c.moveToFirst()) {
+				// Check that the cursor is not empty
+				c.close();
+				dateDownloaded = null;
+			} else{
+				// Determine the last time the story was updated
+				final int index = c.getColumnIndex(SqlConstants.KEY_ADDED);
+				dateDownloaded = new Date(c.getLong(index));
+				c.close();
+			}
+			final Date dateAdded = (dateDownloaded != null ? dateDownloaded : new Date());
 
 			// Update the content provider
-			final ContentResolver resolver = mContext.getContentResolver();
 			resolver.insert(StoryProvider.FF_CONTENT_URI, mStory.toContentValues(lastPageRead, scrollOffset, dateAdded));
 		}
 
