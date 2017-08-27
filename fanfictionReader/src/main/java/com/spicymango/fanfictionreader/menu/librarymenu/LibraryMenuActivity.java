@@ -299,6 +299,7 @@ public class LibraryMenuActivity extends AppCompatActivity implements FilterList
 			inflater.inflate(R.menu.library_menu, menu);
 
 			final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
+			if (searchView == null) return;
 
 			// Set the listener for Search events. Note that the editor action listener is used instead
 			// of the onQueryTextListener in order to catch empty string submissions.

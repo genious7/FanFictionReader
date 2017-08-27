@@ -78,12 +78,13 @@ public abstract class StoryLoader extends AsyncTaskLoader<StoryChapter> {
 		Thread.currentThread().setName("Story Loader Thread");
 		
 		syncSql();
-		final String html;
+		String html;
 		
 		if (mData.isInLibrary() && mData.getTotalChapters() >= mCurrentPage) {
 			try {
 				html = getStoryFromFile(mStoryId, mCurrentPage);
 				if (html == null) {
+					redownload(mStoryId, mCurrentPage);
 					throw new FileNotFoundException();
 				}
 			} catch (FileNotFoundException e) {
@@ -177,6 +178,8 @@ public abstract class StoryLoader extends AsyncTaskLoader<StoryChapter> {
 	protected abstract String getStoryFromFile(final long storyId,final int currentPage) throws FileNotFoundException;
 	
 	protected abstract String getStoryFromSite(final long storyId,final int currentPage, StoryChapter data) throws IOException;
+
+	protected abstract void redownload(final long storyId, final int currentPage);
 	
 	/**
 	 * Closes the cursor when finished

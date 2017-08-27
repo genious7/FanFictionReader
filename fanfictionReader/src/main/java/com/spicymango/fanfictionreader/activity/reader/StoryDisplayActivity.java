@@ -666,7 +666,16 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 			if (storyText.isEmpty()) return null;
 			return storyText.html();
 		}
-		
+
+		@Override
+		protected void redownload(long storyId, int currentPage) {
+			final Uri.Builder storyUri = Sites.FANFICTION.BASE_URI.buildUpon();
+			storyUri.appendPath("s");
+			storyUri.appendPath(Long.toString(storyId));
+			storyUri.appendPath("");
+			LibraryDownloader.integrityCheck(getContext(), storyUri.build(), currentPage, 0);
+		}
+
 		/**
 		 * Extracts the page number or the story id from a url
 		 * 

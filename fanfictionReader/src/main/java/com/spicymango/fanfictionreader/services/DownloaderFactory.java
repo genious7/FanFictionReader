@@ -2,7 +2,6 @@ package com.spicymango.fanfictionreader.services;
 
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.Intent;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
@@ -33,7 +32,7 @@ import java.util.regex.Pattern;
  * A simple factory that creates instances of the {@code Downloader} for the different sites.
  * Created by Michael Chen on 02/15/2016.
  */
-public class DownloaderFactory {
+class DownloaderFactory {
 	private static final int FAN_FICTION = 0;
 	private static final int FICTION_PRESS = 1;
 	private static final int AO3 = 2;
@@ -65,26 +64,25 @@ public class DownloaderFactory {
 
 	/**
 	 * Gets an instance of the {@link com.spicymango.fanfictionreader.services.DownloaderFactory.Downloader}
-	 * that can be used to download the stories of a particular site, as determined by the url in
-	 * the intent uri.
+	 * that can be used to download the stories of a particular site, as determined by the uri.
 	 *
-	 * @param intent The intent used to open a downloader
+	 * @param uri The uri of the story that needs to be downloaded
 	 * @param context The current context
 	 * @return The downloader that works for the requested URI
 	 */
-	public static Downloader getInstance(Intent intent, Context context) {
-		switch (URI_MATCHER.match(intent.getData())) {
+	static Downloader getInstance(Uri uri, Context context) {
+		switch (URI_MATCHER.match(uri)) {
 			case FAN_FICTION:
-				return new FanFictionDownloader(intent, context);
+				return new FanFictionDownloader(uri, context);
 			default:
-				throw new UnsupportedOperationException("Downloader Factory does not support the Uri: " + intent.getData());
+				throw new UnsupportedOperationException("Downloader Factory does not support the Uri: " + uri);
 		}
 	}
 
 	/**
 	 * An object that can be used to download a story from the FanFiction site.
 	 */
-	public interface Downloader {
+	interface Downloader {
 
 		/**
 		 * Determines if there is a newer version of the story online.
@@ -101,8 +99,8 @@ public class DownloaderFactory {
 		boolean hasNextChapter();
 
 		/**
-		 * Gets the story statistics.
-		 * @return The {@link Story}
+		 * Retrieves the story's attributes, such as the story's last update date, etc.
+		 * @return The {@link Story} object, which contains the relevant attributes
 		 * @throws IOException If an internet connection error occurs
 		 * @throws ParseException If an error occurs while parsing
 		 * @throws StoryNotFoundException If the story can not be found on the web site
@@ -123,11 +121,6 @@ public class DownloaderFactory {
 		int getCurrentChapter();
 
 		/**
-		 * @return The story's title, as a string
-		 */
-		String getStoryTitle();
-
-		/**
 		 * Downloads the current chapter, as reported by {@link Downloader#getCurrentChapter()}. On
 		 * success, the function will automatically advance the current chapter pointer to the next
 		 * one.
@@ -141,12 +134,21 @@ public class DownloaderFactory {
 		/**
 		 * Saves any downloaded chapters and story statistics to the device memory
 		 *
+		 * @param lastPageRead The last chapter read by the user
+		 * @param scrollOffset The user's position along the chapter
 		 * @throws IOException If writing to the device memory fails
 		 */
-		void saveStory() throws IOException;
+		void saveStory(int lastPageRead, int scrollOffset) throws IOException;
+
+		/**
+		 * Instructs the downloader to skip pre-existing chapters.
+		 */
+		void EnableIncrementalUpdating();
+
+		void downloadIfMissing() throws IOException, ParseException, StoryNotFoundException;;
 	}
 
-	public static final class FanFictionDownloader implements Downloader{
+	private static final class FanFictionDownloader implements Downloader{
 
 		/**
 		 * Pattern describing the attributes fields
@@ -182,18 +184,6 @@ public class DownloaderFactory {
 		 */
 		private final SparseArray<String> mText;
 
-		/**
-		 * The reader's offset along the story. This field is used to remember the user position so
-		 * that the story opens in the same spot the next time.
-		 */
-		private final int mOffset;
-
-		/**
-		 * The reader's currently selected chapter. This field is used to remember the user position
-		 * so that the story opens in the same spot the next time.
-		 */
-		private final int mLastPage;
-
 		private final long mStoryId;
 
 		/**
@@ -201,22 +191,17 @@ public class DownloaderFactory {
 		 */
 		private final Context mContext;
 
-		public FanFictionDownloader(Intent intent, Context context) {
+		private FanFictionDownloader(Uri uri, Context context) {
 			mContext = context;
 			mCurrentPage = 1;
 
 			mText = new SparseArray<>();
 
 			// Get the story id
-			final Uri uri = intent.getData();
 			if (uri == null) throw new IllegalArgumentException("The uri cannot be null");
 			Matcher idMatcher = PATTERN_FF.matcher(uri.toString());
 			if (!idMatcher.find()) throw new IllegalArgumentException("The uri " + uri + " is not valid");
 			mStoryId = Long.parseLong(idMatcher.group(1));
-
-			// Find the reader's position in the story
-			mLastPage = intent.getIntExtra(LibraryDownloader.EXTRA_LAST_PAGE, 1);
-			mOffset = intent.getIntExtra(LibraryDownloader.EXTRA_OFFSET, 0);
 		}
 
 		@Override
@@ -258,7 +243,8 @@ public class DownloaderFactory {
 
 		@Override
 		public Story getStoryState() throws IOException, ParseException, StoryNotFoundException {
-			// The downloadChapter() code automatically fills mStory.
+			// The downloadChapter() code automatically fills mStory. Since every single story
+			// is warrantied to have a chapter 1, attempt to download the chapter.
 			if (mStory == null) {
 				mCurrentPage = 1;
 				downloadChapter();
@@ -280,19 +266,10 @@ public class DownloaderFactory {
 		}
 
 		@Override
-		public String getStoryTitle() {
-			// Verify the class state
-			if (mStory == null)
-				throw new IllegalStateException("The mStory state must be loaded before calling getStoryTitle");
-			return mStory.getName();
-		}
-
-		@Override
 		public void downloadChapter() throws IOException, ParseException, StoryNotFoundException {
-
-			String url = "https://www.fanfiction.net/s/" + mStoryId + "/"
+			final String url = "https://www.fanfiction.net/s/" + mStoryId + "/"
 					+ mCurrentPage + "/";
-			Document document = Jsoup.connect(url).timeout(10000).userAgent("Mozilla/5.0").get();
+			final Document document = Jsoup.connect(url).timeout(10000).userAgent("Mozilla/5.0").get();
 
 			// On the first run, update the mStory variable
 			if (mCurrentPage == 1) {
@@ -323,37 +300,70 @@ public class DownloaderFactory {
 
 			// If a download is successful, increment the current page counter. This only needs to
 			// be done when the first chapter is downloaded.
-
-			// If incremental updating is selected, determine if there are new chapters
-			// over the previous update. This should only be done once.
-			if (mCurrentPage == 1 && Settings.isIncrementalUpdatingEnabled(mContext)) {
-
-				//If there are more chapters, assume that the preceding chapters have not been revised
-				// and skip them while updating
-				int chaptersOnLastUpdate = StoryProvider.numberOfChapters(mContext, Site.FANFICTION, mStoryId);
-				if (chaptersOnLastUpdate > 1 && getTotalChapters() > chaptersOnLastUpdate) {
-					// Due to the mCurrentPage++ below, the updates will start on the next
-					// chapter, as desired.
-					mCurrentPage = chaptersOnLastUpdate;
-				}
-				// Note that if a revision was performed, the total number of chapters before
-				// and after the update will match; therefore, no chapters will be skipped
-				// while updating.
-			}
 			mCurrentPage++;
 		}
 
 		@Override
-		public void saveStory() throws IOException{
+		public void saveStory(int lastPageRead, int scrollOffset) throws IOException{
 			// Write each of the chapters downloaded into the file system
 			for (int i = 0; i < mText.size(); i++) {
 				final int key = mText.keyAt(i);
 				FileHandler.writeFile(mContext, mStoryId, key, mText.get(key));
 			}
 
+			// By default, the Story object has a date added equal to 0 upon creation. If this value
+			// is found, then the story is newly added and the date added should be set to the current
+			// date. Otherwise, the date added should be conserved.
+			final Date dateDownloaded;
+			final ContentResolver resolver = mContext.getContentResolver();
+			final Cursor c = resolver.query(StoryProvider.FF_CONTENT_URI,
+											new String[] { SqlConstants.KEY_ADDED },
+											SqlConstants.KEY_STORY_ID + " = ?",
+											new String[] { String.valueOf(mStoryId) }, null);
+
+			if (c == null){
+				// Validate the cursor
+				dateDownloaded = null;
+			} else if (!c.moveToFirst()) {
+				// Check that the cursor is not empty
+				c.close();
+				dateDownloaded = null;
+			} else{
+				// Determine the last time the story was updated
+				final int index = c.getColumnIndex(SqlConstants.KEY_ADDED);
+				dateDownloaded = new Date(c.getLong(index));
+				c.close();
+			}
+			final Date dateAdded = (dateDownloaded != null ? dateDownloaded : new Date());
+
 			// Update the content provider
-			ContentResolver resolver = mContext.getContentResolver();
-			resolver.insert(StoryProvider.FF_CONTENT_URI, mStory.toContentValues(mLastPage, mOffset, new Date()));
+			resolver.insert(StoryProvider.FF_CONTENT_URI, mStory.toContentValues(lastPageRead, scrollOffset, dateAdded));
+		}
+
+		@Override
+		public void EnableIncrementalUpdating() {
+			//If there are more chapters, assume that the preceding chapters have not been revised
+			// and skip them while updating
+			int chaptersOnLastUpdate = StoryProvider.numberOfChapters(mContext, Site.FANFICTION, mStoryId);
+			if (chaptersOnLastUpdate > 1 && getTotalChapters() > chaptersOnLastUpdate) {
+				// The first chapter that should be downloaded is the one following the last
+				// one from the previous update.
+				mCurrentPage = chaptersOnLastUpdate + 1;
+			}
+			// Note that if a revision was performed, the total number of chapters before
+			// and after the update will match; therefore, no chapters will be skipped
+			// while updating.
+		}
+
+		@Override
+		public void downloadIfMissing() throws IOException, ParseException, StoryNotFoundException {
+			// First, check if the chapter is missing.
+			if (FileHandler.getFile(mContext, mStoryId, mCurrentPage) == null) {
+				// If it is missing, download the missing chapter.
+				downloadChapter();
+			} else {
+				mCurrentPage++;
+			}
 		}
 
 		/**

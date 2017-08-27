@@ -51,6 +51,8 @@
     <string name="detail_follows">&lt;strong&gt;Follows:&lt;/strong&gt; %s</string>
     <string name="detail_updated">&lt;strong&gt;Updated:&lt;/strong&gt; %s</string>
     <string name="detail_published">&lt;strong&gt;Published:&lt;/strong&gt; %s</string>
+    <string name="detail_added">&lt;strong&gt;Downloaded:&lt;/strong&gt; %s</string>
+    <string name="detail_last_read">&lt;strong&gt;Last Read:&lt;/strong&gt; %s</string>
     <string name="detail_category">&lt;strong&gt;Category:&lt;/strong&gt; %s</string>
     <string name="detail_complete">&lt;strong&gt;Status:&lt;/strong&gt; %s</string>
     <string name="detail_author">&lt;strong&gt;Author:&lt;/strong&gt; %s</string>
@@ -125,12 +127,14 @@
 
     <!-- Story Downloader -->
     <string name="downloader_downloading">Downloading Story</string>
+    <string name="downloader_saving">Saving Story</string>
     <string name="downloader_checking_updates">Checking For Updates</string>
     <string name="downloader_context">%1$s Chapter %2$d/%3$d</string>
+    <string name="downloader_context_saving">%1$s</string>
 
     <plurals name="downloader_notification">
-        <item quantity="one"> One story successfully added</item>
-        <item quantity="other">%d stories successfully added</item>
+        <item quantity="one">One story added in %2$s</item>
+        <item quantity="other">%1$d stories added in %2$s</item>
     </plurals>
 
     <string name="downloader_error">Error downloading story</string>
