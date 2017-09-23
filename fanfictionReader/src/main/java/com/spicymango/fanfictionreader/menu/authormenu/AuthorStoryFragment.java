@@ -79,7 +79,7 @@ public class AuthorStoryFragment extends BaseFragment<Story> implements FilterDi
 		final int loaderId = arguments.getInt(EXTRA_LOADER_ID);
 
 		// Initiate the loaders
-		getLoaderManager().initLoader(loaderId, savedInstanceState, this);
+		getLoaderManager().initLoader(loaderId, mLoaderArgs, this);
 	}
 
 	@Override

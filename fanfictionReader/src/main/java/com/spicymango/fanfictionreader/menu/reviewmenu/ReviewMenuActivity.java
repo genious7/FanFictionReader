@@ -115,7 +115,7 @@ public class ReviewMenuActivity extends AppCompatActivity{
 					break;
 			}
 
-			getLoaderManager().initLoader(0, savedInstanceState, this);
+			getLoaderManager().initLoader(0, mLoaderArgs, this);
 		}
 
 		@Override

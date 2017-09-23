@@ -229,10 +229,10 @@ public class BrowseMenuActivity extends AppCompatActivity {
 
 			if (mToggle == null) {
 				mActiveLoaderId = 0;
-				getLoaderManager().initLoader(0, savedInstanceState, this);
+				getLoaderManager().initLoader(0, mLoaderArgs, this);
 			} else {
 				mActiveLoaderId = mToggle.isChecked() ? 1 : 0;
-				getLoaderManager().initLoader(mActiveLoaderId, savedInstanceState, this);
+				getLoaderManager().initLoader(mActiveLoaderId, mLoaderArgs, this);
 			}
 		}
 
