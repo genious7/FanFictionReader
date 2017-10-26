@@ -14,7 +14,6 @@ import com.spicymango.fanfictionreader.menu.BaseLoader;
 import com.spicymango.fanfictionreader.menu.storymenu.FilterDialog.FilterDialog;
 import com.spicymango.fanfictionreader.menu.storymenu.FilterDialog.SpinnerData;
 import com.spicymango.fanfictionreader.provider.SqlConstants;
-import com.spicymango.fanfictionreader.util.Result;
 
 import java.text.Collator;
 import java.util.ArrayList;
@@ -141,7 +140,7 @@ class LibraryLoader extends CursorLoader implements SqlConstants, BaseLoader.Fil
 		mFilterData = new ArrayList<>();
 
 		// Filter by fandom
-		mFilterData.add(new SpinnerData(KEY_CATEGORY, new ArrayList<String>(), new ArrayList<String>(), 0));
+		mFilterData.add(new SpinnerData(KEY_CATEGORY, new ArrayList<>(), new ArrayList<>(), 0));
 
 		// Filter by sort order
 		final String[] sortByLabel = getContext().getResources().getStringArray(R.array.menu_library_sort_by);

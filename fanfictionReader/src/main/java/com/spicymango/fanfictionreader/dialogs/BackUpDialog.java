@@ -247,8 +247,7 @@ public class BackUpDialog extends DialogFragment {
 					// Recursively zip directories
 					zipDir(zos, file, buffer, parent + '/' + file.getName());
 				} else {
-					final FileInputStream in = new FileInputStream(file);
-					try {
+					try (FileInputStream in = new FileInputStream(file)) {
 						final ZipEntry entry = new ZipEntry(parent + '/' + file.getName());
 						zos.putNextEntry(entry);
 
@@ -264,8 +263,6 @@ public class BackUpDialog extends DialogFragment {
 						publishProgress(mZippedFiles);
 					} catch (IOException e) {
 						throw new IOException(e.getMessage());
-					} finally {
-						in.close();
 					}
 				}
 			}

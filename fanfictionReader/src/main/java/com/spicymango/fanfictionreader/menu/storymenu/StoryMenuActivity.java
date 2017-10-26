@@ -10,7 +10,6 @@ import com.spicymango.fanfictionreader.activity.Site;
 import com.spicymango.fanfictionreader.activity.reader.StoryDisplayActivity;
 import com.spicymango.fanfictionreader.dialogs.DetailDialog;
 import com.spicymango.fanfictionreader.menu.BaseFragment;
-import com.spicymango.fanfictionreader.menu.BaseLoader;
 import com.spicymango.fanfictionreader.menu.BaseLoader.Filterable;
 import com.spicymango.fanfictionreader.menu.storymenu.StoryMenuLoaders.*;
 import com.spicymango.fanfictionreader.menu.storymenu.FilterDialog.FilterDialog.FilterListener;
@@ -27,10 +26,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
 
 public class StoryMenuActivity extends AppCompatActivity implements FilterListener {
@@ -140,12 +135,7 @@ public class StoryMenuActivity extends AppCompatActivity implements FilterListen
 			case URI_AO3_NORMAL_MENU:
 				setTitle(R.string.menu_navigation_title_regular);
 				subTitle = uri.getPathSegments().get(1);
-				mLoaderAdapter = new LoaderAdapter<Story>() {
-					@Override
-					public BaseLoader<Story> getNewLoader(Bundle args) {
-						return new AO3RegularStoryLoader(getActivity(), args, uri);
-					}
-				};
+				mLoaderAdapter = args -> new AO3RegularStoryLoader(getActivity(), args, uri);
 				break;
 			case URI_AO3_COLLECTION_MENU:
 				setTitle(R.string.menu_navigation_title_community);
@@ -154,76 +144,31 @@ public class StoryMenuActivity extends AppCompatActivity implements FilterListen
 			case URI_FF_NORMAL_MENU:
 				setTitle(R.string.menu_navigation_title_regular);
 				subTitle = uri.getLastPathSegment();
-				mLoaderAdapter = new LoaderAdapter<Story>() {
-					@Override
-					public BaseLoader<Story> getNewLoader(Bundle args) {
-						return new FFRegularStoryLoader(getActivity(), args, uri);
-					}
-				};
-				mListView.setOnItemClickListener(new OnItemClickListener() {
-					@Override
-					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-						StoryDisplayActivity.openStory(getActivity(), id, Site.FANFICTION, true);
-					}
-				});
+				mLoaderAdapter = args -> new FFRegularStoryLoader(getActivity(), args, uri);
+				mListView.setOnItemClickListener((parent, view, position, id) -> StoryDisplayActivity.openStory(getActivity(), id, Site.FANFICTION, true));
 				break;
 			case URI_FF_CROSSOVER_MENU:
 				setTitle(R.string.menu_navigation_title_crossover);
 				subTitle = uri.getPathSegments().get(0);
-				mLoaderAdapter = new LoaderAdapter<Story>() {
-					@Override
-					public BaseLoader<Story> getNewLoader(Bundle args) {
-						return new FFRegularStoryLoader(getActivity(), args, uri);
-					}
-				};
-				mListView.setOnItemClickListener(new OnItemClickListener() {
-					@Override
-					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-						StoryDisplayActivity.openStory(getActivity(), id, Site.FANFICTION, true);
-					}
-				});
+				mLoaderAdapter = args -> new FFRegularStoryLoader(getActivity(), args, uri);
+				mListView.setOnItemClickListener((parent, view, position, id) -> StoryDisplayActivity.openStory(getActivity(), id, Site.FANFICTION, true));
 				break;
 			case URI_FF_JUST_IN_MENU:
 				setTitle(R.string.menu_story_title_just_in);
 				subTitle = "";
-				mLoaderAdapter = new LoaderAdapter<Story>() {
-					@Override
-					public BaseLoader<Story> getNewLoader(Bundle args) {
-						return new FFJustInStoryLoader(getActivity(), args, uri);
-					}
-				};
-				mListView.setOnItemClickListener(new OnItemClickListener() {
-					@Override
-					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-						StoryDisplayActivity.openStory(getActivity(), id, Site.FANFICTION, true);
-					}
-				});
+				mLoaderAdapter = args -> new FFJustInStoryLoader(getActivity(), args, uri);
+				mListView.setOnItemClickListener((parent, view, position, id) -> StoryDisplayActivity.openStory(getActivity(), id, Site.FANFICTION, true));
 				break;
 			case URI_FF_COMMUNITY_MENU:
 				setTitle(R.string.menu_navigation_title_community);
 				subTitle = uri.getPathSegments().get(1).replace('-', ' ');
-				mLoaderAdapter = new LoaderAdapter<Story>() {
-					@Override
-					public BaseLoader<Story> getNewLoader(Bundle args) {
-						return new FFCommunityStoryLoader(getActivity(), args, uri);
-					}
-				};
-				mListView.setOnItemClickListener(new OnItemClickListener() {
-					@Override
-					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-						StoryDisplayActivity.openStory(getActivity(), id, Site.FANFICTION, true);
-					}
-				});
+				mLoaderAdapter = args -> new FFCommunityStoryLoader(getActivity(), args, uri);
+				mListView.setOnItemClickListener((parent, view, position, id) -> StoryDisplayActivity.openStory(getActivity(), id, Site.FANFICTION, true));
 				break;
 			case URI_FP_NORMAL_MENU:
 				setTitle(R.string.menu_navigation_title_regular);
 				subTitle = uri.getLastPathSegment();
-				mLoaderAdapter = new LoaderAdapter<Story>() {
-					@Override
-					public BaseLoader<Story> getNewLoader(Bundle args) {
-						return new FPRegularStoryLoader(getActivity(), args, uri);
-					}
-				};
+				mLoaderAdapter = args -> new FPRegularStoryLoader(getActivity(), args, uri);
 				break;
 			case URI_FP_JUST_IN_MENU:
 				setTitle(R.string.menu_story_title_just_in);
@@ -237,12 +182,9 @@ public class StoryMenuActivity extends AppCompatActivity implements FilterListen
 				throw new IllegalArgumentException("The uri " + uri + " is invalid.");
 			}
 
-			mListView.setOnItemLongClickListener(new OnItemLongClickListener() {
-				@Override
-				public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-					DetailDialog.show(getActivity(), (Story) parent.getItemAtPosition(position));
-					return true;
-				}
+			mListView.setOnItemLongClickListener((parent, view, position, id) -> {
+				DetailDialog.show(getActivity(), (Story) parent.getItemAtPosition(position));
+				return true;
 			});
 			setSubTitle(WordUtils.capitalize(subTitle));
 			getLoaderManager().initLoader(0, mLoaderArgs, this);

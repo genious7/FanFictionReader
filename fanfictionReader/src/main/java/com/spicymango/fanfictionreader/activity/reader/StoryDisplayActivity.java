@@ -19,7 +19,6 @@ import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -327,12 +326,9 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 			Chapters[i] = getResources().getString(R.string.read_story_chapter)
 					+ (i + 1);
 		}
-		builder.setItems(Chapters, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				if (mCurrentPage != which + 1) {
-					load(which + 1);
-				}
+		builder.setItems(Chapters, (dialog, which) -> {
+			if (mCurrentPage != which + 1) {
+				load(which + 1);
 			}
 		});
 		builder.create();
@@ -470,7 +466,7 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 		setSupportActionBar(mToolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-		mList = new ArrayList<Spanned>();
+		mList = new ArrayList<>();
 		mListView = (ListView) findViewById(android.R.id.list);
 		mListView.setKeepScreenOn(Settings.isWakeLockEnabled(this));
 		View footer = getLayoutInflater().inflate(R.layout.footer_read_story, null);
@@ -698,10 +694,9 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 
 		@Override
 		protected Cursor getFromDatabase(long storyId) {
-			Cursor c = getContext().getContentResolver().query(StoryProvider.FF_CONTENT_URI, null,
-			SqlConstants.KEY_STORY_ID + " = ?",
-			new String[] {Long.toString(storyId)}, null);
-			return c;
+			return getContext().getContentResolver().query(StoryProvider.FF_CONTENT_URI, null,
+														   SqlConstants.KEY_STORY_ID + " = ?",
+														   new String[] {Long.toString(storyId)}, null);
 		}
 	}
 }

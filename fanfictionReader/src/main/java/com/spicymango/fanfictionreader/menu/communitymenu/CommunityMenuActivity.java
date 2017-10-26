@@ -7,7 +7,6 @@ import org.apache.commons.lang3.text.WordUtils;
 import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.Settings;
 import com.spicymango.fanfictionreader.menu.BaseFragment;
-import com.spicymango.fanfictionreader.menu.BaseLoader;
 import com.spicymango.fanfictionreader.menu.communitymenu.CommunityMenuLoaders.*;
 import com.spicymango.fanfictionreader.menu.storymenu.StoryMenuActivity;
 import com.spicymango.fanfictionreader.util.Sites;
@@ -24,9 +23,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 
 public class CommunityMenuActivity extends AppCompatActivity {
@@ -85,22 +81,12 @@ public class CommunityMenuActivity extends AppCompatActivity {
 
 			switch (site) {
 			case FANFICTION_COMMUNITY:
-				mLoaderAdapter = new LoaderAdapter<CommunityMenuItem>() {
-					@Override
-					public BaseLoader<CommunityMenuItem> getNewLoader(Bundle args) {
-						return new FanFictionCommunityLoader(getActivity(), args, uri);
-					}
-				};
+				mLoaderAdapter = args -> new FanFictionCommunityLoader(getActivity(), args, uri);
 				setTitle(R.string.menu_button_communities);
 				setSubTitle(WordUtils.capitalize(uri.getLastPathSegment()));
 				break;
 			case FICTIONPRESS_COMMUNITY:
-				mLoaderAdapter = new LoaderAdapter<CommunityMenuItem>() {
-					@Override
-					public BaseLoader<CommunityMenuItem> getNewLoader(Bundle args) {
-						return new FanFictionCommunityLoader(getActivity(), args, uri);
-					}
-				};
+				mLoaderAdapter = args -> new FanFictionCommunityLoader(getActivity(), args, uri);
 				setTitle(R.string.menu_button_communities);
 				setSubTitle(WordUtils.capitalize(uri.getLastPathSegment()));
 				break;
@@ -111,13 +97,10 @@ public class CommunityMenuActivity extends AppCompatActivity {
 				throw new IllegalStateException("CommunityMenuActivity: Invalid Uri" + uri);
 			}
 			
-			mListView.setOnItemClickListener(new OnItemClickListener() {
-				@Override
-				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-					final Intent i = new Intent(getActivity(), StoryMenuActivity.class);
-					i.setData(getItem(position).uri);
-					startActivity(i);
-				}
+			mListView.setOnItemClickListener((parent, view, position, id) -> {
+				final Intent i = new Intent(getActivity(), StoryMenuActivity.class);
+				i.setData(getItem(position).uri);
+				startActivity(i);
 			});
 
 			getLoaderManager().initLoader(0, mLoaderArgs, this);

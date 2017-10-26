@@ -29,7 +29,6 @@ import com.spicymango.fanfictionreader.util.adapters.StoryReducedAdapter;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.net.Uri.Builder;
@@ -165,35 +164,32 @@ public class AccountActivity extends TabActivity {
 				diag.setTitle(R.string.dialog_remove);
 				diag.setMessage(R.string.dialog_remove_text);
 				diag.setPositiveButton(android.R.string.yes,
-						new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog,	int which) {
-								
-								HashMap<String, String> data = new HashMap<String, String>();
-								data.put("rstoryid[]", Long.toString(id));
-								data.put("action", "remove");
-								data.put("sort", "adate");
+									   (dialog, which) -> {
 
-								Uri.Builder uri = new Uri.Builder();
-								uri.scheme(getString(R.string.fanfiction_scheme));
-								uri.authority(getString(R.string.fanfiction_authority));
-								uri.appendEncodedPath("m");
+										   HashMap<String, String> data = new HashMap<>();
+										   data.put("rstoryid[]", Long.toString(id));
+										   data.put("action", "remove");
+										   data.put("sort", "adate");
 
-								if (mLoader instanceof FavoriteLoader) {
-									uri.appendEncodedPath("f_story.php");
-								} else {
-									uri.appendEncodedPath("a_story.php");
-								}
+										   Builder uri = new Builder();
+										   uri.scheme(getString(R.string.fanfiction_scheme));
+										   uri.authority(getString(R.string.fanfiction_authority));
+										   uri.appendEncodedPath("m");
 
-								new AsyncPost(getActivity(),
-										R.string.toast_removed, data, uri
-												.build(), Method.POST)
-										.execute();
-								
-								mList.remove(position);	
-								mAdapter.notifyDataSetChanged();
-							}
-				});
+										   if (mLoader instanceof FavoriteLoader) {
+											   uri.appendEncodedPath("f_story.php");
+										   } else {
+											   uri.appendEncodedPath("a_story.php");
+										   }
+
+										   new AsyncPost(getActivity(),
+														 R.string.toast_removed, data, uri
+																 .build(), Method.POST)
+												   .execute();
+
+										   mList.remove(position);
+										   mAdapter.notifyDataSetChanged();
+									   });
 				diag.setNegativeButton(android.R.string.no, null);
 				diag.show();
 
