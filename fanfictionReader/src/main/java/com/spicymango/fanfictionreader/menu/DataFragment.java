@@ -68,12 +68,11 @@ public final class DataFragment extends Fragment {
 		if (savedInstanceState != null && savedInstanceState.containsKey(KEY_FLAG)) {
 			// Read the cache file
 			final Parcel bundledParcel = Parcel.obtain();
-			FileInputStream fin = null;
 
-			try {
-				// The cache file may not exist if an error occurred while saving the file
-				if (mCacheFile.exists()) {
-					fin = new FileInputStream(mCacheFile);
+			// The cache file may not exist if an error occurred while saving the file
+			if (mCacheFile.exists()) {
+				try (FileInputStream fin = new FileInputStream(mCacheFile)) {
+
 					byte[] buffer = new byte[(int) fin.getChannel().size()];
 					fin.read(buffer, 0, buffer.length);
 					fin.close();
@@ -81,17 +80,11 @@ public final class DataFragment extends Fragment {
 					bundledParcel.unmarshall(buffer, 0, buffer.length);
 					bundledParcel.setDataPosition(0);
 					mSavedData = bundledParcel.readBundle(getClass().getClassLoader());
-				}
-			} catch (IOException e) {
-				Crashlytics.logException(e);
-			} finally {
-				bundledParcel.recycle();
 
-				// Close the FileInputStream. No try-with-resources below api 19.
-				if (fin != null) {
-					try {
-						fin.close();
-					} catch (IOException e) {/**/}
+				} catch (IOException e) {
+					Crashlytics.logException(e);
+				} finally {
+					bundledParcel.recycle();
 				}
 			}
 		}
@@ -115,12 +108,9 @@ public final class DataFragment extends Fragment {
 				!getActivity().isChangingConfigurations()) {
 
 			// Write the cache file
-			FileOutputStream fos = null;
 			final Parcel bundledParcel = Parcel.obtain();
 
-			try {
-				fos = new FileOutputStream(mCacheFile);
-
+			try (FileOutputStream fos = new FileOutputStream(mCacheFile);){
 				// Convert the bundle to a parcel and save it on the cache file
 				mSavedData.writeToParcel(bundledParcel, 0);
 				fos.write(bundledParcel.marshall());
@@ -133,13 +123,6 @@ public final class DataFragment extends Fragment {
 				Crashlytics.logException(e);
 			} finally {
 				bundledParcel.recycle();
-
-				// Close the FileOutputStream. No try-with-resources below api 19.
-				if (fos != null) {
-					try {
-						fos.close();
-					} catch (IOException e) {/**/}
-				}
 			}
 		}
 
