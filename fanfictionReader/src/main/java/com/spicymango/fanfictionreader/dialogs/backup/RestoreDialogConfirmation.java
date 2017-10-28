@@ -1,6 +1,7 @@
-package com.spicymango.fanfictionreader.dialogs;
+package com.spicymango.fanfictionreader.dialogs.backup;
 
 import com.spicymango.fanfictionreader.R;
+import com.spicymango.fanfictionreader.dialogs.backup.RestoreDialog;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
