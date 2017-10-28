@@ -1,4 +1,4 @@
-package com.spicymango.fanfictionreader.dialogs;
+package com.spicymango.fanfictionreader.dialogs.backup;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -36,6 +37,7 @@ public class RestoreDialog extends DialogFragment {
 
 	private ProgressBar bar;
 
+	@NonNull
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		setCancelable(false);
@@ -85,7 +87,7 @@ public class RestoreDialog extends DialogFragment {
 	}
 
 	@Override
-	public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 		switch (requestCode) {
 			case PERMISSION_READ:
 				// Regardless of the result, start the restore. If the user has granted permissions,
@@ -130,7 +132,7 @@ public class RestoreDialog extends DialogFragment {
 
 		private final boolean saveOnInternal;
 
-		public RestoreTask(FragmentActivity activity) {
+		RestoreTask(FragmentActivity activity) {
 			super(activity);
 
 			// Set up directories
@@ -283,10 +285,10 @@ public class RestoreDialog extends DialogFragment {
 				while ((length = is.read(buf, 0, buf.length)) >= 0) {
 					fos.write(buf, 0, length);
 				}
-			} catch (FileNotFoundException e) {
+			} catch (FileNotFoundException ignored) {
 
-			} catch (IOException ioex) {
-				ioex.printStackTrace();
+			} catch (IOException IOException) {
+				IOException.printStackTrace();
 			} finally {
 				if (fos != null) {
 					fos.close();

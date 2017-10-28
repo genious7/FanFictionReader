@@ -1,4 +1,4 @@
-package com.spicymango.fanfictionreader.dialogs;
+package com.spicymango.fanfictionreader.dialogs.backup;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,9 +15,11 @@ import com.slezica.tools.async.TaskManagerFragment;
 import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.util.FileHandler;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.media.MediaScannerConnection;
 import android.os.Bundle;
 import android.os.Environment;
@@ -26,19 +28,34 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+/**
+ * A dialog that backs up all the application data files into a zip file.
+ * <p>
+ *     If necessary, the dialog will request for the WRITE_EXTERNAL_STORAGE permission.
+ * </p>
+ */
 public class BackUpDialog extends DialogFragment {
+	private static final String STATE_REQUEST_PERMISSION = "STATE_Request_permission";
+
 	/** The backup file path. For the moment, the file must be in the root*/
 	public static final String FILENAME = "FanFiction_backup.bak";
 
 	/** The progress bar in the back up dialog*/
 	private ProgressBar mBar;
-	
+
+	/**
+	 * True if the app should request for the permission, false if it has already been requested.
+	 */
+	private boolean requestPermission;
+
 	@Override
 	@NonNull
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
+		// Once the backup process starts, it cannot be interrupted.
 		setCancelable(false);
 
 		// Add a progress bar to the dialog
@@ -46,7 +63,7 @@ public class BackUpDialog extends DialogFragment {
 		mBar.setId(android.R.id.progress);
 
 		// Create the dialog
-		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 		builder.setTitle(R.string.diag_back_up);
 		builder.setView(mBar);
 
@@ -56,31 +73,57 @@ public class BackUpDialog extends DialogFragment {
 			builder.setMessage(R.string.diag_back_up_internal);
 		}
 
+		requestPermission = savedInstanceState == null || savedInstanceState.getBoolean(STATE_REQUEST_PERMISSION, true);
+
 		return builder.create();
 	}
 
-	public static boolean isSdCardWritable(Context context){
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		outState.putBoolean(STATE_REQUEST_PERMISSION, requestPermission);
+		super.onSaveInstanceState(outState);
+	}
+
+	private static boolean isSdCardWritable(Context context){
 
 		if (FileHandler.isExternalStorageWritable(context)) {
 			// User has an sd card with write permissions
 			int currentApiVersion = android.os.Build.VERSION.SDK_INT;
-			if (currentApiVersion >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-				// Lollipop does not allow for sd card access without using the ACTION_OPEN_DOCUMENT_TREE,
-				// even though the sd card permission is set.
-				return false;
-			} else {
-				// Other android versions do not require the permission
-				return true;
-			}
+			// Lollipop does not allow for sd card access without using the ACTION_OPEN_DOCUMENT_TREE,
+			// even though the sd card permission is set.
+			return currentApiVersion < android.os.Build.VERSION_CODES.LOLLIPOP;
 		} else {
 			return false;
 		}
 	}
-		
-	@Override
-	public void onStart() {
-		super.onStart();
 
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		// In order to save the backup, the storage permission is required.
+		final int storagePermissionState = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+		boolean hasStoragePermission = storagePermissionState == PackageManager.PERMISSION_GRANTED;
+
+		if (hasStoragePermission) {
+			// If the storage permission is available, start the backup task
+			startBackUpTask();
+		} else if (requestPermission){
+			// If the storage permission is not available and the app has not requested it
+			// in the current session, request for the permission
+			requestPermission = false;
+			requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+							   0);
+		} else{
+			// If the storage permission is not available and the application already requested for
+			// the permission, the user must have denied it. Dismiss the dialog with an error
+			// message.
+			dismiss();
+			Toast.makeText(getContext(),R.string.error_permission_denied, Toast.LENGTH_SHORT).show();
+		}
+	}
+
+	private void startBackUpTask(){
 		// Start the managed async task if it has not been started already.
 		Fragment manager = getFragmentManager().findFragmentByTag(TaskManagerFragment.DEFAULT_TAG);
 		if (manager == null) {
@@ -98,12 +141,12 @@ public class BackUpDialog extends DialogFragment {
 		private final File app_internal[], output;
 
 		private final ArrayList<File> appFiles;
-		
-		public BackUpTask(FragmentActivity activity) {
+
+		BackUpTask(FragmentActivity activity) {
 			super(activity);
 			String s = activity.getApplicationInfo().dataDir;
 			app_internal = new File(s).listFiles(new FilesDirFilter());
-			
+
 			appFiles = new ArrayList<>(3);
 
 			// Get the path of all the app files in both the sd card, the emulated memory, and the
@@ -141,7 +184,7 @@ public class BackUpDialog extends DialogFragment {
 			for (File f : app_internal) {
 				mTotalFiles += countFiles(f);
 			}
-			
+
 			//Count all story files
 			for (File f : appFiles) {
 				mTotalFiles += countFiles(f);
@@ -163,11 +206,11 @@ public class BackUpDialog extends DialogFragment {
 				for (File f : app_internal) {
 					zipDir(zos, f, buffer, f.getName());
 				}
-				
+
 				for (File f : appFiles) {
 					zipDir(zos, f, buffer, f.getName());
 				}
-				
+
 			} catch (IOException e) {
 				Crashlytics.logException(e);
 				result = R.string.error_unknown;
@@ -209,25 +252,25 @@ public class BackUpDialog extends DialogFragment {
 
 			FragmentManager manager = getActivity().getSupportFragmentManager();
 
-			DialogFragment diag = (DialogFragment) manager
+			DialogFragment dialog = (DialogFragment) manager
 					.findFragmentByTag(BackUpDialog.class.getName());
-			
-			diag.dismiss();
-			
+
+			dialog.dismiss();
+
 			manager.beginTransaction()
 					.remove(manager
 							.findFragmentByTag(TaskManagerFragment.DEFAULT_TAG))
 					.commit();
-			
+
 		}
-		
+
 		/**
 		 * Zips all the files and folders present in the supplied directory
 		 * @param zos The zipOutputStream
 		 * @param dir The parent directory
-		 * @param buffer A buffer for the zipping proccess
+		 * @param buffer A buffer for the zipping process
 		 * @param parent The name of the parent path
-		 * @throws IOException
+		 * @throws IOException If an error occurs while writing the backup file
 		 */
 		private void zipDir(ZipOutputStream zos, File dir, byte[] buffer, String parent) throws IOException{
 
@@ -267,7 +310,7 @@ public class BackUpDialog extends DialogFragment {
 				}
 			}
 		}
-	
+
 		/**
 		 * Counts how many files are contained in a folder
 		 * @param folder The parent folder
@@ -276,9 +319,9 @@ public class BackUpDialog extends DialogFragment {
 		private static int countFiles(File folder){
 			int count = 0;
 			File[] files = folder.listFiles();
-			
+
 			if (files == null) return 0;
-			
+
 			for (File file : files) {
 				if (file.isDirectory()) {
 					count += countFiles(file);
@@ -288,11 +331,11 @@ public class BackUpDialog extends DialogFragment {
 			}
 			return count;
 		}
-	
+
 		/**
 		 * A simple file filter that separates saved files from the database and
 		 * the settings.
-		 * 
+		 *
 		 * @author Michael Chen
 		 */
 		private final static class FilesDirFilter implements FilenameFilter{
@@ -301,5 +344,5 @@ public class BackUpDialog extends DialogFragment {
 				return !filename.equalsIgnoreCase("Files");
 			}
 		}
-	}	
+	}
 }

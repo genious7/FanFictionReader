@@ -1,9 +1,9 @@
 package com.spicymango.fanfictionreader;
 
-import com.spicymango.fanfictionreader.dialogs.BackUpDialog;
+import com.spicymango.fanfictionreader.dialogs.backup.BackUpDialog;
 import com.spicymango.fanfictionreader.dialogs.FontDialog;
-import com.spicymango.fanfictionreader.dialogs.RestoreDialog;
-import com.spicymango.fanfictionreader.dialogs.RestoreDialogConfirmation;
+import com.spicymango.fanfictionreader.dialogs.backup.RestoreDialog;
+import com.spicymango.fanfictionreader.dialogs.backup.RestoreDialogConfirmation;
 import com.spicymango.fanfictionreader.util.FileHandler;
 
 import android.app.Activity;
@@ -17,7 +17,6 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
@@ -70,6 +69,7 @@ public class Settings extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		Settings.setOrientationAndTheme(this);
 		super.onCreate(savedInstanceState);
+		assert getSupportActionBar() != null;
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		if (savedInstanceState == null) {
@@ -79,7 +79,6 @@ public class Settings extends AppCompatActivity {
 	}
 
 	public static class PrefsFragment extends PreferenceFragment implements OnPreferenceChangeListener, OnPreferenceClickListener{
-		private final static String CREATE_DIALOG = "CreateDialog";
 
 		@Override
 		public void onCreate(Bundle paramBundle) {
@@ -87,42 +86,35 @@ public class Settings extends AppCompatActivity {
 			addPreferencesFromResource(R.xml.preferences);
 
 			// Check if the orientation setting changes in order to update the activity orientation
-			Preference orientationPref = findPreference(getString(R.string.pref_key_orientation));
+			final Preference orientationPref = findPreference(getString(R.string.pref_key_orientation));
 			orientationPref.setOnPreferenceChangeListener(this);
 
 			// Only display the save location setting if there is an external storage available
 			final boolean isSdCardAvailable = FileHandler.isExternalStorageWritable(getActivity());
-			Preference installLocation = findPreference(getString(R.string.pref_key_loc));
+			final Preference installLocation = findPreference(getString(R.string.pref_key_loc));
 			installLocation.setEnabled(isSdCardAvailable);
 			installLocation.setOnPreferenceChangeListener(this);
 
 			// Check if the theme is changed in order to recreate the activity
-			Preference themeChanged = findPreference(getString(R.string.pref_key_theme));
+			final Preference themeChanged = findPreference(getString(R.string.pref_key_theme));
 			themeChanged.setOnPreferenceChangeListener(this);
 
 			// Check if the locale is changed in order to recreate the activity
-			Preference localeChanged = findPreference(getString(R.string.pref_key_locale));
+			final Preference localeChanged = findPreference(getString(R.string.pref_key_locale));
 			localeChanged.setOnPreferenceChangeListener(this);
 
 			// Check if the backup button is clicked
-			Preference backup = findPreference(getString(R.string.pref_key_back_up));
+			final Preference backup = findPreference(getString(R.string.pref_key_back_up));
 			backup.setOnPreferenceClickListener(this);
 
 			// Check if the restore button is clicked
-			Preference restore = findPreference(getString(R.string.pref_key_restore));
+			final Preference restore = findPreference(getString(R.string.pref_key_restore));
 			restore.setEnabled(RestoreDialog.findBackUpFile(getActivity()) != null);
 			restore.setOnPreferenceClickListener(this);
 
 			// Check if the font button is clicked
-			Preference fontDiag = findPreference(getString(R.string.pref_key_text_size));
-			fontDiag.setOnPreferenceClickListener(this);
-
-			if (getActivity().getIntent().getBooleanExtra(CREATE_DIALOG, false)) {
-				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-				builder.setMessage(R.string.diag_theme_warning);
-				builder.setPositiveButton(android.R.string.ok, (dialog, which) -> dialog.dismiss());
-				builder.show();
-			}
+			final Preference fontDialog = findPreference(getString(R.string.pref_key_text_size));
+			fontDialog.setOnPreferenceClickListener(this);
 		}
 
 		@Override
@@ -130,7 +122,7 @@ public class Settings extends AppCompatActivity {
 			switch (preference.getKey()) {
 				case "Application Orientation":
 					// If the requested orientation changes, update the orientation
-					String value = (String) newValue;
+					final String value = (String) newValue;
 					switch (value){
 						case "A":
 							getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
@@ -150,21 +142,17 @@ public class Settings extends AppCompatActivity {
 				case "Application Theme":
 					// Saves the preference, then reopens the settings file if
 					// the new value is different.
-					String currentValue = preference.getSharedPreferences()
+					final String currentValue = preference.getSharedPreferences()
 							.getString(getString(R.string.pref_key_theme), "D");
 
 					if (currentValue.equals(newValue)) {
 						return false;
 					} else {
-						Editor editor = preference.getEditor();
+						final Editor editor = preference.getEditor();
 						editor.putString(preference.getKey(), (String) newValue);
 						editor.commit();
 
-						Intent i = getActivity().getIntent();
-						//Display imperfect theme dialog.
-						if (newValue.equals("DD")) {
-							i.putExtra(CREATE_DIALOG, true);
-						}
+						final Intent i = getActivity().getIntent();
 						getActivity().finish();
 						startActivity(i);
 						return false;
@@ -172,17 +160,17 @@ public class Settings extends AppCompatActivity {
 				case "Locale":
 					// Save the preference. If the selected locale is different from the current
 					// one, recreate the activity
-					String currentLocale = preference.getSharedPreferences()
+					final String currentLocale = preference.getSharedPreferences()
 							.getString(getString(R.string.pref_key_locale), "auto");
 
 					if (currentLocale.equals(newValue)) {
 						return false;
 					} else {
-						Editor editor = preference.getEditor();
+						final Editor editor = preference.getEditor();
 						editor.putString(preference.getKey(), (String) newValue);
 						editor.commit();
 
-						Intent i = getActivity().getIntent();
+						final Intent i = getActivity().getIntent();
 						getActivity().finish();
 						startActivity(i);
 						return false;
@@ -193,24 +181,24 @@ public class Settings extends AppCompatActivity {
 		}
 
 		private void showMoveDialog() {
-			AlertDialog.Builder diag = new Builder(getActivity());
-			diag.setTitle(R.string.pref_loc_diag_title);
-			diag.setMessage(R.string.pref_loc_diag);
-			diag.setNeutralButton(android.R.string.ok, null);
-			diag.show();
+			AlertDialog.Builder dialog = new Builder(getActivity());
+			dialog.setTitle(R.string.pref_loc_diag_title);
+			dialog.setMessage(R.string.pref_loc_diag);
+			dialog.setNeutralButton(android.R.string.ok, null);
+			dialog.show();
 		}
 
 		@Override
 		public boolean onPreferenceClick(Preference preference) {
 			if (preference.getKey().equals(getString(R.string.pref_key_back_up))) {
-				DialogFragment diag = new BackUpDialog();
-				diag.show(getFragmentManager(), diag.getClass().getName());
+				DialogFragment dialog = new BackUpDialog();
+				dialog.show(getFragmentManager(), dialog.getClass().getName());
 			}else if (preference.getKey().equals(getString(R.string.pref_key_restore))){
-				DialogFragment diag = new RestoreDialogConfirmation();
-				diag.show(getFragmentManager(), diag.getClass().getName());
+				DialogFragment dialog = new RestoreDialogConfirmation();
+				dialog.show(getFragmentManager(), dialog.getClass().getName());
 			}else if(preference.getKey().equals(getString(R.string.pref_key_text_size))){
-				DialogFragment diag = new FontDialog();
-				diag.show(getFragmentManager(), diag.getClass().getName());
+				DialogFragment dialog = new FontDialog();
+				dialog.show(getFragmentManager(), dialog.getClass().getName());
 			}
 			return false;
 		}
@@ -246,7 +234,7 @@ public class Settings extends AppCompatActivity {
 			textSize = TextSize.getSize(sharedPref.getString(context.getString(R.string.pref_key_text_size), ""));
 			Editor editor = sharedPref.edit();
 			editor.putInt(context.getString(R.string.pref_key_text_size), textSize);
-			editor.commit();
+			editor.apply();
 		}
 
 		return textSize;
