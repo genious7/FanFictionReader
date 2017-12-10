@@ -71,7 +71,7 @@ public class Story implements Parcelable, SqlConstants {
 		return builder.build();
 	}
 
-	public ContentValues toContentValues(int lastPage, int offset, Date added) {
+	public ContentValues toContentValues(int lastPage, int offset, Date added, Date lastRead) {
 		ContentValues v = new ContentValues();
 		v.put(KEY_STORY_ID, id);
 		v.put(KEY_TITLE, name);
