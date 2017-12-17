@@ -51,6 +51,11 @@ public final class DataFragment extends Fragment {
 		// the intent uri hashcode (to distinguish the Category and Sub-Category Menus and the
 		// .tmp extension to clearly mark the file as a temporary file.
 		final File cacheFolder = new File(getActivity().getCacheDir(), SAVED_INSTANCE_STATE_CACHE_PATH);
+		if (!cacheFolder.exists()) {
+			// If the directory does not exist, create it
+			cacheFolder.mkdir();
+		}
+
 		String filename = getActivity().getClass().getName();
 		final Uri uri = getActivity().getIntent().getData();
 		if (uri != null){
