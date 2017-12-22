@@ -7,8 +7,6 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
@@ -56,20 +54,11 @@ public class AuthorStoryFragment extends BaseFragment<Story> implements FilterDi
 		setHasOptionsMenu(true);
 
 		// Open the details menu when a story is long-pressed
-		mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-			@Override
-			public boolean onItemLongClick(AdapterView<?> parent, View view, int position,
-										   long id) {
-				DetailDialog.show(getActivity(), (Story) parent.getItemAtPosition(position));
-				return true;
-			}
+		mListView.setOnItemLongClickListener((parent, view, position, id) -> {
+			DetailDialog.show(getActivity(), (Story) parent.getItemAtPosition(position));
+			return true;
 		});
-		mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				StoryDisplayActivity.openStory(getActivity(), id, Site.FANFICTION, true);
-			}
-		});
+		mListView.setOnItemClickListener((parent, view, position, id) -> StoryDisplayActivity.openStory(getActivity(), id, Site.FANFICTION, true));
 
 
 		// Try to get the loader id
@@ -79,7 +68,7 @@ public class AuthorStoryFragment extends BaseFragment<Story> implements FilterDi
 		final int loaderId = arguments.getInt(EXTRA_LOADER_ID);
 
 		// Initiate the loaders
-		getLoaderManager().initLoader(loaderId, savedInstanceState, this);
+		getLoaderManager().initLoader(loaderId, mLoaderArgs, this);
 	}
 
 	@Override

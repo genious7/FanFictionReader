@@ -43,7 +43,7 @@ public class AsyncPost extends AsyncTask<Void, Void, Boolean> {
 		posMsg = positiveMsg;
 		this.method = method;
 		if (data == null) {
-			this.data = new HashMap<String, String>();
+			this.data = new HashMap<>();
 		}else{
 			this.data = data;
 		}		

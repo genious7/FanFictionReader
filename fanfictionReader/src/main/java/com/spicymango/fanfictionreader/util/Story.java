@@ -37,6 +37,8 @@ public class Story implements Parcelable, SqlConstants {
 	private final Date published;
 	private final List<String> characters;
 	private final int mReviews;
+	private final Date added;
+	private final Date lastRead;
 
 	public static Story fromCursor(Cursor cursor) {
 		Builder builder = new Builder();
@@ -63,10 +65,13 @@ public class Story implements Parcelable, SqlConstants {
 
 		builder.setReviews(cursor.getInt(19));
 
+		builder.setAdded(cursor.getLong(20));
+		builder.setLastRead(cursor.getLong(21));
+
 		return builder.build();
 	}
 
-	public ContentValues toContentValues(int lastPage, int offset) {
+	public ContentValues toContentValues(int lastPage, int offset, Date added, Date lastRead) {
 		ContentValues v = new ContentValues();
 		v.put(KEY_STORY_ID, id);
 		v.put(KEY_TITLE, name);
@@ -88,6 +93,8 @@ public class Story implements Parcelable, SqlConstants {
 		v.put(KEY_OFFSET, offset);
 		v.put(KEY_CHARACTERS,  TextUtils.join("\n",characters));
 		v.put(KEY_REVIEWS, mReviews);
+		v.put(KEY_ADDED, added.getTime());
+		v.put(KEY_LAST_READ, lastRead.getTime());
 		return v;
 	}
 
@@ -113,12 +120,15 @@ public class Story implements Parcelable, SqlConstants {
 	 * @param completed     True if the story has been completed, false otherwise
 	 * @param characters    The list of characters that are featured in the story
 	 * @param reviews       The number of reviews the story has
+	 * @param added			The date the story was added to the library
+	 * @param lastRead		The date that the story was last openend
 	 */
 	private Story(long id, String name, String author, long authorId, String summary,
 				  String category, String rating,
 				  String language, String genre, int chapterLength, int wordLength, int favorites,
 				  int follows, Date updated,
-				  Date published, boolean completed, List<String> characters, int reviews) {
+				  Date published, boolean completed, List<String> characters, int reviews,
+				  Date added, Date lastRead) {
 		this.id = id;
 		this.name = name;
 		this.author = author;
@@ -137,6 +147,8 @@ public class Story implements Parcelable, SqlConstants {
 		this.completed = completed;
 		this.characters = characters;
 		mReviews = reviews;
+		this.added = added;
+		this.lastRead = lastRead;
 	}
 
 	// --------------------------------------Parceling--------------------------------------------------
@@ -171,6 +183,8 @@ public class Story implements Parcelable, SqlConstants {
 		builder.setCharacters(characters);
 
 		builder.setReviews(in.readInt());
+		builder.setAdded(in.readLong());
+		builder.setLastRead(in.readLong());
 
 		return builder.build();
 	}
@@ -200,6 +214,8 @@ public class Story implements Parcelable, SqlConstants {
 		dest.writeByte((byte) (completed ? 1 : 0));
 		dest.writeStringList(characters);
 		dest.writeInt(mReviews);
+		dest.writeLong(added.getTime());
+		dest.writeLong(lastRead.getTime());
 	}
 
 	/**
@@ -356,6 +372,12 @@ public class Story implements Parcelable, SqlConstants {
 		return mReviews;
 	}
 
+	@NonNull
+	public Date getAdded() { return added; }
+
+	@NonNull
+	public Date getLastRead() { return lastRead; }
+
 	public final static class Builder {
 		private long id; // Story id, 7 digit number
 		private String name; // The name of the story
@@ -375,6 +397,8 @@ public class Story implements Parcelable, SqlConstants {
 		private Date published;
 		private List<String> characters;
 		private int reviews;
+		private Date added;
+		private Date lastRead;
 
 		private final static Pattern ATTRIBUTE_PATTERN = Pattern.compile("(?i)\\A"// At
 																				 // the
@@ -415,11 +439,13 @@ public class Story implements Parcelable, SqlConstants {
 			completed = false;
 			characters = new ArrayList<>();
 			reviews = 0;
+			lastRead = new Date(0);
+			added = new Date(0);
 		}
 
 		public Story build() {
 			return new Story(id, name, author, authorId, summary, category, rating, language, genre, chapterLength,
-							 wordLength, favorites, follows, updated, published, completed, characters, reviews);
+							 wordLength, favorites, follows, updated, published, completed, characters, reviews, added, lastRead);
 		}
 
 		public void setId(long id) {
@@ -505,6 +531,14 @@ public class Story implements Parcelable, SqlConstants {
 		public void setReviews(int reviews){
 			this.reviews = reviews;
 		}
+
+		public void setAdded(@NonNull Date added) { this.added = added; }
+
+		public void setAdded(long added) { this.added = new Date(added); }
+
+		public void setLastRead(@NonNull Date lastRead) { this.lastRead = lastRead; }
+
+		public void setLastRead(long lastRead) { this.lastRead = new Date(lastRead); }
 
 		public void setFanFicAttributes(@NonNull String attributes) {
 			Matcher match = ATTRIBUTE_PATTERN.matcher(attributes);

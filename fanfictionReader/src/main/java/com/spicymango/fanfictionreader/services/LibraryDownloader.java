@@ -11,11 +11,14 @@ import android.support.annotation.StringRes;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.spicymango.fanfictionreader.R;
+import com.spicymango.fanfictionreader.Settings;
 import com.spicymango.fanfictionreader.menu.librarymenu.LibraryMenuActivity;
+import com.spicymango.fanfictionreader.util.Story;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -25,33 +28,76 @@ import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Downloads a story into the library. Must pass the story id inside the intent.
+ * Downloads a story into the library. In order to use it, the story URI must be passed in the
+ * intent.
+ * <p>
+ * The class queues up every intent and downloads a single story at a time. Multiple simultaneous
+ * downloads have not been implemented since they could cause FanFiction.net to issue a temporary ip
+ * ban due to excessive connections from a single device.
+ * <p>
+ * This class displays two independent notifications. The first notification shows the progress when
+ * an individual story is being updated or downloaded. The second notification displays the lists of
+ * downloaded/updated stories during batch updates.
  *
  * @author Michael Chen
  */
 public class LibraryDownloader extends IntentService {
 	/**
-	 * Key for the offset desired
+	 * Key for the offset desired. This is used to pass the offset on an intent.
+	 * <p>
+	 * The offset (an optional parameter) ensures that the user's position along the story is saved
+	 * in the database whenever the user downloads a story.
 	 */
 	final static String EXTRA_OFFSET = "Offset";
 
 	/**
-	 * Key for the last chapter read.
+	 * Key for the last chapter read. This is used to pass the current chapter on an intent.
+	 * <p>
+	 * The offset (an optional parameter) ensures that the user's position along the story is saved
+	 * in the database whenever the user downloads a story.
 	 */
 	final static String EXTRA_LAST_PAGE = "Last page";
 
 	/**
-	 * ID for the notifications generated.
+	 * Key for an integrity check flag, which forces the downloader to scan for missing files.
 	 */
-	private final static int NOTIFICATION_ID = 0;
+	final static String EXTRA_INTEGRITY = "Integrity Check";
 
 	/**
-	 * The number of stories that have been checked for updates
+	 * IDs for the following notifications
+	 * <ul>
+	 *     <li>"Checking for updates"</li>
+	 *     <li>"Error Notifications"</li>
+	 *     <li>"Update Completed"</li>
+	 * </ul>
+	 */
+	private final static int NOTIFICATION_UPDATE_ID = 0;
+
+	/**
+	 * IDs for the following notifications
+	 * <ul>
+	 *     <li>"Downloading Story"</li>
+	 *     <li>"Downloading Chapter #/#"</li>
+	 *     <li>"Saving Story</li>
+	 * </ul>
+	 */
+	private final static int NOTIFICATION_DOWNLOAD_ID = 1;
+
+	/**
+	 * The number of stories that have been already been checked for updates. This variable is used
+	 * in order to derive the total number of stories queued, which is used to generate the progress
+	 * bar.
 	 */
 	private int currentProgress = 0;
 
 	/** Keeps track of errors*/
 	private boolean hasParsingError, hasConnectionError, hasIoError;
+
+	/**
+	 * Stores the time at which the update process began. This is used to calculate the time elapsed
+	 * displayed in the notification.
+	 */
+	private long updateStartTime;
 
 	/**
 	 * Counts how many more stories need to be parsed before the complete notification is
@@ -84,29 +130,56 @@ public class LibraryDownloader extends IntentService {
 		context.startService(i);
 	}
 
+	/**
+	 * Scans a story for missing chapters and downloads them as required.
+	 *
+	 * @param context     The current context
+	 * @param uri         The url that points to any chapter in the story
+	 * @param currentPage The reader's current page
+	 * @param offset      The reader's current scroll offset
+	 */
+	public static void integrityCheck(Context context, Uri uri, int currentPage, int offset) {
+		Intent i = new Intent(context, LibraryDownloader.class);
+		i.setData(uri);
+		i.putExtra(EXTRA_LAST_PAGE, currentPage);
+		i.putExtra(EXTRA_OFFSET, offset);
+		i.putExtra(EXTRA_INTEGRITY, true);
+		context.startService(i);
+	}
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
+
+		// Clear error flags when the service is initialized.
 		hasParsingError = false;
 		hasConnectionError = false;
 		hasIoError = false;
+
+		// An atomic integer is used to synchronize incoming requests (which occur on the main
+		// thread) with the website downloads, which occur asynchronously.
 		mStoryQueueLength = new AtomicInteger(0);
+
+		// The time at which the service starts.
+		updateStartTime = System.currentTimeMillis();
 	}
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		// Add the story to the queue of stories that need to be checked
+		// Add the story to the queue of stories that need to be checked for updates and increments
+		// the queue length by one.
 		mStoryQueueLength.incrementAndGet();
 		return super.onStartCommand(intent, flags, startId);
 	}
 
 	@Override
 	public void onDestroy() {
-		// By this point, the notification been shown should be the completetion notification.
+		// By this point, the notification been shown should be the completion notification.
 		// If not, something went wrong. Remove the notification in order to avoid leaving a
 		// non-cancelable notification.
 		if (mStoryQueueLength.get() != 0){
-			removeNotification();
+			removeNotification(NOTIFICATION_UPDATE_ID);
+			removeNotification(NOTIFICATION_DOWNLOAD_ID);
 		}
 		Log.d("LibraryDownloader", "Destroyed");
 
@@ -115,7 +188,9 @@ public class LibraryDownloader extends IntentService {
 
 	@Override
 	protected void onHandleIntent(Intent intent) {
-		// If there is a connection error, just end the service.
+		// If the connection error flag is true, a connection error occurred during the current
+		// execution of the service. It is reasonable to assume that further downloads will fail,
+		// which is why the service is cancelled.
 		if (hasConnectionError){
 			onUpdateComplete();
 			stopSelf();
@@ -123,11 +198,11 @@ public class LibraryDownloader extends IntentService {
 		}
 
 		// The total number of stories in this update sequence. This includes both queued and
-		// already checked (regardless of whether they were modified) stories.
+		// already checked (regardless of whether they were updated or not) stories.
 		final int totalNumberOfStories = currentProgress + mStoryQueueLength.get();
 
-		// Display the updating notification. If there is more than one story in total the
-		// notification should update the progress bar.
+		// Display the "Checking for updates" notification. If there is more than one story in the
+		// queue the notification should update the progress bar accordingly.
 		if (totalNumberOfStories > 0) {
 			showCheckingNotification(currentProgress, totalNumberOfStories);
 		} else {
@@ -135,9 +210,12 @@ public class LibraryDownloader extends IntentService {
 		}
 
 		currentProgress++;
+
+		// Attempt to download the story. Once done, remove the story from the queue.
 		mStoryQueueLength.decrementAndGet();
 		download(intent);
 
+		// If the queue is empty, display the final notification if appropriate.
 		if (mStoryQueueLength.get() == 0){
 			onUpdateComplete();
 		}
@@ -148,60 +226,75 @@ public class LibraryDownloader extends IntentService {
 	 * @param intent An intent with a valid uri
 	 */
 	private void download(Intent intent){
-		// Get the story uri
-		final DownloaderFactory.Downloader downloader = DownloaderFactory.getInstance(intent, LibraryDownloader.this);
+		// Determine the current chapter and the page offset from the intent. These values are used
+		// to save the user's location in the database. If not available, assume the user's location
+		// is at the beginning of the story.
+		final int currPage = intent.getIntExtra(EXTRA_LAST_PAGE, 1);
+		final int offset = intent.getIntExtra(EXTRA_OFFSET, 0);
 
-		// Get the story details
+		// Determine if a full integrity check of the story should be performed. An integrity check
+		// check for missing files and will download any missing chapters for a particular story.
+		final boolean integrityCheck = intent.getBooleanExtra(EXTRA_INTEGRITY, false);
+
+		// The uri, which contains the story site and id.
+		final Uri uri = intent.getData();
+
+		// The DownloaderFactory selects the downloader based on the url provided.
+		final DownloaderFactory.Downloader downloader = DownloaderFactory.getInstance(uri, LibraryDownloader.this);
+
+		// The story variable holds the story's attributes
+		final Story story;
+
+		// True if the story was updated, false otherwise. This is used to determine if the story's
+		// name should be added to the notification.
+		boolean updated = false;
+
 		try {
-			downloader.getStoryState();
-		} catch (IOException e) {
-			hasConnectionError = true;
-			return;
-		} catch (StoryNotFoundException e) {
-			return;
-		} catch (ParseException e) {
-			// Parsing errors should be logged
-			Crashlytics.logException(e);
-			hasParsingError = true;
-			return;
-		}
+			// First, the story details are obtained in order to determine if a new update is available.
+			story = downloader.getStoryState();
 
-		// If an update is required, begin the process
-		if (downloader.isUpdateNeeded()) {
-			final String storyTitle = downloader.getStoryTitle();
+			// The story title can be obtained from the story attributes
+			final String storyTitle = story.getName();
+			final long downloadStartTime = System.currentTimeMillis();
 
-			// Download each chapter, updating the notification as required
-			try {
+			if (integrityCheck){
+				// If an integrity check is requested, redownload all missing chapters
+				// Download each missing chapter, updating the notification as required
 				while (downloader.hasNextChapter()) {
-					showUpdateNotification(storyTitle, downloader.getCurrentChapter(), downloader.getTotalChapters());
+					showUpdateNotification(storyTitle, downloader.getCurrentChapter(), downloader.getTotalChapters(), downloadStartTime);
+					downloader.downloadIfMissing();
+				}
+			} else if (downloader.isUpdateNeeded()) {
+				// If an update is required, begin the process
+				// Download only new chapters if incremental updating is enabled.
+				if (Settings.isIncrementalUpdatingEnabled(this)){
+					downloader.EnableIncrementalUpdating();
+				}
+
+				// Download each chapter, updating the notification as required
+				while (downloader.hasNextChapter()) {
+					showUpdateNotification(storyTitle, downloader.getCurrentChapter(), downloader.getTotalChapters(), downloadStartTime);
 					downloader.downloadChapter();
 				}
-			} catch (StoryNotFoundException e) {
-				// Disregard missing stories
-				return;
-			} catch (IOException e) {
-				hasConnectionError = true;
-				return;
-			} catch (ParseException e) {
-				// Parsing errors should be logged
-				Crashlytics.logException(e);
-				hasParsingError = true;
-				return;
+				updated = true;
 			}
 
-			// Update the files and the sql database.
+			// The saveStory method is called regardless of whether an update was done or not since
+			// that will update the story attributes such as the number of followers, etc. The
+			// notification is only shown if an update took place. This try/catch is separate from
+			// the one below in order to distinguish internet connection errors from file IO errors.
 			try {
-				downloader.saveStory();
+				if (updated){
+					showSavingNotification(storyTitle, downloadStartTime);
+				}
 
-				// Upon success, add the title of the story to the list so that it is displayed
-				// in the complete notification
-				storiesUpdated.add(storyTitle);
-			} catch (IOException e) {
-				hasIoError = true;
-			}
-		} else {
-			try {
-				downloader.saveStory();
+				downloader.saveStory(currPage,offset);
+
+				// If updated, add the title of the story to the list so that it is displayed
+				// in the completed notification
+				if (updated){
+					storiesUpdated.add(storyTitle);
+				}
 			} catch (IOException e) {
 				// This shouldn't happen. Log the exception if it occurs
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
@@ -209,7 +302,28 @@ public class LibraryDownloader extends IntentService {
 				} else {
 					Crashlytics.logException(new Exception("Exception while saving sql parameters", e));
 				}
+
+				// If no updated were required, fail silently upon error since no significant
+				// changes were made. If an update was being performed but failed, set the error
+				// flag.
+				if (updated){
+					hasIoError = true;
+				}
 			}
+
+		} catch (IOException e) {
+			// If a connection error occurs, set the flag and cancel the download by returning.
+			hasConnectionError = true;
+		} catch (StoryNotFoundException e) {
+			// If the story is not found, exit without setting any flags. By not setting an error flag,
+			// notifications are avoided for deleted stories during batch updates.
+		} catch (ParseException e) {
+			// Parsing errors should be logged on Crashlytics for further analysis.
+			Crashlytics.logException(e);
+			hasParsingError = true;
+		} finally{
+			// Remove the notification after the download stage is completed
+			removeNotification(NOTIFICATION_DOWNLOAD_ID);
 		}
 	}
 
@@ -217,6 +331,10 @@ public class LibraryDownloader extends IntentService {
 	 * Selects the appropriate notification to display at the end of an update cycle.
 	 */
 	private void onUpdateComplete(){
+		// Since this method is only called when no further stories are being updated or downloaded,
+		// the download notification should be removed.
+		removeNotification(NOTIFICATION_DOWNLOAD_ID);
+
 		// Once every intent has been processed, display a "download complete" notification
 		// if a story was updated. If an error occurred, show an error notification. If nothing
 		// was done, remove the notification.
@@ -231,21 +349,23 @@ public class LibraryDownloader extends IntentService {
 			showErrorNotification(R.string.error_sd);
 		} else {
 			// The story did not require any updates; no changes were made.
-			removeNotification();
+			removeNotification(NOTIFICATION_UPDATE_ID);
 		}
 	}
 
 	/**
 	 * Removes the notification from the screen
+	 *
+	 * @param notificationId The id of the notification that needs to be removed.
 	 */
-	private void removeNotification() {
+	private void removeNotification(int notificationId) {
 		NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		manager.cancel(NOTIFICATION_ID);
+		manager.cancel(notificationId);
 	}
 
 	/**
 	 * When checking more than one story for updates, shows a progress bar displaying how many
-	 * stories have already been checked.
+	 * stories have already been checked along with the "Checking for Updates" message.
 	 *
 	 * @param currentStory The story whose progress is currently being checked
 	 * @param totalStories The total number of stories in the queue, including previously checked
@@ -253,14 +373,16 @@ public class LibraryDownloader extends IntentService {
 	 */
 	private void showCheckingNotification(int currentStory, int totalStories) {
 		// Calculate the percentage of stories checked
-		double percent = (((double) currentStory) / totalStories) * 100;
+		final double percent = (((double) currentStory) / totalStories) * 100;
 
 		// Create the notification
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(LibraryDownloader.this);
 		builder.setContentTitle(getString(R.string.downloader_checking_updates));
-		builder.setContentText(String.format(Locale.US, "%.2f", percent) + "%");
+		builder.setContentText(String.format(Locale.US, "%.2f%% (%d/%d)", percent, currentStory + 1, totalStories));
 		builder.setProgress(totalStories, currentStory, currentStory == totalStories);
-		builder.setSmallIcon(android.R.drawable.stat_sys_download);
+		builder.setWhen(updateStartTime);
+		builder.setUsesChronometer(true);
+		builder.setSmallIcon(android.R.drawable.ic_popup_sync);
 		builder.setAutoCancel(false);
 
 		// Set an empty Pending Intent on the notification
@@ -269,7 +391,7 @@ public class LibraryDownloader extends IntentService {
 
 		// Show or update the notification
 		NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		manager.notify(NOTIFICATION_ID, builder.build());
+		manager.notify(NOTIFICATION_UPDATE_ID, builder.build());
 	}
 
 	private void showUpdateNotification(){
@@ -285,7 +407,7 @@ public class LibraryDownloader extends IntentService {
 
 		// Show or update the notification
 		NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		manager.notify(NOTIFICATION_ID, builder.build());
+		manager.notify(NOTIFICATION_DOWNLOAD_ID, builder.build());
 	}
 
 	/**
@@ -296,11 +418,15 @@ public class LibraryDownloader extends IntentService {
 	 * @param currentPage The chapter being downloaded
 	 * @param TotalPage   The total number of chapters
 	 */
-	private void showUpdateNotification(String storyTitle, int currentPage, int TotalPage) {
+	private void showUpdateNotification(String storyTitle, int currentPage, int TotalPage, long downloadStartTime) {
 		// Create the notification
+		final String text = getString(R.string.downloader_context, storyTitle, currentPage, TotalPage);
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(LibraryDownloader.this);
 		builder.setContentTitle(getString(R.string.downloader_downloading));
-		builder.setContentText(getString(R.string.downloader_context, storyTitle, currentPage, TotalPage));
+		builder.setStyle(new NotificationCompat.BigTextStyle().bigText(text));
+		builder.setContentText(text);
+		builder.setWhen(downloadStartTime);
+		builder.setUsesChronometer(true);
 		builder.setSmallIcon(android.R.drawable.stat_sys_download);
 		builder.setAutoCancel(false);
 
@@ -310,7 +436,28 @@ public class LibraryDownloader extends IntentService {
 
 		// Show or update the notification
 		NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		manager.notify(NOTIFICATION_ID, builder.build());
+		manager.notify(NOTIFICATION_DOWNLOAD_ID, builder.build());
+	}
+
+	private void showSavingNotification(String storyTitle, long downloadStartTime) {
+		// Create the notification
+		final String text = getString(R.string.downloader_context_saving, storyTitle);
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(LibraryDownloader.this);
+		builder.setContentTitle(getString(R.string.downloader_saving));
+		builder.setStyle(new NotificationCompat.BigTextStyle().bigText(text));
+		builder.setContentText(text);
+		builder.setWhen(downloadStartTime);
+		builder.setUsesChronometer(true);
+		builder.setSmallIcon(android.R.drawable.stat_sys_download_done);
+		builder.setAutoCancel(false);
+
+		// Set an empty Pending Intent on the notification
+		PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, new Intent(), PendingIntent.FLAG_UPDATE_CURRENT);
+		builder.setContentIntent(pendingIntent);
+
+		// Show or update the notification
+		NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		manager.notify(NOTIFICATION_DOWNLOAD_ID, builder.build());
 	}
 
 	/**
@@ -332,7 +479,7 @@ public class LibraryDownloader extends IntentService {
 
 		// Show or update the notification
 		NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		manager.notify(NOTIFICATION_ID, builder.build());
+		manager.notify(NOTIFICATION_UPDATE_ID, builder.build());
 	}
 
 	/**
@@ -342,17 +489,20 @@ public class LibraryDownloader extends IntentService {
 	private void showUpdateCompleteNotification(List<String> storyTitles) {
 		// The title of the notification contains the total number of stories updated
 		final String title = getResources().getQuantityString(R.plurals.downloader_notification,
-															  storyTitles.size(), storyTitles.size());
+				storyTitles.size(), storyTitles.size(),
+				DateUtils.formatElapsedTime((System.currentTimeMillis() - updateStartTime) / 1000L));
 
-		// The content of the notification contains the comma separated list of the titles of the stories updated
-		final String text = TextUtils.join(", ", storyTitles);
+		// The content of the notification contains the comma separated list of the titles of the
+		// stories updated
+		final String contentText = TextUtils.join(", ", storyTitles);
 
 		// Create the notification
 		final NotificationCompat.Builder notBuilder = new NotificationCompat.Builder(LibraryDownloader.this);
 		notBuilder.setContentTitle(title);
 		notBuilder.setSmallIcon(R.drawable.ic_not_check);
 		notBuilder.setAutoCancel(true);
-		notBuilder.setContentText(text);
+		notBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(contentText));
+		notBuilder.setContentText(contentText);
 
 		// If the notification is clicked, open the library
 		final Intent i = new Intent(LibraryDownloader.this, LibraryMenuActivity.class);
@@ -364,7 +514,7 @@ public class LibraryDownloader extends IntentService {
 
 		// Show or update the notification
 		NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		manager.notify(NOTIFICATION_ID, notBuilder.build());
+		manager.notify(NOTIFICATION_UPDATE_ID, notBuilder.build());
 	}
 
 }

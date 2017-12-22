@@ -14,7 +14,6 @@ import com.spicymango.fanfictionreader.menu.BaseLoader;
 import com.spicymango.fanfictionreader.menu.storymenu.FilterDialog.FilterDialog;
 import com.spicymango.fanfictionreader.menu.storymenu.FilterDialog.SpinnerData;
 import com.spicymango.fanfictionreader.provider.SqlConstants;
-import com.spicymango.fanfictionreader.util.Result;
 
 import java.text.Collator;
 import java.util.ArrayList;
@@ -141,7 +140,7 @@ class LibraryLoader extends CursorLoader implements SqlConstants, BaseLoader.Fil
 		mFilterData = new ArrayList<>();
 
 		// Filter by fandom
-		mFilterData.add(new SpinnerData(KEY_CATEGORY, new ArrayList<String>(), new ArrayList<String>(), 0));
+		mFilterData.add(new SpinnerData(KEY_CATEGORY, new ArrayList<>(), new ArrayList<>(), 0));
 
 		// Filter by sort order
 		final String[] sortByLabel = getContext().getResources().getStringArray(R.array.menu_library_sort_by);
@@ -155,7 +154,9 @@ class LibraryLoader extends CursorLoader implements SqlConstants, BaseLoader.Fil
 				KEY_REVIEWS + " DESC",
 				//We subtract 1 from the last chapter and chapter so chapter 1 always starts at 0 and the last chapter always ends at 1
 				//When the percentage is the same we will use the default sort behavior(update date). (Read Percentage Filter)
-				"(CAST(" + KEY_LAST + " - 1 AS FLOAT) / (" + KEY_CHAPTER + " - 1)) ASC, " + KEY_UPDATED + " DESC"
+				"(CAST(" + KEY_LAST + " - 1 AS FLOAT) / (" + KEY_CHAPTER + " - 1)) ASC, " + KEY_UPDATED + " DESC",
+				KEY_ADDED + " DESC",
+				KEY_LAST_READ + " DESC"
 		};
 		mFilterData.add(new SpinnerData("SortBy", sortByLabel, sortBySQL, 0));
 

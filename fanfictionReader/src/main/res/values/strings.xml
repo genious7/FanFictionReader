@@ -51,6 +51,8 @@
     <string name="detail_follows">&lt;strong&gt;Follows:&lt;/strong&gt; %s</string>
     <string name="detail_updated">&lt;strong&gt;Updated:&lt;/strong&gt; %s</string>
     <string name="detail_published">&lt;strong&gt;Published:&lt;/strong&gt; %s</string>
+    <string name="detail_added">&lt;strong&gt;Downloaded:&lt;/strong&gt; %s</string>
+    <string name="detail_last_read">&lt;strong&gt;Last Read:&lt;/strong&gt; %s</string>
     <string name="detail_category">&lt;strong&gt;Category:&lt;/strong&gt; %s</string>
     <string name="detail_complete">&lt;strong&gt;Status:&lt;/strong&gt; %s</string>
     <string name="detail_author">&lt;strong&gt;Author:&lt;/strong&gt; %s</string>
@@ -110,7 +112,8 @@
     <string name="diag_back_up">Creating Backup</string>
     <string name="toast_back_up">Back up successful</string>
     <string name="error_backup_not_found">Back up file not found</string>
-    <string name="toast_restore_successful">Restore completed successfuly</string>
+    <string name="error_permission_denied">Permission Denied</string>
+    <string name="toast_restore_successful">Restore completed successfully</string>
     <string name="diag_restoring">Restoring from Backup</string>
     <string name="error_corrupted">The file is invalid</string>
     <string name="diag_back_up_external">The backup file is being saved to the SD card.</string>
@@ -125,12 +128,14 @@
 
     <!-- Story Downloader -->
     <string name="downloader_downloading">Downloading Story</string>
+    <string name="downloader_saving">Saving Story</string>
     <string name="downloader_checking_updates">Checking For Updates</string>
     <string name="downloader_context">%1$s Chapter %2$d/%3$d</string>
+    <string name="downloader_context_saving">%1$s</string>
 
     <plurals name="downloader_notification">
-        <item quantity="one"> One story successfully added</item>
-        <item quantity="other">%d stories successfully added</item>
+        <item quantity="one">One story added in %2$s</item>
+        <item quantity="other">%1$d stories added in %2$s</item>
     </plurals>
 
     <string name="downloader_error">Error downloading story</string>
@@ -202,6 +207,8 @@
     <string name="menu_library_sort_by_follow">Follows</string>
     <string name="menu_library_sort_by_reviews">Reviews</string>
     <string name="menu_library_sort_by_percentage">Percentage Read</string>
+    <string name="menu_library_sort_by_added">Date Added</string>
+    <string name="menu_library_sort_by_last_read">Last Read</string>
 
     <string-array name="menu_library_filter_words">
         <item>All</item>
@@ -252,7 +259,7 @@
 
     <!-- About Page -->
     <string name="about">This application was developed by Michael Chen. 
-		The author is not affiliated in anyway with Fanfiction.net.\n
+		The author is not affiliated in anyway with FanFiction.net.\n
 		\nPlease report any bugs or request any features using the button below.</string>
     <string name="about_feature">Contact the developer</string>
 

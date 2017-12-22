@@ -5,6 +5,9 @@ import android.preference.PreferenceManager;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;
+import com.spicymango.fanfictionreader.menu.DataFragment;
+
+import java.io.File;
 
 import io.fabric.sdk.android.Fabric;
 

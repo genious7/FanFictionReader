@@ -19,7 +19,6 @@ import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -327,12 +326,9 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 			Chapters[i] = getResources().getString(R.string.read_story_chapter)
 					+ (i + 1);
 		}
-		builder.setItems(Chapters, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				if (mCurrentPage != which + 1) {
-					load(which + 1);
-				}
+		builder.setItems(Chapters, (dialog, which) -> {
+			if (mCurrentPage != which + 1) {
+				load(which + 1);
 			}
 		});
 		builder.create();
@@ -470,7 +466,7 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 		setSupportActionBar(mToolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-		mList = new ArrayList<Spanned>();
+		mList = new ArrayList<>();
 		mListView = (ListView) findViewById(android.R.id.list);
 		mListView.setKeepScreenOn(Settings.isWakeLockEnabled(this));
 		View footer = getLayoutInflater().inflate(R.layout.footer_read_story, null);
@@ -537,6 +533,7 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 			ContentValues values = new ContentValues(1);
 			values.put(SqlConstants.KEY_LAST, mCurrentPage);
 			values.put(SqlConstants.KEY_OFFSET, offset);
+			values.put(SqlConstants.KEY_LAST_READ, System.currentTimeMillis());
 			handler.startUpdate(0, null, StoryProvider.FF_CONTENT_URI, values,
 					SqlConstants.KEY_STORY_ID + " = ?",
 					new String[] { String.valueOf(mStoryId) });
@@ -665,7 +662,16 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 			if (storyText.isEmpty()) return null;
 			return storyText.html();
 		}
-		
+
+		@Override
+		protected void redownload(long storyId, int currentPage) {
+			final Uri.Builder storyUri = Sites.FANFICTION.BASE_URI.buildUpon();
+			storyUri.appendPath("s");
+			storyUri.appendPath(Long.toString(storyId));
+			storyUri.appendPath("");
+			LibraryDownloader.integrityCheck(getContext(), storyUri.build(), currentPage, 0);
+		}
+
 		/**
 		 * Extracts the page number or the story id from a url
 		 * 
@@ -688,10 +694,9 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 
 		@Override
 		protected Cursor getFromDatabase(long storyId) {
-			Cursor c = getContext().getContentResolver().query(StoryProvider.FF_CONTENT_URI, null,
-			SqlConstants.KEY_STORY_ID + " = ?",
-			new String[] {Long.toString(storyId)}, null);
-			return c;
+			return getContext().getContentResolver().query(StoryProvider.FF_CONTENT_URI, null,
+														   SqlConstants.KEY_STORY_ID + " = ?",
+														   new String[] {Long.toString(storyId)}, null);
 		}
 	}
 }

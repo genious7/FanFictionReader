@@ -8,6 +8,7 @@ import com.spicymango.fanfictionreader.util.Result;
 
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -27,6 +28,16 @@ import android.widget.TextView;
 
 public abstract class BaseFragment<T extends Parcelable> extends Fragment
 		implements LoaderCallbacks<List<T>>, OnClickListener {
+
+	/**
+	 * Used to avoid a TransactionTooLargeException, the data is stored in a persistent fragment
+	 */
+	private DataFragment mDataFragment;
+
+	/**
+	 * The loader's saved instance state.
+	 */
+	protected Bundle mLoaderArgs;
 
 	protected ListView mListView;
 	private BaseAdapter mAdapter;
@@ -71,6 +82,21 @@ public abstract class BaseFragment<T extends Parcelable> extends Fragment
 		mListView.setAdapter(mAdapter);
 
 		return v;
+	}
+
+	@Override
+	public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+
+		// SavedInstanceState throws an TransactionTooLargeException when saving data,
+		// so we save the data in a persistent fragment instead.
+		// Create the persistent DataFragment if it doesn't exist and recover the saved bundle.
+		mDataFragment = (DataFragment) getFragmentManager().findFragmentByTag("DATA");
+		if (mDataFragment == null){
+			mDataFragment = new DataFragment();
+			getFragmentManager().beginTransaction().add(mDataFragment,"DATA").commit();
+		}
+		mLoaderArgs = mDataFragment.getData();
 	}
 
 	@Override
@@ -141,7 +167,12 @@ public abstract class BaseFragment<T extends Parcelable> extends Fragment
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		mLoader.saveInstanceState(outState);
+
+		// Since the savedInstanceState throws an error with large bundles, the state is saved
+		// in a persistent fragment instead.
+		final Bundle savedState = new Bundle();
+		mLoader.saveInstanceState(savedState);
+		mDataFragment.saveData(savedState);
 	}
 
 	protected abstract BaseAdapter adapter(List<T> dataSet);

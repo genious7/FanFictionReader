@@ -1,6 +1,7 @@
 package com.spicymango.fanfictionreader.dialogs;
 
 import java.text.DateFormat;
+import java.util.Date;
 
 import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.menu.librarymenu.LibraryMenuActivity;
@@ -52,6 +53,8 @@ public class DetailDialog extends DialogFragment implements OnClickListener{
 				R.string.detail_favorites,
 				R.string.detail_follows,
 				R.string.detail_reviews,
+				R.string.detail_added,
+				R.string.detail_last_read,
 				R.string.detail_updated,
 				R.string.detail_published,
 				R.string.detail_story_id,
@@ -60,6 +63,11 @@ public class DetailDialog extends DialogFragment implements OnClickListener{
 	};
 	
 	public DetailDialog(){
+	}
+
+	private String asString(Date time)
+	{
+        return (time.getTime() <= 0L ? "" : DateFormat.getDateInstance().format(time));
 	}
 	
 	@SuppressLint("InflateParams")
@@ -96,8 +104,10 @@ public class DetailDialog extends DialogFragment implements OnClickListener{
 				mStory.getFavorites(),
 				mStory.getFollows(),
 				Parser.withSuffix(mStory.getReviews()),
-				DateFormat.getDateInstance().format(mStory.getUpdated()),
-				DateFormat.getDateInstance().format(mStory.getPublished()),
+				asString(mStory.getAdded()),
+				asString(mStory.getLastRead()),
+				asString(mStory.getUpdated()),
+				asString(mStory.getPublished()),
 				Long.toString(mStory.getId()),
 				mStory.isCompleted() ? getString(R.string.complete_true) : getString(R.string.complete_false),
 				TextUtils.join(", ", mStory.getCharacters())

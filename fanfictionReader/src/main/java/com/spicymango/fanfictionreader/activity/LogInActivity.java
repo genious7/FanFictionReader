@@ -37,7 +37,7 @@ public class LogInActivity extends AppCompatActivity {
 
 		//Split the cookie string into a HashMap
 		String[] tmp = cookies.split(";");
-		Map<String, String> cookieMap = new HashMap<String, String>();
+		Map<String, String> cookieMap = new HashMap<>();
 		for (String string : tmp) {
 			String[] cookie = string.split("=");
 			cookieMap.put(cookie[0], cookie[1]);

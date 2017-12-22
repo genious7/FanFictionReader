@@ -1,14 +1,7 @@
 package com.spicymango.fanfictionreader.backup;
 
 import android.app.backup.BackupAgentHelper;
-import android.app.backup.BackupDataInput;
-import android.app.backup.BackupDataOutput;
 import android.app.backup.SharedPreferencesBackupHelper;
-import android.os.ParcelFileDescriptor;
-
-import com.spicymango.fanfictionreader.menu.mainmenu.MainActivity;
-
-import java.io.IOException;
 
 /**
  * Created by Michael Chen on 12/17/2015.

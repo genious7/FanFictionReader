@@ -17,30 +17,26 @@ repositories {
 apply plugin: 'io.fabric'
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion "24.0.1"
+    compileSdkVersion 25
+    buildToolsVersion '26.0.2'
 
     defaultConfig {
         applicationId "com.spicymango.fanfictionreader"
-        minSdkVersion 8
-        targetSdkVersion 24
-        versionCode 76
-        versionName "1.51"
+        minSdkVersion 9
+        targetSdkVersion 25
+        versionCode 83
+        versionName "1.56"
     }
-
     lintOptions {
         abortOnError true
     }
-
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
-
     signingConfigs {
         release
     }
-
     buildTypes {
         debug{
             ext.enableCrashlytics = false
@@ -52,7 +48,6 @@ android {
             signingConfig signingConfigs.release
         }
     }
-
     packagingOptions {
         exclude 'META-INF/NOTICE.txt'
         exclude 'META-INF/LICENSE.txt'
@@ -61,13 +56,15 @@ android {
 
 dependencies {
     compile project(':kolavar')
-    compile 'com.android.support:appcompat-v7:24.1.1'
-    compile 'com.android.support:design:24.1.1'
-    compile 'org.jsoup:jsoup:1.8.3'
+    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    compile 'io.reactivex.rxjava2:rxjava:2.1.7'
+    compile 'com.android.support:appcompat-v7:25.4.0'
+    compile 'com.android.support:design:25.4.0'
+    compile 'org.jsoup:jsoup:1.11.2'
     compile 'org.apache.commons:commons-collections4:4.1'
-    compile 'org.apache.commons:commons-lang3:3.4'
-    compile('com.crashlytics.sdk.android:crashlytics:2.6.1@aar') {
-        transitive = true;
+    compile 'org.apache.commons:commons-lang3:3.7'
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
+        transitive = true
     }
 }
 

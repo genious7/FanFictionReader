@@ -1,17 +1,5 @@
 package com.spicymango.fanfictionreader.menu.browsemenu;
 
-import java.util.List;
-
-import com.spicymango.fanfictionreader.R;
-import com.spicymango.fanfictionreader.Settings;
-import com.spicymango.fanfictionreader.menu.BaseFragment;
-import com.spicymango.fanfictionreader.menu.BaseLoader;
-import com.spicymango.fanfictionreader.menu.browsemenu.BrowseMenuLoaders.*;
-import com.spicymango.fanfictionreader.menu.categorymenu.CategoryMenuActivity;
-import com.spicymango.fanfictionreader.menu.communitymenu.CommunityMenuActivity;
-import com.spicymango.fanfictionreader.menu.storymenu.StoryMenuActivity;
-import com.spicymango.fanfictionreader.util.Sites;
-
 import android.content.Intent;
 import android.content.UriMatcher;
 import android.net.Uri;
@@ -25,13 +13,27 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ToggleButton;
+
+import com.spicymango.fanfictionreader.R;
+import com.spicymango.fanfictionreader.Settings;
+import com.spicymango.fanfictionreader.menu.BaseFragment;
+import com.spicymango.fanfictionreader.menu.browsemenu.BrowseMenuLoaders.ArchiveOfOurOwnBrowseLoader;
+import com.spicymango.fanfictionreader.menu.browsemenu.BrowseMenuLoaders.FanFictionCommunityBrowseLoader;
+import com.spicymango.fanfictionreader.menu.browsemenu.BrowseMenuLoaders.FanFictionCrossOverBrowseLoader;
+import com.spicymango.fanfictionreader.menu.browsemenu.BrowseMenuLoaders.FanFictionRegularBrowseLoader;
+import com.spicymango.fanfictionreader.menu.browsemenu.BrowseMenuLoaders.FictionPressCommunityBrowseLoader;
+import com.spicymango.fanfictionreader.menu.browsemenu.BrowseMenuLoaders.FictionPressPoetryPressBrowseLoader;
+import com.spicymango.fanfictionreader.menu.browsemenu.BrowseMenuLoaders.FictionpressFictionPressBrowseLoader;
+import com.spicymango.fanfictionreader.menu.categorymenu.CategoryMenuActivity;
+import com.spicymango.fanfictionreader.menu.communitymenu.CommunityMenuActivity;
+import com.spicymango.fanfictionreader.menu.storymenu.StoryMenuActivity;
+import com.spicymango.fanfictionreader.util.Sites;
+
+import java.util.List;
 
 public class BrowseMenuActivity extends AppCompatActivity {
 
@@ -110,117 +112,65 @@ public class BrowseMenuActivity extends AppCompatActivity {
 			case SITE_ARCHIVE_OF_OUR_OWN:
 				setTitle(R.string.menu_browse_title_stories);
 				setSubTitle(Sites.ARCHIVE_OF_OUR_OWN.TITLE);
-				mLoaderOff = new LoaderAdapter<BrowseMenuItem>() {
-					@Override
-					public BaseLoader<BrowseMenuItem> getNewLoader(Bundle args) {
-						return new ArchiveOfOurOwnBrowseLoader(getActivity(), args);
-					}
-				};
-				mListView.setOnItemClickListener(new OnItemClickListener() {
-					@Override
-					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-						Intent i = new Intent(getActivity(), CategoryMenuActivity.class);
-						i.setData(getItem(position).uri);
-						startActivity(i);
-					}
+				mLoaderOff = args -> new ArchiveOfOurOwnBrowseLoader(getActivity(), args);
+				mListView.setOnItemClickListener((parent, view, position, id) -> {
+					Intent i = new Intent(getActivity(), CategoryMenuActivity.class);
+					i.setData(getItem(position).uri);
+					startActivity(i);
 				});
 				break;
 			case SITE_FANFICTION:
 				setTitle(R.string.menu_browse_title_stories);
 				setSubTitle(Sites.FANFICTION.TITLE);
-				mLoaderOff = new LoaderAdapter<BrowseMenuItem>() {
-					@Override
-					public BaseLoader<BrowseMenuItem> getNewLoader(Bundle args) {
-						return new FanFictionRegularBrowseLoader(getActivity(), args);
-					}
-				};
-				mLoaderOn = new LoaderAdapter<BrowseMenuItem>() {
-
-					@Override
-					public BaseLoader<BrowseMenuItem> getNewLoader(Bundle args) {
-						return new FanFictionCrossOverBrowseLoader(getActivity(), args);
-					}
-				};
-				mListView.setOnItemClickListener(new OnItemClickListener() {
-					@Override
-					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-						Intent i = new Intent(getActivity(), CategoryMenuActivity.class);
-						i.setData(getItem(position).uri);
-						startActivity(i);
-					}
+				mLoaderOff = args -> new FanFictionRegularBrowseLoader(getActivity(), args);
+				mLoaderOn = args -> new FanFictionCrossOverBrowseLoader(getActivity(), args);
+				mListView.setOnItemClickListener((parent, view, position, id) -> {
+					Intent i = new Intent(getActivity(), CategoryMenuActivity.class);
+					i.setData(getItem(position).uri);
+					startActivity(i);
 				});
 				enableToggleButton(R.string.toggle_regular, R.string.toggle_crossover, savedInstanceState);
 				break;
 			case SITE_FANFICTION_COMMUNITY:
 				setTitle(R.string.menu_button_communities);
 				setSubTitle(Sites.FANFICTION.TITLE);
-				mLoaderOff = new LoaderAdapter<BrowseMenuItem>() {
-					@Override
-					public BaseLoader<BrowseMenuItem> getNewLoader(Bundle args) {
-						return new FanFictionCommunityBrowseLoader(getActivity(), args);
+				mLoaderOff = args -> new FanFictionCommunityBrowseLoader(getActivity(), args);
+				mListView.setOnItemClickListener((parent, view, position, id) -> {
+					Intent i;
+					if (position == 0) {
+						i = new Intent(getActivity(), CommunityMenuActivity.class);
+					} else {
+						i = new Intent(getActivity(), CategoryMenuActivity.class);
 					}
-				};
-				mListView.setOnItemClickListener(new OnItemClickListener() {
-					@Override
-					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-						Intent i;
-						if (position == 0) {
-							i = new Intent(getActivity(), CommunityMenuActivity.class);
-						} else {
-							i = new Intent(getActivity(), CategoryMenuActivity.class);
-						}
-						i.setData(getItem(position).uri);
-						startActivity(i);
-					}
+					i.setData(getItem(position).uri);
+					startActivity(i);
 				});
 				break;
 			case SITE_FICTIONPRESS:
 				setTitle(R.string.menu_browse_title_stories);
 				setSubTitle(Sites.FICTIONPRESS.TITLE);
-				mLoaderOff = new LoaderAdapter<BrowseMenuItem>() {
-					@Override
-					public BaseLoader<BrowseMenuItem> getNewLoader(Bundle args) {
-						return new FictionpressFictionPressBrowseLoader(getActivity(), args);
-					}
-				};
-				mLoaderOn = new LoaderAdapter<BrowseMenuItem>() {
-					@Override
-					public BaseLoader<BrowseMenuItem> getNewLoader(Bundle args) {
-						return new FictionPressPoetryPressBrowseLoader(getActivity(), args);
-					}
-				};
-				mListView.setOnItemClickListener(new OnItemClickListener() {
-					@Override
-					public void onItemClick(AdapterView<?> parent, View view, int position,
-											long id) {
-						Intent i = new Intent(getActivity(), StoryMenuActivity.class);
-						i.setData(getItem(position).uri);
-						startActivity(i);
-					}
+				mLoaderOff = args -> new FictionpressFictionPressBrowseLoader(getActivity(), args);
+				mLoaderOn = args -> new FictionPressPoetryPressBrowseLoader(getActivity(), args);
+				mListView.setOnItemClickListener((parent, view, position, id) -> {
+					Intent i = new Intent(getActivity(), StoryMenuActivity.class);
+					i.setData(getItem(position).uri);
+					startActivity(i);
 				});
 				enableToggleButton(R.string.toggle_fiction, R.string.toggle_poetry, savedInstanceState);
 				break;
 			case SITE_FICTIONPRESS_COMMUNITY:
 				setTitle(R.string.menu_button_communities);
 				setSubTitle(Sites.FICTIONPRESS.TITLE);
-				mLoaderOff = new LoaderAdapter<BrowseMenuItem>() {
-					@Override
-					public BaseLoader<BrowseMenuItem> getNewLoader(Bundle args) {
-						return new FictionPressCommunityBrowseLoader(getActivity(), args);
+				mLoaderOff = args -> new FictionPressCommunityBrowseLoader(getActivity(), args);
+				mListView.setOnItemClickListener((parent, view, position, id) -> {
+					Intent i;
+					if (position == 0) {
+						i = new Intent(getActivity(), CommunityMenuActivity.class);
+					} else {
+						i = new Intent(getActivity(), CategoryMenuActivity.class);
 					}
-				};
-				mListView.setOnItemClickListener(new OnItemClickListener() {
-					@Override
-					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-						Intent i;
-						if (position == 0) {
-							i = new Intent(getActivity(), CommunityMenuActivity.class);
-						} else {
-							i = new Intent(getActivity(), CategoryMenuActivity.class);
-						}
-						i.setData(getItem(position).uri);
-						startActivity(i);
-					}
+					i.setData(getItem(position).uri);
+					startActivity(i);
 				});
 				break;
 			default:
@@ -229,10 +179,10 @@ public class BrowseMenuActivity extends AppCompatActivity {
 
 			if (mToggle == null) {
 				mActiveLoaderId = 0;
-				getLoaderManager().initLoader(0, savedInstanceState, this);
+				getLoaderManager().initLoader(0, mLoaderArgs, this);
 			} else {
 				mActiveLoaderId = mToggle.isChecked() ? 1 : 0;
-				getLoaderManager().initLoader(mActiveLoaderId, savedInstanceState, this);
+				getLoaderManager().initLoader(mActiveLoaderId, mLoaderArgs, this);
 			}
 		}
 

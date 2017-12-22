@@ -1,6 +1,5 @@
 package com.spicymango.fanfictionreader.menu.librarymenu;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -24,7 +23,6 @@ import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -236,18 +234,10 @@ public class LibraryMenuActivity extends AppCompatActivity implements FilterList
 					final AlertDialog.Builder diag = new AlertDialog.Builder(getContext());
 					diag.setTitle(R.string.dialog_remove);
 					diag.setMessage(R.string.dialog_remove_text);
-					diag.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							new Thread(new Runnable() {
-								@Override
-								public void run() {
-									getContext().getContentResolver().delete(databaseUri, null, null);
-									FileHandler.deleteStory(getContext(), story.getId());
-								}
-							}).start();
-						}
-					});
+					diag.setPositiveButton(android.R.string.yes, (dialog, which) -> new Thread(() -> {
+						getContext().getContentResolver().delete(databaseUri, null, null);
+						FileHandler.deleteStory(getContext(), story.getId());
+					}).start());
 					diag.setNegativeButton(android.R.string.no, null);
 					diag.show();
 					return true;
@@ -299,28 +289,21 @@ public class LibraryMenuActivity extends AppCompatActivity implements FilterList
 			inflater.inflate(R.menu.library_menu, menu);
 
 			final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
+			if (searchView == null) return;
 
 			// Set the listener for Search events. Note that the editor action listener is used instead
 			// of the onQueryTextListener in order to catch empty string submissions.
 			final TextView searchViewTxt = (TextView) searchView.findViewById(R.id.search_src_text);
-			searchViewTxt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-				@Override
-				public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-					mLoader.onSearch(searchView.getQuery().toString());
-					searchView.clearFocus();
-					return false;
-				}
+			searchViewTxt.setOnEditorActionListener((textView, i, keyEvent) -> {
+				mLoader.onSearch(searchView.getQuery().toString());
+				searchView.clearFocus();
+				return false;
 			});
 
 			// If the close button is pressed, clear the search. This is required because the close
 			// button won't trigger the onEditorAction listener
 			final View closeBtn = searchView.findViewById(R.id.search_close_btn);
-			closeBtn.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View view) {
-					mLoader.onSearch(null);
-				}
-			});
+			closeBtn.setOnClickListener(view -> mLoader.onSearch(null));
 		}
 
 		@Override
@@ -421,27 +404,23 @@ public class LibraryMenuActivity extends AppCompatActivity implements FilterList
 			final EditText input = new EditText(getContext());
 			input.setInputType(InputType.TYPE_CLASS_NUMBER);
 			alert.setView(input);
-			alert.setPositiveButton(R.string.diag_btn_pos, new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int whichButton) {
-					final Editable value = input.getText();
-					try {
-						final long id = Long.parseLong(value.toString());
-						final Uri.Builder storyUri = Sites.FANFICTION.BASE_URI.buildUpon();
-						storyUri.appendPath("s");
-						storyUri.appendPath(Long.toString(id));
-						storyUri.appendPath("");
-						LibraryDownloader.download(getContext(), storyUri.build(), 1, 0);
-					} catch (Exception e) {
-						Toast toast = Toast.makeText(getContext(), R.string.menu_library_by_id_error, Toast.LENGTH_SHORT);
-						toast.show();
-					}
-				}
-			});
-			alert.setNegativeButton(R.string.diag_btn_neg, new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int whichButton) {
-					final Toast toast = Toast.makeText(getContext(), R.string.dialog_cancelled, Toast.LENGTH_SHORT);
+			alert.setPositiveButton(R.string.diag_btn_pos, (dialog, whichButton) -> {
+				final Editable value = input.getText();
+				try {
+					final long id = Long.parseLong(value.toString());
+					final Builder storyUri = Sites.FANFICTION.BASE_URI.buildUpon();
+					storyUri.appendPath("s");
+					storyUri.appendPath(Long.toString(id));
+					storyUri.appendPath("");
+					LibraryDownloader.download(getContext(), storyUri.build(), 1, 0);
+				} catch (Exception e) {
+					Toast toast = Toast.makeText(getContext(), R.string.menu_library_by_id_error, Toast.LENGTH_SHORT);
 					toast.show();
 				}
+			});
+			alert.setNegativeButton(R.string.diag_btn_neg, (dialog, whichButton) -> {
+				final Toast toast = Toast.makeText(getContext(), R.string.dialog_cancelled, Toast.LENGTH_SHORT);
+				toast.show();
 			});
 			alert.show();
 		}
