@@ -289,9 +289,15 @@ class DownloaderFactory {
 
 			// Load the chapter itself
 			String storyText = document.select("div#storytext").html();
+
 			if (storyText == null || storyText.length() == 0) {
-				throw new ParseException("Error reading story text for id: "
-												 + mStoryId + " and chapter " + mCurrentPage, 0);
+				if (document.body().text().contains("FanFiction.Net Error Type 1")) {
+					// If a server error occurs, ignore the story
+					throw new StoryNotFoundException("Story " + mStoryId + " does not exist");
+				} else {
+					throw new ParseException("Error reading story text for id: "
+													 + mStoryId + " and chapter " + mCurrentPage, 0);
+				}
 			}
 
 			// Save the chapter on the sparse array
