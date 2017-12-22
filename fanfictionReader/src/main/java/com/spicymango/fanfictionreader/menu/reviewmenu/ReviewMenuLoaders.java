@@ -1,7 +1,6 @@
 package com.spicymango.fanfictionreader.menu.reviewmenu;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -105,13 +104,10 @@ final class ReviewMenuLoaders {
 			}
 
 			// Show the dialog
-			dialog.setItems(entries, new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int position) {
-					// Since this is a much simpler dialog than filters on other sections of the app,
-					// the app won't remember if the dialog is open on orientation changes.
-					filter(new int[]{position});
-				}
+			dialog.setItems(entries, (dialog1, position) -> {
+				// Since this is a much simpler dialog than filters on other sections of the app,
+				// the app won't remember if the dialog is open on orientation changes.
+				filter(new int[]{position});
 			});
 			dialog.show();
 		}

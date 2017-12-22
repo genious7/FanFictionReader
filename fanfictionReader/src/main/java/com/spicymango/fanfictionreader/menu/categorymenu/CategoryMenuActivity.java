@@ -7,14 +7,12 @@ import org.apache.commons.lang3.text.WordUtils;
 import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.Settings;
 import com.spicymango.fanfictionreader.menu.BaseFragment;
-import com.spicymango.fanfictionreader.menu.BaseLoader;
 import com.spicymango.fanfictionreader.menu.categorymenu.CategoryMenuLoaders.*;
 import com.spicymango.fanfictionreader.menu.communitymenu.CommunityMenuActivity;
 import com.spicymango.fanfictionreader.menu.storymenu.StoryMenuActivity;
 import com.spicymango.fanfictionreader.util.Sites;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.UriMatcher;
 import android.net.Uri;
@@ -26,9 +24,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 
 public class CategoryMenuActivity extends AppCompatActivity {
@@ -108,111 +103,63 @@ public class CategoryMenuActivity extends AppCompatActivity {
 
 			switch (site) {
 			case ARCHIVE_OF_OUR_OWN_NORMAL:
-				mListView.setOnItemClickListener(new OnItemClickListener() {
-					@Override
-					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-						final Intent i = new Intent(getActivity(), StoryMenuActivity.class);
-						i.setData(getItem(position).mUri);
-						startActivity(i);
-					}
+				mListView.setOnItemClickListener((parent, view, position, id) -> {
+					final Intent i = new Intent(getActivity(), StoryMenuActivity.class);
+					i.setData(getItem(position).mUri);
+					startActivity(i);
 				});
-				mLoaderAdapter = new LoaderAdapter<CategoryMenuItem>() {
-					@Override
-					public BaseLoader<CategoryMenuItem> getNewLoader(Bundle args) {
-						return new ArchiveOfOurOwnCategoryLoader(getActivity(), args, uri);
-					}
-				};
+				mLoaderAdapter = args -> new ArchiveOfOurOwnCategoryLoader(getActivity(), args, uri);
 				setTitle(R.string.menu_navigation_title_regular);
 				String subTitle = WordUtils.capitalize(uri.getPathSegments().get(1), ' ', '.', '\'');
 				setSubTitle(subTitle.replace("*a*", "&"));
 				break;
 			case FANFICTION_REGULAR:
-				mListView.setOnItemClickListener(new OnItemClickListener() {
-					@Override
-					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-						final Intent i = new Intent(getActivity(), StoryMenuActivity.class);
-						i.setData(getItem(position).mUri);
-						startActivity(i);
-					}
+				mListView.setOnItemClickListener((parent, view, position, id) -> {
+					final Intent i = new Intent(getActivity(), StoryMenuActivity.class);
+					i.setData(getItem(position).mUri);
+					startActivity(i);
 				});
-				mLoaderAdapter = new LoaderAdapter<CategoryMenuItem>() {
-					@Override
-					public BaseLoader<CategoryMenuItem> getNewLoader(Bundle args) {
-						return new FanFictionRegularCategoryLoader(getActivity(), args, uri);
-					}
-				};
+				mLoaderAdapter = args -> new FanFictionRegularCategoryLoader(getActivity(), args, uri);
 				setTitle(R.string.menu_navigation_title_regular);
 				setSubTitle(WordUtils.capitalize(uri.getPathSegments().get(0), ' ', '.', '\''));
 				break;
 			case FANFICTION_CROSSOVER:
-				mListView.setOnItemClickListener(new OnItemClickListener() {
-					@Override
-					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-						final Intent i = new Intent(getActivity(), CategoryMenuActivity.class);
-						i.setData(getItem(position).mUri);
-						startActivity(i);
-					}
+				mListView.setOnItemClickListener((parent, view, position, id) -> {
+					final Intent i = new Intent(getActivity(), CategoryMenuActivity.class);
+					i.setData(getItem(position).mUri);
+					startActivity(i);
 				});
-				mLoaderAdapter = new LoaderAdapter<CategoryMenuItem>() {
-					@Override
-					public BaseLoader<CategoryMenuItem> getNewLoader(Bundle args) {
-						return new FanFictionRegularCategoryLoader(getActivity(), args, uri);
-					}
-				};
+				mLoaderAdapter = args -> new FanFictionRegularCategoryLoader(getActivity(), args, uri);
 				setTitle(R.string.menu_navigation_title_crossover);
 				setSubTitle(WordUtils.capitalize(uri.getPathSegments().get(1), ' ', '.', '\''));
 				break;
 			case FANFICTION_SUB_CATEGORY:
-				mListView.setOnItemClickListener(new OnItemClickListener() {
-					@Override
-					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-						final Intent i = new Intent(getActivity(), StoryMenuActivity.class);
-						i.setData(getItem(position).mUri);
-						startActivity(i);
-					}
+				mListView.setOnItemClickListener((parent, view, position, id) -> {
+					final Intent i = new Intent(getActivity(), StoryMenuActivity.class);
+					i.setData(getItem(position).mUri);
+					startActivity(i);
 				});
-				mLoaderAdapter = new LoaderAdapter<CategoryMenuItem>() {
-					@Override
-					public BaseLoader<CategoryMenuItem> getNewLoader(Bundle args) {
-						return new FanFictionSubCategoryLoader(getActivity(), args, uri);
-					}
-				};
+				mLoaderAdapter = args -> new FanFictionSubCategoryLoader(getActivity(), args, uri);
 				setTitle(R.string.menu_navigation_title_crossover);
 				setSubTitle(WordUtils.capitalize(uri.getPathSegments().get(1), ' ', '.', '\''));
 				break;
 			case FANFICTION_COMMUNITY:
-				mListView.setOnItemClickListener(new OnItemClickListener() {
-					@Override
-					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-						final Intent i = new Intent(getActivity(), CommunityMenuActivity.class);
-						i.setData(getItem(position).mUri);
-						startActivity(i);
-					}
+				mListView.setOnItemClickListener((parent, view, position, id) -> {
+					final Intent i = new Intent(getActivity(), CommunityMenuActivity.class);
+					i.setData(getItem(position).mUri);
+					startActivity(i);
 				});
-				mLoaderAdapter = new LoaderAdapter<CategoryMenuItem>() {
-					@Override
-					public BaseLoader<CategoryMenuItem> getNewLoader(Bundle args) {
-						return new FanFictionCommunityCategoryLoader(getActivity(), args, uri);
-					}
-				};
+				mLoaderAdapter = args -> new FanFictionCommunityCategoryLoader(getActivity(), args, uri);
 				setTitle(R.string.menu_navigation_title_community);
 				setSubTitle(WordUtils.capitalize(uri.getPathSegments().get(1), ' ', '.', '\''));
 				break;
 			case FICTIONPRESS_COMMUNITY:
-				mListView.setOnItemClickListener(new OnItemClickListener() {
-					@Override
-					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-						final Intent i = new Intent(getActivity(), CommunityMenuActivity.class);
-						i.setData(getItem(position).mUri);
-						startActivity(i);
-					}
+				mListView.setOnItemClickListener((parent, view, position, id) -> {
+					final Intent i = new Intent(getActivity(), CommunityMenuActivity.class);
+					i.setData(getItem(position).mUri);
+					startActivity(i);
 				});
-				mLoaderAdapter = new LoaderAdapter<CategoryMenuItem>() {
-					@Override
-					public BaseLoader<CategoryMenuItem> getNewLoader(Bundle args) {
-						return new FictionPressCommunityCategoryLoader(getActivity(), args, uri);
-					}
-				};
+				mLoaderAdapter = args -> new FictionPressCommunityCategoryLoader(getActivity(), args, uri);
 				setTitle(R.string.menu_navigation_title_community);
 				setSubTitle(WordUtils.capitalize(uri.getPathSegments().get(1), ' ', '.', '\''));
 				break;
@@ -227,7 +174,7 @@ public class CategoryMenuActivity extends AppCompatActivity {
 				mSortOrder = CategoryMenuComparator.SORT_VIEWS;
 			}
 
-			getLoaderManager().initLoader(0, savedInstanceState, this);
+			getLoaderManager().initLoader(0, mLoaderArgs, this);
 		}
 
 		@Override
@@ -301,12 +248,9 @@ public class CategoryMenuActivity extends AppCompatActivity {
 
 			String[] filterList = loader.getFilterEntries();
 
-			builder.setItems(filterList, new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int position) {
-					loader.onFilterSelected(position);
-					mSortOrder = CategoryMenuComparator.SORT_ALPHABETICAL;
-				}
+			builder.setItems(filterList, (dialog, position) -> {
+				loader.onFilterSelected(position);
+				mSortOrder = CategoryMenuComparator.SORT_ALPHABETICAL;
 			});
 			builder.show();
 		}

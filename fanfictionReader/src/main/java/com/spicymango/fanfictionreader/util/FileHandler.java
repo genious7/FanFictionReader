@@ -352,10 +352,6 @@ public class FileHandler {
 
 			fos = new FileOutputStream(file);
 			fos.write(html.getBytes());
-		} catch (IOException e) {
-			// Pass the exception to the next level.
-			// The catch is here in order to ensure that the final block executes
-			throw e;
 		} finally {
 			closeStream(fos);
 		}

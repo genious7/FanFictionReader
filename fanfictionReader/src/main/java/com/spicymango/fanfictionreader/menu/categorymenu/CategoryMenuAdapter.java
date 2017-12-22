@@ -80,7 +80,7 @@ public class CategoryMenuAdapter extends ArrayAdapter<CategoryMenuItem> implemen
 				mIndexer.put(c, i);
 			}			
 		}
-		ArrayList<Character> sectionList = new ArrayList<Character>(mIndexer.keySet());
+		ArrayList<Character> sectionList = new ArrayList<>(mIndexer.keySet());
 		Collections.sort(sectionList);
 		mSections = sectionList.toArray(new Character[0]);		
 	}

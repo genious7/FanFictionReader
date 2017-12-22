@@ -112,7 +112,8 @@
     <string name="diag_back_up">Creating Backup</string>
     <string name="toast_back_up">Back up successful</string>
     <string name="error_backup_not_found">Back up file not found</string>
-    <string name="toast_restore_successful">Restore completed successfuly</string>
+    <string name="error_permission_denied">Permission Denied</string>
+    <string name="toast_restore_successful">Restore completed successfully</string>
     <string name="diag_restoring">Restoring from Backup</string>
     <string name="error_corrupted">The file is invalid</string>
     <string name="diag_back_up_external">The backup file is being saved to the SD card.</string>
@@ -258,7 +259,7 @@
 
     <!-- About Page -->
     <string name="about">This application was developed by Michael Chen. 
-		The author is not affiliated in anyway with Fanfiction.net.\n
+		The author is not affiliated in anyway with FanFiction.net.\n
 		\nPlease report any bugs or request any features using the button below.</string>
     <string name="about_feature">Contact the developer</string>
 

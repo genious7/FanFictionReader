@@ -65,7 +65,7 @@ public class DetailDialog extends DialogFragment implements OnClickListener{
 	public DetailDialog(){
 	}
 
-	private final String asString(Date time)
+	private String asString(Date time)
 	{
         return (time.getTime() <= 0L ? "" : DateFormat.getDateInstance().format(time));
 	}

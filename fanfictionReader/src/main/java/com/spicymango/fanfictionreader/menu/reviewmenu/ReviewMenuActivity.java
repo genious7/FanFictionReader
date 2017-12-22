@@ -102,12 +102,7 @@ public class ReviewMenuActivity extends AppCompatActivity{
 
 			switch (match){
 				case MATCHER_FF:
-					mLoaderAdapter = new LoaderAdapter<ReviewMenuItem>() {
-						@Override
-						public BaseLoader<ReviewMenuItem> getNewLoader(Bundle args) {
-							return new ReviewMenuLoaders.FanFictionReviewLoader(getActivity(), args, uri);
-						}
-					};
+					mLoaderAdapter = args -> new ReviewMenuLoaders.FanFictionReviewLoader(getActivity(), args, uri);
 					break;
 				case MATCHER_FP:
 					break;
@@ -115,7 +110,7 @@ public class ReviewMenuActivity extends AppCompatActivity{
 					break;
 			}
 
-			getLoaderManager().initLoader(0, savedInstanceState, this);
+			getLoaderManager().initLoader(0, mLoaderArgs, this);
 		}
 
 		@Override

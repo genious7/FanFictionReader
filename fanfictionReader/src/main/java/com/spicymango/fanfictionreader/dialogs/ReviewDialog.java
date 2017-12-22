@@ -17,8 +17,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -53,22 +51,16 @@ public class ReviewDialog extends DialogFragment {
 
 		builder.setTitle(R.string.review);
 		builder.setView(review);
-		builder.setNegativeButton(android.R.string.cancel, new OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				dismiss();
-				Toast toast = Toast.makeText(getActivity(), R.string.dialog_cancelled, Toast.LENGTH_SHORT);
-				toast.show();
-			}
+		builder.setNegativeButton(android.R.string.cancel, (dialog, which) -> {
+			dismiss();
+			Toast toast = Toast.makeText(getActivity(), R.string.dialog_cancelled, Toast.LENGTH_SHORT);
+			toast.show();
 		});
 
-		builder.setPositiveButton(android.R.string.ok, new OnClickListener() {			
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				PostReview post = new PostReview(getActivity(), currentPage, storyId, review.getText().toString());
-				post.execute();
-				
-			}
+		builder.setPositiveButton(android.R.string.ok, (dialog, which) -> {
+			PostReview post = new PostReview(getActivity(), currentPage, storyId, review.getText().toString());
+			post.execute();
+
 		});
 		
 		return builder.create();
@@ -141,7 +133,7 @@ public class ReviewDialog extends DialogFragment {
 				uri.appendPath("api");
 				uri.appendPath("ajax_review.php");
 				
-				HashMap<String, String> data = new HashMap<String, String>();
+				HashMap<String, String> data = new HashMap<>();
 				data.put("storyid", Long.toString(mStoryId));
 				data.put("storytextid", Long.toString(textId));
 				data.put("chapter", Integer.toString(mCurrentPage));

@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.SparseArray;
 
-import com.spicymango.fanfictionreader.Settings;
 import com.spicymango.fanfictionreader.activity.Site;
 import com.spicymango.fanfictionreader.provider.SqlConstants;
 import com.spicymango.fanfictionreader.provider.StoryProvider;
@@ -276,10 +275,10 @@ class DownloaderFactory {
 				mStory = parseDetails(document);
 
 				// If an error occurs while parsing, quit
-				// Note that there are two possibilities: either the author deleted the story
+				// Note that there are two possibilities: either the error is in the server (which should fail silently)
 				// or there is an issue in the app
 				if (mStory == null) {
-					if (document.body().text().contains("Story Not Found")) {
+					if (document.body().text().contains("Story Not Found") || document.body().text().contains("FanFiction.Net Error Type 1")) {
 						// If the story was deleted from the web site, pass the error to the previous layer
 						throw new StoryNotFoundException("Story " + mStoryId + " does not exist");
 					} else {
@@ -314,30 +313,33 @@ class DownloaderFactory {
 			// By default, the Story object has a date added equal to 0 upon creation. If this value
 			// is found, then the story is newly added and the date added should be set to the current
 			// date. Otherwise, the date added should be conserved.
-			final Date dateDownloaded;
+			final Date dateDownloaded, dateLastRead;
 			final ContentResolver resolver = mContext.getContentResolver();
 			final Cursor c = resolver.query(StoryProvider.FF_CONTENT_URI,
-											new String[] { SqlConstants.KEY_ADDED },
+											new String[] { SqlConstants.KEY_ADDED, SqlConstants.KEY_LAST_READ },
 											SqlConstants.KEY_STORY_ID + " = ?",
 											new String[] { String.valueOf(mStoryId) }, null);
 
 			if (c == null){
 				// Validate the cursor
 				dateDownloaded = null;
+				dateLastRead = null;
 			} else if (!c.moveToFirst()) {
 				// Check that the cursor is not empty
 				c.close();
 				dateDownloaded = null;
+				dateLastRead = null;
 			} else{
 				// Determine the last time the story was updated
-				final int index = c.getColumnIndex(SqlConstants.KEY_ADDED);
-				dateDownloaded = new Date(c.getLong(index));
+				dateDownloaded = new Date(c.getLong(c.getColumnIndex(SqlConstants.KEY_ADDED)));
+				dateLastRead = new Date(c.getLong(c.getColumnIndex(SqlConstants.KEY_LAST_READ)));
 				c.close();
 			}
-			final Date dateAdded = (dateDownloaded != null ? dateDownloaded : new Date());
+			final Date dateAdded = (dateDownloaded != null ? dateDownloaded : new Date()),
+					dateRead = (dateLastRead != null ? dateLastRead : new Date(0));
 
 			// Update the content provider
-			resolver.insert(StoryProvider.FF_CONTENT_URI, mStory.toContentValues(lastPageRead, scrollOffset, dateAdded));
+			resolver.insert(StoryProvider.FF_CONTENT_URI, mStory.toContentValues(lastPageRead, scrollOffset, dateAdded, dateRead));
 		}
 
 		@Override
