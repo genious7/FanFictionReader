@@ -208,7 +208,10 @@ public abstract class BaseLoader<T extends Parcelable> extends
 				document = new Document("");
 			} else {
 				// Load the document
-				document = Jsoup.connect(uri.toString()).timeout(10000).get();
+				document = Jsoup
+						.connect(uri.toString())
+						.userAgent("Mozilla/5.0 (Linux; Android; FanFictionReader App) like Gecko")
+						.timeout(10000).get();
 			}
 		} catch (IOException e) {
 			mStatus = Result.ERROR_CONNECTION;

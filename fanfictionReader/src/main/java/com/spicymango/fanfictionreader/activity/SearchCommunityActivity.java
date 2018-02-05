@@ -152,7 +152,7 @@ public class SearchCommunityActivity extends BaseActivity<CommunityMenuItem> imp
             if (TextUtils.isEmpty(mQuery)) return null;
 
             Uri.Builder builder = Sites.FANFICTION.DESKTOP_URI.buildUpon();
-            builder.path("search.php")
+            builder.path("search/")
                     .appendQueryParameter("type", "community")
                     .appendQueryParameter("ready", "1")
                     .appendQueryParameter("keywords", mQuery)
