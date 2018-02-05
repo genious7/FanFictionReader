@@ -156,7 +156,7 @@ public class SearchAuthorActivity extends BaseActivity<MenuObject> implements On
 			builder.path("search/")
 					.appendQueryParameter("type", "author")
 					.appendQueryParameter("ready", "1")
-					.appendQueryParameter("keywords", mQuery)
+					.appendQueryParameter("keywords", mQuery.trim().replace(' ', '+'))
 					.appendQueryParameter("ppage", currentPage + "");
 			
 			// Adds the filter, if available

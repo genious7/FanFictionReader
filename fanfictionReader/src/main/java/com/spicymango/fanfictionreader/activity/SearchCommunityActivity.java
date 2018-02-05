@@ -155,7 +155,7 @@ public class SearchCommunityActivity extends BaseActivity<CommunityMenuItem> imp
             builder.path("search/")
                     .appendQueryParameter("type", "community")
                     .appendQueryParameter("ready", "1")
-                    .appendQueryParameter("keywords", mQuery)
+                    .appendQueryParameter("keywords", mQuery.trim().replace(' ', '+'))
                     .appendQueryParameter("ppage", currentPage + "");
 
             // Adds the filter, if available

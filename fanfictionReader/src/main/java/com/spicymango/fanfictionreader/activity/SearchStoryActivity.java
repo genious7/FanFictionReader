@@ -148,7 +148,7 @@ public class SearchStoryActivity extends BaseActivity<Story> implements OnQueryT
 			builder.path("search/").
 				appendQueryParameter("type", "story")
 				.appendQueryParameter("ready", "1")
-				.appendQueryParameter("keywords", mQuery)
+				.appendQueryParameter("keywords", mQuery.trim().replace(' ', '+'))
 				.appendQueryParameter("ppage", currentPage + "");
 
 			// Adds the filter, if available
