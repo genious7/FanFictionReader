@@ -71,7 +71,7 @@ public class Parser {
 			builder.setName(title.ownText());
 			builder.setAuthor(author.text());
 			builder.setAuthorId(Long.parseLong(authorIdMatcher.group(1)));
-			builder.setSummary(element.ownText().replaceFirst("(?i)by\\s*", ""));
+			builder.setSummary(element.ownText().replaceFirst("^(?i)by\\s*", ""));
 			builder.setFanFicAttributes(attributes.text());
 			builder.setUpdateDate(updateDate);
 			builder.setPublishDate(publishDate);
