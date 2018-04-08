@@ -443,7 +443,7 @@ public class AccountActivity extends TabActivity {
 					builder.setName(story.text());
 					builder.setAuthor(author.text());
 					builder.setAuthorId(Long.parseLong(authorIdMatcher.group(1)));
-					builder.setSummary(summary.text());
+					builder.setSummary(summary.ownText().replaceFirst("^\\s*-?\\s*", ""));
 					builder.setCategory(category.text());
 					builder.setUpdateDate(update);
 					builder.setPublishDate(published);
