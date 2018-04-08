@@ -80,7 +80,7 @@ final class CategoryMenuLoaders {
 				if (children.size() == 0) { return false; }
 
 				String title = category.ownText();
-				String views = children.get(0).ownText();
+				String views = children.get(0).wholeText();
 				views = String.format(mFormatString, views);
 				Uri url = Uri.parse(category.absUrl("href"));
 				CategoryMenuItem item = new CategoryMenuItem(title, views, url);
@@ -181,7 +181,7 @@ final class CategoryMenuLoaders {
 				if (children.size() == 0) { return false; }
 
 				String title = category.ownText();
-				String views = children.get(0).ownText();
+				String views = children.get(0).wholeText();
 				views = String.format(mFormatString, views);
 				Uri url = Uri.parse(category.absUrl("href"));
 				CategoryMenuItem item = new CategoryMenuItem(title, views, url);
@@ -287,7 +287,7 @@ final class CategoryMenuLoaders {
 				if (children.size() == 0) { return false; }
 
 				String title = category.ownText();
-				String views = children.get(0).ownText();
+				String views = children.get(0).wholeText();
 				views = String.format(mFormatString, views);
 				Uri url = Uri.parse(category.absUrl("href"));
 				CategoryMenuItem item = new CategoryMenuItem(title, views, url);
@@ -351,7 +351,7 @@ final class CategoryMenuLoaders {
 				if (children.size() == 0) { return false; }
 
 				String title = category.ownText();
-				String views = children.get(0).ownText();
+				String views = children.get(0).wholeText();
 				views = String.format(mFormatString, views);
 				Uri url = Uri.parse(category.absUrl("href"));
 				CategoryMenuItem item = new CategoryMenuItem(title, views, url);
