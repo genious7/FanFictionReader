@@ -1,17 +1,5 @@
 package com.spicymango.fanfictionreader.activity.reader;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.jsoup.Jsoup;
-import org.jsoup.Connection.Method;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
@@ -27,13 +15,17 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Spanned;
+import android.util.TypedValue;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.DecelerateInterpolator;
@@ -58,6 +50,18 @@ import com.spicymango.fanfictionreader.util.AsyncPost;
 import com.spicymango.fanfictionreader.util.FileHandler;
 import com.spicymango.fanfictionreader.util.Sites;
 import com.spicymango.fanfictionreader.util.adapters.TextAdapter;
+
+import org.jsoup.Connection.Method;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class StoryDisplayActivity extends AppCompatActivity implements LoaderCallbacks<StoryChapter>, OnClickListener{
 	private static final String STATE_UPDATED = "HasUpdated";
@@ -153,9 +157,32 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 				return true;
 			}
 		}
+
+		// scroll page up / down by keyboard.
+		// Support slash / backslash as additional keys because
+		// for many tablet keyboards, pressing page up/down requires additional Fn key
+		switch(keyCode) {
+			case KeyEvent.KEYCODE_PAGE_DOWN:
+			case KeyEvent.KEYCODE_BACKSLASH:
+				scrollStoryByPage(PGDN);
+				return true;
+			case KeyEvent.KEYCODE_PAGE_UP:
+			case KeyEvent.KEYCODE_SLASH:
+				scrollStoryByPage(PGUP);
+				return true;
+		}
+
 		return super.onKeyDown(keyCode, event);
 	}
-	
+
+	private static final boolean PGUP = false;
+	private static final boolean PGDN = true;
+	private void scrollStoryByPage(boolean isScrollDown) {
+		final int pageSize = mListView.getHeight() - 100;
+		final int stepSize = isScrollDown ? pageSize : -pageSize;
+		mListView.smoothScrollBy(stepSize, 250);
+	}
+
 	@Override
 	public Loader<StoryChapter> onCreateLoader(int id, Bundle args) {
 		return new FanFictionLoader(this, args, mStoryId, mCurrentPage);
@@ -480,6 +507,30 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 			mListView.setOnScrollListener(new ListViewHider());
 		}
 
+        // gesture detection on story text view
+        mListView.setOnTouchListener(new View.OnTouchListener() {
+            private GestureDetectorCompat mDetector = new GestureDetectorCompat(StoryDisplayActivity.this,
+                    new GestureDetector.SimpleOnGestureListener() {
+                        final float mOneInchInPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_IN,
+                                1, getResources().getDisplayMetrics());
+
+                        @Override
+                        public boolean onFling(MotionEvent event1, MotionEvent event2, float vX, float vY) {
+                            // somehow event1 (start of a fling) is often null, forced to use end event
+                            if (mListView.getHeight() - event2.getY() < mOneInchInPx) { // fling on screen bottom
+                                boolean isScrollDown = vX < 0;
+                                scrollStoryByPage(isScrollDown);
+                                return true;
+                            }
+                            return false;
+                        }
+                    });
+
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                return mDetector.onTouchEvent(event);
+            }
+        });
 
 		btnFirst = footer.findViewById(R.id.read_story_first);
 		btnPrev = footer.findViewById(R.id.read_story_prev);
