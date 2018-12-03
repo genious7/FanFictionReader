@@ -164,15 +164,32 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 		// scroll page up / down by keyboard.
 		// Support slash / backslash as additional keys because
 		// for many tablet keyboards, pressing page up/down requires additional Fn key
-		switch(keyCode) {
-			case KeyEvent.KEYCODE_PAGE_DOWN:
-			case KeyEvent.KEYCODE_BACKSLASH:
-				scrollStoryByPage(PGDN);
-				return true;
-			case KeyEvent.KEYCODE_PAGE_UP:
-			case KeyEvent.KEYCODE_SLASH:
-				scrollStoryByPage(PGUP);
-				return true;
+		if (event.hasNoModifiers()) {
+			switch (keyCode) {
+				case KeyEvent.KEYCODE_PAGE_DOWN:
+				case KeyEvent.KEYCODE_BACKSLASH:
+					scrollStoryByPage(PGDN);
+					return true;
+				case KeyEvent.KEYCODE_PAGE_UP:
+				case KeyEvent.KEYCODE_SLASH:
+					scrollStoryByPage(PGUP);
+					return true;
+			}
+		}
+
+		if (event.isShiftPressed()) {
+			switch (keyCode) {
+				case KeyEvent.KEYCODE_DPAD_RIGHT:
+					if (mCurrentPage < mTotalPages) {
+						load(mCurrentPage + 1);
+					}
+					return true;
+				case KeyEvent.KEYCODE_DPAD_LEFT:
+					if (mCurrentPage > 1) {
+						load(mCurrentPage - 1);
+					}
+					return true;
+			}
 		}
 
 		return super.onKeyDown(keyCode, event);
