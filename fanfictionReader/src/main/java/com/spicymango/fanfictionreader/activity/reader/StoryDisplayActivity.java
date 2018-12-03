@@ -19,6 +19,7 @@ import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Spanned;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
@@ -37,6 +38,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.spicymango.fanfictionreader.BuildConfig;
 import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.Settings;
 import com.spicymango.fanfictionreader.activity.LogInActivity;
@@ -65,7 +67,8 @@ import java.util.regex.Pattern;
 
 public class StoryDisplayActivity extends AppCompatActivity implements LoaderCallbacks<StoryChapter>, OnClickListener{
 	private static final String STATE_UPDATED = "HasUpdated";
-	
+	public static final String TAG = "FFR-Story";
+
 	/**
 	 * Opens the story with the selected id. If the story already exists in the
 	 * library, the story will open in the last position read. Otherwise, it
@@ -509,6 +512,8 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 
         // gesture detection on story text view
         mListView.setOnTouchListener(new View.OnTouchListener() {
+        	private final boolean DEBUG_TOUCHES = true && BuildConfig.DEBUG;
+
             private GestureDetectorCompat mDetector = new GestureDetectorCompat(StoryDisplayActivity.this,
                     new GestureDetector.SimpleOnGestureListener() {
                         final float mOneInchInPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_IN,
@@ -516,19 +521,102 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 
                         @Override
                         public boolean onFling(MotionEvent event1, MotionEvent event2, float vX, float vY) {
-                            // somehow event1 (start of a fling) is often null, forced to use end event
-                            if (mListView.getHeight() - event2.getY() < mOneInchInPx) { // fling on screen bottom
-                                boolean isScrollDown = vX < 0;
-                                scrollStoryByPage(isScrollDown);
-                                return true;
-                            }
-                            return false;
+							// somehow event1 (start of a fling) is often null (i.e., no ACTION_DOWN)
+							// use the first action move as an approximation
+							final MotionEvent evStart = event1 != null ? event1 : mCurrentStartEvent;
+
+							if (evStart == null) {
+								Log.w(TAG, "onFling - false, cannot determine Start Event");
+								return false;
+							}
+
+							return doOnFling(evStart, event2, vX, vY);
                         }
+
+						private boolean doOnFling(MotionEvent event1, MotionEvent event2, float vX, float vY) {
+                        	if (DEBUG_TOUCHES) {
+								String dbgMsg = "onFling -  vX: " + vX + ", vY: " + vY
+										+ ", e1.X: " + (event1 != null ? event1.getX() : -1) + ", e2.X: " + event2.getX()
+										+ ", e1.Y: " + (event1 != null ? event1.getY() : -1) + ", e2.Y: " + event2.getY()
+										+ ", height: " + mListView.getHeight()
+										+ ", e1: " + event1 + ", e2: " + event2;
+								Log.d(TAG, dbgMsg);
+							}
+
+
+							// logic to support horizontal swipes at screen bottom
+
+							// accept fling on screen / view bottom only
+							if (mListView.getHeight() - event2.getY() > mOneInchInPx) {
+								if (DEBUG_TOUCHES) { Log.d(TAG, "  onFling - false, not on screen bottom"); }
+								return false;
+							}
+
+							// accept flings with only small vertical delta only
+							float absDeltaY = Math.abs(event2.getY() - event1.getY());
+                        	// Note: relatively large vertical leeway (1 in) is allowed here
+							// because somehow, truly horizontal swipes often are not processed
+							// i.e., those horizontal swipes are not passed to the parent OnTouchListener
+							// at all.
+							// The swipes that get registered tend to have some leeway.
+							if (absDeltaY > mOneInchInPx) {
+								if (DEBUG_TOUCHES) { Log.d(TAG, "  onFling - false, absDeltaY too large, absDeltaY: " + absDeltaY); }
+								return false;
+							}
+
+							// accept flings with big enough horizontal delta
+							float deltaX = event2.getX() - event1.getX();
+							if (Math.abs(deltaX) < mOneInchInPx / 2) {
+								if (DEBUG_TOUCHES) { Log.d(TAG, "  onFling - false, deltaX too small, deltaX: " + deltaX); }
+								return false;
+							}
+
+							// sometimes vX from onFling is not reliable
+							boolean isScrollDown = deltaX < 0;
+							if (DEBUG_TOUCHES) {
+								Log.d(TAG, "  to scroll " + (isScrollDown ? "down" : "up")
+										+ ", vX: " + vX + ", deltaX: " + deltaX + ", deltaY: " + absDeltaY);
+							}
+							if (deltaX < 0 && vX > 0 || deltaX > 0 && vX < 0) {
+								Log.w(TAG, "onFling: vX and deltaX are not in the same direction. "
+										+ " deltaX: " + deltaX + " , vX: " + vX);
+							}
+							scrollStoryByPage(isScrollDown);
+							return true;
+						}
                     });
+
+            MotionEvent mCurrentStartEvent; // to be used by onFling() in case event1 is null, i.e., do down event
 
             @Override
             public boolean onTouch(View view, MotionEvent event) {
-                return mDetector.onTouchEvent(event);
+				if (DEBUG_TOUCHES) { Log.v(TAG, "onTouch - e: " + event); }
+            	switch (event.getActionMasked()) {
+					case MotionEvent.ACTION_DOWN:
+					case MotionEvent.ACTION_MOVE:
+						if (mCurrentStartEvent == null ||
+								mCurrentStartEvent.getDownTime() != event.getDownTime()) {
+							// The downtime test: In some edge cases (reasons not known yet), an
+							// old (from previous user gesture) event is still kept as mCurrentStartEvent.
+							// The downtime test ensures an old one (which has a different downtime)
+							// will be discarded
+							mCurrentStartEvent = MotionEvent.obtain(event);
+						}
+				}
+
+				try {
+					boolean res = mDetector.onTouchEvent(event);
+					return res;
+				} finally {
+					switch (event.getActionMasked()) {
+						case MotionEvent.ACTION_UP:
+						case MotionEvent.ACTION_CANCEL:
+							if (mCurrentStartEvent != null) {
+								mCurrentStartEvent.recycle();
+								mCurrentStartEvent = null;
+							}
+					}
+				}
             }
         });
 
