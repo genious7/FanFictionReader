@@ -37,18 +37,22 @@ android {
         release
     }
     buildTypes {
+        // see https://stackoverflow.com/a/40592469
+        def addConstantTo = {target, constantName, constantValue ->
+            target.manifestPlaceholders += [ (constantName):constantValue]
+            target.buildConfigField "String", "${constantName}", "\"${constantValue}\""
+        }
         debug{
             applicationIdSuffix ".debug"
             // buildType-specific provider authority
             // 1. manifestPlaceholders is used by AndroidManifest.xml
             // 2. buildConfigField is used by static constant in StoryProvider.java
-            manifestPlaceholders += [ provider_authority: "com.spicymango.fanfictionreader.debug.provider"]
-            buildConfigField "String", "provider_authority", '"com.spicymango.fanfictionreader.debug.provider"'
+            // Note: owner refers to current script block
+            addConstantTo(owner, "provider_authority", "com.spicymango.fanfictionreader.debug.provider")
             ext.enableCrashlytics = false
         }
         release {
-            manifestPlaceholders += [ provider_authority: "com.spicymango.fanfictionreader.provider"]
-            buildConfigField "String", "provider_authority", '"com.spicymango.fanfictionreader.provider"'
+            addConstantTo(owner, "provider_authority", "com.spicymango.fanfictionreader.provider")
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.pro'
