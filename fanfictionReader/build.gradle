@@ -39,9 +39,16 @@ android {
     buildTypes {
         debug{
             applicationIdSuffix ".debug"
+            // buildType-specific provider authority
+            // 1. manifestPlaceholders is used by AndroidManifest.xml
+            // 2. buildConfigField is used by static constant in StoryProvider.java
+            manifestPlaceholders += [ provider_authority: "com.spicymango.fanfictionreader.debug.provider"]
+            buildConfigField "String", "provider_authority", '"com.spicymango.fanfictionreader.debug.provider"'
             ext.enableCrashlytics = false
         }
         release {
+            manifestPlaceholders += [ provider_authority: "com.spicymango.fanfictionreader.provider"]
+            buildConfigField "String", "provider_authority", '"com.spicymango.fanfictionreader.provider"'
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.pro'
