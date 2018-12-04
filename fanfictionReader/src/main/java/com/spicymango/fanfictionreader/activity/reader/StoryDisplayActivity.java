@@ -378,7 +378,6 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 				load(which + 1);
 			}
 		});
-		builder.create();
 		builder.show();
 	}
 	
