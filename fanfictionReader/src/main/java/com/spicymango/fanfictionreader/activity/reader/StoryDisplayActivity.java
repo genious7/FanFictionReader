@@ -56,6 +56,7 @@ import com.spicymango.fanfictionreader.provider.StoryProvider;
 import com.spicymango.fanfictionreader.services.LibraryDownloader;
 import com.spicymango.fanfictionreader.util.AsyncPost;
 import com.spicymango.fanfictionreader.util.FileHandler;
+import com.spicymango.fanfictionreader.util.JsoupUtil;
 import com.spicymango.fanfictionreader.util.Sites;
 import com.spicymango.fanfictionreader.util.adapters.TextAdapter;
 
@@ -634,8 +635,8 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 			builder.appendEncodedPath(Long.toString(storyId));
 			builder.appendEncodedPath(Integer.toString(currentPage));
 			builder.appendEncodedPath("");
-			
-			Document document = Jsoup.connect(builder.toString()).timeout(10000).get();
+
+			Document document = JsoupUtil.safeGet(builder.toString());
 			
 			if (data.getTotalChapters() == 0) {
 				Element title = document.select("div#content div b").first();

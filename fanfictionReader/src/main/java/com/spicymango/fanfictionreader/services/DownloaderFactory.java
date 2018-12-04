@@ -12,6 +12,7 @@ import com.spicymango.fanfictionreader.activity.Site;
 import com.spicymango.fanfictionreader.provider.SqlConstants;
 import com.spicymango.fanfictionreader.provider.StoryProvider;
 import com.spicymango.fanfictionreader.util.FileHandler;
+import com.spicymango.fanfictionreader.util.JsoupUtil;
 import com.spicymango.fanfictionreader.util.Parser;
 import com.spicymango.fanfictionreader.util.Sites;
 import com.spicymango.fanfictionreader.util.Story;
@@ -268,7 +269,7 @@ class DownloaderFactory {
 		public void downloadChapter() throws IOException, ParseException, StoryNotFoundException {
 			final String url = "https://www.fanfiction.net/s/" + mStoryId + "/"
 					+ mCurrentPage + "/";
-			final Document document = Jsoup.connect(url).timeout(10000).userAgent("Mozilla/5.0").get();
+			final Document document = JsoupUtil.safeGet(url, "Mozilla/5.0");
 
 			// On the first run, update the mStory variable
 			if (mCurrentPage == 1) {
