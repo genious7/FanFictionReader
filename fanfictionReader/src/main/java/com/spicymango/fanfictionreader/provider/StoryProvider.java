@@ -3,8 +3,6 @@
  */
 package com.spicymango.fanfictionreader.provider;
 
-import com.spicymango.fanfictionreader.activity.Site;
-
 import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -19,12 +17,15 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
+import com.spicymango.fanfictionreader.BuildConfig;
+import com.spicymango.fanfictionreader.activity.Site;
+
 /**
  * @author Michael Chen
  * 
  */
 public class StoryProvider extends ContentProvider implements SqlConstants {
-	private static final String AUTHORITY = "com.spicymango.fanfictionreader.provider";
+	private static final String AUTHORITY = BuildConfig.provider_authority;
 	private static final String BASE_PATH_FF = "library";
 	private static final String BASE_PATH_FP = "fictionPressLibrary";
 	

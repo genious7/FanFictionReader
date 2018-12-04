@@ -61,7 +61,7 @@
 
         <provider
             android:name="com.spicymango.fanfictionreader.provider.StoryProvider"
-            android:authorities="com.spicymango.fanfictionreader.provider"
+            android:authorities="${provider_authority}"
             android:exported="false" />
 
         <activity
