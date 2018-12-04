@@ -13,6 +13,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
@@ -378,7 +379,13 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 				load(which + 1);
 			}
 		});
-		builder.show();
+		AlertDialog dialog = builder.show();
+		ListView dialogListView = dialog.getListView();
+		if (dialogListView != null) {
+			// the more intuitive .smoothScrollToPosition() does not work,
+			// without adding some delay
+			dialogListView.setSelection(mCurrentPage - 1);
+		}
 	}
 	
 	/**
