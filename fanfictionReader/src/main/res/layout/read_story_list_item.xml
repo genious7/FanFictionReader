@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content" 
     android:textColor="?android:attr/textColorSecondary"
+    android:textIsSelectable="true"
     android:paddingLeft="@dimen/reading_margin"
     android:paddingRight="@dimen/reading_margin">
 </info.piwai.android.JellyBeanSpanFixTextView>
