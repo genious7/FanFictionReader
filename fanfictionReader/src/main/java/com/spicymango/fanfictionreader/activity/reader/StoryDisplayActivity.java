@@ -13,7 +13,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
@@ -371,7 +370,12 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		String[] Chapters = new String[mTotalPages];
 		for (int i = 0; i < mTotalPages; i++) {
-			Chapters[i] = getResources().getString(R.string.read_story_chapter)
+			// "> " as a indicator of current chapter
+			// a better one (bold, perfectly aligned) will require a custom view
+			// for the items via a ListAdapter using builder.setAdapter(...)
+			// instead of simple String[] here
+			Chapters[i] = (i == mCurrentPage - 1 ? ">  ": "    ")
+                    + getResources().getString(R.string.read_story_chapter)
 					+ (i + 1);
 		}
 		builder.setItems(Chapters, (dialog, which) -> {
