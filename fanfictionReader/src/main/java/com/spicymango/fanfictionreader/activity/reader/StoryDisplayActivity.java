@@ -833,9 +833,10 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 							// sometimes vX from onFling is not reliable
 							boolean isSwipeLeft = deltaX < 0;
 							if (DEBUG_TOUCHES) {
-								Log.d(TAG, "  swipe " + (isSwipeLeft ? "left" : "right")
+								Log.d(TAG, "  onFling - swipe " + (isSwipeLeft ? "left" : "right")
 										+ ", vX: " + vX + ", deltaX: " + deltaX + ", deltaY: " + absDeltaY);
 							}
+							// The following logs cases that framework-supplied vX is buggy.
 							if (deltaX < 0 && vX > 0 || deltaX > 0 && vX < 0) {
 								Log.w(TAG, "onFling: vX and deltaX are not in the same direction. "
 										+ " deltaX: " + deltaX + " , vX: " + vX);
@@ -873,6 +874,10 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 	 * (of the first MotionEvent of the gesture that is tracked)
 	 */
 	private static class FixedGestureDetectorCompat {
+		private static final String TAG = "FFR-FGestureD";
+
+		private static final boolean DEBUG_TOUCHES = true && BuildConfig.DEBUG;
+
 		@NonNull
 		private final GestureDetectorCompat mDetector;
 
@@ -902,6 +907,10 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 						// old (from previous user gesture) event is still kept as mCurrentStartEvent.
 						// The downtime test ensures an old one (which has a different downtime)
 						// will be discarded
+						if (DEBUG_TOUCHES) {
+							Log.v(TAG, "onTouchEvent - a new start event. type: "
+									+ event.getActionMasked());
+						}
 						mCurrentStartEvent = MotionEvent.obtain(event);
 					}
 			}
@@ -913,6 +922,10 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 				switch (event.getActionMasked()) {
 					case MotionEvent.ACTION_UP:
 					case MotionEvent.ACTION_CANCEL:
+						if (DEBUG_TOUCHES) {
+							Log.v(TAG, "onTouchEvent - gesture end. release start event: "
+									+ (mCurrentStartEvent != null));
+						}
 						if (mCurrentStartEvent != null) {
 							mCurrentStartEvent.recycle();
 							mCurrentStartEvent = null;
@@ -971,11 +984,40 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 			public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
 				// somehow event1 (start of a fling) is often null (i.e., no ACTION_DOWN)
 				// use the first action move as an approximation
-				final MotionEvent evStart = e1!= null ? e1 : mCurrentStartEvent;
+				MotionEvent evStart = e1!= null ? e1 : mCurrentStartEvent;
 
 				if (evStart == null) {
-//						Log.w(TAG, "onFling - false, cannot determine Start Event");
+					Log.w(TAG, "onFling - aborted. Cannot determine Start Event.");
 					return false;
+				}
+				if (e2.getDownTime() != evStart.getDownTime()) {
+					if (e1 != null) {
+						// case evStart comes from original GestureDetectorCompat, which
+						// supplies a buggy one from an old gesture. Use our approximation.
+						// Example scenarios:
+						// 1. framework only occasionally detects ACTION_DOWN (the proper gesture start).
+						//    at least on the tested devices.
+						// 2. when it does detect ACTION_DOWN, it first uses it correctly.
+						// 3. however, for subsequent gestures (with no ACTION_DOWN), framework continues
+						//    to use the old ACTION_DOWN in step 2, and passes it to here.
+						//
+						// See relevant codes:
+						// - in GestureDetectorCompat.java:307-310 (support v25.4.0) the only place
+						//   member mCurrentDownEvent ever get set (in dealing with ACTION_DOWN)
+						// - when subsequent gestures (with no ACTION_DOWN) happen, mCurrentDownEvent
+						//   thus retains the old value.
+						if (DEBUG_TOUCHES) {
+							Log.d(TAG, "onFling - framework-supplied Start Event e1 comes from an old gesture with downTime ["
+									+ e1.getDownTime() + "]. Use our approximation.");
+						}
+						evStart = mCurrentStartEvent;
+					} else {
+						// a case that should not happen, our own approximation event
+						// somehow comes from a different (old) gesture
+						Log.e(TAG, "onFling - aborted. Cannot find a proper Start Event. Our approximation"
+								+ " comes from an old gesture.  evStart: " + evStart + ", e2: " + e2);
+						return false;
+					}
 				}
 
 				return mListener.onFling(evStart, e2, velocityX, velocityY);
