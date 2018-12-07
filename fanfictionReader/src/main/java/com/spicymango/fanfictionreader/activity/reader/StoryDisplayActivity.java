@@ -822,8 +822,17 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 							}
 
 							// accept flings with big enough horizontal delta
+							// Note: for the rule with more lenient (0.25in) range when event1 is not ACTION_DOWN
+							// This is to address cases that (many) MotionEvent are not passed to the detector.
+							// In those cases, initial ACTION_DOWN are rarely supplied, so as some other
+							// events. The net result is that in a typical swipe, the deltaX derived by
+							// the supplied MotionEvent tends to be much smaller than the actual user swipe.
+							// Empirically, even for a swipe over 1inch, it is not unusual for the deltaX
+							// be as small as 0.2in (due to missing MotionEvents)
 							float deltaX = event2.getX() - event1.getX();
-							if (Math.abs(deltaX) < mOneInchInPx / 2) {
+							if (!( Math.abs(deltaX) > mOneInchInPx / 2 ||
+									(MotionEvent.ACTION_DOWN  != event1.getActionMasked() &&
+											Math.abs(deltaX) > mOneInchInPx / 5) )) {
 								if (DEBUG_TOUCHES) {
 									Log.d(TAG, "  onFling - false, deltaX too small, deltaX: " + deltaX);
 								}
