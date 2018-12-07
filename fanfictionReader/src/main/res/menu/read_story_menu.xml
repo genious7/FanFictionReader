@@ -16,6 +16,14 @@
         spicymango:showAsAction="never" android:checkable="true" android:visible="false">
     </item>
 
+
+    <item
+        android:id="@+id/reader_settings"
+        android:enabled="true"
+        android:title="@string/menu_button_settings"
+        spicymango:showAsAction="ifRoom">
+    </item>
+
     <group
         android:id="@+id/go_to_group"
         android:enabled="false"

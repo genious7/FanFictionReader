@@ -69,6 +69,8 @@ import java.util.regex.Pattern;
 public class StoryDisplayActivity extends AppCompatActivity implements LoaderCallbacks<StoryChapter>, OnClickListener{
 	private static final String STATE_UPDATED = "HasUpdated";
 
+	private static final int INTENT_SETTINGS = 0;
+
 	/**
 	 * Opens the story with the selected id. If the story already exists in the
 	 * library, the story will open in the last position read. Otherwise, it
@@ -277,7 +279,22 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 			break;
 		}
 	}
-	
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		switch (requestCode) {
+			//Restart the activity after returning from settings in order to refresh the theme
+			case INTENT_SETTINGS:
+				Intent intent = getIntent();
+				finish();
+				startActivity(intent);
+				break;
+			default:
+				super.onActivityResult(requestCode, resultCode, data);
+				break;
+		}
+	}
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -292,6 +309,10 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 			LibraryDownloader.download(this, storyUri.build(), mCurrentPage, getOffset());
 
 			supportInvalidateOptionsMenu();
+			return true;
+		case R.id.reader_settings:
+			Intent intent = new Intent(this, Settings.class);
+			startActivityForResult(intent, INTENT_SETTINGS);
 			return true;
 		case R.id.read_story_go_to:
 			chapterPicker();
