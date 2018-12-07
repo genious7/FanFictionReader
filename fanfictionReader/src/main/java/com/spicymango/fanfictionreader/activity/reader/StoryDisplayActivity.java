@@ -574,7 +574,20 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 
 		getSupportLoaderManager().initLoader(0, savedInstanceState, this);
 	}
-	
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		final int visibility = getWindow().getDecorView().getSystemUiVisibility();
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+			int newVisibility = visibility
+					| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+					| View.SYSTEM_UI_FLAG_FULLSCREEN
+					| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+			getWindow().getDecorView().setSystemUiVisibility(newVisibility);
+		}
+	}
+
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
