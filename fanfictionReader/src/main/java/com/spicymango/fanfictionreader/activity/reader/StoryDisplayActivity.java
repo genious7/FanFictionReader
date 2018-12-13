@@ -371,7 +371,12 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		String[] Chapters = new String[mTotalPages];
 		for (int i = 0; i < mTotalPages; i++) {
-			Chapters[i] = getResources().getString(R.string.read_story_chapter)
+			// "> " as a indicator of current chapter
+			// a better one (bold, perfectly aligned) will require a custom view
+			// for the items via a ListAdapter using builder.setAdapter(...)
+			// instead of simple String[] here
+			Chapters[i] = (i == mCurrentPage - 1 ? ">  ": "    ")
+                    + getResources().getString(R.string.read_story_chapter)
 					+ (i + 1);
 		}
 		builder.setItems(Chapters, (dialog, which) -> {
@@ -379,8 +384,13 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 				load(which + 1);
 			}
 		});
-		builder.create();
-		builder.show();
+		AlertDialog dialog = builder.show();
+		ListView dialogListView = dialog.getListView();
+		if (dialogListView != null) {
+			// the more intuitive .smoothScrollToPosition() does not work,
+			// without adding some delay
+			dialogListView.setSelection(mCurrentPage - 1);
+		}
 	}
 	
 	/**
