@@ -766,150 +766,273 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 	 * Utility to detect horizontal swipes at the bottom of a given view.
 	 */
 	private static abstract class BottomHorizontalSwipeListener implements View.OnTouchListener {
-			private static final String TAG = "FFR-HSwipe";
+		private static final String TAG = "FFR-HSwipe";
 
-			private static final boolean DEBUG_TOUCHES = true && BuildConfig.DEBUG;
+		private static final boolean DEBUG_TOUCHES = true && BuildConfig.DEBUG;
 
-			// Given the listener should have a life cycle within the parent view
-		    // Holding a reference to the view should not cause memory leak.
-			@NonNull
-			final View mParentView; // package scope to be used by inner class
+		// Given the listener should have a life cycle within the parent view
+		// Holding a reference to the view should not cause memory leak.
+		@NonNull
+		final View mParentView; // package scope to be used by inner class
 
-			@NonNull
-			private final GestureDetectorCompat mDetector;
+		@NonNull
+		private final FixedGestureDetectorCompat mDetector;
 
-		    // to be used by mDetector.onFling() in case event1 is null, i.e., no down event
-			MotionEvent mCurrentStartEvent;
 
-			public BottomHorizontalSwipeListener(@NonNull View parentView) {
-				mParentView = parentView;
-				mDetector = new GestureDetectorCompat(parentView.getContext(),
-						new GestureDetector.SimpleOnGestureListener() {
-							final float mOneInchInPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_IN,
-									1, parentView.getContext().getResources().getDisplayMetrics());
+		public BottomHorizontalSwipeListener(@NonNull View parentView) {
+			mParentView = parentView;
+			mDetector = new FixedGestureDetectorCompat(parentView.getContext(),
+					new GestureDetector.SimpleOnGestureListener() {
+						final float mOneInchInPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_IN,
+								1, parentView.getContext().getResources().getDisplayMetrics());
 
-							@Override
-							public boolean onFling(MotionEvent event1, MotionEvent event2, float vX, float vY) {
-								// somehow event1 (start of a fling) is often null (i.e., no ACTION_DOWN)
-								// use the first action move as an approximation
-								final MotionEvent evStart = event1 != null ? event1 : mCurrentStartEvent;
-
-								if (evStart == null) {
-									Log.w(TAG, "onFling - false, cannot determine Start Event");
-									return false;
-								}
-
-								return doOnFling(evStart, event2, vX, vY);
+						@Override
+						public boolean onFling(MotionEvent event1, MotionEvent event2, float vX, float vY) {
+							if (DEBUG_TOUCHES) {
+								String dbgMsg = "onFling -  vX: " + vX + ", vY: " + vY
+										+ ", e1.X: " + (event1 != null ? event1.getX() : -1) + ", e2.X: " + event2.getX()
+										+ ", e1.Y: " + (event1 != null ? event1.getY() : -1) + ", e2.Y: " + event2.getY()
+										+ ", height: " + mParentView.getHeight()
+										+ ", e1: " + event1 + ", e2: " + event2;
+								Log.d(TAG, dbgMsg);
 							}
 
-							private boolean doOnFling(MotionEvent event1, MotionEvent event2, float vX, float vY) {
+
+							// logic to support horizontal swipes at screen bottom
+
+							// accept fling on screen / view bottom only
+							if (mParentView.getHeight() - event2.getY() > mOneInchInPx) {
 								if (DEBUG_TOUCHES) {
-									String dbgMsg = "onFling -  vX: " + vX + ", vY: " + vY
-											+ ", e1.X: " + (event1 != null ? event1.getX() : -1) + ", e2.X: " + event2.getX()
-											+ ", e1.Y: " + (event1 != null ? event1.getY() : -1) + ", e2.Y: " + event2.getY()
-											+ ", height: " + mParentView.getHeight()
-											+ ", e1: " + event1 + ", e2: " + event2;
-									Log.d(TAG, dbgMsg);
+									Log.d(TAG, "  onFling - false, not on screen bottom");
 								}
-
-
-								// logic to support horizontal swipes at screen bottom
-
-								// accept fling on screen / view bottom only
-								if (mParentView.getHeight() - event2.getY() > mOneInchInPx) {
-									if (DEBUG_TOUCHES) {
-										Log.d(TAG, "  onFling - false, not on screen bottom");
-									}
-									return false;
-								}
-
-								// accept flings with only small vertical delta only
-								float absDeltaY = Math.abs(event2.getY() - event1.getY());
-								// Note: relatively large vertical leeway (1 in) is allowed here
-								// because somehow, truly horizontal swipes often are not processed
-								// i.e., those horizontal swipes are not passed to the parent OnTouchListener
-								// at all.
-								// The swipes that get registered tend to have some leeway.
-								if (absDeltaY > mOneInchInPx) {
-									if (DEBUG_TOUCHES) {
-										Log.d(TAG, "  onFling - false, absDeltaY too large, absDeltaY: " + absDeltaY);
-									}
-									return false;
-								}
-
-								// accept flings with big enough horizontal delta
-								float deltaX = event2.getX() - event1.getX();
-								if (Math.abs(deltaX) < mOneInchInPx / 2) {
-									if (DEBUG_TOUCHES) {
-										Log.d(TAG, "  onFling - false, deltaX too small, deltaX: " + deltaX);
-									}
-									return false;
-								}
-
-								// sometimes vX from onFling is not reliable
-								boolean isSwipeLeft = deltaX < 0;
-								if (DEBUG_TOUCHES) {
-									Log.d(TAG, "  swipe " + (isSwipeLeft ? "left" : "right")
-											+ ", vX: " + vX + ", deltaX: " + deltaX + ", deltaY: " + absDeltaY);
-								}
-								if (deltaX < 0 && vX > 0 || deltaX > 0 && vX < 0) {
-									Log.w(TAG, "onFling: vX and deltaX are not in the same direction. "
-											+ " deltaX: " + deltaX + " , vX: " + vX);
-								}
-
-								if (isSwipeLeft) {
-									onSwipeLeftAtViewBottom();
-								} else {
-									onSwipeRightAtViewBottom();
-								}
-								return true;
+								return false;
 							}
-						});
+
+							// accept flings with only small vertical delta only
+							float absDeltaY = Math.abs(event2.getY() - event1.getY());
+							// Note: relatively large vertical leeway (1 in) is allowed here
+							// because somehow, truly horizontal swipes often are not processed
+							// i.e., those horizontal swipes are not passed to the parent OnTouchListener
+							// at all.
+							// The swipes that get registered tend to have some leeway.
+							if (absDeltaY > mOneInchInPx) {
+								if (DEBUG_TOUCHES) {
+									Log.d(TAG, "  onFling - false, absDeltaY too large, absDeltaY: " + absDeltaY);
+								}
+								return false;
+							}
+
+							// accept flings with big enough horizontal delta
+							// Note: for the rule with more lenient (0.25in) range when event1 is not ACTION_DOWN
+							// This is to address cases that (many) MotionEvent are not passed to the detector.
+							// In those cases, initial ACTION_DOWN are rarely supplied, so as some other
+							// events. The net result is that in a typical swipe, the deltaX derived by
+							// the supplied MotionEvent tends to be much smaller than the actual user swipe.
+							// Empirically, even for a swipe over 1inch, it is not unusual for the deltaX
+							// be as small as 0.2in (due to missing MotionEvents)
+							float deltaX = event2.getX() - event1.getX();
+							if (!( Math.abs(deltaX) > mOneInchInPx / 2 ||
+									(MotionEvent.ACTION_DOWN  != event1.getActionMasked() &&
+											Math.abs(deltaX) > mOneInchInPx / 5) )) {
+								if (DEBUG_TOUCHES) {
+									Log.d(TAG, "  onFling - false, deltaX too small, deltaX: " + deltaX);
+								}
+								return false;
+							}
+
+							// sometimes vX from onFling is not reliable
+							boolean isSwipeLeft = deltaX < 0;
+							if (DEBUG_TOUCHES) {
+								Log.d(TAG, "  onFling - swipe " + (isSwipeLeft ? "left" : "right")
+										+ ", vX: " + vX + ", deltaX: " + deltaX + ", deltaY: " + absDeltaY);
+							}
+							// The following logs cases that framework-supplied vX is buggy.
+							if (deltaX < 0 && vX > 0 || deltaX > 0 && vX < 0) {
+								Log.w(TAG, "onFling: vX and deltaX are not in the same direction. "
+										+ " deltaX: " + deltaX + " , vX: " + vX);
+							}
+
+							if (isSwipeLeft) {
+								onSwipeLeftAtViewBottom();
+							} else {
+								onSwipeRightAtViewBottom();
+							}
+							return true;
+						}
+					});
+		}
+
+
+		@Override
+		public boolean onTouch(View view, MotionEvent event) {
+			if (DEBUG_TOUCHES) { Log.v(TAG, "onTouch - e: " + event); }
+			return mDetector.onTouchEvent(event);
+		}
+
+		public abstract void onSwipeLeftAtViewBottom();
+
+		public abstract void onSwipeRightAtViewBottom();
+
+	}
+
+	/**
+	 * A replacement of {@link GestureDetectorCompat} that fixes the issue
+	 * that in invoking {@link android.view.GestureDetector.OnGestureListener#onFling(MotionEvent, MotionEvent, float, float)}
+	 * call, the supplied parameter <code>event1</code>, the gesture start event, is sometimes missing.
+	 *
+	 * This class fixes the issue: when event1 is null, it supplies an approximation
+	 * (of the first MotionEvent of the gesture that is tracked)
+	 */
+	private static class FixedGestureDetectorCompat {
+		private static final String TAG = "FFR-FGestureD";
+
+		private static final boolean DEBUG_TOUCHES = true && BuildConfig.DEBUG;
+
+		@NonNull
+		private final GestureDetectorCompat mDetector;
+
+		// to be used by listener's onFling() in case event1 is null, i.e., no down event
+		private MotionEvent mCurrentStartEvent;
+
+		public FixedGestureDetectorCompat(@NonNull Context context,
+										  @NonNull GestureDetector.OnGestureListener listener) {
+			mDetector = new GestureDetectorCompat(context, new OnGestureListenerDecorator(listener));
+		}
+
+		public boolean isLongpressEnabled() {
+			return mDetector.isLongpressEnabled();
+		}
+
+		public boolean onTouchEvent(MotionEvent event) {
+			// tracking the gesture start event,
+			// to be used by mDetector's listener.onFling() implementation
+			// where event1 (start of a gesture) is often (unexpectedly) null.
+			// (somehow in some system, the initial ACTION_DOWN is often missed in flings)
+			switch (event.getActionMasked()) {
+				case MotionEvent.ACTION_DOWN:
+				case MotionEvent.ACTION_MOVE:
+					if (mCurrentStartEvent == null ||
+							mCurrentStartEvent.getDownTime() != event.getDownTime()) {
+						// The downtime test: In some edge cases (reasons not known yet), an
+						// old (from previous user gesture) event is still kept as mCurrentStartEvent.
+						// The downtime test ensures an old one (which has a different downtime)
+						// will be discarded
+						if (DEBUG_TOUCHES) {
+							Log.v(TAG, "onTouchEvent - a new start event. type: "
+									+ event.getActionMasked());
+						}
+						mCurrentStartEvent = MotionEvent.obtain(event);
+					}
 			}
 
-
-			@Override
-			public boolean onTouch(View view, MotionEvent event) {
-				if (DEBUG_TOUCHES) { Log.v(TAG, "onTouch - e: " + event); }
-
-				// tracking the gesture start event,
-                // to be used by mDetector.onFling() implementation
-                // where event1 (start of a gesture) is often (unexpectedly) null.
-                // A cleaner implementation would have the logic built into a
-                // GestureDetectorCompat subclass.
-                // However, GestureDetectorCompat is final so it is not possible
+			try {
+				boolean res = mDetector.onTouchEvent(event);
+				return res;
+			} finally {
 				switch (event.getActionMasked()) {
-					case MotionEvent.ACTION_DOWN:
-					case MotionEvent.ACTION_MOVE:
-						if (mCurrentStartEvent == null ||
-								mCurrentStartEvent.getDownTime() != event.getDownTime()) {
-							// The downtime test: In some edge cases (reasons not known yet), an
-							// old (from previous user gesture) event is still kept as mCurrentStartEvent.
-							// The downtime test ensures an old one (which has a different downtime)
-							// will be discarded
-							mCurrentStartEvent = MotionEvent.obtain(event);
+					case MotionEvent.ACTION_UP:
+					case MotionEvent.ACTION_CANCEL:
+						if (DEBUG_TOUCHES) {
+							Log.v(TAG, "onTouchEvent - gesture end. release start event: "
+									+ (mCurrentStartEvent != null));
+						}
+						if (mCurrentStartEvent != null) {
+							mCurrentStartEvent.recycle();
+							mCurrentStartEvent = null;
 						}
 				}
+			}
+		}
 
-				try {
-					boolean res = mDetector.onTouchEvent(event);
-					return res;
-				} finally {
-					switch (event.getActionMasked()) {
-						case MotionEvent.ACTION_UP:
-						case MotionEvent.ACTION_CANCEL:
-							if (mCurrentStartEvent != null) {
-								mCurrentStartEvent.recycle();
-								mCurrentStartEvent = null;
-							}
-					}
-				}
+		public void setIsLongpressEnabled(boolean enabled) {
+			mDetector.setIsLongpressEnabled(enabled);
+		}
+
+		public void setOnDoubleTapListener(GestureDetector.OnDoubleTapListener listener) {
+			mDetector.setOnDoubleTapListener(listener);
+		}
+
+		/**
+		 * The decorator fixes the null event1 on {@link #onFling(MotionEvent, MotionEvent, float, float)}
+		 * if needed
+		 */
+		private class OnGestureListenerDecorator implements GestureDetector.OnGestureListener {
+			@NonNull
+			private final GestureDetector.OnGestureListener mListener;
+
+			public OnGestureListenerDecorator(@NonNull GestureDetector.OnGestureListener listener) {
+				mListener = listener;
 			}
 
-			public abstract void onSwipeLeftAtViewBottom();
+			@Override
+			public boolean onDown(MotionEvent e) {
+				return mListener.onDown(e);
+			}
 
-			public abstract void onSwipeRightAtViewBottom();
+			@Override
+			public void onShowPress(MotionEvent e) {
+				mListener.onShowPress(e);
+			}
 
+			@Override
+			public boolean onSingleTapUp(MotionEvent e) {
+				return mListener.onSingleTapUp(e);
+			}
+
+			@Override
+			public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+				// LATER: probably I need to wrap around onScroll similar to onFling
+				return mListener.onScroll(e1, e2, distanceX, distanceY);
+			}
+
+			@Override
+			public void onLongPress(MotionEvent e) {
+				mListener.onLongPress(e);
+			}
+
+			@Override
+			public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+				// somehow event1 (start of a fling) is often null (i.e., no ACTION_DOWN)
+				// use the first action move as an approximation
+				MotionEvent evStart = e1!= null ? e1 : mCurrentStartEvent;
+
+				if (evStart == null) {
+					Log.w(TAG, "onFling - aborted. Cannot determine Start Event.");
+					return false;
+				}
+				if (e2.getDownTime() != evStart.getDownTime()) {
+					if (e1 != null) {
+						// case evStart comes from original GestureDetectorCompat, which
+						// supplies a buggy one from an old gesture. Use our approximation.
+						// Example scenarios:
+						// 1. framework only occasionally detects ACTION_DOWN (the proper gesture start).
+						//    at least on the tested devices.
+						// 2. when it does detect ACTION_DOWN, it first uses it correctly.
+						// 3. however, for subsequent gestures (with no ACTION_DOWN), framework continues
+						//    to use the old ACTION_DOWN in step 2, and passes it to here.
+						//
+						// See relevant codes:
+						// - in GestureDetectorCompat.java:307-310 (support v25.4.0) the only place
+						//   member mCurrentDownEvent ever get set (in dealing with ACTION_DOWN)
+						// - when subsequent gestures (with no ACTION_DOWN) happen, mCurrentDownEvent
+						//   thus retains the old value.
+						if (DEBUG_TOUCHES) {
+							Log.d(TAG, "onFling - framework-supplied Start Event e1 comes from an old gesture with downTime ["
+									+ e1.getDownTime() + "]. Use our approximation.");
+						}
+						evStart = mCurrentStartEvent;
+					} else {
+						// a case that should not happen, our own approximation event
+						// somehow comes from a different (old) gesture
+						Log.e(TAG, "onFling - aborted. Cannot find a proper Start Event. Our approximation"
+								+ " comes from an old gesture.  evStart: " + evStart + ", e2: " + e2);
+						return false;
+					}
+				}
+
+				return mListener.onFling(evStart, e2, velocityX, velocityY);
+			}
 		}
+	}
 
 }
