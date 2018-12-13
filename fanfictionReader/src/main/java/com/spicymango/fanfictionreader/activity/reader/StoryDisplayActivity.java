@@ -184,18 +184,36 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 			switch (keyCode) {
 				case KeyEvent.KEYCODE_DPAD_RIGHT:
 					if (mCurrentPage < mTotalPages) {
-						load(mCurrentPage + 1);
+						resetScrollThenLoad(mCurrentPage + 1);
 					}
 					return true;
 				case KeyEvent.KEYCODE_DPAD_LEFT:
 					if (mCurrentPage > 1) {
-						load(mCurrentPage - 1);
+						resetScrollThenLoad(mCurrentPage - 1);
 					}
 					return true;
 			}
 		}
 
 		return super.onKeyDown(keyCode, event);
+	}
+
+	/**
+	 * This load chapter variation is used when it is initiated from keyboards only.
+	 *
+	 * Reason: when initiated from keyboards, somehow the scroll remains at the position
+	 * before the load, (i.e., the scroll reset logic in {@link #load(int)} has no effect
+	 * when initiated from keyboards.
+	 *
+	 * The implementation workarounds it by first clearing out current chapter text to forec the
+	 * view to scroll back to top, before loading the next chapter.
+	 * The other alternative that works is to use <code></code>mListView.smoothScrollToPosition(0)</code>
+	 * But the smooth scroll creates a unpleasant, noticeable delay.
+	 */
+	private void resetScrollThenLoad(int page) {
+		mList.clear();
+		mAdapter.notifyDataSetChanged();
+		load(page);
 	}
 
 	private static final boolean PGUP = false;
