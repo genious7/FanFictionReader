@@ -17,14 +17,14 @@ repositories {
 apply plugin: 'io.fabric'
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 28
 
     defaultConfig {
         applicationId "com.spicymango.fanfictionreader"
-        minSdkVersion 9
-        targetSdkVersion 25
-        versionCode 87
-        versionName "1.57b"
+        minSdkVersion 14
+        targetSdkVersion 28
+        versionCode 92
+        versionName "1.58"
     }
     lintOptions {
         abortOnError true
@@ -67,14 +67,14 @@ android {
 
 dependencies {
     implementation project(':kolavar')
-    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
-    implementation 'com.android.support:appcompat-v7:25.4.0'
-    implementation 'com.android.support:design:25.4.0'
-    implementation 'org.jsoup:jsoup:1.11.2'
-    implementation 'org.apache.commons:commons-collections4:4.1'
-    implementation 'org.apache.commons:commons-lang3:3.7'
-    implementation ('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.2'
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support:design:28.0.0'
+    implementation 'org.jsoup:jsoup:1.11.3'
+    implementation 'org.apache.commons:commons-collections4:4.2'
+    implementation 'org.apache.commons:commons-lang3:3.8.1'
+    implementation ('com.crashlytics.sdk.android:crashlytics:2.9.8@aar') {
         transitive = true
     }
 }
