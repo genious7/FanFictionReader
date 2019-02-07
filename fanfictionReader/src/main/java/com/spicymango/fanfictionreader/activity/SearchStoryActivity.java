@@ -145,10 +145,10 @@ public class SearchStoryActivity extends BaseActivity<Story> implements OnQueryT
 			if (TextUtils.isEmpty(mQuery)) return null;
 
 			Uri.Builder builder = Sites.FANFICTION.BASE_URI.buildUpon();
-			builder.path("search.php").
+			builder.path("search/").
 				appendQueryParameter("type", "story")
 				.appendQueryParameter("ready", "1")
-				.appendQueryParameter("keywords", mQuery)
+				.appendQueryParameter("keywords", mQuery.trim().replace(' ', '+'))
 				.appendQueryParameter("ppage", currentPage + "");
 
 			// Adds the filter, if available

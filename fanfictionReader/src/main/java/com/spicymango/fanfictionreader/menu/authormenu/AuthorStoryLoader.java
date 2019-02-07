@@ -186,7 +186,7 @@ class AuthorStoryLoader {
 				builder.setName(storyTitle);
 				builder.setAuthor(mAuthor);
 				builder.setAuthorId(mAuthorId);
-				builder.setSummary(element.ownText().replaceFirst("(?i)by\\s*", ""));
+				builder.setSummary(element.ownText().replaceFirst("^(?i)by\\s*", ""));
 				builder.setFanFicAttributes(attributes.text());
 				builder.setUpdateDate(updateDate);
 				builder.setPublishDate(publishDate);
@@ -374,7 +374,7 @@ class AuthorStoryLoader {
 				builder.setName(storyTitle);
 				builder.setAuthor(authorName);
 				builder.setAuthorId(Long.parseLong(authorIdMatcher.group(1)));
-				builder.setSummary(element.ownText().replaceFirst("(?i)by\\s*", ""));
+				builder.setSummary(element.ownText().replaceFirst("^(?i)by\\s*", ""));
 				builder.setFanFicAttributes(attributes.text());
 				builder.setUpdateDate(updateDate);
 				builder.setPublishDate(publishDate);

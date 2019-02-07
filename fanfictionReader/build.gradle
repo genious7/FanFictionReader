@@ -17,15 +17,14 @@ repositories {
 apply plugin: 'io.fabric'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '26.0.2'
+    compileSdkVersion 28
 
     defaultConfig {
         applicationId "com.spicymango.fanfictionreader"
-        minSdkVersion 9
-        targetSdkVersion 25
-        versionCode 84
-        versionName "1.56"
+        minSdkVersion 14
+        targetSdkVersion 28
+        versionCode 92
+        versionName "1.58"
     }
     lintOptions {
         abortOnError true
@@ -38,10 +37,22 @@ android {
         release
     }
     buildTypes {
+        // see https://stackoverflow.com/a/40592469
+        def addConstantTo = {target, constantName, constantValue ->
+            target.manifestPlaceholders += [ (constantName):constantValue]
+            target.buildConfigField "String", "${constantName}", "\"${constantValue}\""
+        }
         debug{
+            applicationIdSuffix ".debug"
+            // buildType-specific provider authority
+            // 1. manifestPlaceholders is used by AndroidManifest.xml
+            // 2. buildConfigField is used by static constant in StoryProvider.java
+            // Note: owner refers to current script block
+            addConstantTo(owner, "provider_authority", "com.spicymango.fanfictionreader.debug.provider")
             ext.enableCrashlytics = false
         }
         release {
+            addConstantTo(owner, "provider_authority", "com.spicymango.fanfictionreader.provider")
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.pro'
@@ -55,15 +66,15 @@ android {
 }
 
 dependencies {
-    compile project(':kolavar')
-    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    compile 'io.reactivex.rxjava2:rxjava:2.1.7'
-    compile 'com.android.support:appcompat-v7:25.4.0'
-    compile 'com.android.support:design:25.4.0'
-    compile 'org.jsoup:jsoup:1.11.2'
-    compile 'org.apache.commons:commons-collections4:4.1'
-    compile 'org.apache.commons:commons-lang3:3.7'
-    compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
+    implementation project(':kolavar')
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.2'
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support:design:28.0.0'
+    implementation 'org.jsoup:jsoup:1.11.3'
+    implementation 'org.apache.commons:commons-collections4:4.2'
+    implementation 'org.apache.commons:commons-lang3:3.8.1'
+    implementation ('com.crashlytics.sdk.android:crashlytics:2.9.8@aar') {
         transitive = true
     }
 }

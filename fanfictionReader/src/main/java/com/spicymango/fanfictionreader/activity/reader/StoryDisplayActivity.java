@@ -1,17 +1,5 @@
 package com.spicymango.fanfictionreader.activity.reader;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.jsoup.Jsoup;
-import org.jsoup.Connection.Method;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
@@ -25,15 +13,21 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Spanned;
+import android.util.Log;
+import android.util.TypedValue;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.DecelerateInterpolator;
@@ -45,6 +39,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.spicymango.fanfictionreader.BuildConfig;
 import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.Settings;
 import com.spicymango.fanfictionreader.activity.LogInActivity;
@@ -56,12 +51,27 @@ import com.spicymango.fanfictionreader.provider.StoryProvider;
 import com.spicymango.fanfictionreader.services.LibraryDownloader;
 import com.spicymango.fanfictionreader.util.AsyncPost;
 import com.spicymango.fanfictionreader.util.FileHandler;
+import com.spicymango.fanfictionreader.util.JsoupUtil;
 import com.spicymango.fanfictionreader.util.Sites;
 import com.spicymango.fanfictionreader.util.adapters.TextAdapter;
 
+import org.jsoup.Connection.Method;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class StoryDisplayActivity extends AppCompatActivity implements LoaderCallbacks<StoryChapter>, OnClickListener{
 	private static final String STATE_UPDATED = "HasUpdated";
-	
+
+	private static final int INTENT_SETTINGS = 0;
+
 	/**
 	 * Opens the story with the selected id. If the story already exists in the
 	 * library, the story will open in the last position read. Otherwise, it
@@ -153,9 +163,67 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 				return true;
 			}
 		}
+
+		// scroll page up / down by keyboard.
+		// Support slash / backslash as additional keys because
+		// for many tablet keyboards, pressing page up/down requires additional Fn key
+		if (event.hasNoModifiers()) {
+			switch (keyCode) {
+				case KeyEvent.KEYCODE_PAGE_DOWN:
+				case KeyEvent.KEYCODE_BACKSLASH:
+					scrollStoryByPage(PGDN);
+					return true;
+				case KeyEvent.KEYCODE_PAGE_UP:
+				case KeyEvent.KEYCODE_SLASH:
+					scrollStoryByPage(PGUP);
+					return true;
+			}
+		}
+
+		if (event.isShiftPressed()) {
+			switch (keyCode) {
+				case KeyEvent.KEYCODE_DPAD_RIGHT:
+					if (mCurrentPage < mTotalPages) {
+						resetScrollThenLoad(mCurrentPage + 1);
+					}
+					return true;
+				case KeyEvent.KEYCODE_DPAD_LEFT:
+					if (mCurrentPage > 1) {
+						resetScrollThenLoad(mCurrentPage - 1);
+					}
+					return true;
+			}
+		}
+
 		return super.onKeyDown(keyCode, event);
 	}
-	
+
+	/**
+	 * This load chapter variation is used when it is initiated from keyboards only.
+	 *
+	 * Reason: when initiated from keyboards, somehow the scroll remains at the position
+	 * before the load, (i.e., the scroll reset logic in {@link #load(int)} has no effect
+	 * when initiated from keyboards.
+	 *
+	 * The implementation workarounds it by first clearing out current chapter text to forec the
+	 * view to scroll back to top, before loading the next chapter.
+	 * The other alternative that works is to use <code></code>mListView.smoothScrollToPosition(0)</code>
+	 * But the smooth scroll creates a unpleasant, noticeable delay.
+	 */
+	private void resetScrollThenLoad(int page) {
+		mList.clear();
+		mAdapter.notifyDataSetChanged();
+		load(page);
+	}
+
+	private static final boolean PGUP = false;
+	private static final boolean PGDN = true;
+	private void scrollStoryByPage(boolean isScrollDown) {
+		final int pageSize = mListView.getHeight() - 100;
+		final int stepSize = isScrollDown ? pageSize : -pageSize;
+		mListView.smoothScrollBy(stepSize, 250);
+	}
+
 	@Override
 	public Loader<StoryChapter> onCreateLoader(int id, Bundle args) {
 		return new FanFictionLoader(this, args, mStoryId, mCurrentPage);
@@ -230,7 +298,22 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 			break;
 		}
 	}
-	
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		switch (requestCode) {
+			//Restart the activity after returning from settings in order to refresh the theme
+			case INTENT_SETTINGS:
+				Intent intent = getIntent();
+				finish();
+				startActivity(intent);
+				break;
+			default:
+				super.onActivityResult(requestCode, resultCode, data);
+				break;
+		}
+	}
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -245,6 +328,10 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 			LibraryDownloader.download(this, storyUri.build(), mCurrentPage, getOffset());
 
 			supportInvalidateOptionsMenu();
+			return true;
+		case R.id.reader_settings:
+			Intent intent = new Intent(this, Settings.class);
+			startActivityForResult(intent, INTENT_SETTINGS);
 			return true;
 		case R.id.read_story_go_to:
 			chapterPicker();
@@ -323,7 +410,12 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		String[] Chapters = new String[mTotalPages];
 		for (int i = 0; i < mTotalPages; i++) {
-			Chapters[i] = getResources().getString(R.string.read_story_chapter)
+			// "> " as a indicator of current chapter
+			// a better one (bold, perfectly aligned) will require a custom view
+			// for the items via a ListAdapter using builder.setAdapter(...)
+			// instead of simple String[] here
+			Chapters[i] = (i == mCurrentPage - 1 ? ">  ": "    ")
+                    + getResources().getString(R.string.read_story_chapter)
 					+ (i + 1);
 		}
 		builder.setItems(Chapters, (dialog, which) -> {
@@ -331,8 +423,13 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 				load(which + 1);
 			}
 		});
-		builder.create();
-		builder.show();
+		AlertDialog dialog = builder.show();
+		ListView dialogListView = dialog.getListView();
+		if (dialogListView != null) {
+			// the more intuitive .smoothScrollToPosition() does not work,
+			// without adding some delay
+			dialogListView.setSelection(mCurrentPage - 1);
+		}
 	}
 	
 	/**
@@ -480,6 +577,20 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 			mListView.setOnScrollListener(new ListViewHider());
 		}
 
+        // gesture detection on story text view
+		mListView.setOnTouchListener(new BottomHorizontalSwipeListener(mListView) {
+			private static final boolean SCROLL_DOWN = true;
+			@Override
+			public void onSwipeLeftAtViewBottom() {
+				scrollStoryByPage(SCROLL_DOWN);
+
+			}
+
+			@Override
+			public void onSwipeRightAtViewBottom() {
+				scrollStoryByPage(!SCROLL_DOWN);
+			}
+		});
 
 		btnFirst = footer.findViewById(R.id.read_story_first);
 		btnPrev = footer.findViewById(R.id.read_story_prev);
@@ -513,7 +624,20 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 
 		getSupportLoaderManager().initLoader(0, savedInstanceState, this);
 	}
-	
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		final int visibility = getWindow().getDecorView().getSystemUiVisibility();
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+			int newVisibility = visibility
+					| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+					| View.SYSTEM_UI_FLAG_FULLSCREEN
+					| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+			getWindow().getDecorView().setSystemUiVisibility(newVisibility);
+		}
+	}
+
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
@@ -634,8 +758,8 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 			builder.appendEncodedPath(Long.toString(storyId));
 			builder.appendEncodedPath(Integer.toString(currentPage));
 			builder.appendEncodedPath("");
-			
-			Document document = Jsoup.connect(builder.toString()).timeout(10000).get();
+
+			Document document = JsoupUtil.safeGet(builder.toString());
 			
 			if (data.getTotalChapters() == 0) {
 				Element title = document.select("div#content div b").first();
@@ -699,4 +823,278 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 														   new String[] {Long.toString(storyId)}, null);
 		}
 	}
+
+	/**
+	 * Utility to detect horizontal swipes at the bottom of a given view.
+	 */
+	private static abstract class BottomHorizontalSwipeListener implements View.OnTouchListener {
+		private static final String TAG = "FFR-HSwipe";
+
+		private static final boolean DEBUG_TOUCHES = true && BuildConfig.DEBUG;
+
+		// Given the listener should have a life cycle within the parent view
+		// Holding a reference to the view should not cause memory leak.
+		@NonNull
+		final View mParentView; // package scope to be used by inner class
+
+		@NonNull
+		private final FixedGestureDetectorCompat mDetector;
+
+
+		public BottomHorizontalSwipeListener(@NonNull View parentView) {
+			mParentView = parentView;
+			mDetector = new FixedGestureDetectorCompat(parentView.getContext(),
+					new GestureDetector.SimpleOnGestureListener() {
+						final float mOneInchInPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_IN,
+								1, parentView.getContext().getResources().getDisplayMetrics());
+
+						@Override
+						public boolean onFling(MotionEvent event1, MotionEvent event2, float vX, float vY) {
+							if (DEBUG_TOUCHES) {
+								String dbgMsg = "onFling -  vX: " + vX + ", vY: " + vY
+										+ ", e1.X: " + (event1 != null ? event1.getX() : -1) + ", e2.X: " + event2.getX()
+										+ ", e1.Y: " + (event1 != null ? event1.getY() : -1) + ", e2.Y: " + event2.getY()
+										+ ", height: " + mParentView.getHeight()
+										+ ", e1: " + event1 + ", e2: " + event2;
+								Log.d(TAG, dbgMsg);
+							}
+
+
+							// logic to support horizontal swipes at screen bottom
+
+							// accept fling on screen / view bottom only
+							if (mParentView.getHeight() - event2.getY() > mOneInchInPx) {
+								if (DEBUG_TOUCHES) {
+									Log.d(TAG, "  onFling - false, not on screen bottom");
+								}
+								return false;
+							}
+
+							// accept flings with only small vertical delta only
+							float absDeltaY = Math.abs(event2.getY() - event1.getY());
+							// Note: relatively large vertical leeway (1 in) is allowed here
+							// because somehow, truly horizontal swipes often are not processed
+							// i.e., those horizontal swipes are not passed to the parent OnTouchListener
+							// at all.
+							// The swipes that get registered tend to have some leeway.
+							if (absDeltaY > mOneInchInPx) {
+								if (DEBUG_TOUCHES) {
+									Log.d(TAG, "  onFling - false, absDeltaY too large, absDeltaY: " + absDeltaY);
+								}
+								return false;
+							}
+
+							// accept flings with big enough horizontal delta
+							// Note: for the rule with more lenient (0.25in) range when event1 is not ACTION_DOWN
+							// This is to address cases that (many) MotionEvent are not passed to the detector.
+							// In those cases, initial ACTION_DOWN are rarely supplied, so as some other
+							// events. The net result is that in a typical swipe, the deltaX derived by
+							// the supplied MotionEvent tends to be much smaller than the actual user swipe.
+							// Empirically, even for a swipe over 1inch, it is not unusual for the deltaX
+							// be as small as 0.2in (due to missing MotionEvents)
+							float deltaX = event2.getX() - event1.getX();
+							if (!( Math.abs(deltaX) > mOneInchInPx / 2 ||
+									(MotionEvent.ACTION_DOWN  != event1.getActionMasked() &&
+											Math.abs(deltaX) > mOneInchInPx / 5) )) {
+								if (DEBUG_TOUCHES) {
+									Log.d(TAG, "  onFling - false, deltaX too small, deltaX: " + deltaX);
+								}
+								return false;
+							}
+
+							// sometimes vX from onFling is not reliable
+							boolean isSwipeLeft = deltaX < 0;
+							if (DEBUG_TOUCHES) {
+								Log.d(TAG, "  onFling - swipe " + (isSwipeLeft ? "left" : "right")
+										+ ", vX: " + vX + ", deltaX: " + deltaX + ", deltaY: " + absDeltaY);
+							}
+							// The following logs cases that framework-supplied vX is buggy.
+							if (deltaX < 0 && vX > 0 || deltaX > 0 && vX < 0) {
+								Log.w(TAG, "onFling: vX and deltaX are not in the same direction. "
+										+ " deltaX: " + deltaX + " , vX: " + vX);
+							}
+
+							if (isSwipeLeft) {
+								onSwipeLeftAtViewBottom();
+							} else {
+								onSwipeRightAtViewBottom();
+							}
+							return true;
+						}
+					});
+		}
+
+
+		@Override
+		public boolean onTouch(View view, MotionEvent event) {
+			if (DEBUG_TOUCHES) { Log.v(TAG, "onTouch - e: " + event); }
+			return mDetector.onTouchEvent(event);
+		}
+
+		public abstract void onSwipeLeftAtViewBottom();
+
+		public abstract void onSwipeRightAtViewBottom();
+
+	}
+
+	/**
+	 * A replacement of {@link GestureDetectorCompat} that fixes the issue
+	 * that in invoking {@link android.view.GestureDetector.OnGestureListener#onFling(MotionEvent, MotionEvent, float, float)}
+	 * call, the supplied parameter <code>event1</code>, the gesture start event, is sometimes missing.
+	 *
+	 * This class fixes the issue: when event1 is null, it supplies an approximation
+	 * (of the first MotionEvent of the gesture that is tracked)
+	 */
+	private static class FixedGestureDetectorCompat {
+		private static final String TAG = "FFR-FGestureD";
+
+		private static final boolean DEBUG_TOUCHES = true && BuildConfig.DEBUG;
+
+		@NonNull
+		private final GestureDetectorCompat mDetector;
+
+		// to be used by listener's onFling() in case event1 is null, i.e., no down event
+		private MotionEvent mCurrentStartEvent;
+
+		public FixedGestureDetectorCompat(@NonNull Context context,
+										  @NonNull GestureDetector.OnGestureListener listener) {
+			mDetector = new GestureDetectorCompat(context, new OnGestureListenerDecorator(listener));
+		}
+
+		public boolean isLongpressEnabled() {
+			return mDetector.isLongpressEnabled();
+		}
+
+		public boolean onTouchEvent(MotionEvent event) {
+			// tracking the gesture start event,
+			// to be used by mDetector's listener.onFling() implementation
+			// where event1 (start of a gesture) is often (unexpectedly) null.
+			// (somehow in some system, the initial ACTION_DOWN is often missed in flings)
+			switch (event.getActionMasked()) {
+				case MotionEvent.ACTION_DOWN:
+				case MotionEvent.ACTION_MOVE:
+					if (mCurrentStartEvent == null ||
+							mCurrentStartEvent.getDownTime() != event.getDownTime()) {
+						// The downtime test: In some edge cases (reasons not known yet), an
+						// old (from previous user gesture) event is still kept as mCurrentStartEvent.
+						// The downtime test ensures an old one (which has a different downtime)
+						// will be discarded
+						if (DEBUG_TOUCHES) {
+							Log.v(TAG, "onTouchEvent - a new start event. type: "
+									+ event.getActionMasked());
+						}
+						mCurrentStartEvent = MotionEvent.obtain(event);
+					}
+			}
+
+			try {
+				boolean res = mDetector.onTouchEvent(event);
+				return res;
+			} finally {
+				switch (event.getActionMasked()) {
+					case MotionEvent.ACTION_UP:
+					case MotionEvent.ACTION_CANCEL:
+						if (DEBUG_TOUCHES) {
+							Log.v(TAG, "onTouchEvent - gesture end. release start event: "
+									+ (mCurrentStartEvent != null));
+						}
+						if (mCurrentStartEvent != null) {
+							mCurrentStartEvent.recycle();
+							mCurrentStartEvent = null;
+						}
+				}
+			}
+		}
+
+		public void setIsLongpressEnabled(boolean enabled) {
+			mDetector.setIsLongpressEnabled(enabled);
+		}
+
+		public void setOnDoubleTapListener(GestureDetector.OnDoubleTapListener listener) {
+			mDetector.setOnDoubleTapListener(listener);
+		}
+
+		/**
+		 * The decorator fixes the null event1 on {@link #onFling(MotionEvent, MotionEvent, float, float)}
+		 * if needed
+		 */
+		private class OnGestureListenerDecorator implements GestureDetector.OnGestureListener {
+			@NonNull
+			private final GestureDetector.OnGestureListener mListener;
+
+			public OnGestureListenerDecorator(@NonNull GestureDetector.OnGestureListener listener) {
+				mListener = listener;
+			}
+
+			@Override
+			public boolean onDown(MotionEvent e) {
+				return mListener.onDown(e);
+			}
+
+			@Override
+			public void onShowPress(MotionEvent e) {
+				mListener.onShowPress(e);
+			}
+
+			@Override
+			public boolean onSingleTapUp(MotionEvent e) {
+				return mListener.onSingleTapUp(e);
+			}
+
+			@Override
+			public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+				// LATER: probably I need to wrap around onScroll similar to onFling
+				return mListener.onScroll(e1, e2, distanceX, distanceY);
+			}
+
+			@Override
+			public void onLongPress(MotionEvent e) {
+				mListener.onLongPress(e);
+			}
+
+			@Override
+			public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+				// somehow event1 (start of a fling) is often null (i.e., no ACTION_DOWN)
+				// use the first action move as an approximation
+				MotionEvent evStart = e1!= null ? e1 : mCurrentStartEvent;
+
+				if (evStart == null) {
+					Log.w(TAG, "onFling - aborted. Cannot determine Start Event.");
+					return false;
+				}
+				if (e2.getDownTime() != evStart.getDownTime()) {
+					if (e1 != null) {
+						// case evStart comes from original GestureDetectorCompat, which
+						// supplies a buggy one from an old gesture. Use our approximation.
+						// Example scenarios:
+						// 1. framework only occasionally detects ACTION_DOWN (the proper gesture start).
+						//    at least on the tested devices.
+						// 2. when it does detect ACTION_DOWN, it first uses it correctly.
+						// 3. however, for subsequent gestures (with no ACTION_DOWN), framework continues
+						//    to use the old ACTION_DOWN in step 2, and passes it to here.
+						//
+						// See relevant codes:
+						// - in GestureDetectorCompat.java:307-310 (support v25.4.0) the only place
+						//   member mCurrentDownEvent ever get set (in dealing with ACTION_DOWN)
+						// - when subsequent gestures (with no ACTION_DOWN) happen, mCurrentDownEvent
+						//   thus retains the old value.
+						if (DEBUG_TOUCHES) {
+							Log.d(TAG, "onFling - framework-supplied Start Event e1 comes from an old gesture with downTime ["
+									+ e1.getDownTime() + "]. Use our approximation.");
+						}
+						evStart = mCurrentStartEvent;
+					} else {
+						// a case that should not happen, our own approximation event
+						// somehow comes from a different (old) gesture
+						Log.e(TAG, "onFling - aborted. Cannot find a proper Start Event. Our approximation"
+								+ " comes from an old gesture.  evStart: " + evStart + ", e2: " + e2);
+						return false;
+					}
+				}
+
+				return mListener.onFling(evStart, e2, velocityX, velocityY);
+			}
+		}
+	}
+
 }

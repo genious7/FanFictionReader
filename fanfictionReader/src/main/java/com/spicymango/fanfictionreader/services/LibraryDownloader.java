@@ -1,6 +1,7 @@
 package com.spicymango.fanfictionreader.services;
 
 import android.app.IntentService;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -83,6 +84,8 @@ public class LibraryDownloader extends IntentService {
 	 */
 	private final static int NOTIFICATION_DOWNLOAD_ID = 1;
 
+	private final static String NOTIFICATION_CHANNEL = "Channel";
+
 	/**
 	 * The number of stories that have been already been checked for updates. This variable is used
 	 * in order to derive the total number of stories queued, which is used to generate the progress
@@ -162,6 +165,15 @@ public class LibraryDownloader extends IntentService {
 
 		// The time at which the service starts.
 		updateStartTime = System.currentTimeMillis();
+
+		// Create the Notification Channel
+		if (Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O){
+			final NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL,
+																  getString(R.string.app_name),
+																  NotificationManager.IMPORTANCE_LOW);
+			final NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+			manager.createNotificationChannel(channel);
+		}
 	}
 
 	@Override
@@ -376,7 +388,7 @@ public class LibraryDownloader extends IntentService {
 		final double percent = (((double) currentStory) / totalStories) * 100;
 
 		// Create the notification
-		NotificationCompat.Builder builder = new NotificationCompat.Builder(LibraryDownloader.this);
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(LibraryDownloader.this, NOTIFICATION_CHANNEL);
 		builder.setContentTitle(getString(R.string.downloader_checking_updates));
 		builder.setContentText(String.format(Locale.US, "%.2f%% (%d/%d)", percent, currentStory + 1, totalStories));
 		builder.setProgress(totalStories, currentStory, currentStory == totalStories);
@@ -396,7 +408,7 @@ public class LibraryDownloader extends IntentService {
 
 	private void showUpdateNotification(){
 		// Create the notification
-		NotificationCompat.Builder builder = new NotificationCompat.Builder(LibraryDownloader.this);
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(LibraryDownloader.this, NOTIFICATION_CHANNEL);
 		builder.setContentTitle(getString(R.string.downloader_downloading));
 		builder.setSmallIcon(android.R.drawable.stat_sys_download);
 		builder.setAutoCancel(false);
@@ -421,7 +433,7 @@ public class LibraryDownloader extends IntentService {
 	private void showUpdateNotification(String storyTitle, int currentPage, int TotalPage, long downloadStartTime) {
 		// Create the notification
 		final String text = getString(R.string.downloader_context, storyTitle, currentPage, TotalPage);
-		NotificationCompat.Builder builder = new NotificationCompat.Builder(LibraryDownloader.this);
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(LibraryDownloader.this, NOTIFICATION_CHANNEL);
 		builder.setContentTitle(getString(R.string.downloader_downloading));
 		builder.setStyle(new NotificationCompat.BigTextStyle().bigText(text));
 		builder.setContentText(text);
@@ -442,7 +454,7 @@ public class LibraryDownloader extends IntentService {
 	private void showSavingNotification(String storyTitle, long downloadStartTime) {
 		// Create the notification
 		final String text = getString(R.string.downloader_context_saving, storyTitle);
-		NotificationCompat.Builder builder = new NotificationCompat.Builder(LibraryDownloader.this);
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(LibraryDownloader.this, NOTIFICATION_CHANNEL);
 		builder.setContentTitle(getString(R.string.downloader_saving));
 		builder.setStyle(new NotificationCompat.BigTextStyle().bigText(text));
 		builder.setContentText(text);
@@ -467,7 +479,7 @@ public class LibraryDownloader extends IntentService {
 	 */
 	private void showErrorNotification(@StringRes int errorString) {
 		// Create the notification
-		NotificationCompat.Builder builder = new NotificationCompat.Builder(LibraryDownloader.this);
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(LibraryDownloader.this, NOTIFICATION_CHANNEL);
 		builder.setContentTitle(getString(R.string.downloader_error));
 		builder.setContentText(getString(errorString));
 		builder.setSmallIcon(R.drawable.ic_not_close);
@@ -497,7 +509,7 @@ public class LibraryDownloader extends IntentService {
 		final String contentText = TextUtils.join(", ", storyTitles);
 
 		// Create the notification
-		final NotificationCompat.Builder notBuilder = new NotificationCompat.Builder(LibraryDownloader.this);
+		final NotificationCompat.Builder notBuilder = new NotificationCompat.Builder(LibraryDownloader.this, NOTIFICATION_CHANNEL);
 		notBuilder.setContentTitle(title);
 		notBuilder.setSmallIcon(R.drawable.ic_not_check);
 		notBuilder.setAutoCancel(true);

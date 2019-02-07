@@ -37,8 +37,12 @@ public class Parser {
 			Element attributes = element.select("div.gray").first();
 			Elements dates = element.select("span[data-xutime]");
 
+			// Check if the author is valid. If it is not valid, skip the story. The author may be
+			// null if the author deletes his account and the web site hasn't fully processed the request.
+			if (author == null) continue;
+
 			// Check that all the elements are valid. If at least one of them is invalid, return false
-			if (title == null || author == null || attributes == null || dates.isEmpty())
+			if (title == null || attributes == null || dates.isEmpty())
 				return false;
 			
 			storyIdMatcher.reset(title.attr("href"));
@@ -67,7 +71,7 @@ public class Parser {
 			builder.setName(title.ownText());
 			builder.setAuthor(author.text());
 			builder.setAuthorId(Long.parseLong(authorIdMatcher.group(1)));
-			builder.setSummary(element.ownText().replaceFirst("(?i)by\\s*", ""));
+			builder.setSummary(element.ownText().replaceFirst("^(?i)by\\s*", ""));
 			builder.setFanFicAttributes(attributes.text());
 			builder.setUpdateDate(updateDate);
 			builder.setPublishDate(publishDate);
