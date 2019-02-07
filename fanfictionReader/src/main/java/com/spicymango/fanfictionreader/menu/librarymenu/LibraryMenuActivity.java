@@ -1,7 +1,6 @@
 package com.spicymango.fanfictionreader.menu.librarymenu;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.net.Uri.Builder;
@@ -60,11 +59,6 @@ import com.spicymango.fanfictionreader.util.Story;
  * @author Michael Chen
  */
 public class LibraryMenuActivity extends AppCompatActivity implements FilterListener {
-	private static final String TAG = "FFR-Library";
-
-	private static final String LIBRARY_PREF_NAME = "Library";
-	private static final String PREF_FILTER = "filter";
-
 	private LibraryMenuFragment mFragment;
 
 	@Override
@@ -95,67 +89,8 @@ public class LibraryMenuActivity extends AppCompatActivity implements FilterList
 	}
 
 	@Override
-	protected void onStart() {
-		super.onStart();
-		int[] filter = getSelectedFilter();
-		if (filter != null) {
-			doFilter(filter);
-		}
-	}
-
-	@Override
 	public void onFilter(int[] selected) {
-		doFilter(selected);
-		setSelectedFilter(selected);
-	}
-	
-	private void doFilter(int[] selected) {
 		mFragment.onFilter(selected);
-	}
-
-	private int[] getSelectedFilter() {
-		SharedPreferences preference = getSharedPreferences(LIBRARY_PREF_NAME, MODE_PRIVATE);
-		String filterStr = preference.getString(PREF_FILTER, null);
-		return stringToIntAry(filterStr);
-	}
-
-	private void setSelectedFilter(int[] filter) {
-		SharedPreferences preference = getSharedPreferences(LIBRARY_PREF_NAME, MODE_PRIVATE);
-		SharedPreferences.Editor editor = preference.edit();
-		editor.putString(PREF_FILTER, intAryToString(filter));
-		editor.commit();
-	}
-
-	private static  String intAryToString(int[] intAry) {
-		if (intAry == null || intAry.length < 1) {
-			return "";
-		}
-
-		StringBuilder sb = new StringBuilder();
-		sb.append(intAry[0]);
-		for (int i = 1; i < intAry.length; i++) {
-			sb.append(",")
-					.append(intAry[i]);
-		}
-		return sb.toString();
-	}
-
-	private static int[] stringToIntAry(String intAryStr) {
-		if (intAryStr == null || intAryStr.length() < 1) {
-			return null;
-		}
-		try {
-			String[] intStrs = intAryStr.split(",");
-			int[] intAry = new int[intStrs.length];
-			for (int i = 0; i < intStrs.length; i++) {
-				intAry[i] = Integer.parseInt(intStrs[i].trim());
-			}
-			return intAry;
-		} catch (Exception e) {
-			// typically NumberFormatException
-			Log.e(TAG, "Error in parsing int[] from string \"" + intAryStr + "\" . return null", e);
-			return null;
-		}
 	}
 
 	@Override
