@@ -1,13 +1,14 @@
 package com.spicymango.fanfictionreader.menu.storymenu.FilterDialog;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * An object that represents a spinner element. Each object will pair a list of
@@ -18,6 +19,8 @@ import android.support.annotation.Nullable;
  *
  */
 public class SpinnerData implements Parcelable {
+	private static final String TAG = "FF-SD";
+
 	private final String mName;
 	private List<String> mLabels;
 	private List<String> mFilters;
@@ -173,6 +176,32 @@ public class SpinnerData implements Parcelable {
 
 		// Set the requested selection
 		mSelected = selected;
+	}
+
+	public void setSelectedByFilterValue(String selectedValue, boolean ignoreNonExistent) {
+		if (selectedValue.equals("0")) { // see getCurrentFilter for the special case of "0"
+			return;
+		}
+
+		if (mFilters == null) {
+			Log.w(TAG, "setSelectedByFilterValue() - for filter: " + mName +
+					" , underlying possible filter values are null : " + selectedValue);
+			return;
+		}
+
+		int selectedIdx = mFilters.indexOf(selectedValue);
+		if (selectedIdx < 0) {
+			if (ignoreNonExistent) {
+				Log.d(TAG, "setSelectedByFilterValue() - for filter: " + mName +
+						" , supplied value " + selectedValue + " is no longer valid. It is ignored. Valid values: " + mFilters);
+				return;
+			} else {
+				throw new IllegalArgumentException("setSelectedByFilterValue() - for filter: " + mName +
+						" , supplied value " + selectedValue + " is not valid. Valid values: " + mFilters);
+			}
+		}
+
+		setSelected(selectedIdx);
 	}
 
 	/**
