@@ -56,7 +56,6 @@ import com.spicymango.fanfictionreader.util.Sites;
 import com.spicymango.fanfictionreader.util.adapters.TextAdapter;
 
 import org.jsoup.Connection.Method;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -331,6 +330,7 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 			return true;
 		case R.id.reader_settings:
 			Intent intent = new Intent(this, Settings.class);
+			intent.putExtra(Settings.EXTRA_READER_SETTINGS, true);
 			startActivityForResult(intent, INTENT_SETTINGS);
 			return true;
 		case R.id.read_story_go_to:

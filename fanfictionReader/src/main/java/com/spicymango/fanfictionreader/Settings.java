@@ -1,11 +1,5 @@
 package com.spicymango.fanfictionreader;
 
-import com.spicymango.fanfictionreader.dialogs.backup.BackUpDialog;
-import com.spicymango.fanfictionreader.dialogs.FontDialog;
-import com.spicymango.fanfictionreader.dialogs.backup.RestoreDialog;
-import com.spicymango.fanfictionreader.dialogs.backup.RestoreDialogConfirmation;
-import com.spicymango.fanfictionreader.util.FileHandler;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -21,7 +15,9 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
+import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.preference.PreferenceFragment;
@@ -29,6 +25,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.MenuItem;
 
+import com.spicymango.fanfictionreader.dialogs.FontDialog;
+import com.spicymango.fanfictionreader.dialogs.backup.BackUpDialog;
+import com.spicymango.fanfictionreader.dialogs.backup.RestoreDialog;
+import com.spicymango.fanfictionreader.dialogs.backup.RestoreDialogConfirmation;
+import com.spicymango.fanfictionreader.util.FileHandler;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 
@@ -36,6 +40,7 @@ public class Settings extends AppCompatActivity {
 
 	public final static int SANS_SERIF = 0;
 	public final static int SERIF = 1;
+	public static final String EXTRA_READER_SETTINGS = "READER_SETTINGS";
 
 	/**
 	 * An enum for the old text size format, before it was customizable. Retained only for
@@ -115,6 +120,24 @@ public class Settings extends AppCompatActivity {
 			// Check if the font button is clicked
 			final Preference fontDialog = findPreference(getString(R.string.pref_key_text_size));
 			fontDialog.setOnPreferenceClickListener(this);
+
+			if (getActivity().getIntent().getBooleanExtra(EXTRA_READER_SETTINGS, false)) {
+				customizeUIAsReaderSetting();
+			}
+		}
+
+		private void customizeUIAsReaderSetting() {
+			final PreferenceScreen ps = getPreferenceScreen();
+			List<Preference> prefsToRemove = new ArrayList<>(ps.getPreferenceCount() -1);
+			for(int i = 1; i < ps.getPreferenceCount(); i++) { // leave the first (Appearance) intact
+				prefsToRemove.add(ps.getPreference(i));
+			}
+			for (Preference pref : prefsToRemove) {
+				ps.removePreference(pref);
+			}
+
+			PreferenceGroup pgAppearance = ((PreferenceGroup)ps.getPreference(0));
+			pgAppearance.removePreference(pgAppearance.findPreference(getString(R.string.pref_key_locale)));
 		}
 
 		@Override
