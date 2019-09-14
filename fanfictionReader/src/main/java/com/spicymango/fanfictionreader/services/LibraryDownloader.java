@@ -84,6 +84,11 @@ public class LibraryDownloader extends IntentService {
 	 */
 	private final static int NOTIFICATION_DOWNLOAD_ID = 1;
 
+	/**
+	 * ID For the required foreground notification
+	 */
+	private final static int NOTIFICATION_FOREGROUND_ID =  3;
+
 	private final static String NOTIFICATION_CHANNEL = "Channel";
 
 	/**
@@ -130,7 +135,11 @@ public class LibraryDownloader extends IntentService {
 		i.setData(uri);
 		i.putExtra(EXTRA_LAST_PAGE, currentPage);
 		i.putExtra(EXTRA_OFFSET, offset);
-		context.startService(i);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			context.startForegroundService(i);
+		} else {
+			context.startService(i);
+		}
 	}
 
 	/**
@@ -173,6 +182,8 @@ public class LibraryDownloader extends IntentService {
 																  NotificationManager.IMPORTANCE_LOW);
 			final NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 			manager.createNotificationChannel(channel);
+			NotificationCompat.Builder builder = new NotificationCompat.Builder(LibraryDownloader.this, NOTIFICATION_CHANNEL);
+			startForeground(NOTIFICATION_FOREGROUND_ID, builder.build());
 		}
 	}
 
