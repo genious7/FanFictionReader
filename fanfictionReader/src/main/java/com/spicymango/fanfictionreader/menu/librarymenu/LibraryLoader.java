@@ -45,6 +45,8 @@ class LibraryLoader extends CursorLoader implements SqlConstants, BaseLoader.Fil
 	private String mQuery;
 	private static final String STATE_QUERY = "STATE QUERY";
 
+	private Runnable mFilterDataLoadedOnetimeCallback = null;
+
 	public LibraryLoader(Context context, Uri uri, String[] projection, Bundle saveInstanceState) {
 		super(context, uri, projection, null, null, null);
 
@@ -64,7 +66,7 @@ class LibraryLoader extends CursorLoader implements SqlConstants, BaseLoader.Fil
 	}
 
 	@Override
-	public Cursor loadInBackground() {
+	public synchronized Cursor loadInBackground() {
 		final Cursor c = super.loadInBackground();
 
 		if (!mFandomsLoaded && c != null) {
@@ -96,6 +98,11 @@ class LibraryLoader extends CursorLoader implements SqlConstants, BaseLoader.Fil
 			mFandomsLoaded = true;
 		}
 
+		if (mFilterDataLoadedOnetimeCallback != null) {
+			mFilterDataLoadedOnetimeCallback.run();
+			mFilterDataLoadedOnetimeCallback = null;
+		}
+
 		return c;
 	}
 
@@ -110,7 +117,38 @@ class LibraryLoader extends CursorLoader implements SqlConstants, BaseLoader.Fil
 		for (int i = 0; i < filterSelected.length; i++) {
 			mFilterData.get(i).setSelected(filterSelected[i]);
 		}
+		doFilterOnceSet();
+	}
 
+	public List<String> getFilterValues() {
+		List<String> filterValues = new ArrayList<String>(mFilterData.size());
+		for (SpinnerData aFilter : mFilterData) {
+			filterValues.add(aFilter.getCurrentFilter());
+		}
+		return filterValues;
+	}
+
+	public synchronized void filterByValuesAsync(List<String> filterValueSelected, boolean ignoreNonExistent) {
+		// applying filer by values can only be done after filer data are loaded
+		// (otherwise the possible filter values would be incomplete)
+		//
+		// The method is synchronized with loadInBackground() to avoid race conditions
+
+		Runnable doFilterByValues = () -> {
+			for (int i = 0; i < filterValueSelected.size(); i++) {
+				mFilterData.get(i).setSelectedByFilterValue(filterValueSelected.get(i), ignoreNonExistent);
+			}
+			doFilterOnceSet();
+		};
+
+		if (isFilterAvailable()) {
+			doFilterByValues.run();
+		} else {
+			mFilterDataLoadedOnetimeCallback = doFilterByValues;
+		}
+	}
+
+	private void doFilterOnceSet() {
 		setSqlWhere();
 		setSortOrder(getSqlOrderBy());
 		onContentChanged();

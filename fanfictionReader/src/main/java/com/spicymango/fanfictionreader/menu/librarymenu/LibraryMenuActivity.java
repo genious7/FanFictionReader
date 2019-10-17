@@ -1,10 +1,12 @@
 package com.spicymango.fanfictionreader.menu.librarymenu;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.net.Uri.Builder;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -53,12 +55,21 @@ import com.spicymango.fanfictionreader.util.FileHandler;
 import com.spicymango.fanfictionreader.util.Sites;
 import com.spicymango.fanfictionreader.util.Story;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * An activity which displays the stories that are saved in the library.
  *
  * @author Michael Chen
  */
 public class LibraryMenuActivity extends AppCompatActivity implements FilterListener {
+	private static final String TAG = "FFR-Library";
+
+	private static final String LIBRARY_PREF_NAME = "Library";
+	private static final String PREF_KEY_FILTER = "filterValues";
+
 	private LibraryMenuFragment mFragment;
 
 	@Override
@@ -89,8 +100,103 @@ public class LibraryMenuActivity extends AppCompatActivity implements FilterList
 	}
 
 	@Override
+	public void onStart() {
+		super.onStart();
+		List<String> filterValues = loadSelectedFilter();
+		if (filterValues != null) {
+			// ignoreNonExistent = true use case:
+			// - users set (and saved) a filter including category / fandom, e.g., Lord of the Ring
+			// - later users removed all  Lord of the Ring stories from the library
+			// - applying Lord of the Ring filter would be an error (as it is no longer a valid value)
+			mFragment.mLoader.filterByValuesAsync(filterValues, true);
+		}
+	}
+
+	@Override
 	public void onFilter(int[] selected) {
 		mFragment.onFilter(selected);
+		saveSelectedFilter();
+	}
+
+	private List<String> loadSelectedFilter() {
+		SharedPreferences preference = getSharedPreferences(LIBRARY_PREF_NAME, MODE_PRIVATE);
+		String filterStr = preference.getString(PREF_KEY_FILTER, null);
+		return stringToStringList(filterStr);
+	}
+
+	private void saveSelectedFilter() {
+		String filterValuesString = stringListToString(mFragment.mLoader.getFilterValues());
+		SharedPreferences preference = getSharedPreferences(LIBRARY_PREF_NAME, MODE_PRIVATE);
+		SharedPreferences.Editor editor = preference.edit();
+		editor.putString(PREF_KEY_FILTER, filterValuesString);
+		editor.commit();
+	}
+
+	//
+	// Logic to convert list of filter values (List<String>) into / from a single String
+	// that can be persisted.
+	// Note:
+	// - the encoded string is delimited by "\n"
+	// - the logic supports for empty string as possible values
+	//
+
+	private static final String STR_ENCODED_BEGIN_MARK = "[";
+	private static final String STR_ENCODED_END_MARK = "]";
+	private static final String STR_ENCODED_DELIMITER = "\n";
+
+	@NonNull
+	private static List<String> stringToStringList(@Nullable String stringListStr) {
+		if (stringListStr == null) {
+			return Collections.emptyList();
+		}
+		List<String> result = new ArrayList<String>();
+		String[] values = stringListStr.split(STR_ENCODED_DELIMITER);
+		for (int i = 0; i < values.length; i++) {
+			String aValue = values[i];
+
+			// handle edge cases
+			if (i == 0) {
+				if (aValue.equals(STR_ENCODED_BEGIN_MARK)) {
+					continue;
+				} else {
+					throw new IllegalArgumentException("stringToStringList() - the supplied string is not encoded properly: " + stringListStr);
+				}
+			}
+			if (i == values.length - 1) {
+				if (aValue.equals(STR_ENCODED_END_MARK)) {
+					continue;
+				} else {
+					throw new IllegalArgumentException("stringToStringList() - the supplied string is not encoded properly: " + stringListStr);
+				}
+			}
+
+			// Regular cases
+			result.add(aValue);
+		}
+		return result;
+	}
+
+	@NonNull
+	private static String stringListToString(@Nullable List<String> values) {
+		// Wrap the encoded string with begin and end marks
+		// to ensure that empty strings is properly encoded.
+		// Otherwise, trailing empty strings will be omitted by String.split()
+		// during reverse conversion in stringToStringList().
+
+		if (values == null) {
+			return STR_ENCODED_BEGIN_MARK + STR_ENCODED_DELIMITER + STR_ENCODED_END_MARK;
+		}
+
+		StringBuilder sbResult = new StringBuilder();
+		sbResult.append(STR_ENCODED_BEGIN_MARK);
+		for (String aValue : values) {
+			sbResult.append(STR_ENCODED_DELIMITER);
+			sbResult.append(aValue);
+		}
+		sbResult.append(STR_ENCODED_DELIMITER);
+		sbResult.append(STR_ENCODED_END_MARK);
+
+		return sbResult.toString();
 	}
 
 	@Override
