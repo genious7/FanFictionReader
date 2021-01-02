@@ -24,8 +24,8 @@
 
 package com.slezica.tools.widget.tabs;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 
 public class FragmentTabManager extends TabManager<Fragment, Integer> {

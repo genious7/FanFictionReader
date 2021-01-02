@@ -8,7 +8,7 @@ import com.spicymango.fanfictionreader.Settings;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
@@ -105,6 +105,7 @@ public class LogInActivity extends AppCompatActivity {
 		
 		WebView view = new WebView(this);
 		view.getSettings().setUserAgentString("Mozilla/5.0");
+		view.getSettings().setJavaScriptEnabled(true);
 		view.setWebViewClient(new WebClient());
 		setContentView(view);
 		view.loadUrl("https://www.fanfiction.net/login.php");

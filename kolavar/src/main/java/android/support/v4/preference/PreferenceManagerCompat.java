@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package android.support.v4.preference;
+package androidx.core.preference;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;

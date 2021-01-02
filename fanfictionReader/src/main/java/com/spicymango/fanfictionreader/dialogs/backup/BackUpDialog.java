@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.slezica.tools.async.ManagedAsyncTask;
 import com.slezica.tools.async.TaskManagerFragment;
 import com.spicymango.fanfictionreader.R;
@@ -23,12 +23,12 @@ import android.content.pm.PackageManager;
 import android.media.MediaScannerConnection;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.core.content.ContextCompat;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -102,7 +102,7 @@ public class BackUpDialog extends DialogFragment {
 		super.onResume();
 
 		// In order to save the backup, the storage permission is required.
-		final int storagePermissionState = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+		final int storagePermissionState = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
 		boolean hasStoragePermission = storagePermissionState == PackageManager.PERMISSION_GRANTED;
 
 		if (hasStoragePermission) {
@@ -212,7 +212,7 @@ public class BackUpDialog extends DialogFragment {
 				}
 
 			} catch (IOException e) {
-				Crashlytics.logException(e);
+				FirebaseCrashlytics.getInstance().recordException(e);
 				result = R.string.error_unknown;
 			} finally {
 				// Note that ZipOutputStream closes the underlying FileOutputStream
@@ -220,7 +220,7 @@ public class BackUpDialog extends DialogFragment {
 					if (zos != null)
 						zos.close();
 				} catch (IOException e) {
-					Crashlytics.logException(e);
+					FirebaseCrashlytics.getInstance().recordException(e);
 					result = R.string.error_unknown;
 				}
 			}

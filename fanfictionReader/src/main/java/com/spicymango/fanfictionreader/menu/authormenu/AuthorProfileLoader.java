@@ -3,7 +3,7 @@ package com.spicymango.fanfictionreader.menu.authormenu;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.content.AsyncTaskLoader;
+import androidx.loader.content.AsyncTaskLoader;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.SpannedString;

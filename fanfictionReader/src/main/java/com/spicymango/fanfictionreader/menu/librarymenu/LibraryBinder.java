@@ -2,7 +2,7 @@ package com.spicymango.fanfictionreader.menu.librarymenu;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.support.v4.widget.SimpleCursorAdapter;
+import androidx.cursoradapter.widget.SimpleCursorAdapter;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;

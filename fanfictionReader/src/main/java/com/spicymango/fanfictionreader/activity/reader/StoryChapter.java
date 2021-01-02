@@ -2,7 +2,7 @@ package com.spicymango.fanfictionreader.activity.reader;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.text.Spanned;
 
 import com.spicymango.fanfictionreader.util.HtmlParser;

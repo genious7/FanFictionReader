@@ -8,14 +8,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
-import android.support.annotation.StringRes;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
+import androidx.annotation.StringRes;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.TaskStackBuilder;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.Settings;
 import com.spicymango.fanfictionreader.menu.librarymenu.LibraryMenuActivity;
@@ -181,6 +181,7 @@ public class LibraryDownloader extends IntentService {
 																  getString(R.string.app_name),
 																  NotificationManager.IMPORTANCE_LOW);
 			final NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+			assert manager != null;
 			manager.createNotificationChannel(channel);
 			NotificationCompat.Builder builder = new NotificationCompat.Builder(LibraryDownloader.this, NOTIFICATION_CHANNEL);
 			startForeground(NOTIFICATION_FOREGROUND_ID, builder.build());
@@ -281,7 +282,7 @@ public class LibraryDownloader extends IntentService {
 			final long downloadStartTime = System.currentTimeMillis();
 
 			if (integrityCheck){
-				// If an integrity check is requested, redownload all missing chapters
+				// If an integrity check is requested, re-download all missing chapters
 				// Download each missing chapter, updating the notification as required
 				while (downloader.hasNextChapter()) {
 					showUpdateNotification(storyTitle, downloader.getCurrentChapter(), downloader.getTotalChapters(), downloadStartTime);
@@ -320,11 +321,7 @@ public class LibraryDownloader extends IntentService {
 				}
 			} catch (IOException e) {
 				// This shouldn't happen. Log the exception if it occurs
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-					Crashlytics.logException(new IOException("Exception while saving sql parameters", e));
-				} else {
-					Crashlytics.logException(new Exception("Exception while saving sql parameters", e));
-				}
+				FirebaseCrashlytics.getInstance().recordException(new IOException("Exception while saving sql parameters", e));
 
 				// If no updated were required, fail silently upon error since no significant
 				// changes were made. If an update was being performed but failed, set the error
@@ -342,7 +339,7 @@ public class LibraryDownloader extends IntentService {
 			// notifications are avoided for deleted stories during batch updates.
 		} catch (ParseException e) {
 			// Parsing errors should be logged on Crashlytics for further analysis.
-			Crashlytics.logException(e);
+			FirebaseCrashlytics.getInstance().recordException(e);
 			hasParsingError = true;
 		} finally{
 			// Remove the notification after the download stage is completed
@@ -383,6 +380,7 @@ public class LibraryDownloader extends IntentService {
 	 */
 	private void removeNotification(int notificationId) {
 		NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		assert manager != null;
 		manager.cancel(notificationId);
 	}
 
@@ -414,6 +412,7 @@ public class LibraryDownloader extends IntentService {
 
 		// Show or update the notification
 		NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		assert manager != null;
 		manager.notify(NOTIFICATION_UPDATE_ID, builder.build());
 	}
 
@@ -430,6 +429,7 @@ public class LibraryDownloader extends IntentService {
 
 		// Show or update the notification
 		NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		assert manager != null;
 		manager.notify(NOTIFICATION_DOWNLOAD_ID, builder.build());
 	}
 
@@ -459,6 +459,7 @@ public class LibraryDownloader extends IntentService {
 
 		// Show or update the notification
 		NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		assert manager != null;
 		manager.notify(NOTIFICATION_DOWNLOAD_ID, builder.build());
 	}
 
@@ -480,6 +481,7 @@ public class LibraryDownloader extends IntentService {
 
 		// Show or update the notification
 		NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		assert manager != null;
 		manager.notify(NOTIFICATION_DOWNLOAD_ID, builder.build());
 	}
 
@@ -502,6 +504,7 @@ public class LibraryDownloader extends IntentService {
 
 		// Show or update the notification
 		NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		assert manager != null;
 		manager.notify(NOTIFICATION_UPDATE_ID, builder.build());
 	}
 
@@ -537,6 +540,7 @@ public class LibraryDownloader extends IntentService {
 
 		// Show or update the notification
 		NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		assert manager != null;
 		manager.notify(NOTIFICATION_UPDATE_ID, notBuilder.build());
 	}
 

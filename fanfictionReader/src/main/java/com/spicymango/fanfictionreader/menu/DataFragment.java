@@ -4,10 +4,9 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-
-import com.crashlytics.android.Crashlytics;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -87,7 +86,7 @@ public final class DataFragment extends Fragment {
 					mSavedData = bundledParcel.readBundle(getClass().getClassLoader());
 
 				} catch (IOException e) {
-					Crashlytics.logException(e);
+					FirebaseCrashlytics.getInstance().recordException(e);
 				} finally {
 					bundledParcel.recycle();
 				}
@@ -125,7 +124,7 @@ public final class DataFragment extends Fragment {
 
 				fos.flush();
 			} catch (IOException e) {
-				Crashlytics.logException(e);
+				FirebaseCrashlytics.getInstance().recordException(e);
 			} finally {
 				bundledParcel.recycle();
 			}
