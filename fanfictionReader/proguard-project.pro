@@ -23,6 +23,20 @@
 -keep class com.crashlytics.** { *; }
 -keep class com.crashlytics.android.**
 
+# Do not obfuscate Serializable cookie since it uses reflection
+-keep class com.spicymango.fanfictionreader.util.AndroidCookieStore { *; }
+-keep class com.spicymango.fanfictionreader.util.AndroidCookieStore$SerializableHttpCookie { *; }
+-keepnames class * implements java.io.Serializable
+-keepclassmembers class * implements java.io.Serializable {
+    static final long serialVersionUID;
+    private static final java.io.ObjectStreamField[] serialPersistentFields;
+    !static !transient <fields>;
+    private void writeObject(java.io.ObjectOutputStream);
+    private void readObject(java.io.ObjectInputStream);
+    java.lang.Object writeReplace();
+    java.lang.Object readResolve();
+}
+
 # Remove debugging log statements
 -assumenosideeffects class android.util.Log {
     public static *** d(...);
