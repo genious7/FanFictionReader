@@ -23,8 +23,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
+import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
-import androidx.core.view.MenuItemCompat;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.SearchView.OnQueryTextListener;
 import android.text.TextUtils;
@@ -43,6 +43,7 @@ public class SearchStoryActivity extends BaseActivity<Story> implements OnQueryT
 	private SearchLoader<Story> mLoader;
 	private SearchView sView;
 	
+	@NonNull
 	@Override
 	public Loader<List<Story>> onCreateLoader(int id, Bundle args) {
 		mLoader = new StorySearchLoader(this, args);
@@ -60,7 +61,7 @@ public class SearchStoryActivity extends BaseActivity<Story> implements OnQueryT
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.search_menu, menu);
 
-		sView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
+		sView = (SearchView) menu.findItem(R.id.search).getActionView();
 		sView.setOnQueryTextListener(this);
 		return super.onCreateOptionsMenu(menu);
 	}
@@ -79,7 +80,7 @@ public class SearchStoryActivity extends BaseActivity<Story> implements OnQueryT
 	}
 	
 	@Override
-	public void onLoadFinished(Loader<List<Story>> loader, List<Story> data) {
+	public void onLoadFinished(@NonNull Loader<List<Story>> loader, List<Story> data) {
 		super.onLoadFinished(loader, data);
 		mLoader = (SearchLoader<Story>) loader;
 		supportInvalidateOptionsMenu();
@@ -87,12 +88,12 @@ public class SearchStoryActivity extends BaseActivity<Story> implements OnQueryT
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.filter:
+		if (item.getItemId() == R.id.filter){
 			((Filterable) mLoader).onFilterClick(this);
 			return true;
-		default:
+		} else{
 			return super.onOptionsItemSelected(item);
+
 		}
 	}
 
@@ -130,7 +131,7 @@ public class SearchStoryActivity extends BaseActivity<Story> implements OnQueryT
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		getSupportLoaderManager().initLoader(0, savedInstanceState, this);
+		LoaderManager.getInstance(this).initLoader(0, savedInstanceState, this);
 	}
 	
 	private static class StorySearchLoader extends SearchLoader<Story> implements Filterable{

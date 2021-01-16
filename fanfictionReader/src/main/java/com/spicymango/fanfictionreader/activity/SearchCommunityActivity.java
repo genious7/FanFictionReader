@@ -17,8 +17,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
+import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
-import androidx.core.view.MenuItemCompat;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.SearchView.OnQueryTextListener;
 import android.text.TextUtils;
@@ -45,6 +45,7 @@ public class SearchCommunityActivity extends BaseActivity<CommunityMenuItem> imp
     private SearchLoader<CommunityMenuItem> mLoader;
     private SearchView sView;
 
+    @NonNull
     @Override
     public Loader<List<CommunityMenuItem>> onCreateLoader(int id, Bundle args) {
         mLoader = new CommunityLoader(this, args);
@@ -58,7 +59,7 @@ public class SearchCommunityActivity extends BaseActivity<CommunityMenuItem> imp
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.search_menu, menu);
 
-        sView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
+        sView = (SearchView) menu.findItem(R.id.search).getActionView();
         sView.setOnQueryTextListener(this);
         return super.onCreateOptionsMenu(menu);
     }
@@ -79,8 +80,8 @@ public class SearchCommunityActivity extends BaseActivity<CommunityMenuItem> imp
     }
 
     @Override
-    public void onLoadFinished(Loader<List<CommunityMenuItem>> loader,
-                               List<CommunityMenuItem> data) {
+    public void onLoadFinished(@NonNull Loader<List<CommunityMenuItem>> loader,
+							   List<CommunityMenuItem> data) {
         super.onLoadFinished(loader, data);
         mLoader = (SearchLoader<CommunityMenuItem>) loader;
         supportInvalidateOptionsMenu();
@@ -88,12 +89,11 @@ public class SearchCommunityActivity extends BaseActivity<CommunityMenuItem> imp
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.filter:
-                ((Filterable) mLoader).onFilterClick(this);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.filter){
+            ((Filterable) mLoader).onFilterClick(this);
+            return true;
+        } else{
+            return super.onOptionsItemSelected(item);
         }
     }
 
@@ -130,15 +130,13 @@ public class SearchCommunityActivity extends BaseActivity<CommunityMenuItem> imp
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSupportLoaderManager().initLoader(0, savedInstanceState, this);
+        LoaderManager.getInstance(this).initLoader(0, savedInstanceState, this);
     }
 
     private static final class CommunityLoader extends SearchLoader<CommunityMenuItem> implements Filterable{
-        private final String formatString;
 
         public CommunityLoader(Context context, Bundle savedInstanceState) {
             super(context, savedInstanceState);
-            formatString = context.getString(R.string.menu_navigation_count_story);
         }
 
         @Override

@@ -1,9 +1,10 @@
 package com.spicymango.fanfictionreader.menu;
 
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
@@ -49,14 +50,14 @@ public final class DataFragment extends Fragment {
 		// Create the filename. The filename is composed of the class name (to easily identify it)
 		// the intent uri hashcode (to distinguish the Category and Sub-Category Menus and the
 		// .tmp extension to clearly mark the file as a temporary file.
-		final File cacheFolder = new File(getActivity().getCacheDir(), SAVED_INSTANCE_STATE_CACHE_PATH);
+		final File cacheFolder = new File(requireActivity().getCacheDir(), SAVED_INSTANCE_STATE_CACHE_PATH);
 		if (!cacheFolder.exists()) {
 			// If the directory does not exist, create it
 			cacheFolder.mkdir();
 		}
 
-		String filename = getActivity().getClass().getName();
-		final Uri uri = getActivity().getIntent().getData();
+		String filename = requireActivity().getClass().getName();
+		final Uri uri = requireActivity().getIntent().getData();
 		if (uri != null){
 			filename += uri.hashCode();
 		}
@@ -64,9 +65,7 @@ public final class DataFragment extends Fragment {
 		mCacheFile = new File(cacheFolder, filename);
 
 		// Prevent the fragment from being recreated on configuration changes.
-		if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			setRetainInstance(true);
-		}
+		setRetainInstance(true);
 
 		// If the fragment is being recreated, read the cache file
 		if (savedInstanceState != null && savedInstanceState.containsKey(KEY_FLAG)) {
@@ -103,13 +102,12 @@ public final class DataFragment extends Fragment {
 	}
 
 	@Override
-	public void onSaveInstanceState(Bundle outState) {
+	public void onSaveInstanceState(@NonNull Bundle outState) {
 		// On android Honeycomb or greater, the fragment will be retained on configuration changes
 		// and therefore, the data can be retrieved from the fragment directly. The cache file only
 		// needs to be used on Api versions lower than Honeycomb or when a configuration change is
 		// not occurring.
-		if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB ||
-				!getActivity().isChangingConfigurations()) {
+		if (!requireActivity().isChangingConfigurations() && mSavedData != null) {
 
 			// Write the cache file
 			final Parcel bundledParcel = Parcel.obtain();
@@ -138,7 +136,7 @@ public final class DataFragment extends Fragment {
 		super.onPause();
 
 		// If the activity is being closed, delete the cache file
-		if (getActivity().isFinishing()) {
+		if (requireActivity().isFinishing()) {
 			if (mCacheFile.exists()) {
 				mCacheFile.delete();
 			}
