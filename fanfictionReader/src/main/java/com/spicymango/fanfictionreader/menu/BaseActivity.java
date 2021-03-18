@@ -9,11 +9,13 @@ import com.spicymango.fanfictionreader.Settings;
 import com.spicymango.fanfictionreader.util.Result;
 
 import android.annotation.TargetApi;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
 import androidx.loader.app.LoaderManager.LoaderCallbacks;
 import androidx.loader.content.Loader;
 import androidx.appcompat.app.AppCompatActivity;
@@ -80,12 +82,32 @@ public abstract class BaseActivity<T extends Parcelable> extends
 		mAdapter.notifyDataSetChanged();
 		mLoader = (BaseLoader<T>) loader;
 		
-		Result state = mLoader.getState();		
+		final Result state = mLoader.getState();
 		switch (state) {
 		case LOADING:
 			mProgressBar.setVisibility(View.VISIBLE);
 			mAddPageButton.setVisibility(View.GONE);
 			mErrorBar.setVisibility(View.GONE);
+			break;
+		case ERROR_CLOUDFLARE_CAPTCHA:
+			mProgressBar.setVisibility(View.VISIBLE);
+			mAddPageButton.setVisibility(View.GONE);
+			mErrorBar.setVisibility(View.GONE);
+			// Launch a new fragment
+			final Uri uri = mLoader.getUri(mLoader.getCurrentPage());
+			final Bundle arguments = new Bundle();
+			arguments.putParcelable(CloudflareFragment.EXTRA_URI, uri);
+
+			final FragmentManager manager = getSupportFragmentManager();
+			manager.setFragmentResultListener("DATA_CLOUDFLARE",this,(requestKey, bundle) ->{
+				mLoader.setHtmlFromWebView(bundle.getString("DATA"));
+				mLoader.startLoading();
+			});
+
+			manager.beginTransaction()
+					.add(CloudflareFragment.class, arguments, "DATA_CLOUDFLARE")
+					.setReorderingAllowed(true)
+					.commit();
 			break;
 		case ERROR_CONNECTION:
 			mRetryLabel.setText(R.string.error_connection);

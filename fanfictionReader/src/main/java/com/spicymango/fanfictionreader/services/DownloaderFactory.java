@@ -1,29 +1,44 @@
 package com.spicymango.fanfictionreader.services;
 
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.SparseArray;
+import android.webkit.CookieManager;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import com.spicymango.fanfictionreader.activity.Site;
 import com.spicymango.fanfictionreader.provider.SqlConstants;
 import com.spicymango.fanfictionreader.provider.StoryProvider;
 import com.spicymango.fanfictionreader.util.FileHandler;
-import com.spicymango.fanfictionreader.util.JsoupUtil;
 import com.spicymango.fanfictionreader.util.Parser;
 import com.spicymango.fanfictionreader.util.Sites;
 import com.spicymango.fanfictionreader.util.Story;
 
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.net.CookieHandler;
+import java.net.CookieStore;
+import java.net.HttpCookie;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -69,10 +84,10 @@ class DownloaderFactory {
 	 * @param context The current context
 	 * @return The downloader that works for the requested URI
 	 */
-	static Downloader getInstance(Uri uri, Context context) {
+	static Downloader getInstance(Uri uri, Context context, WebView webView) {
 		switch (URI_MATCHER.match(uri)) {
 			case FAN_FICTION:
-				return new FanFictionDownloader(uri, context);
+				return new FanFictionDownloader(uri, context, webView);
 			default:
 				throw new UnsupportedOperationException("Downloader Factory does not support the Uri: " + uri);
 		}
@@ -190,9 +205,21 @@ class DownloaderFactory {
 		 */
 		private final Context mContext;
 
-		private FanFictionDownloader(Uri uri, Context context) {
+		/**
+		 *  A web view used to bypass Cloudflare's captcha
+		 *  */
+		private final WebView mWebView;
+
+		private final Object mutex;
+		private String mHtmlFromWebView;
+
+
+		@SuppressLint("AddJavascriptInterface")
+		private FanFictionDownloader(Uri uri, Context context, WebView webView) {
 			mContext = context;
 			mCurrentPage = 1;
+			mutex = new Object();
+			mHtmlFromWebView = null;
 
 			mText = new SparseArray<>();
 
@@ -201,6 +228,29 @@ class DownloaderFactory {
 			Matcher idMatcher = PATTERN_FF.matcher(uri.toString());
 			if (!idMatcher.find()) throw new IllegalArgumentException("The uri " + uri + " is not valid");
 			mStoryId = Long.parseLong(idMatcher.group(1));
+
+			// Initialize the webView's callbacks
+			mWebView = webView;
+
+			// Try to load the document. This must be done from the main thread
+			final Handler mainHandler = new Handler(mContext.getMainLooper());
+			final Runnable runnable = () -> {
+				mWebView.setWebViewClient(new CustomWebView());
+				mWebView.addJavascriptInterface(new JavascriptListener(), "HTMLOUT");
+				synchronized (mutex){
+					mutex.notify();
+				}
+			};
+
+			// Wait for the WebView to finish loading
+			synchronized (mutex){
+				try {
+					mainHandler.post(runnable);
+					mutex.wait();
+				} catch (InterruptedException e){
+					Log.e(this.getClass().getSimpleName(), "Thread interrupted", e);
+				}
+			}
 		}
 
 		@Override
@@ -268,7 +318,29 @@ class DownloaderFactory {
 		public void downloadChapter() throws IOException, ParseException, StoryNotFoundException {
 			final String url = "https://www.fanfiction.net/s/" + mStoryId + "/"
 					+ mCurrentPage + "/";
-			final Document document = JsoupUtil.safeGet(url, "Mozilla/5.0");
+
+			// Try to load the document. This must be done from the main thread
+			final Handler mainHandler = new Handler(mContext.getMainLooper());
+			final Runnable runnable = () -> mWebView.loadUrl(url);
+			mHtmlFromWebView = null;
+
+			// Wait for the WebView to finish loading
+			synchronized (mutex){
+				mainHandler.post(runnable);
+				try {
+					while (mHtmlFromWebView == null){
+						mutex.wait();
+					}
+				} catch (InterruptedException e){
+					throw new IOException();
+				}
+			}
+
+			if (mHtmlFromWebView.equalsIgnoreCase("404")){
+				throw new IOException();
+			}
+
+			final Document document = Jsoup.parse(mHtmlFromWebView, url);
 
 			// On the first run, update the mStory variable
 			if (mCurrentPage == 1) {
@@ -396,7 +468,7 @@ class DownloaderFactory {
 
 			Matcher matcher = PATTERN_FF.matcher(authorElement.attr("href"));
 			if (!matcher.find()) return null;
-			int authorId = Integer.valueOf(matcher.group(1));
+			int authorId = Integer.parseInt(matcher.group(1));
 
 			Element summaryElement = document.select("div#profile_top > div").first();
 			if (summaryElement == null) return null;
@@ -441,6 +513,71 @@ class DownloaderFactory {
 			builder.setCompleted(attributes.text().contains("Complete"));
 
 			return builder.build();
+		}
+
+
+		private class JavascriptListener{
+			@android.webkit.JavascriptInterface
+			public void processHTML(String html) {
+				mHtmlFromWebView = html;
+				synchronized (mutex) {
+					mutex.notify();
+				}
+			}
+		}
+
+		private class CustomWebView extends WebViewClient {
+
+			@Override
+			public void onReceivedError(WebView view, WebResourceRequest request,
+										WebResourceError error) {
+				super.onReceivedError(view, request, error);
+
+				mHtmlFromWebView = "404";
+				synchronized (mutex) {
+					mutex.notify();
+				}
+			}
+
+			@Override
+			public void onReceivedHttpError(WebView view, WebResourceRequest request,
+											WebResourceResponse errorResponse) {
+				super.onReceivedHttpError(view, request, errorResponse);
+				mHtmlFromWebView = "404";
+				synchronized (mutex) {
+					mutex.notify();
+				}
+			}
+
+			@Override
+			public void onPageFinished(WebView view, String url) {
+
+				// Pass the cookies from the webView to the cookie storage
+				final CookieManager manager = CookieManager.getInstance();
+				final String httpCookieHeader = manager.getCookie(url);
+
+				if (httpCookieHeader != null){
+					try {
+						final URI uri = new URI("https://fanfiction.net/");
+						final CookieStore cookieStore = ((java.net.CookieManager) CookieHandler.getDefault()).getCookieStore();
+
+						for (String cookieString : httpCookieHeader.split(";")){
+							final String[] splitCookie = cookieString.split("=");
+							HttpCookie cookie = new HttpCookie(splitCookie[0], splitCookie[1]);
+							cookieStore.add(uri, cookie);
+						}
+
+					} catch (URISyntaxException e) {
+						Log.d(getClass().getSimpleName(), "Failed to parse URI =" + url, e);
+					}
+				}
+
+
+				// Retrieve the html code.
+				view.loadUrl("javascript:window.HTMLOUT.processHTML('<html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>');");
+
+				super.onPageFinished(view, url);
+			}
 		}
 
 	}

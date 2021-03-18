@@ -1,5 +1,6 @@
 package com.spicymango.fanfictionreader.services;
 
+import android.annotation.SuppressLint;
 import android.app.IntentService;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -8,25 +9,35 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
-import androidx.annotation.StringRes;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.TaskStackBuilder;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
+import android.webkit.WebView;
 
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.Settings;
 import com.spicymango.fanfictionreader.menu.librarymenu.LibraryMenuActivity;
+import com.spicymango.fanfictionreader.util.Sites;
 import com.spicymango.fanfictionreader.util.Story;
 
 import java.io.IOException;
+import java.net.CookieHandler;
+import java.net.CookieStore;
+import java.net.HttpCookie;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import androidx.annotation.StringRes;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.TaskStackBuilder;
 
 /**
  * Downloads a story into the library. In order to use it, the story URI must be passed in the
@@ -116,6 +127,8 @@ public class LibraryDownloader extends IntentService {
 	/** Keeps track of story names for update purposes*/
 	private final List<String> storiesUpdated = new ArrayList<>();
 
+	private WebView mWebView;
+
 	public LibraryDownloader() {
 		super(LibraryDownloader.class.getName());
 	}
@@ -159,6 +172,7 @@ public class LibraryDownloader extends IntentService {
 		context.startService(i);
 	}
 
+	@SuppressLint("SetJavaScriptEnabled")
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -175,6 +189,14 @@ public class LibraryDownloader extends IntentService {
 		// The time at which the service starts.
 		updateStartTime = System.currentTimeMillis();
 
+		// Create the WebView through which HTTP requests will be performed
+		initializeCookies();
+		mWebView = new WebView(this);
+		mWebView.getSettings().setUserAgentString("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36");
+		mWebView.getSettings().setJavaScriptEnabled(true);
+		mWebView.getSettings().setDomStorageEnabled(true);
+
+
 		// Create the Notification Channel
 		if (Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O){
 			final NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL,
@@ -185,6 +207,49 @@ public class LibraryDownloader extends IntentService {
 			manager.createNotificationChannel(channel);
 			NotificationCompat.Builder builder = new NotificationCompat.Builder(LibraryDownloader.this, NOTIFICATION_CHANNEL);
 			startForeground(NOTIFICATION_FOREGROUND_ID, builder.build());
+		}
+	}
+
+	/**
+	 * Initializes the cookie storage for the WebView
+	 */
+	private void initializeCookies(){
+		// Set the webView cookies to match the http cookies
+		CookieSyncManager.createInstance(this);
+		final CookieManager cookieManager = CookieManager.getInstance();
+		cookieManager.setAcceptCookie(true);
+		final CookieStore cookieStore = ((java.net.CookieManager) CookieHandler.getDefault()).getCookieStore();
+		final List<HttpCookie> cookieList = cookieStore.getCookies();
+		for (HttpCookie cookie : cookieList){
+			URI baseUri;
+			try {
+				baseUri = new URI(Sites.FANFICTION.DESKTOP_URI.toString());
+			} catch (URISyntaxException e) {
+				continue;
+			}
+
+			// If the HttpCookie has a domain attribute, use that over the provided uri.
+			if (cookie.getDomain() != null){
+				// Remove the starting dot character of the domain, if exists (e.g: .domain.com -> domain.com)
+				String domain = cookie.getDomain();
+				if (domain.charAt(0) == '.') {
+					domain = domain.substring(1);
+				}
+
+				// Create the new URI
+				try{
+					baseUri = new URI("https",
+									  domain,
+									  cookie.getPath() == null ? "/" : cookie.getPath(),
+									  null);
+				} catch (URISyntaxException e) {
+					Log.w(this.getClass().getSimpleName(), e);
+				}
+			}
+
+			String cookieHeader = cookie.toString() + "; domain=" + cookie.getDomain() +
+					"; path=" + cookie.getPath();
+			cookieManager.setCookie(baseUri.toString(), cookieHeader);
 		}
 	}
 
@@ -264,7 +329,7 @@ public class LibraryDownloader extends IntentService {
 		final Uri uri = intent.getData();
 
 		// The DownloaderFactory selects the downloader based on the url provided.
-		final DownloaderFactory.Downloader downloader = DownloaderFactory.getInstance(uri, LibraryDownloader.this);
+		final DownloaderFactory.Downloader downloader = DownloaderFactory.getInstance(uri, LibraryDownloader.this, mWebView);
 
 		// The story variable holds the story's attributes
 		final Story story;
@@ -543,5 +608,4 @@ public class LibraryDownloader extends IntentService {
 		assert manager != null;
 		manager.notify(NOTIFICATION_UPDATE_ID, notBuilder.build());
 	}
-
 }

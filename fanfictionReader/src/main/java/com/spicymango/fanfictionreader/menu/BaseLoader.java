@@ -1,23 +1,22 @@
 package com.spicymango.fanfictionreader.menu;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-
-import com.spicymango.fanfictionreader.util.Result;
-
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+
+import com.spicymango.fanfictionreader.util.Result;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 import androidx.loader.content.AsyncTaskLoader;
-
-import androidx.annotation.Nullable;
 
 /**
  * An loader of {@link Parcelable} objects that caches the objects across state
@@ -35,6 +34,7 @@ public abstract class BaseLoader<T extends Parcelable> extends
 	private final static String STATE_DATA = "STATE CURRENT DATA";
 	private final static String STATE_STATUS = "STATE STATUS";
 	private final static String STATE_TOTAL = "STATE TOTAL PAGES";
+	private String htmlFromWebView;
 	
 	/**
 	 * An interface that must be implemented by any loader that offers
@@ -196,36 +196,35 @@ public abstract class BaseLoader<T extends Parcelable> extends
 		return mStatus == Result.LOADING;
 	}
 
+	public final void setHtmlFromWebView(String html){
+		htmlFromWebView = html;
+	}
+
 	@Override
 	public final List<T> loadInBackground() {
 
 		Document document;
+		final Uri uri = getUri(mCurrentPage);
 
-		// Check for Internet connection errors
-		try {
-			final Uri uri = getUri(mCurrentPage);
-			if (uri == null) {
-				// Assign the document an empty value
-				document = new Document("");
-			} else {
-				// Load the document
-				document = Jsoup
-						.connect(uri.toString())
-						.header("accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9")
-						.header("accept-encoding","gzip, deflate, br")
-						.header("accept-language","en-US,en;q=0.9")
-						.header("cache-control", "max-age=0")
-						.header("sec-fetch-dest","document")
-						.header("sec-fetch-mode","navigate")
-						.header("sec-fetch-site", "none")
-						.header("sec-fetch-user","?1")
-						.header("upgrade-insecure-requests","1")
-						.userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36")
-						.timeout(10000).get();
-			}
-		} catch (IOException e) {
+		if (htmlFromWebView == null) {
+
+			// Check for Internet connection errors
+			//try {
+				if (uri == null) {
+					// Assign the document an empty value
+					document = new Document("");
+				} else {
+					mStatus = Result.ERROR_CLOUDFLARE_CAPTCHA;
+					return null;
+				}
+		} else if (htmlFromWebView.equalsIgnoreCase("404")){
 			mStatus = Result.ERROR_CONNECTION;
+			htmlFromWebView = null;
 			return null;
+		} else{
+			assert uri != null;
+			document = Jsoup.parse(htmlFromWebView, uri.toString());
+			htmlFromWebView = null;
 		}
 
 		// Check for parsing errors
@@ -250,6 +249,7 @@ public abstract class BaseLoader<T extends Parcelable> extends
 	public final void loadNextPage() {
 		// Load the next age if it exists.
 		if (mCurrentPage < mTotalPages) {
+			htmlFromWebView = null;
 			mCurrentPage++;
 			mStatus = Result.LOADING;
 			startLoading();
@@ -282,6 +282,7 @@ public abstract class BaseLoader<T extends Parcelable> extends
 	 * Resets the loader to its default state
 	 */
 	public void resetState() {
+		htmlFromWebView = null;
 		mCurrentPage = 1;
 		mTotalPages = 0;
 		mData.clear();
@@ -329,8 +330,6 @@ public abstract class BaseLoader<T extends Parcelable> extends
 	 */
 	protected abstract boolean load(Document document, List<T> list);
 
-	
-	
 	@Override
 	protected final void onStartLoading() {
 		// Reload the data if required.
