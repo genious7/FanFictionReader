@@ -3,6 +3,7 @@ package com.spicymango.fanfictionreader;
 import android.app.Application;
 import android.preference.PreferenceManager;
 
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.spicymango.fanfictionreader.util.AndroidCookieStore;
 
 import java.net.CookieHandler;
@@ -27,6 +28,9 @@ public class FanFictionApplication extends Application {
 		// which is required to be able to browse the ff.net website.
 		final CookieManager cookieManager = new CookieManager(new AndroidCookieStore(getApplicationContext()), CookiePolicy.ACCEPT_ALL);
 		CookieHandler.setDefault(cookieManager);
+
+		// Enable crash reporting if set
+		FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(Settings.isCrashReportingEnabled(this));
 	}
 
 }

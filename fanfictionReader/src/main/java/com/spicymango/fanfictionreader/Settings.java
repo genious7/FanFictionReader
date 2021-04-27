@@ -1,5 +1,6 @@
 package com.spicymango.fanfictionreader;
 
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.spicymango.fanfictionreader.dialogs.backup.BackUpDialog;
 import com.spicymango.fanfictionreader.dialogs.FontDialog;
 import com.spicymango.fanfictionreader.dialogs.backup.RestoreDialog;
@@ -115,6 +116,10 @@ public class Settings extends AppCompatActivity {
 			// Check if the font button is clicked
 			final Preference fontDialog = findPreference(getString(R.string.pref_key_text_size));
 			fontDialog.setOnPreferenceClickListener(this);
+
+			// Check if the crash reporting preference has changed
+			final Preference crashReporting = findPreference(getString(R.string.pref_key_crash_reporting));
+			crashReporting.setOnPreferenceChangeListener(this);
 		}
 
 		@Override
@@ -175,6 +180,9 @@ public class Settings extends AppCompatActivity {
 						startActivity(i);
 						return false;
 					}
+				case "Automatically Report Crashes":
+					FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled((boolean) newValue);
+					return true;
 				default:
 					return true;
 			}
@@ -272,6 +280,16 @@ public class Settings extends AppCompatActivity {
 	public static boolean isWakeLockEnabled(Context context){
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
 		return sharedPref.getBoolean(context.getString(R.string.pref_key_wake_lock), true);
+	}
+
+	/**
+	 * Checks if the crash reporting should be enabled. If true, the device should report crashes
+	 * @param context The current context
+	 * @return True if crashes should be reported
+	 */
+	public static boolean isCrashReportingEnabled(Context context){
+		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+		return sharedPref.getBoolean(context.getString(R.string.pref_key_crash_reporting), false);
 	}
 
 	public static boolean shouldWriteToSD(Context context){
