@@ -146,7 +146,8 @@ public class AndroidCookieStore implements CookieStore {
 		// Remove all expired cookies
 		final Iterator<HttpCookie> iterator = returnList.iterator();
 		while (iterator.hasNext()){
-			if (iterator.next().hasExpired())
+			final HttpCookie cookie = iterator.next();
+			if (cookie == null || cookie.hasExpired()) // Remove null or expired cookies
 				iterator.remove();
 		}
 
@@ -165,7 +166,7 @@ public class AndroidCookieStore implements CookieStore {
 			final Iterator<HttpCookie> iterator = cookieList.iterator();
 			while (iterator.hasNext()){
 				final HttpCookie cookie = iterator.next();
-				if (cookie.hasExpired())
+				if (cookie == null || cookie.hasExpired()) // Remove null or expired cookies
 					iterator.remove();
 				else
 					returnValue.add(cookie);
