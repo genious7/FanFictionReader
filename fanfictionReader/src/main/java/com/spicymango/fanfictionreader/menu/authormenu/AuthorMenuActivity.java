@@ -36,7 +36,7 @@ public class AuthorMenuActivity extends TabActivity implements FilterDialog.Filt
 		// Forward the filter to the currently selected fragment
 		Fragment fragment = getCurrentFragment();
 
-		if (fragment != null && fragment instanceof FilterDialog.FilterListener){
+		if (fragment instanceof FilterDialog.FilterListener){
 			FilterDialog.FilterListener listener = (FilterDialog.FilterListener) fragment;
 			listener.onFilter(selected);
 		}
