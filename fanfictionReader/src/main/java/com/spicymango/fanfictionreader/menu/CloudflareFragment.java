@@ -1,7 +1,6 @@
 package com.spicymango.fanfictionreader.menu;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,6 +32,8 @@ import androidx.fragment.app.FragmentManager;
  */
 public class CloudflareFragment extends Fragment {
 	public final static String EXTRA_URI = "uri";
+
+	private WebView mWebView;
 
 	@SuppressLint({"SetJavaScriptEnabled", "AddJavascriptInterface"})
 	@Nullable
@@ -86,14 +87,22 @@ public class CloudflareFragment extends Fragment {
 		}
 
 
-		final WebView webView = new WebView(requireContext());
-		webView.getSettings().setUserAgentString("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36");
-		webView.getSettings().setJavaScriptEnabled(true);
-		webView.setWebViewClient(new CustomWebView());
-		webView.addJavascriptInterface(new JavascriptListener(), "HTMLOUT");
-		webView.loadUrl(uri.toString());
+		mWebView = new WebView(requireContext());
+		mWebView.getSettings().setUserAgentString("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36");
+		mWebView.getSettings().setJavaScriptEnabled(true);
+		mWebView.setWebViewClient(new CustomWebView());
+		mWebView.addJavascriptInterface(new JavascriptListener(), "HTMLOUT");
+		mWebView.loadUrl(uri.toString());
 
-		return webView;
+		return mWebView;
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+
+		// Stop loading any page if the fragment is destroyed
+		mWebView.stopLoading();
 	}
 
 	/**
@@ -101,6 +110,9 @@ public class CloudflareFragment extends Fragment {
 	 * @param result The string that should be passed to the main fragment.
 	 */
 	private void closeFragment(String result){
+
+		if (!isAdded())	return; // If the activity has been closed, then disregard the results.
+
 		final Bundle results = new Bundle();
 		results.putString("DATA", result);
 
