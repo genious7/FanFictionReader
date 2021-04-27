@@ -105,6 +105,7 @@
     <string name="pref_incremental_summary_off">Updating a story will redownload every chapter</string>
     <string name="pref_incremental_summary_on">Updating a story will only download new chapters. Revised chapters will not be updated.</string>
     <string name="pref_wake_lock">Keep Screen On</string>
+    <string name="pref_crash_reporting" translatable="false">Automatically Report Crashes</string>
     <string name="pref_back_and_restore">Backup and restore</string>
     <string name="pref_back_up">Back up files to memory</string>
     <string name="pref_restore">Restore files from memory</string>

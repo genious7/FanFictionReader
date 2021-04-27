@@ -3,13 +3,13 @@ package com.spicymango.fanfictionreader;
 import android.app.Application;
 import android.preference.PreferenceManager;
 
-import com.crashlytics.android.Crashlytics;
-import com.crashlytics.android.core.CrashlyticsCore;
-import com.spicymango.fanfictionreader.menu.DataFragment;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import com.spicymango.fanfictionreader.util.AndroidCookieStore;
 
-import java.io.File;
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
 
-import io.fabric.sdk.android.Fabric;
 
 /**
  * An application class that represents the FanFiction Application. Initialization for basic
@@ -21,15 +21,16 @@ public class FanFictionApplication extends Application {
 	public void onCreate() {
 		super.onCreate();
 
-		// Set up Crashlytics, disabled for debug builds
-		Crashlytics crashlyticsKit = new Crashlytics.Builder()
-				.core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
-				.build();
-
-		// Initialize Fabric with the debug-disabled crashlytics.
-		Fabric.with(this, crashlyticsKit);
-
 		//Initialize settings to default values upon the first access to the application
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+
+		// Initialize the persistent cookie manager. This is used to store the Cloudflare cookie,
+		// which is required to be able to browse the ff.net website.
+		final CookieManager cookieManager = new CookieManager(new AndroidCookieStore(getApplicationContext()), CookiePolicy.ACCEPT_ALL);
+		CookieHandler.setDefault(cookieManager);
+
+		// Enable crash reporting if set
+		FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(Settings.isCrashReportingEnabled(this));
 	}
+
 }

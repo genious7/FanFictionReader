@@ -1,6 +1,7 @@
 package com.spicymango.fanfictionreader.menu.categorymenu;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.lang3.text.WordUtils;
 
@@ -17,10 +18,13 @@ import android.content.Intent;
 import android.content.UriMatcher;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.Loader;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -36,7 +40,7 @@ public class CategoryMenuActivity extends AppCompatActivity {
 
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
 		if (savedInstanceState == null) {
 			FragmentTransaction fr = getSupportFragmentManager().beginTransaction();
@@ -47,11 +51,10 @@ public class CategoryMenuActivity extends AppCompatActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
+		if (item.getItemId() == android.R.id.home){
 			onBackPressed();
 			return true;
-		default:
+		} else{
 			return super.onOptionsItemSelected(item);
 		}
 	}
@@ -98,7 +101,7 @@ public class CategoryMenuActivity extends AppCompatActivity {
 			super.onActivityCreated(savedInstanceState);
 			setHasOptionsMenu(true);
 
-			final Uri uri = getActivity().getIntent().getData();
+			final Uri uri = requireActivity().getIntent().getData();
 			int site = URI_MATCHER.match(uri);
 
 			switch (site) {
@@ -174,17 +177,17 @@ public class CategoryMenuActivity extends AppCompatActivity {
 				mSortOrder = CategoryMenuComparator.SORT_VIEWS;
 			}
 
-			getLoaderManager().initLoader(0, mLoaderArgs, this);
+			LoaderManager.getInstance(this).initLoader(0, mLoaderArgs, this);
 		}
 
 		@Override
-		public void onSaveInstanceState(Bundle outState) {
+		public void onSaveInstanceState(@NonNull Bundle outState) {
 			super.onSaveInstanceState(outState);
 			outState.putBoolean(STATE_SORT, mSortOrder);
 		}
 
 		@Override
-		public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
 			// Inflate the menu
 			inflater.inflate(R.menu.navigation_menu, menu);
 
@@ -201,39 +204,38 @@ public class CategoryMenuActivity extends AppCompatActivity {
 		}
 
 		@Override
-		public void onLoadFinished(Loader<List<CategoryMenuItem>> loader, List<CategoryMenuItem> data) {
+		public void onLoadFinished(@NonNull Loader<List<CategoryMenuItem>> loader, List<CategoryMenuItem> data) {
 			super.onLoadFinished(loader, data);
 			mAdapter.sort(mSortOrder);
-			getActivity().supportInvalidateOptionsMenu();
+			requireActivity().invalidateOptionsMenu();
 		}
 
 		@Override
 		public void onResume() {
 			super.onResume();
-			getActivity().supportInvalidateOptionsMenu();
+			requireActivity().invalidateOptionsMenu();
 		}
 
 		@Override
 		public boolean onOptionsItemSelected(MenuItem item) {
-			switch (item.getItemId()) {
-			case R.id.navigation_library_sort_by_name:
+			if (item.getItemId() == R.id.navigation_library_sort_by_name){
 				if (mSortOrder != CategoryMenuComparator.SORT_ALPHABETICAL) {
 					mListView.setFastScrollEnabled(true);
 					mSortOrder = CategoryMenuComparator.SORT_ALPHABETICAL;
 					mAdapter.sort(mSortOrder);
 				}
 				return true;
-			case R.id.navigation_library_sort_by_size:
+			} else if(item.getItemId() == R.id.navigation_library_sort_by_size){
 				if (mSortOrder != CategoryMenuComparator.SORT_VIEWS) {
 					mListView.setFastScrollEnabled(false);
 					mSortOrder = CategoryMenuComparator.SORT_VIEWS;
 					mAdapter.sort(mSortOrder);
 				}
 				return true;
-			case R.id.filter:
+			} else if (item.getItemId() == R.id.filter){
 				displayFilterDialog();
 				return true;
-			default:
+			} else{
 				return super.onOptionsItemSelected(item);
 			}
 		}
@@ -255,6 +257,7 @@ public class CategoryMenuActivity extends AppCompatActivity {
 			builder.show();
 		}
 
+		@NonNull
 		@Override
 		public Loader<List<CategoryMenuItem>> onCreateLoader(int id, Bundle args) {
 			return mLoaderAdapter.getNewLoader(args);

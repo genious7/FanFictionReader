@@ -6,6 +6,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
 
     <application
         android:name=".FanFictionApplication"
@@ -79,8 +81,8 @@
         <activity android:name=".menu.reviewmenu.ReviewMenuActivity"/>
 
         <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="61aab708a9e345f4b2277b7b4503d011bb5ecf2a" />
+            android:name="firebase_crashlytics_collection_enabled"
+            android:value="false" />
     </application>
 
 </manifest>

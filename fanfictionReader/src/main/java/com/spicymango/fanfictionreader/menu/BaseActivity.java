@@ -2,19 +2,24 @@ package com.spicymango.fanfictionreader.menu;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.Settings;
 import com.spicymango.fanfictionreader.util.Result;
 
 import android.annotation.TargetApi;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.Loader;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
+import androidx.loader.app.LoaderManager.LoaderCallbacks;
+import androidx.loader.content.Loader;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -58,36 +63,51 @@ public abstract class BaseActivity<T extends Parcelable> extends
 
 	@Override
 	public void onClick(View v) {
-		switch (v.getId()) {
-		case R.id.story_load_pages:
+		if (v.getId() == R.id.story_load_pages){
 			mLoader.loadNextPage();
-			break;
-		case R.id.btn_retry:
+		} else if (v.getId() == R.id.btn_retry){
 			mLoader.startLoading();
-			break;
-		default:
-			break;
 		}
 	}
 
 	@Override
-	public void onLoaderReset(Loader<List<T>> loader) {
+	public void onLoaderReset(@NonNull Loader<List<T>> loader) {
 		mList = null;
 	}
 
 	@Override
-	public void onLoadFinished(Loader<List<T>> loader, List<T> data) {
+	public void onLoadFinished(@NonNull Loader<List<T>> loader, List<T> data) {
 		mList.clear();
 		mList.addAll(data);
 		mAdapter.notifyDataSetChanged();
 		mLoader = (BaseLoader<T>) loader;
 		
-		Result state = mLoader.getState();		
+		final Result state = mLoader.getState();
 		switch (state) {
 		case LOADING:
 			mProgressBar.setVisibility(View.VISIBLE);
 			mAddPageButton.setVisibility(View.GONE);
 			mErrorBar.setVisibility(View.GONE);
+			break;
+		case ERROR_CLOUDFLARE_CAPTCHA:
+			mProgressBar.setVisibility(View.VISIBLE);
+			mAddPageButton.setVisibility(View.GONE);
+			mErrorBar.setVisibility(View.GONE);
+			// Launch a new fragment
+			final Uri uri = mLoader.getUri(mLoader.getCurrentPage());
+			final Bundle arguments = new Bundle();
+			arguments.putParcelable(CloudflareFragment.EXTRA_URI, uri);
+
+			final FragmentManager manager = getSupportFragmentManager();
+			manager.setFragmentResultListener("DATA_CLOUDFLARE",this,(requestKey, bundle) ->{
+				mLoader.setHtmlFromWebView(bundle.getString("DATA"));
+				mLoader.startLoading();
+			});
+
+			manager.beginTransaction()
+					.add(CloudflareFragment.class, arguments, "DATA_CLOUDFLARE")
+					.setReorderingAllowed(true)
+					.commit();
 			break;
 		case ERROR_CONNECTION:
 			mRetryLabel.setText(R.string.error_connection);
@@ -121,9 +141,9 @@ public abstract class BaseActivity<T extends Parcelable> extends
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		int currentapiVersion = android.os.Build.VERSION.SDK_INT;
-		if (currentapiVersion >= android.os.Build.VERSION_CODES.HONEYCOMB) {
+	protected void onSaveInstanceState(@NonNull Bundle outState) {
+		int currentApiVersion = android.os.Build.VERSION.SDK_INT;
+		if (currentApiVersion >= android.os.Build.VERSION_CODES.HONEYCOMB) {
 			if (!isChangingConfigurations()) {
 				mLoader.saveInstanceState(outState);
 			}
@@ -136,11 +156,10 @@ public abstract class BaseActivity<T extends Parcelable> extends
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
+		if (item.getItemId() == android.R.id.home){
 			onBackPressed();
 			return true;
-		default:
+		} else{
 			return super.onOptionsItemSelected(item);
 		}
 	}
@@ -151,26 +170,26 @@ public abstract class BaseActivity<T extends Parcelable> extends
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list_toolbar);
 
-		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+		Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
 		mList = new ArrayList<>();
 		mAdapter = getAdapter();
 
-		ListView listView = (ListView) findViewById(android.R.id.list);
+		ListView listView = findViewById(android.R.id.list);
 		View footer = getLayoutInflater().inflate(R.layout.footer_list, null);
 		listView.addFooterView(footer, null, false);
 		listView.setOnItemClickListener(this);
 		listView.setOnItemLongClickListener(this);
 		listView.setAdapter(mAdapter);
 
-		mAddPageButton = (Button) findViewById(R.id.story_load_pages);
+		mAddPageButton = findViewById(R.id.story_load_pages);
 		mAddPageButton.setOnClickListener(this);
 		mProgressBar = findViewById(R.id.progress_bar);
 		mErrorBar = findViewById(R.id.row_retry);
 
-		mRetryLabel = (TextView) footer.findViewById(R.id.label_retry);
+		mRetryLabel = footer.findViewById(R.id.label_retry);
 		View retryButton = footer.findViewById(R.id.btn_retry);
 		retryButton.setOnClickListener(this);
 	}

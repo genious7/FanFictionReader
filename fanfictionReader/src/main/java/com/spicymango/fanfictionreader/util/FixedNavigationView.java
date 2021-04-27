@@ -2,7 +2,7 @@ package com.spicymango.fanfictionreader.util;
 
 import android.content.Context;
 import android.os.Parcelable;
-import android.support.design.widget.NavigationView;
+import com.google.android.material.navigation.NavigationView;
 import android.util.AttributeSet;
 
 /**

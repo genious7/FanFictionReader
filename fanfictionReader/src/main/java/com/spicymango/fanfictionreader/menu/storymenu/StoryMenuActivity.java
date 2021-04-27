@@ -1,6 +1,7 @@
 package com.spicymango.fanfictionreader.menu.storymenu;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.lang3.text.WordUtils;
 
@@ -19,10 +20,13 @@ import com.spicymango.fanfictionreader.util.Story;
 import android.content.UriMatcher;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.Loader;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -40,7 +44,7 @@ public class StoryMenuActivity extends AppCompatActivity implements FilterListen
 
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
 		final String tag = StoryMenuFragment.class.getName();
 		if (savedInstanceState == null) {
@@ -58,11 +62,10 @@ public class StoryMenuActivity extends AppCompatActivity implements FilterListen
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
+		if (item.getItemId() == android.R.id.home){
 			onBackPressed();
 			return true;
-		default:
+		}{
 			return super.onOptionsItemSelected(item);
 		}
 	}
@@ -128,7 +131,7 @@ public class StoryMenuActivity extends AppCompatActivity implements FilterListen
 
 			setHasOptionsMenu(true);
 
-			final Uri uri = getActivity().getIntent().getData();
+			final Uri uri = requireActivity().getIntent().getData();
 			String subTitle;
 
 			switch (URI_MATCHER.match(uri)) {
@@ -187,17 +190,17 @@ public class StoryMenuActivity extends AppCompatActivity implements FilterListen
 				return true;
 			});
 			setSubTitle(WordUtils.capitalize(subTitle));
-			getLoaderManager().initLoader(0, mLoaderArgs, this);
+			LoaderManager.getInstance(this).initLoader(0, mLoaderArgs, this);
 		}
 
 		@Override
 		public void onResume() {
 			super.onResume();
-			getActivity().supportInvalidateOptionsMenu();
+			requireActivity().invalidateOptionsMenu();
 		}
 
 		@Override
-		public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
 			inflater.inflate(R.menu.story_menu, menu);
 		}
 
@@ -222,25 +225,25 @@ public class StoryMenuActivity extends AppCompatActivity implements FilterListen
 
 		@Override
 		public boolean onOptionsItemSelected(MenuItem item) {
-			switch (item.getItemId()) {
-			case R.id.filter:
+			if (item.getItemId() == R.id.filter){
 				Filterable filterable = (Filterable) mLoader;
 				filterable.onFilterClick(getActivity());
 				return true;
-			default:
+			} else{
 				return super.onOptionsItemSelected(item);
 			}
 		}
 
+		@NonNull
 		@Override
 		public Loader<List<Story>> onCreateLoader(int id, Bundle args) {
 			return mLoaderAdapter.getNewLoader(args);
 		}
 
 		@Override
-		public void onLoadFinished(Loader<List<Story>> loader, List<Story> data) {
+		public void onLoadFinished(@NonNull Loader<List<Story>> loader, List<Story> data) {
 			super.onLoadFinished(loader, data);
-			getActivity().supportInvalidateOptionsMenu();
+			requireActivity().invalidateOptionsMenu();
 		}
 
 		@Override

@@ -28,7 +28,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 
 public class TaskManagerFragment extends Fragment implements TaskManager {
 

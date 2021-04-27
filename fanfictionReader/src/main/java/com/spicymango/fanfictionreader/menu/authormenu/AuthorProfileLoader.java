@@ -3,7 +3,6 @@ package com.spicymango.fanfictionreader.menu.authormenu;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.content.AsyncTaskLoader;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.SpannedString;
@@ -17,13 +16,13 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.loader.content.AsyncTaskLoader;
+
 /**
- * Loads the author's biography
- * Created by Michael Chen on 01/30/2016.
+ * Loads the author's biography Created by Michael Chen on 01/30/2016.
  */
 class AuthorProfileLoader {
 
@@ -34,10 +33,13 @@ class AuthorProfileLoader {
 
 
 		public String mAuthor;
-		private long mAuthorId;
+		private final long mAuthorId;
 		public ArrayList<Spanned> mData;
 		private boolean mDataHasChanged;
-		private Uri BASE_URI;
+		private final Uri BASE_URI;
+
+		private String mHtmlFromWebView;
+
 
 		public FanFictionProfileLoader(Context context, Bundle args, long authorId) {
 			super(context);
@@ -68,6 +70,10 @@ class AuthorProfileLoader {
 
 		}
 
+		public final void setHtmlFromWebView(String html) {
+			mHtmlFromWebView = html;
+		}
+
 		public void onSavedInstanceState(Bundle outState) {
 
 			ArrayList<String> spans = new ArrayList<>();
@@ -92,10 +98,12 @@ class AuthorProfileLoader {
 
 		@Override
 		public Result loadInBackground() {
-			try {
-
-				Document document = Jsoup.connect(
-						formatUri().toString()).timeout(10000).get();
+			if (mHtmlFromWebView == null) {
+				return Result.ERROR_CLOUDFLARE_CAPTCHA;
+			} else if (mHtmlFromWebView.equalsIgnoreCase("404")) {
+				return Result.ERROR_CONNECTION;
+			} else {
+				final Document document = Jsoup.parse(mHtmlFromWebView, formatUri().toString());
 
 				if (mAuthor == null) {
 					mAuthor = getAuthor(document);
@@ -107,9 +115,6 @@ class AuthorProfileLoader {
 				} else {
 					return Result.ERROR_PARSE;
 				}
-
-			} catch (IOException e) {
-				return Result.ERROR_CONNECTION;
 			}
 		}
 
@@ -154,7 +159,5 @@ class AuthorProfileLoader {
 				return author.first().ownText();
 			}
 		}
-
 	}
-
 }

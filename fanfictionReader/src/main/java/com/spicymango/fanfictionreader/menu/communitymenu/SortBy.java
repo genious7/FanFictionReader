@@ -1,6 +1,6 @@
 package com.spicymango.fanfictionreader.menu.communitymenu;
 
-import android.support.v7.widget.ThemedSpinnerAdapter.Helper;
+import androidx.appcompat.widget.ThemedSpinnerAdapter.Helper;
 
 /**
  * A small {@link Helper} Enum that contains the associated filter values for

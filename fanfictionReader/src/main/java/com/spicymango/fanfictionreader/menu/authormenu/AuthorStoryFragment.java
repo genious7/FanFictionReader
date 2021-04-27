@@ -1,7 +1,10 @@
 package com.spicymango.fanfictionreader.menu.authormenu;
 
 import android.os.Bundle;
-import android.support.v4.content.Loader;
+
+import androidx.annotation.NonNull;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.Menu;
@@ -68,11 +71,11 @@ public class AuthorStoryFragment extends BaseFragment<Story> implements FilterDi
 		final int loaderId = arguments.getInt(EXTRA_LOADER_ID);
 
 		// Initiate the loaders
-		getLoaderManager().initLoader(loaderId, mLoaderArgs, this);
+		LoaderManager.getInstance(this).initLoader(loaderId, mLoaderArgs, this);
 	}
 
 	@Override
-	public void onLoadFinished(Loader<List<Story>> loader, List<Story> data) {
+	public void onLoadFinished(@NonNull Loader<List<Story>> loader, List<Story> data) {
 		super.onLoadFinished(loader, data);
 
 		if (mLoader.getState() == Result.SUCCESS && mLoader instanceof SubTitleGetter){
@@ -80,22 +83,23 @@ public class AuthorStoryFragment extends BaseFragment<Story> implements FilterDi
 		}
 
 		if (mLoader instanceof BaseLoader.Filterable){
-			getActivity().supportInvalidateOptionsMenu();
+			requireActivity().invalidateOptionsMenu();
 		}
 
 	}
 
+	@NonNull
 	@Override
 	public Loader<List<Story>> onCreateLoader(int id, Bundle args) {
 		final BaseLoader<Story> loader;
 		switch (id){
 			case LOADER_STORIES:
 				loader = new AuthorStoryLoader.
-						FanFictionAuthorStoryLoader(getActivity(), args, getActivity().getIntent().getData());
+						FanFictionAuthorStoryLoader(getActivity(), args, requireActivity().getIntent().getData());
 				break;
 			case LOADER_FAVORITES:
 				loader = new AuthorStoryLoader.
-						FanFictionAuthorFavoriteLoader(getActivity(), args, getActivity().getIntent().getData());
+						FanFictionAuthorFavoriteLoader(getActivity(), args, requireActivity().getIntent().getData());
 				break;
 			default:
 				throw new IllegalArgumentException("The EXTRA_LOADER_ID '" + id + "' is invalid");
@@ -117,11 +121,11 @@ public class AuthorStoryFragment extends BaseFragment<Story> implements FilterDi
 	@Override
 	public void onResume() {
 		super.onResume();
-		getActivity().supportInvalidateOptionsMenu();
+		requireActivity().invalidateOptionsMenu();
 	}
 
 	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+	public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
 		inflater.inflate(R.menu.story_menu, menu);
 	}
 
@@ -146,13 +150,12 @@ public class AuthorStoryFragment extends BaseFragment<Story> implements FilterDi
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case R.id.filter:
-				BaseLoader.Filterable filterable = (BaseLoader.Filterable) mLoader;
-				filterable.onFilterClick(getActivity());
-				return true;
-			default:
-				return super.onOptionsItemSelected(item);
+		if (item.getItemId() == R.id.filter){
+			BaseLoader.Filterable filterable = (BaseLoader.Filterable) mLoader;
+			filterable.onFilterClick(getActivity());
+			return true;
+		} else{
+			return super.onOptionsItemSelected(item);
 		}
 	}
 }

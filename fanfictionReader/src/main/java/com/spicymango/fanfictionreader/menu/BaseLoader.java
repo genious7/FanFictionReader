@@ -1,22 +1,22 @@
 package com.spicymango.fanfictionreader.menu;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-
-import com.spicymango.fanfictionreader.util.Result;
-
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.AsyncTaskLoader;
 
-import android.support.annotation.Nullable;
+import com.spicymango.fanfictionreader.util.Result;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
+import androidx.loader.content.AsyncTaskLoader;
 
 /**
  * An loader of {@link Parcelable} objects that caches the objects across state
@@ -34,6 +34,7 @@ public abstract class BaseLoader<T extends Parcelable> extends
 	private final static String STATE_DATA = "STATE CURRENT DATA";
 	private final static String STATE_STATUS = "STATE STATUS";
 	private final static String STATE_TOTAL = "STATE TOTAL PAGES";
+	private String htmlFromWebView;
 	
 	/**
 	 * An interface that must be implemented by any loader that offers
@@ -195,27 +196,35 @@ public abstract class BaseLoader<T extends Parcelable> extends
 		return mStatus == Result.LOADING;
 	}
 
+	public final void setHtmlFromWebView(String html){
+		htmlFromWebView = html;
+	}
+
 	@Override
 	public final List<T> loadInBackground() {
 
 		Document document;
+		final Uri uri = getUri(mCurrentPage);
 
-		// Check for Internet connection errors
-		try {
-			final Uri uri = getUri(mCurrentPage);
-			if (uri == null) {
-				// Assign the document an empty value
-				document = new Document("");
-			} else {
-				// Load the document
-				document = Jsoup
-						.connect(uri.toString())
-						.userAgent("Mozilla/5.0 (Linux; Android; FanFictionReader App) like Gecko")
-						.timeout(10000).get();
-			}
-		} catch (IOException e) {
+		if (htmlFromWebView == null) {
+
+			// Check for Internet connection errors
+			//try {
+				if (uri == null) {
+					// Assign the document an empty value
+					document = new Document("");
+				} else {
+					mStatus = Result.ERROR_CLOUDFLARE_CAPTCHA;
+					return null;
+				}
+		} else if (htmlFromWebView.equalsIgnoreCase("404")){
 			mStatus = Result.ERROR_CONNECTION;
+			htmlFromWebView = null;
 			return null;
+		} else{
+			assert uri != null;
+			document = Jsoup.parse(htmlFromWebView, uri.toString());
+			htmlFromWebView = null;
 		}
 
 		// Check for parsing errors
@@ -240,6 +249,7 @@ public abstract class BaseLoader<T extends Parcelable> extends
 	public final void loadNextPage() {
 		// Load the next age if it exists.
 		if (mCurrentPage < mTotalPages) {
+			htmlFromWebView = null;
 			mCurrentPage++;
 			mStatus = Result.LOADING;
 			startLoading();
@@ -272,6 +282,7 @@ public abstract class BaseLoader<T extends Parcelable> extends
 	 * Resets the loader to its default state
 	 */
 	public void resetState() {
+		htmlFromWebView = null;
 		mCurrentPage = 1;
 		mTotalPages = 0;
 		mData.clear();
@@ -319,8 +330,6 @@ public abstract class BaseLoader<T extends Parcelable> extends
 	 */
 	protected abstract boolean load(Document document, List<T> list);
 
-	
-	
 	@Override
 	protected final void onStartLoading() {
 		// Reload the data if required.

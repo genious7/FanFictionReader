@@ -1,5 +1,6 @@
 package com.spicymango.fanfictionreader.services;
 
+import android.annotation.SuppressLint;
 import android.app.IntentService;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -8,25 +9,35 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
-import android.support.annotation.StringRes;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
+import android.webkit.WebView;
 
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.Settings;
 import com.spicymango.fanfictionreader.menu.librarymenu.LibraryMenuActivity;
+import com.spicymango.fanfictionreader.util.Sites;
 import com.spicymango.fanfictionreader.util.Story;
 
 import java.io.IOException;
+import java.net.CookieHandler;
+import java.net.CookieStore;
+import java.net.HttpCookie;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import androidx.annotation.StringRes;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.TaskStackBuilder;
 
 /**
  * Downloads a story into the library. In order to use it, the story URI must be passed in the
@@ -84,6 +95,11 @@ public class LibraryDownloader extends IntentService {
 	 */
 	private final static int NOTIFICATION_DOWNLOAD_ID = 1;
 
+	/**
+	 * ID For the required foreground notification
+	 */
+	private final static int NOTIFICATION_FOREGROUND_ID =  3;
+
 	private final static String NOTIFICATION_CHANNEL = "Channel";
 
 	/**
@@ -111,6 +127,8 @@ public class LibraryDownloader extends IntentService {
 	/** Keeps track of story names for update purposes*/
 	private final List<String> storiesUpdated = new ArrayList<>();
 
+	private WebView mWebView;
+
 	public LibraryDownloader() {
 		super(LibraryDownloader.class.getName());
 	}
@@ -130,7 +148,11 @@ public class LibraryDownloader extends IntentService {
 		i.setData(uri);
 		i.putExtra(EXTRA_LAST_PAGE, currentPage);
 		i.putExtra(EXTRA_OFFSET, offset);
-		context.startService(i);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			context.startForegroundService(i);
+		} else {
+			context.startService(i);
+		}
 	}
 
 	/**
@@ -150,6 +172,7 @@ public class LibraryDownloader extends IntentService {
 		context.startService(i);
 	}
 
+	@SuppressLint("SetJavaScriptEnabled")
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -166,13 +189,67 @@ public class LibraryDownloader extends IntentService {
 		// The time at which the service starts.
 		updateStartTime = System.currentTimeMillis();
 
+		// Create the WebView through which HTTP requests will be performed
+		initializeCookies();
+		mWebView = new WebView(this);
+		mWebView.getSettings().setUserAgentString("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36");
+		mWebView.getSettings().setJavaScriptEnabled(true);
+		mWebView.getSettings().setDomStorageEnabled(true);
+
+
 		// Create the Notification Channel
 		if (Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O){
 			final NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL,
 																  getString(R.string.app_name),
 																  NotificationManager.IMPORTANCE_LOW);
 			final NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+			assert manager != null;
 			manager.createNotificationChannel(channel);
+			NotificationCompat.Builder builder = new NotificationCompat.Builder(LibraryDownloader.this, NOTIFICATION_CHANNEL);
+			startForeground(NOTIFICATION_FOREGROUND_ID, builder.build());
+		}
+	}
+
+	/**
+	 * Initializes the cookie storage for the WebView
+	 */
+	private void initializeCookies(){
+		// Set the webView cookies to match the http cookies
+		CookieSyncManager.createInstance(this);
+		final CookieManager cookieManager = CookieManager.getInstance();
+		cookieManager.setAcceptCookie(true);
+		final CookieStore cookieStore = ((java.net.CookieManager) CookieHandler.getDefault()).getCookieStore();
+		final List<HttpCookie> cookieList = cookieStore.getCookies();
+		for (HttpCookie cookie : cookieList){
+			URI baseUri;
+			try {
+				baseUri = new URI(Sites.FANFICTION.DESKTOP_URI.toString());
+			} catch (URISyntaxException e) {
+				continue;
+			}
+
+			// If the HttpCookie has a domain attribute, use that over the provided uri.
+			if (cookie.getDomain() != null){
+				// Remove the starting dot character of the domain, if exists (e.g: .domain.com -> domain.com)
+				String domain = cookie.getDomain();
+				if (domain.charAt(0) == '.') {
+					domain = domain.substring(1);
+				}
+
+				// Create the new URI
+				try{
+					baseUri = new URI("https",
+									  domain,
+									  cookie.getPath() == null ? "/" : cookie.getPath(),
+									  null);
+				} catch (URISyntaxException e) {
+					Log.w(this.getClass().getSimpleName(), e);
+				}
+			}
+
+			String cookieHeader = cookie.toString() + "; domain=" + cookie.getDomain() +
+					"; path=" + cookie.getPath();
+			cookieManager.setCookie(baseUri.toString(), cookieHeader);
 		}
 	}
 
@@ -252,7 +329,7 @@ public class LibraryDownloader extends IntentService {
 		final Uri uri = intent.getData();
 
 		// The DownloaderFactory selects the downloader based on the url provided.
-		final DownloaderFactory.Downloader downloader = DownloaderFactory.getInstance(uri, LibraryDownloader.this);
+		final DownloaderFactory.Downloader downloader = DownloaderFactory.getInstance(uri, LibraryDownloader.this, mWebView);
 
 		// The story variable holds the story's attributes
 		final Story story;
@@ -270,7 +347,7 @@ public class LibraryDownloader extends IntentService {
 			final long downloadStartTime = System.currentTimeMillis();
 
 			if (integrityCheck){
-				// If an integrity check is requested, redownload all missing chapters
+				// If an integrity check is requested, re-download all missing chapters
 				// Download each missing chapter, updating the notification as required
 				while (downloader.hasNextChapter()) {
 					showUpdateNotification(storyTitle, downloader.getCurrentChapter(), downloader.getTotalChapters(), downloadStartTime);
@@ -309,11 +386,7 @@ public class LibraryDownloader extends IntentService {
 				}
 			} catch (IOException e) {
 				// This shouldn't happen. Log the exception if it occurs
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-					Crashlytics.logException(new IOException("Exception while saving sql parameters", e));
-				} else {
-					Crashlytics.logException(new Exception("Exception while saving sql parameters", e));
-				}
+				FirebaseCrashlytics.getInstance().recordException(new IOException("Exception while saving sql parameters", e));
 
 				// If no updated were required, fail silently upon error since no significant
 				// changes were made. If an update was being performed but failed, set the error
@@ -331,7 +404,7 @@ public class LibraryDownloader extends IntentService {
 			// notifications are avoided for deleted stories during batch updates.
 		} catch (ParseException e) {
 			// Parsing errors should be logged on Crashlytics for further analysis.
-			Crashlytics.logException(e);
+			FirebaseCrashlytics.getInstance().recordException(e);
 			hasParsingError = true;
 		} finally{
 			// Remove the notification after the download stage is completed
@@ -372,6 +445,7 @@ public class LibraryDownloader extends IntentService {
 	 */
 	private void removeNotification(int notificationId) {
 		NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		assert manager != null;
 		manager.cancel(notificationId);
 	}
 
@@ -403,6 +477,7 @@ public class LibraryDownloader extends IntentService {
 
 		// Show or update the notification
 		NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		assert manager != null;
 		manager.notify(NOTIFICATION_UPDATE_ID, builder.build());
 	}
 
@@ -419,6 +494,7 @@ public class LibraryDownloader extends IntentService {
 
 		// Show or update the notification
 		NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		assert manager != null;
 		manager.notify(NOTIFICATION_DOWNLOAD_ID, builder.build());
 	}
 
@@ -448,6 +524,7 @@ public class LibraryDownloader extends IntentService {
 
 		// Show or update the notification
 		NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		assert manager != null;
 		manager.notify(NOTIFICATION_DOWNLOAD_ID, builder.build());
 	}
 
@@ -469,6 +546,7 @@ public class LibraryDownloader extends IntentService {
 
 		// Show or update the notification
 		NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		assert manager != null;
 		manager.notify(NOTIFICATION_DOWNLOAD_ID, builder.build());
 	}
 
@@ -491,6 +569,7 @@ public class LibraryDownloader extends IntentService {
 
 		// Show or update the notification
 		NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		assert manager != null;
 		manager.notify(NOTIFICATION_UPDATE_ID, builder.build());
 	}
 
@@ -526,7 +605,7 @@ public class LibraryDownloader extends IntentService {
 
 		// Show or update the notification
 		NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		assert manager != null;
 		manager.notify(NOTIFICATION_UPDATE_ID, notBuilder.build());
 	}
-
 }

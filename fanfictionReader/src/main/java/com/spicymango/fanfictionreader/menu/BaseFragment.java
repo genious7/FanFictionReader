@@ -6,15 +6,19 @@ import java.util.List;
 import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.util.Result;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.Loader;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.loader.app.LoaderManager.LoaderCallbacks;
+import androidx.loader.content.Loader;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -63,15 +67,15 @@ public abstract class BaseFragment<T extends Parcelable> extends Fragment
 
 		// Get the listView and the empty view
 		View v = inflater.inflate(R.layout.activity_list_view, container, false);
-		mListView = (ListView) v.findViewById(android.R.id.list);
-		mEmptyView = (FrameLayout) v.findViewById(R.id.empty);
+		mListView = v.findViewById(android.R.id.list);
+		mEmptyView = v.findViewById(R.id.empty);
 
 		// Set the footer and its associated variables
 		View footer = inflater.inflate(R.layout.footer_list, mListView, false);
 		mProgressBar = footer.findViewById(R.id.progress_bar);
 		mErrorBar = footer.findViewById(R.id.row_retry);
-		mRetryLabel = (TextView) footer.findViewById(R.id.label_retry);
-		mAddPageButton = (Button) footer.findViewById(R.id.story_load_pages);
+		mRetryLabel = footer.findViewById(R.id.label_retry);
+		mAddPageButton = footer.findViewById(R.id.story_load_pages);
 		mAddPageButton.setOnClickListener(this);
 		final View retryButton = footer.findViewById(R.id.btn_retry);
 		retryButton.setOnClickListener(this);
@@ -91,21 +95,21 @@ public abstract class BaseFragment<T extends Parcelable> extends Fragment
 		// SavedInstanceState throws an TransactionTooLargeException when saving data,
 		// so we save the data in a persistent fragment instead.
 		// Create the persistent DataFragment if it doesn't exist and recover the saved bundle.
-		mDataFragment = (DataFragment) getFragmentManager().findFragmentByTag("DATA");
+		mDataFragment = (DataFragment) getParentFragmentManager().findFragmentByTag("DATA");
 		if (mDataFragment == null){
 			mDataFragment = new DataFragment();
-			getFragmentManager().beginTransaction().add(mDataFragment,"DATA").commit();
+			getParentFragmentManager().beginTransaction().add(mDataFragment,"DATA").commit();
 		}
 		mLoaderArgs = mDataFragment.getData();
 	}
 
 	@Override
-	public void onLoaderReset(Loader<List<T>> loader) {
+	public void onLoaderReset(@NonNull Loader<List<T>> loader) {
 		mList = null;
 	}
 
 	@Override
-	public void onLoadFinished(Loader<List<T>> loader, List<T> data) {
+	public void onLoadFinished(@NonNull Loader<List<T>> loader, List<T> data) {
 		mLoader = (BaseLoader<T>) loader;
 
 		mList.clear();
@@ -144,6 +148,26 @@ public abstract class BaseFragment<T extends Parcelable> extends Fragment
 				mErrorBar.setVisibility(View.VISIBLE);
 				mRetryLabel.setText(R.string.error_parsing_mini);
 				break;
+			case ERROR_CLOUDFLARE_CAPTCHA:
+				// Launch a new fragment
+				final Uri uri = mLoader.getUri(mLoader.getCurrentPage());
+				final Bundle arguments = new Bundle();
+				arguments.putParcelable(CloudflareFragment.EXTRA_URI, uri);
+
+				final FragmentManager manager = getParentFragmentManager();
+				manager.setFragmentResultListener("DATA_CLOUDFLARE",this,(requestKey, bundle) ->{
+					mLoader.setHtmlFromWebView(bundle.getString("DATA"));
+					mLoader.startLoading();
+				});
+
+				manager.beginTransaction()
+						.add(CloudflareFragment.class, arguments, "DATA_CLOUDFLARE")
+						.setReorderingAllowed(true)
+						.commit();
+
+				// Only the progress bar should be visible
+				mProgressBar.setVisibility(View.VISIBLE);
+				break;
 			case SUCCESS:
 				// If the loader has additional pages, display the button
 				if (mLoader.hasNextPage()) {
@@ -165,7 +189,7 @@ public abstract class BaseFragment<T extends Parcelable> extends Fragment
 	}
 
 	@Override
-	public void onSaveInstanceState(Bundle outState) {
+	public void onSaveInstanceState(@NonNull Bundle outState) {
 		super.onSaveInstanceState(outState);
 
 		// Since the savedInstanceState throws an error with large bundles, the state is saved
@@ -182,7 +206,7 @@ public abstract class BaseFragment<T extends Parcelable> extends Fragment
 	 * @param title The subTitle
 	 */
 	protected final void setSubTitle(@StringRes int title) {
-		final ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+		final ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
 		if (actionBar != null) {
 			actionBar.setSubtitle(title);
 		} else {
@@ -195,7 +219,7 @@ public abstract class BaseFragment<T extends Parcelable> extends Fragment
 	 * @param title The subTitle
 	 */
 	protected final void setSubTitle(String title) {
-		final ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+		final ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
 		if (actionBar != null) {
 			actionBar.setSubtitle(title);
 		} else {
@@ -204,21 +228,17 @@ public abstract class BaseFragment<T extends Parcelable> extends Fragment
 	}
 
 	protected final void setTitle(@StringRes int title) {
-		getActivity().setTitle(title);
+		requireActivity().setTitle(title);
 	}
 
 	@Override
 	public void onClick(View v) {
 		if (mLoader == null) return;
-
-		switch (v.getId()) {
-		case R.id.btn_retry:
+		if (v.getId() == R.id.btn_retry){
+			mLoader.setHtmlFromWebView(null);
 			mLoader.startLoading();
-			break;
-		case R.id.story_load_pages:
+		} else if (v.getId() == R.id.story_load_pages){
 			mLoader.loadNextPage();
-		default:
-			break;
 		}
 	}
 

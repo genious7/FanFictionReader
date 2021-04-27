@@ -43,3 +43,5 @@
     public static *** v(...);
     public static *** i(...);
 }
+
+-dontobfuscate

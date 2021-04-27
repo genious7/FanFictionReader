@@ -6,9 +6,9 @@ package com.spicymango.fanfictionreader.util;
 import com.spicymango.fanfictionreader.R;
 
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 
 /**
  * Contains the base uri for the different sites

@@ -4,12 +4,15 @@ import android.content.Intent;
 import android.content.UriMatcher;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.StringRes;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.Loader;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
+import androidx.core.view.MenuItemCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -34,16 +37,16 @@ import com.spicymango.fanfictionreader.menu.storymenu.StoryMenuActivity;
 import com.spicymango.fanfictionreader.util.Sites;
 
 import java.util.List;
+import java.util.Objects;
 
 public class BrowseMenuActivity extends AppCompatActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
+		if (item.getItemId() == android.R.id.home){
 			onBackPressed();
 			return true;
-		default:
+		} else{
 			return super.onOptionsItemSelected(item);
 		}
 	}
@@ -56,7 +59,7 @@ public class BrowseMenuActivity extends AppCompatActivity {
 
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
 		if (savedInstanceState == null) {
 			FragmentTransaction fr = getSupportFragmentManager().beginTransaction();
@@ -105,7 +108,7 @@ public class BrowseMenuActivity extends AppCompatActivity {
 		public void onActivityCreated(Bundle savedInstanceState) {
 			super.onActivityCreated(savedInstanceState);
 
-			Uri uri = getActivity().getIntent().getData();
+			Uri uri = requireActivity().getIntent().getData();
 			int siteId = URI_MATCHER.match(uri);
 
 			switch (siteId) {
@@ -179,19 +182,20 @@ public class BrowseMenuActivity extends AppCompatActivity {
 
 			if (mToggle == null) {
 				mActiveLoaderId = 0;
-				getLoaderManager().initLoader(0, mLoaderArgs, this);
+				LoaderManager.getInstance(this).initLoader(0, mLoaderArgs, this);
 			} else {
 				mActiveLoaderId = mToggle.isChecked() ? 1 : 0;
-				getLoaderManager().initLoader(mActiveLoaderId, mLoaderArgs, this);
+				LoaderManager.getInstance(this).initLoader(mActiveLoaderId, mLoaderArgs, this);
 			}
 		}
 
 		@Override
 		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 			mActiveLoaderId = isChecked ? 1 : 0;
-			getLoaderManager().initLoader(mActiveLoaderId, null, this);
+			LoaderManager.getInstance(this).initLoader(mActiveLoaderId, null, this);
 		}
 
+		@NonNull
 		@Override
 		public Loader<List<BrowseMenuItem>> onCreateLoader(int id, Bundle args) {
 			switch (id) {
@@ -204,22 +208,22 @@ public class BrowseMenuActivity extends AppCompatActivity {
 		}
 
 		@Override
-		public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		public void onCreateOptionsMenu(Menu menu, @NonNull MenuInflater inflater) {
 			MenuItem item = menu.add("");
-			MenuItemCompat.setActionView(item, mToggle);
-			MenuItemCompat.setShowAsAction(item, MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
+			item.setActionView(mToggle);
+			item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 			super.onCreateOptionsMenu(menu, inflater);
 		}
 
 		@Override
-		public void onLoadFinished(Loader<List<BrowseMenuItem>> loader, List<BrowseMenuItem> data) {
+		public void onLoadFinished(@NonNull Loader<List<BrowseMenuItem>> loader, List<BrowseMenuItem> data) {
 			if (loader.getId() == mActiveLoaderId) {
 				super.onLoadFinished(loader, data);
 			}
 		}
 
 		@Override
-		public void onSaveInstanceState(Bundle outState) {
+		public void onSaveInstanceState(@NonNull Bundle outState) {
 			super.onSaveInstanceState(outState);
 			if (mToggle != null) {
 				outState.putBoolean(STATE_TOGGLE_BUTTON, mToggle.isChecked());
@@ -228,8 +232,8 @@ public class BrowseMenuActivity extends AppCompatActivity {
 
 		private void enableToggleButton(@StringRes int textOff, @StringRes int textOn, Bundle savedInstanceState) {
 			mToggle = new ToggleButton(getActivity());
-			mToggle.setTextOff(getActivity().getString(textOff));
-			mToggle.setTextOn(getActivity().getString(textOn));
+			mToggle.setTextOff(requireActivity().getString(textOff));
+			mToggle.setTextOn(requireActivity().getString(textOn));
 			mToggle.setOnCheckedChangeListener(this);
 			if (savedInstanceState != null) mToggle.setChecked(savedInstanceState.getBoolean(STATE_TOGGLE_BUTTON));
 			else mToggle.setChecked(false);

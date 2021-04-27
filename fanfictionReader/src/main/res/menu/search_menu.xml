@@ -7,7 +7,7 @@
         android:icon="@drawable/ic_menu_search"
         android:title="@string/menu_search_title"
         android:titleCondensed="@string/menu_search_title"
-        spicymango:actionViewClass="android.support.v7.widget.SearchView"
+        spicymango:actionViewClass="androidx.appcompat.widget.SearchView"
         spicymango:showAsAction="ifRoom">
     </item>
     <item

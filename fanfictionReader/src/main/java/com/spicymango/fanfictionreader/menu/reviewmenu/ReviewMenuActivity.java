@@ -3,10 +3,13 @@ package com.spicymango.fanfictionreader.menu.reviewmenu;
 import android.content.UriMatcher;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.Loader;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.Menu;
@@ -50,12 +53,11 @@ public class ReviewMenuActivity extends AppCompatActivity{
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case android.R.id.home:
-				onBackPressed();
-				return true;
-			default:
-				return super.onOptionsItemSelected(item);
+		if (item.getItemId() == android.R.id.home){
+			onBackPressed();
+			return true;
+		} else{
+			return super.onOptionsItemSelected(item);
 		}
 	}
 
@@ -97,7 +99,7 @@ public class ReviewMenuActivity extends AppCompatActivity{
 			empty.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
 			setEmptyView(empty);
 
-			final Uri uri = getActivity().getIntent().getData();
+			final Uri uri = requireActivity().getIntent().getData();
 			final int match = URI_MATCHER.match(uri);
 
 			switch (match){
@@ -105,18 +107,17 @@ public class ReviewMenuActivity extends AppCompatActivity{
 					mLoaderAdapter = args -> new ReviewMenuLoaders.FanFictionReviewLoader(getActivity(), args, uri);
 					break;
 				case MATCHER_FP:
-					break;
 				case MATCHER_AO3:
 					break;
 			}
 
-			getLoaderManager().initLoader(0, mLoaderArgs, this);
+			LoaderManager.getInstance(this).initLoader(0, mLoaderArgs, this);
 		}
 
 		@Override
-		public void onLoadFinished(Loader<List<ReviewMenuItem>> loader, List<ReviewMenuItem> data) {
+		public void onLoadFinished(@NonNull Loader<List<ReviewMenuItem>> loader, List<ReviewMenuItem> data) {
 			super.onLoadFinished(loader, data);
-			getActivity().supportInvalidateOptionsMenu();
+			requireActivity().invalidateOptionsMenu();
 
 			// If the loader succeeded,  update the subtitle
 			if (mLoader instanceof ReviewMenuLoaders.TitleLoader) {
@@ -130,18 +131,17 @@ public class ReviewMenuActivity extends AppCompatActivity{
 
 		@Override
 		public boolean onOptionsItemSelected(MenuItem item) {
-			switch (item.getItemId()) {
-				case R.id.filter:
-					BaseLoader.Filterable filterable = (BaseLoader.Filterable) mLoader;
-					filterable.onFilterClick(getActivity());
-					return true;
-				default:
-					return super.onOptionsItemSelected(item);
+			if (item.getItemId() == R.id.filter){
+				BaseLoader.Filterable filterable = (BaseLoader.Filterable) mLoader;
+				filterable.onFilterClick(getActivity());
+				return true;
+			} else{
+				return super.onOptionsItemSelected(item);
 			}
 		}
 
 		@Override
-		public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
 			inflater.inflate(R.menu.story_menu, menu);
 		}
 
@@ -164,6 +164,7 @@ public class ReviewMenuActivity extends AppCompatActivity{
 			}
 		}
 
+		@NonNull
 		@Override
 		public Loader<List<ReviewMenuItem>> onCreateLoader(int id, Bundle args) {
 			return mLoaderAdapter.getNewLoader(args);

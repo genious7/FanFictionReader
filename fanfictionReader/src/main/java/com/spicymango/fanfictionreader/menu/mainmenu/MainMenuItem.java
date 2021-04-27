@@ -1,7 +1,7 @@
 package com.spicymango.fanfictionreader.menu.mainmenu;
 
-import android.support.annotation.DrawableRes;
-import android.support.annotation.StringRes;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.StringRes;
 
 /**
  * Represents a single menu item

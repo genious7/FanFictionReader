@@ -9,16 +9,17 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.Loader;
-import android.support.v4.view.GestureDetectorCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.app.LoaderManager.LoaderCallbacks;
+import androidx.loader.content.Loader;
+import androidx.core.view.GestureDetectorCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.text.Spanned;
 import android.util.Log;
 import android.util.TypedValue;
@@ -45,25 +46,20 @@ import com.spicymango.fanfictionreader.Settings;
 import com.spicymango.fanfictionreader.activity.LogInActivity;
 import com.spicymango.fanfictionreader.activity.Site;
 import com.spicymango.fanfictionreader.dialogs.ReviewDialog;
+import com.spicymango.fanfictionreader.menu.CloudflareFragment;
 import com.spicymango.fanfictionreader.menu.mainmenu.MainActivity;
 import com.spicymango.fanfictionreader.provider.SqlConstants;
 import com.spicymango.fanfictionreader.provider.StoryProvider;
 import com.spicymango.fanfictionreader.services.LibraryDownloader;
 import com.spicymango.fanfictionreader.util.AsyncPost;
-import com.spicymango.fanfictionreader.util.FileHandler;
-import com.spicymango.fanfictionreader.util.JsoupUtil;
 import com.spicymango.fanfictionreader.util.Sites;
 import com.spicymango.fanfictionreader.util.adapters.TextAdapter;
 
 import org.jsoup.Connection.Method;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -102,7 +98,7 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 	/**
 	 * The button at the footer
 	 */
-	private View btnFirst, btnPrev, btnNext, btnLast, progressBar, recconectBar, buttonBar;
+	private View btnFirst, btnPrev, btnNext, btnLast, progressBar, reconnectBar, buttonBar;
 	
 	private TextView btnPage;
 	private StoryChapter mData;
@@ -128,26 +124,20 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 	
 	@Override
 	public void onClick(View v) {
-		switch (v.getId()) {
-		case R.id.read_story_first:	
+		final int id = v.getId();
+
+		if (id == R.id.read_story_first)
 			load(1);
-			break;
-		case R.id.read_story_prev:
+		else if (id == R.id.read_story_prev)
 			load(mCurrentPage - 1);
-			break;
-		case R.id.read_story_next:
+		else if (id == R.id.read_story_next)
 			load(mCurrentPage + 1);
-			break;
-		case R.id.read_story_last:
+		else if (id == R.id.read_story_last)
 			load(mTotalPages);
-			break;
-		case R.id.read_story_page_counter:
+		else if (id == R.id.read_story_page_counter)
 			chapterPicker();
-			break;
-		case R.id.btn_retry:
+		else if (id == R.id.btn_retry)
 			mLoader.startLoading();
-			break;
-		}	
 	}
 
 	@Override
@@ -171,11 +161,11 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 			switch (keyCode) {
 				case KeyEvent.KEYCODE_PAGE_DOWN:
 				case KeyEvent.KEYCODE_BACKSLASH:
-					scrollStoryByPage(PGDN);
+					scrollStoryByPage(PAGE_DOWN);
 					return true;
 				case KeyEvent.KEYCODE_PAGE_UP:
 				case KeyEvent.KEYCODE_SLASH:
-					scrollStoryByPage(PGUP);
+					scrollStoryByPage(PAGE_UP);
 					return true;
 			}
 		}
@@ -216,14 +206,15 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 		load(page);
 	}
 
-	private static final boolean PGUP = false;
-	private static final boolean PGDN = true;
+	private static final boolean PAGE_UP = false;
+	private static final boolean PAGE_DOWN = true;
 	private void scrollStoryByPage(boolean isScrollDown) {
 		final int pageSize = mListView.getHeight() - 100;
 		final int stepSize = isScrollDown ? pageSize : -pageSize;
 		mListView.smoothScrollBy(stepSize, 250);
 	}
 
+	@NonNull
 	@Override
 	public Loader<StoryChapter> onCreateLoader(int id, Bundle args) {
 		return new FanFictionLoader(this, args, mStoryId, mCurrentPage);
@@ -238,29 +229,51 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 	}
 	
 	@Override
-	public void onLoaderReset(Loader<StoryChapter> loader) {
+	public void onLoaderReset(@NonNull Loader<StoryChapter> loader) {
 	}
 
 	@Override
-	public void onLoadFinished(Loader<StoryChapter> loader, StoryChapter data) {
+	public void onLoadFinished(@NonNull Loader<StoryChapter> loader, StoryChapter data) {
 		
 		mLoader = (StoryLoader) loader;
 		
 		switch (mLoader.mResult) {
 		case LOADING:
-			recconectBar.setVisibility(View.GONE);
+			reconnectBar.setVisibility(View.GONE);
 			progressBar.setVisibility(View.VISIBLE);
 			buttonBar.setVisibility(View.GONE);
 			break;
+		case ERROR_CLOUDFLARE_CAPTCHA:
+			reconnectBar.setVisibility(View.GONE);
+			progressBar.setVisibility(View.VISIBLE);
+			buttonBar.setVisibility(View.GONE);
+
+			// Launch a new fragment
+			final Uri uri = mLoader.getUri();
+			final Bundle arguments = new Bundle();
+			arguments.putParcelable(CloudflareFragment.EXTRA_URI, uri);
+
+			final FragmentManager manager = getSupportFragmentManager();
+			manager.setFragmentResultListener("DATA_CLOUDFLARE",this,(requestKey, bundle) ->{
+				mLoader.setHtmlFromWebView(bundle.getString("DATA"));
+				mLoader.startLoading();
+			});
+
+			manager.beginTransaction()
+					.add(CloudflareFragment.class, arguments, "DATA_CLOUDFLARE")
+					.setReorderingAllowed(true)
+					.commit();
+
+			break;
 		case ERROR_CONNECTION:
-			recconectBar.setVisibility(View.VISIBLE);
+			reconnectBar.setVisibility(View.VISIBLE);
 			progressBar.setVisibility(View.GONE);
 			buttonBar.setVisibility(View.GONE);
 			break;
 		case ERROR_SD:
-			TextView btn = (TextView) findViewById(R.id.label_retry);
+			TextView btn = findViewById(R.id.label_retry);
 			btn.setText(R.string.error_sd);
-			recconectBar.setVisibility(View.VISIBLE);
+			reconnectBar.setVisibility(View.VISIBLE);
 			progressBar.setVisibility(View.GONE);
 			buttonBar.setVisibility(View.GONE);
 			break;
@@ -268,9 +281,10 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 			mData = data;
 			mTotalPages = data.getTotalChapters();
 			mCurrentPage = data.getChapterNumber();
-			getSupportActionBar().setSubtitle(data.getStoryTitle());
+			Objects.requireNonNull(getSupportActionBar()).setSubtitle(data.getStoryTitle());
 			
 			mList.clear();
+			assert data.getStorySpans() != null;
 			mList.addAll(data.getStorySpans());
 			mAdapter.notifyDataSetChanged();											//Update story text
 			
@@ -279,7 +293,7 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 				mLoader.mScrollTo = false;
 			}
 			
-			recconectBar.setVisibility(View.GONE);
+			reconnectBar.setVisibility(View.GONE);
 			progressBar.setVisibility(View.GONE);
 			buttonBar.setVisibility(View.VISIBLE);
 			updatePageButtons(mCurrentPage, mTotalPages);								//Set button visibility
@@ -301,23 +315,21 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		switch (requestCode) {
-			//Restart the activity after returning from settings in order to refresh the theme
-			case INTENT_SETTINGS:
-				Intent intent = getIntent();
-				finish();
-				startActivity(intent);
-				break;
-			default:
-				super.onActivityResult(requestCode, resultCode, data);
-				break;
+		//Restart the activity after returning from settings in order to refresh the theme
+		if (requestCode == INTENT_SETTINGS) {
+			Intent intent = getIntent();
+			finish();
+			startActivity(intent);
+		} else {
+			super.onActivityResult(requestCode, resultCode, data);
 		}
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.read_story_menu_add:
+		final int itemId = item.getItemId();
+
+		if (itemId == R.id.read_story_menu_add){
 			mHasUpdated = true;
 
 			// Download
@@ -329,15 +341,14 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 
 			supportInvalidateOptionsMenu();
 			return true;
-		case R.id.reader_settings:
+		} else if (itemId == R.id.reader_settings){
 			Intent intent = new Intent(this, Settings.class);
 			startActivityForResult(intent, INTENT_SETTINGS);
 			return true;
-		case R.id.read_story_go_to:
+		} else if (itemId == R.id.read_story_go_to){
 			chapterPicker();
 			return true;
-		case R.id.follow:
-		case R.id.favorite:	
+		} else if (itemId == R.id.follow || itemId == R.id.favorite){
 			//TODO: Fictionpress and archieve of our own follows
 			Uri.Builder builder = new Uri.Builder();
 			builder.scheme(Site.scheme);
@@ -348,29 +359,28 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 			builder.appendQueryParameter("sid", Long.toString(mStoryId));
 			builder.appendQueryParameter("src", "s");
 			builder.appendQueryParameter("ch", Long.toString(mCurrentPage));
-			
-			if (item.getItemId() == R.id.follow) {
+
+			if (itemId == R.id.follow) {
 				builder.appendQueryParameter("salert", "1");
 				new AsyncPost(this,R.string.toast_added_follows, builder.build(), Method.GET).execute();
 			}else{
 				builder.appendQueryParameter("favs", "1");
 				new AsyncPost(this,R.string.toast_added_favs, builder.build(), Method.GET).execute();
 			}
-			
 			return true;
-		case R.id.read_story_go_to_top:
+		} else if (item.getItemId() == R.id.read_story_go_to_top){
 			scrollTo(0);
 			return true;
-		case R.id.read_story_go_to_bottom:
+		} else if (item.getItemId() == R.id.read_story_go_to_bottom){
 			mListView.setSelection(mListView.getCount() - 1);
 			return true;
-		case R.id.review:
+		} else if (item.getItemId() == R.id.review){
 			ReviewDialog.review(this, mStoryId, mCurrentPage);
 			return true;
-		case android.R.id.home:
+		} else if (item.getItemId() == android.R.id.home){
 			onBackPressed();
 			return true;
-		default:
+		} else{
 			return super.onOptionsItemSelected(item);
 		}
 	}
@@ -468,8 +478,8 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 			Matcher matcher = filePattern.matcher(uri.toString());
 			if (matcher.find()) {
 				fromBrowser = !uri.getScheme().equals("file");
-				mStoryId = Integer.valueOf(matcher.group(1));
-				mCurrentPage = Integer.valueOf(matcher.group(2));
+				mStoryId = Integer.parseInt(Objects.requireNonNull(matcher.group(1)));
+				mCurrentPage = Integer.parseInt(Objects.requireNonNull(matcher.group(2)));
 				return true;
 			}
 			break;
@@ -559,12 +569,12 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 		super.onCreate(savedInstanceState);					//Super() constructor
 		setContentView(R.layout.activity_list_toolbar);		//Set the layout
 
-		mToolbar = (Toolbar) findViewById(R.id.toolbar);
+		mToolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(mToolbar);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
 		mList = new ArrayList<>();
-		mListView = (ListView) findViewById(android.R.id.list);
+		mListView = findViewById(android.R.id.list);
 		mListView.setKeepScreenOn(Settings.isWakeLockEnabled(this));
 		View footer = getLayoutInflater().inflate(R.layout.footer_read_story, null);
 		mListView.addFooterView(footer, null, false);
@@ -583,7 +593,6 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 			@Override
 			public void onSwipeLeftAtViewBottom() {
 				scrollStoryByPage(SCROLL_DOWN);
-
 			}
 
 			@Override
@@ -605,7 +614,7 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 		btnPage.setOnClickListener(this);
 
 		progressBar = footer.findViewById(R.id.progress_bar);
-		recconectBar = footer.findViewById(R.id.row_retry);
+		reconnectBar = footer.findViewById(R.id.row_retry);
 		buttonBar = footer.findViewById(R.id.buttonBar);
 
 		//Creates a new activity, and sets the initial page and story Id
@@ -622,7 +631,7 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 			mHasUpdated = savedInstanceState.getBoolean(STATE_UPDATED);
 		}
 
-		getSupportLoaderManager().initLoader(0, savedInstanceState, this);
+		LoaderManager.getInstance(this).initLoader(0, savedInstanceState, this);
 	}
 
 	@Override
@@ -639,7 +648,7 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 	}
 
 	@Override
-	protected void onSaveInstanceState(Bundle outState) {
+	protected void onSaveInstanceState(@NonNull Bundle outState) {
 		super.onSaveInstanceState(outState);
 		mLoader.onSaveInstanceState(outState);
 		outState.putBoolean(STATE_UPDATED, mHasUpdated);
@@ -665,7 +674,7 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 			SharedPreferences preference = getSharedPreferences(MainActivity.EXTRA_PREF,MODE_PRIVATE);
 			SharedPreferences.Editor editor = preference.edit();
 			editor.putLong(MainActivity.EXTRA_RESUME_ID, mStoryId);
-			editor.commit();
+			editor.apply();
 		}
 		super.onStop();
 	}
@@ -736,93 +745,6 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 			oldFirstVisibleItemY = firstItem.getTop();
 		}
 	}
-	
-	private static class FanFictionLoader extends StoryLoader{
-
-		public FanFictionLoader(Context context, Bundle in, long storyId,
-				int currentPage) {
-			super(context, in, storyId, currentPage);
-		}
-
-		@Override
-		protected String getStoryFromFile(long storyId, int currentPage) {
-			return FileHandler.getFile(getContext(), storyId, currentPage);
-		}
-
-		@Override
-		protected String getStoryFromSite(long storyId, int currentPage, StoryChapter data) throws IOException {
-			Uri.Builder builder = new Uri.Builder();
-			builder.scheme(Site.scheme);
-			builder.authority(Site.FANFICTION.authorityMobile);
-			builder.appendEncodedPath("s");
-			builder.appendEncodedPath(Long.toString(storyId));
-			builder.appendEncodedPath(Integer.toString(currentPage));
-			builder.appendEncodedPath("");
-
-			Document document = JsoupUtil.safeGet(builder.toString());
-			
-			if (data.getTotalChapters() == 0) {
-				Element title = document.select("div#content div b").first();
-				if (title == null) return null;
-				data.setStoryTitle(title.ownText());
-				
-				int totalPages;
-				Element link = document.select("body#top div[align=center] > a:matches(^\\d++$)").first();
-				if (link != null)
-					totalPages = Math.max(
-							pageNumberOnline(link.attr("href"), 2),
-							currentPage);
-				else {
-					totalPages = 1;
-				}
-				data.setTotalChapters(totalPages);
-				
-				Element authorElement = document.select("input[name=uid]").first();
-				long authorId = Long.parseLong(authorElement.attr("value"));
-				data.setAuthorId(authorId);
-			}
-			
-			Elements storyText = document.select("div#storycontent");
-			if (storyText.isEmpty()) return null;
-			return storyText.html();
-		}
-
-		@Override
-		protected void redownload(long storyId, int currentPage) {
-			final Uri.Builder storyUri = Sites.FANFICTION.BASE_URI.buildUpon();
-			storyUri.appendPath("s");
-			storyUri.appendPath(Long.toString(storyId));
-			storyUri.appendPath("");
-			LibraryDownloader.integrityCheck(getContext(), storyUri.build(), currentPage, 0);
-		}
-
-		/**
-		 * Extracts the page number or the story id from a url
-		 * 
-		 * @param url
-		 *            The string containing the url that needs to be parsed
-		 * @param group
-		 *            One for the story id, two for the page number.
-		 * @return Either the story id or the page number
-		 */
-		private int pageNumberOnline(String url, int group) {
-			final Pattern currentPageNumber = Pattern
-					.compile("(?:/s/(\\d{1,10}+)/)(\\d++)(?:/)");
-			Matcher matcher = currentPageNumber.matcher(url);
-			if (matcher.find()) {
-				return Integer.valueOf(matcher.group(group));
-			} else {
-				return 1;
-			}
-		}
-
-		@Override
-		protected Cursor getFromDatabase(long storyId) {
-			return getContext().getContentResolver().query(StoryProvider.FF_CONTENT_URI, null,
-														   SqlConstants.KEY_STORY_ID + " = ?",
-														   new String[] {Long.toString(storyId)}, null);
-		}
-	}
 
 	/**
 	 * Utility to detect horizontal swipes at the bottom of a given view.
@@ -830,7 +752,7 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 	private static abstract class BottomHorizontalSwipeListener implements View.OnTouchListener {
 		private static final String TAG = "FFR-HSwipe";
 
-		private static final boolean DEBUG_TOUCHES = true && BuildConfig.DEBUG;
+		private static final boolean DEBUG_TOUCHES = BuildConfig.DEBUG;
 
 		// Given the listener should have a life cycle within the parent view
 		// Holding a reference to the view should not cause memory leak.
@@ -871,6 +793,7 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 							}
 
 							// accept flings with only small vertical delta only
+							assert event1 != null;
 							float absDeltaY = Math.abs(event2.getY() - event1.getY());
 							// Note: relatively large vertical leeway (1 in) is allowed here
 							// because somehow, truly horizontal swipes often are not processed
@@ -948,7 +871,7 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 	private static class FixedGestureDetectorCompat {
 		private static final String TAG = "FFR-FGestureD";
 
-		private static final boolean DEBUG_TOUCHES = true && BuildConfig.DEBUG;
+		private static final boolean DEBUG_TOUCHES = BuildConfig.DEBUG;
 
 		@NonNull
 		private final GestureDetectorCompat mDetector;
@@ -959,10 +882,6 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 		public FixedGestureDetectorCompat(@NonNull Context context,
 										  @NonNull GestureDetector.OnGestureListener listener) {
 			mDetector = new GestureDetectorCompat(context, new OnGestureListenerDecorator(listener));
-		}
-
-		public boolean isLongpressEnabled() {
-			return mDetector.isLongpressEnabled();
 		}
 
 		public boolean onTouchEvent(MotionEvent event) {
@@ -988,8 +907,7 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 			}
 
 			try {
-				boolean res = mDetector.onTouchEvent(event);
-				return res;
+				return mDetector.onTouchEvent(event);
 			} finally {
 				switch (event.getActionMasked()) {
 					case MotionEvent.ACTION_UP:
@@ -1006,7 +924,7 @@ public class StoryDisplayActivity extends AppCompatActivity implements LoaderCal
 			}
 		}
 
-		public void setIsLongpressEnabled(boolean enabled) {
+		public void setIsLongPressEnabled(boolean enabled) {
 			mDetector.setIsLongpressEnabled(enabled);
 		}
 

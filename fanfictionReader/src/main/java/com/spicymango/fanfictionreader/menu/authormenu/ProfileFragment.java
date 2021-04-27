@@ -4,11 +4,14 @@ import android.annotation.TargetApi;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +20,7 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 
 import com.spicymango.fanfictionreader.R;
+import com.spicymango.fanfictionreader.menu.CloudflareFragment;
 import com.spicymango.fanfictionreader.util.Result;
 import com.spicymango.fanfictionreader.util.adapters.TextAdapter;
 
@@ -69,8 +73,8 @@ public final class ProfileFragment extends Fragment implements LoaderManager.Loa
 		View retryButton = mNoConnectionBar.findViewById(R.id.btn_retry);
 		retryButton.setOnClickListener(this);
 
-		mAuthorId = authorId(getActivity().getIntent().getData());
-		getLoaderManager().initLoader(0, savedInstanceState, this);
+		mAuthorId = authorId(requireActivity().getIntent().getData());
+		LoaderManager.getInstance(this).initLoader(0, savedInstanceState, this);
 
 		return v;
 	}
@@ -81,7 +85,7 @@ public final class ProfileFragment extends Fragment implements LoaderManager.Loa
 	}
 
 	@Override
-	public void onLoadFinished(Loader<Result> loader, Result data) {
+	public void onLoadFinished(@NonNull Loader<Result> loader, Result data) {
 		mLoader = (AuthorProfileLoader.FanFictionProfileLoader) loader;
 		switch (data) {
 			case LOADING:
@@ -92,6 +96,27 @@ public final class ProfileFragment extends Fragment implements LoaderManager.Loa
 				mProgressBar.setVisibility(View.GONE);
 				mNoConnectionBar.setVisibility(View.VISIBLE);
 				break;
+			case ERROR_CLOUDFLARE_CAPTCHA:
+				// Launch a new fragment
+				final Uri uri = mLoader.formatUri();
+				final Bundle arguments = new Bundle();
+				arguments.putParcelable(CloudflareFragment.EXTRA_URI, uri);
+
+				final FragmentManager manager = getParentFragmentManager();
+				manager.setFragmentResultListener("DATA_CLOUDFLARE",this,(requestKey, bundle) ->{
+					mLoader.setHtmlFromWebView(bundle.getString("DATA"));
+					mLoader.startLoading();
+				});
+
+				manager.beginTransaction()
+						.add(CloudflareFragment.class, arguments, "DATA_CLOUDFLARE")
+						.setReorderingAllowed(true)
+						.commit();
+
+				// Only the progress bar should be visible
+				mProgressBar.setVisibility(View.VISIBLE);
+				mNoConnectionBar.setVisibility(View.GONE);
+				break;
 			case SUCCESS:
 				mProgressBar.setVisibility(View.GONE);
 				mNoConnectionBar.setVisibility(View.GONE);
@@ -101,7 +126,7 @@ public final class ProfileFragment extends Fragment implements LoaderManager.Loa
 				mAdapter.notifyDataSetChanged();
 
 				// Set the action bar's subtitle to the author's name
-				final ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+				final ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
 				if (actionBar != null) actionBar.setSubtitle(mLoader.mAuthor);
 
 				break;
@@ -111,15 +136,15 @@ public final class ProfileFragment extends Fragment implements LoaderManager.Loa
 	}
 
 	@Override
-	public void onLoaderReset(Loader<Result> loader) {
+	public void onLoaderReset(@NonNull Loader<Result> loader) {
 	}
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	@Override
-	public void onSaveInstanceState(Bundle outState) {
+	public void onSaveInstanceState(@NonNull Bundle outState) {
 		int currentApiVersion = Build.VERSION.SDK_INT;
 		if (currentApiVersion >= Build.VERSION_CODES.HONEYCOMB) {
-			if (!getActivity().isChangingConfigurations()) {
+			if (!requireActivity().isChangingConfigurations()) {
 				mLoader.onSavedInstanceState(outState);
 			}
 		} else {
@@ -130,12 +155,10 @@ public final class ProfileFragment extends Fragment implements LoaderManager.Loa
 
 	@Override
 	public void onClick(View v) {
-		switch (v.getId()) {
-			case R.id.btn_retry:
-				mLoader.startLoading();
-				break;
-			default:
-				break;
+		final int id = v.getId();
+
+		if (id == R.id.btn_retry){
+			mLoader.startLoading();
 		}
 	}
 

@@ -1,6 +1,5 @@
 package com.spicymango.fanfictionreader.activity;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -20,6 +19,7 @@ import org.jsoup.select.Elements;
 
 import com.spicymango.fanfictionreader.R;
 import com.spicymango.fanfictionreader.activity.reader.StoryDisplayActivity;
+import com.spicymango.fanfictionreader.menu.CloudflareFragment;
 import com.spicymango.fanfictionreader.menu.TabActivity;
 import com.spicymango.fanfictionreader.menu.authormenu.AuthorMenuActivity;
 import com.spicymango.fanfictionreader.util.AsyncPost;
@@ -33,10 +33,16 @@ import android.content.Intent;
 import android.net.Uri;
 import android.net.Uri.Builder;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.AsyncTaskLoader;
-import android.support.v4.content.Loader;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.app.LoaderManager.LoaderCallbacks;
+import androidx.loader.content.AsyncTaskLoader;
+import androidx.loader.content.Loader;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -72,11 +78,12 @@ public class AccountActivity extends TabActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.account_menu_log_out:
+		final int itemId = item.getItemId();
+		if (itemId == R.id.account_menu_log_out){
 			LogInActivity.logOut(this);
 			finish();
-		default:
+			return true;
+		} else{
 			return super.onOptionsItemSelected(item);
 		}
 	}
@@ -111,6 +118,15 @@ public class AccountActivity extends TabActivity {
 
 		private AccountLoader mLoader;
 
+		final ActivityResultLauncher<Intent> mLauncher = registerForActivityResult(
+				new ActivityResultContracts.StartActivityForResult(), result -> {
+			if (result.getResultCode() == RESULT_OK) {
+				mLoader.startLoading();
+			}else{
+				requireActivity().finish();
+			}
+		});
+
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
@@ -120,14 +136,14 @@ public class AccountActivity extends TabActivity {
 
 			View v = inflater.inflate(R.layout.activity_list_view, container,
 					false);
-			ListView listView = (ListView) v.findViewById(android.R.id.list);
+			ListView listView = v.findViewById(android.R.id.list);
 			View footer = inflater.inflate(R.layout.footer_list, null);
 			listView.addFooterView(footer, null, false);
 			listView.setOnItemClickListener(this);
 			listView.setAdapter(mAdapter);
 			registerForContextMenu(listView);
 
-			mAddPageButton = (Button) footer
+			mAddPageButton = footer
 					.findViewById(R.id.story_load_pages);
 			mAddPageButton.setOnClickListener(this);
 			mProgressBar = footer.findViewById(R.id.progress_bar);
@@ -136,17 +152,18 @@ public class AccountActivity extends TabActivity {
 					.findViewById(R.id.btn_retry);
 			retryButton.setOnClickListener(this);
 
+			assert getArguments() != null;
 			int loaderId = getArguments().getInt(EXTRA_LOADER_ID);
-			getLoaderManager().initLoader(loaderId, savedInstanceState, this);
+			LoaderManager.getInstance(this).initLoader(loaderId, savedInstanceState, this);
 
 			return v;
 		}
 		
 		@Override
-		public void onCreateContextMenu(ContextMenu menu, View v,
-				ContextMenuInfo menuInfo) {
+		public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v,
+										ContextMenuInfo menuInfo) {
 			super.onCreateContextMenu(menu, v, menuInfo);
-			getActivity().getMenuInflater().inflate(R.menu.account_context_menu, menu);
+			requireActivity().getMenuInflater().inflate(R.menu.account_context_menu, menu);
 		}
 		
 		@Override
@@ -155,10 +172,8 @@ public class AccountActivity extends TabActivity {
 			final long id = info.id;
 			final int position = info.position;
 			Story story = mList.get(position);
-			
-			switch (item.getItemId()) {
-			case R.id.menu_library_context_delete:
-				
+
+			if (item.getItemId() == R.id.menu_library_context_delete){
 				AlertDialog.Builder diag = new AlertDialog.Builder(
 						getActivity());
 				diag.setTitle(R.string.dialog_remove);
@@ -192,10 +207,8 @@ public class AccountActivity extends TabActivity {
 									   });
 				diag.setNegativeButton(android.R.string.no, null);
 				diag.show();
-
 				return true;
-			
-			case R.id.menu_library_context_author:
+			} else if(item.getItemId() == R.id.menu_library_context_delete){
 				Uri.Builder builder = new Builder();
 
 				builder.scheme(getString(R.string.fanfiction_scheme))
@@ -206,26 +219,27 @@ public class AccountActivity extends TabActivity {
 				Intent i = new Intent(getActivity(), AuthorMenuActivity.class);
 				i.setData(builder.build());
 				startActivity(i);
-			default:
+				return true;
+			} else{
 				return super.onContextItemSelected(item);
 			}
 		}
 
+		@NonNull
 		@Override
 		public Loader<Result> onCreateLoader(int id, Bundle args) {
 			switch (id) {
 			case LOADER_FAVORITES:
 				return new FavoriteLoader(getActivity(), args);
 			case LOADER_FOLLOWS:
-				return new FollowsLoader(getActivity(), args);
 			default:
-				return null;
+				return new FollowsLoader(getActivity(), args);
 			}
 
 		}
 
 		@Override
-		public void onLoadFinished(Loader<Result> loader, Result data) {
+		public void onLoadFinished(@NonNull Loader<Result> loader, Result data) {
 			mLoader = (AccountLoader) loader;
 			switch (data) {
 			case LOADING:
@@ -233,14 +247,35 @@ public class AccountActivity extends TabActivity {
 				mAddPageButton.setVisibility(View.GONE);
 				mNoConnectionBar.setVisibility(View.GONE);
 				break;
+			case ERROR_CLOUDFLARE_CAPTCHA:
+				mProgressBar.setVisibility(View.VISIBLE);
+				mAddPageButton.setVisibility(View.GONE);
+				mNoConnectionBar.setVisibility(View.GONE);
+
+				// Launch a new fragment
+				final Uri uri = Uri.parse(mLoader.getUrl());
+				final Bundle arguments = new Bundle();
+				arguments.putParcelable(CloudflareFragment.EXTRA_URI, uri);
+
+				final FragmentManager manager = getParentFragmentManager();
+				manager.setFragmentResultListener("DATA_CLOUDFLARE",this,(requestKey, bundle) ->{
+					mLoader.setHtmlFromWebView(bundle.getString("DATA"));
+					mLoader.startLoading();
+				});
+
+				manager.beginTransaction()
+						.add(CloudflareFragment.class, arguments, "DATA_CLOUDFLARE")
+						.setReorderingAllowed(true)
+						.commit();
+				break;
 			case ERROR_CONNECTION:
 				mProgressBar.setVisibility(View.GONE);
 				mAddPageButton.setVisibility(View.GONE);
 				mNoConnectionBar.setVisibility(View.VISIBLE);
 				break;
 			case ERROR_LOGIN:
-				Intent i = new Intent(getActivity(), LogInActivity.class);
-				startActivityForResult(i, 0);
+				final Intent i = new Intent(getActivity(), LogInActivity.class);
+				mLauncher.launch(i);
 				break;
 			case SUCCESS:
 				mProgressBar.setVisibility(View.GONE);
@@ -269,39 +304,21 @@ public class AccountActivity extends TabActivity {
 		}
 
 		@Override
-		public void onLoaderReset(Loader<Result> loader) {
+		public void onLoaderReset(@NonNull Loader<Result> loader) {
 
 		}
 
 		@Override
 		public void onClick(View v) {
-			switch (v.getId()) {
-			case R.id.btn_retry:
+			if (v.getId() == R.id.btn_retry){
 				mLoader.startLoading();
-				break;
-
-			default:
-				break;
 			}
 		}
 
 		@Override
-		public void onSaveInstanceState(Bundle outState) {
+		public void onSaveInstanceState(@NonNull Bundle outState) {
 			mLoader.onSaveInstanceState(outState);
 			super.onSaveInstanceState(outState);
-		}
-
-		@Override
-		public void onActivityResult(int requestCode, int resultCode,
-				Intent data) {
-			if (requestCode == 0) {
-				if (resultCode == RESULT_OK) {
-				mLoader.startLoading();
-				}else{
-					getActivity().finish();
-				}
-			}
-			super.onActivityResult(requestCode, resultCode, data);
 		}
 
 		@Override
@@ -339,16 +356,17 @@ public class AccountActivity extends TabActivity {
 		private static abstract class AccountLoader extends
 				AsyncTaskLoader<Result> {
 			private static final String STATE_DATA = "mData";
-			private static final String STATE_CHAGED = "mDataHasChanged";
+			private static final String STATE_CHANGED = "mDataHasChanged";
 
-			private ArrayList<Story> mData;
+			private final ArrayList<Story> mData;
 			private boolean mDataHasChanged;
+			private String mHtmlFromWebView;
 
 			public AccountLoader(Context context, Bundle args) {
 				super(context);
 				if (args != null && args.containsKey(STATE_DATA)) {
 					mData = args.getParcelableArrayList(STATE_DATA);
-					mDataHasChanged = args.getBoolean(STATE_CHAGED);
+					mDataHasChanged = args.getBoolean(STATE_CHANGED);
 				} else {
 					mData = new ArrayList<>();
 					mDataHasChanged = true;
@@ -356,9 +374,13 @@ public class AccountActivity extends TabActivity {
 
 			}
 
+			public void setHtmlFromWebView(String data) {
+				mHtmlFromWebView = data;
+			}
+
 			private void onSaveInstanceState(Bundle in) {
 				in.putParcelableArrayList(STATE_DATA, mData);
-				in.putBoolean(STATE_CHAGED, mDataHasChanged);
+				in.putBoolean(STATE_CHANGED, mDataHasChanged);
 			}
 
 			@Override
@@ -370,25 +392,25 @@ public class AccountActivity extends TabActivity {
 					return Result.ERROR_LOGIN;
 				}
 
-				try {
-					Document document = Jsoup.connect(getUrl())
-							.cookies(cookies).timeout(10000).followRedirects(false).get();
-
+				if (mHtmlFromWebView == null) {
+					// Trigger the Cloudflare loading
+					return Result.ERROR_CLOUDFLARE_CAPTCHA;
+				} else if (mHtmlFromWebView.equalsIgnoreCase("404")){
+					return Result.ERROR_CONNECTION;
+				} else {
+					final Document document = Jsoup.parse(mHtmlFromWebView, getUrl());
 					if (!document.select("body div.panel span.gui_warning")
 							.isEmpty()) {
+						mHtmlFromWebView = null;
 						return Result.ERROR_LOGIN;
-					}
-
-					if (!parse(document)) {
+					} else if (!parse(document)) {
+						mHtmlFromWebView = null;
 						return Result.ERROR_PARSE;
 					}
-
-					mDataHasChanged = false;
-					return Result.SUCCESS;
-
-				} catch (IOException e) {
-					return Result.ERROR_CONNECTION;
 				}
+
+				mDataHasChanged = false;
+				return Result.SUCCESS;
 			}
 
 			protected abstract String getUrl();

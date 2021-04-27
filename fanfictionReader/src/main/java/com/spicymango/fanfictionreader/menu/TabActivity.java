@@ -1,14 +1,17 @@
 package com.spicymango.fanfictionreader.menu;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import com.google.android.material.tabs.TabLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentFactory;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.spicymango.fanfictionreader.R;
@@ -45,13 +48,13 @@ public abstract class TabActivity extends AppCompatActivity{
 		setContentView(R.layout.activity_tab_layout);
 
 		// Set the action bar
-		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+		Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		assert getSupportActionBar() != null; // Make IntelliJ null check happy
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		// Set the tab properties
-		mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
+		mTabLayout = findViewById(R.id.tab_layout);
 		mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 		mTabLayout.addOnTabSelectedListener(mTabListener);
 
@@ -93,7 +96,7 @@ public abstract class TabActivity extends AppCompatActivity{
 	}
 
 	@Override
-	protected void onSaveInstanceState(Bundle outState) {
+	protected void onSaveInstanceState(@NonNull Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putInt(STATE_SELECTED_TAB, mTabLayout.getSelectedTabPosition());
 		outState.putInt(STATE_TOTAL_TABS, mTabLayout.getTabCount());
@@ -148,12 +151,11 @@ public abstract class TabActivity extends AppCompatActivity{
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case android.R.id.home:
-				onBackPressed();
-				return true;
-			default:
-				return super.onOptionsItemSelected(item);
+		if (item.getItemId() == android.R.id.home){
+			onBackPressed();
+			return true;
+		} else{
+			return super.onOptionsItemSelected(item);
 		}
 	}
 
@@ -179,7 +181,10 @@ public abstract class TabActivity extends AppCompatActivity{
 				// The fragment does not exist. Create a new instance of the fragment
 				final String fragmentName = mFragmentClasses.get(tabPosition).getName();
 				final Bundle fragmentArgs = mFragmentArguments.get(tabPosition);
-				fragment = Fragment.instantiate(TabActivity.this, fragmentName, fragmentArgs);
+
+				final FragmentFactory fragmentFactory = manager.getFragmentFactory();
+				fragment = fragmentFactory.instantiate(ClassLoader.getSystemClassLoader(), fragmentName);
+				fragment.setArguments(fragmentArgs);
 				ft.add(R.id.content_frame, fragment, fragmentTag);
 			} else{
 				// The fragment already exists. Just show it

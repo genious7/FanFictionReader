@@ -6,8 +6,9 @@ import java.io.IOException;
 import android.content.Context;
 import android.database.ContentObserver;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.content.AsyncTaskLoader;
+import androidx.loader.content.AsyncTaskLoader;
 
 import com.spicymango.fanfictionreader.provider.SqlConstants;
 import com.spicymango.fanfictionreader.util.Result;
@@ -20,12 +21,13 @@ public abstract class StoryLoader extends AsyncTaskLoader<StoryChapter> {
 	
 	private int mCurrentPage;
 	private Cursor mCursor;
-	private StoryChapter mData;
+	private final StoryChapter mData;
 	private boolean mDataHasChanged;
 	private boolean mFirstScroll;
 	private final ContentObserver mObserver;
 	private int mScrollOffset;
 	private final long mStoryId;
+	private String mDataFromWebView;
 	
 	public StoryLoader(Context context, Bundle in, long storyId, int currentPage) {
 		super(context);
@@ -84,7 +86,7 @@ public abstract class StoryLoader extends AsyncTaskLoader<StoryChapter> {
 			try {
 				html = getStoryFromFile(mStoryId, mCurrentPage);
 				if (html == null) {
-					redownload(mStoryId, mCurrentPage);
+					reDownload(mStoryId, mCurrentPage);
 					throw new FileNotFoundException();
 				}
 			} catch (FileNotFoundException e) {
@@ -92,15 +94,21 @@ public abstract class StoryLoader extends AsyncTaskLoader<StoryChapter> {
 				return null;
 			}
 		} else {
-			try {
-				html = getStoryFromSite(mStoryId, mCurrentPage, mData);
-				if (html == null) {
-					mResult = Result.ERROR_PARSE;
-					return null;
-				}
-			} catch (IOException e) {
-				mResult = Result.ERROR_CONNECTION;
+			// Must download story from the internet.
+
+			// See if it has already been downloaded
+			if (mDataFromWebView == null){
+				// Download the data if it hasn't been downloaded
+				mResult = Result.ERROR_CLOUDFLARE_CAPTCHA;
 				return null;
+			} else if (mDataFromWebView.equalsIgnoreCase("404")){
+				// Connection failure
+				mResult = Result.ERROR_CONNECTION;
+				mDataFromWebView = null;
+				return null;
+			} else{
+				html = parseHTML(mDataFromWebView, mData);
+				mDataFromWebView = null;
 			}
 		}
 
@@ -137,7 +145,11 @@ public abstract class StoryLoader extends AsyncTaskLoader<StoryChapter> {
 			outState.putParcelable(STATE_DATA, mData);
 		}
 	}
-	
+
+	public void setHtmlFromWebView(String data){
+		mDataFromWebView = data;
+	};
+
 	private void syncSql(){
 		//If the cursor is null, create a new cursor and register it
 		if(mCursor == null){
@@ -176,10 +188,14 @@ public abstract class StoryLoader extends AsyncTaskLoader<StoryChapter> {
 	 * @throws FileNotFoundException If the requested file is not found 
 	 */
 	protected abstract String getStoryFromFile(final long storyId,final int currentPage) throws FileNotFoundException;
+
+	protected abstract Uri getUri();
 	
 	protected abstract String getStoryFromSite(final long storyId,final int currentPage, StoryChapter data) throws IOException;
 
-	protected abstract void redownload(final long storyId, final int currentPage);
+	protected abstract String parseHTML(final String html, StoryChapter data);
+
+	protected abstract void reDownload(final long storyId, final int currentPage);
 	
 	/**
 	 * Closes the cursor when finished
@@ -203,6 +219,14 @@ public abstract class StoryLoader extends AsyncTaskLoader<StoryChapter> {
 			mResult = Result.SUCCESS;
 			deliverResult(mData);
 		}
+	}
+
+	protected final int getCurrentPage(){
+		return mCurrentPage;
+	}
+
+	protected final long getStoryId(){
+		return mStoryId;
 	}
 }
 
