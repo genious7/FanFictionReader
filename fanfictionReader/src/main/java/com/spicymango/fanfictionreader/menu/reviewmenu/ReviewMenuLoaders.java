@@ -18,6 +18,7 @@ import org.jsoup.select.Elements;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -70,14 +71,14 @@ final class ReviewMenuLoaders {
 				// Get the chapter and story id from the uri
 				Matcher matcher = URI_PATTERN.matcher(uri.toString());
 				if (matcher.find()){
-					mStoryId = Long.parseLong(matcher.group(1));
+					mStoryId = Long.parseLong(Objects.requireNonNull(matcher.group(1)));
 
 					// If there is no chapter id, use 0 as default (all chapters)
 					if (matcher.group(2) == null){
 						mChapter = 0;
 						mTotalChapters = 0;
 					} else{
-						mChapter = Integer.parseInt(matcher.group(2));
+						mChapter = Integer.parseInt(Objects.requireNonNull(matcher.group(2)));
 						mTotalChapters = mChapter;
 					}
 				} else{
@@ -146,12 +147,12 @@ final class ReviewMenuLoaders {
 				// The last link exists. Get the page number from there
 				Uri link = Uri.parse(lastLink.absUrl("href"));
 				String pageNumber = link.getLastPathSegment();
-				maxPage = Integer.valueOf(pageNumber);
+				maxPage = Integer.parseInt(pageNumber);
 			} else if (nextLink != null) {
 				// The "next" link exists. Get the page number from there
 				Uri link = Uri.parse(nextLink.absUrl("href"));
 				String pageNumber = link.getLastPathSegment();
-				maxPage = Integer.valueOf(pageNumber);
+				maxPage = Integer.parseInt(pageNumber);
 			} else {
 				// The current page is the last page
 				maxPage = getCurrentPage();
