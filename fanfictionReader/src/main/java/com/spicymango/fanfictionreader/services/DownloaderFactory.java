@@ -38,7 +38,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.Date;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -85,12 +84,10 @@ class DownloaderFactory {
 	 * @return The downloader that works for the requested URI
 	 */
 	static Downloader getInstance(Uri uri, Context context, WebView webView) {
-		switch (URI_MATCHER.match(uri)) {
-			case FAN_FICTION:
-				return new FanFictionDownloader(uri, context, webView);
-			default:
-				throw new UnsupportedOperationException("Downloader Factory does not support the Uri: " + uri);
+		if (URI_MATCHER.match(uri) == FAN_FICTION) {
+			return new FanFictionDownloader(uri, context, webView);
 		}
+		throw new UnsupportedOperationException("Downloader Factory does not support the Uri: " + uri);
 	}
 
 	/**
@@ -159,7 +156,7 @@ class DownloaderFactory {
 		 */
 		void EnableIncrementalUpdating();
 
-		void downloadIfMissing() throws IOException, ParseException, StoryNotFoundException;;
+		void downloadIfMissing() throws IOException, ParseException, StoryNotFoundException;
 	}
 
 	private static final class FanFictionDownloader implements Downloader{
@@ -527,6 +524,8 @@ class DownloaderFactory {
 		}
 
 		private class CustomWebView extends WebViewClient {
+			private final Object internalMutex = new Object();
+			private boolean mHasLoaded;
 
 			@Override
 			public void onReceivedError(WebView view, WebResourceRequest request,
@@ -543,14 +542,35 @@ class DownloaderFactory {
 			public void onReceivedHttpError(WebView view, WebResourceRequest request,
 											WebResourceResponse errorResponse) {
 				super.onReceivedHttpError(view, request, errorResponse);
-				mHtmlFromWebView = "404";
-				synchronized (mutex) {
-					mutex.notify();
-				}
+
+				// If an HttpError is received, it may be a "Wait a few seconds" Cloudflare page.
+				// Use the internalMutex to wait 5 seconds before assuming an error.
+				mHasLoaded = false;
+				new Thread(()->{
+					synchronized (internalMutex){
+						try {
+							internalMutex.wait(5*1000);
+						} catch (InterruptedException ignored) {}
+					}
+
+					if (!mHasLoaded){
+
+						// Even after waiting, the error persists. Return a connection error.
+						mHtmlFromWebView = "404";
+						synchronized (mutex) {
+							mutex.notify();
+						}
+					}
+				}).start();
 			}
 
 			@Override
 			public void onPageFinished(WebView view, String url) {
+				// Notify mutex that the Cloudflare "Wait a few seconds" page has loaded.
+				mHasLoaded = true;
+				synchronized (internalMutex){
+					internalMutex.notify();
+				}
 
 				// Pass the cookies from the webView to the cookie storage
 				final CookieManager manager = CookieManager.getInstance();
@@ -571,7 +591,6 @@ class DownloaderFactory {
 						Log.d(getClass().getSimpleName(), "Failed to parse URI =" + url, e);
 					}
 				}
-
 
 				// Retrieve the html code.
 				view.loadUrl("javascript:window.HTMLOUT.processHTML('<html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>');");

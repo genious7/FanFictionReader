@@ -2,6 +2,8 @@ package com.spicymango.fanfictionreader.menu;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +36,9 @@ public class CloudflareFragment extends Fragment {
 	public final static String EXTRA_URI = "uri";
 
 	private WebView mWebView;
+	private final Object mutex = new Object();
+	private boolean mHasLoaded;
+
 
 	@SuppressLint({"SetJavaScriptEnabled", "AddJavascriptInterface"})
 	@Nullable
@@ -121,6 +126,32 @@ public class CloudflareFragment extends Fragment {
 		manager.beginTransaction().remove(CloudflareFragment.this).commit();
 	}
 
+	/**
+	 * Waits 5 seconds (just in case the current error is a Cloudflare wait page), then closes the
+	 * fragment, returning an error.
+	 */
+	private void waitThenCloseFragment(){
+		if (!isAdded())	return; // If the activity has been closed, then disregard the results.
+
+		mHasLoaded = false;
+
+		final Runnable runnable = () -> {
+			try {
+				synchronized (mutex){
+					mutex.wait(5*1000); // Wait 5 seconds before timing out
+				}
+			} catch (InterruptedException ignored) {}
+
+			// If the page hasn't loaded by then, close the fragment whilst throwing an error.
+			if (!mHasLoaded){
+				// Close the fragment from the main thread.
+				new Handler(Looper.getMainLooper()).post(()-> closeFragment("404"));
+			}
+		};
+
+		new Thread(runnable).start();
+	}
+
 	private class JavascriptListener{
 		@android.webkit.JavascriptInterface
 		public void processHTML(String html){
@@ -141,11 +172,16 @@ public class CloudflareFragment extends Fragment {
 		public void onReceivedHttpError(WebView view, WebResourceRequest request,
 										WebResourceResponse errorResponse) {
 			super.onReceivedHttpError(view, request, errorResponse);
-			closeFragment("404");
+			waitThenCloseFragment();
 		}
 
 		@Override
 		public void onPageFinished(WebView view, String url) {
+			// Stop the HttpErrorTimer if it is running.
+			mHasLoaded = true;
+			synchronized (mutex) {
+				mutex.notify();
+			}
 
 			// Pass the cookies from the webView to the cookie storage
 			final CookieManager manager = CookieManager.getInstance();
