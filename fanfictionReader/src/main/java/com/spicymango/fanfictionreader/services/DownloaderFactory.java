@@ -147,9 +147,11 @@ class DownloaderFactory {
 		 *
 		 * @param lastPageRead The last chapter read by the user
 		 * @param scrollOffset The user's position along the chapter
+		 * @param saveChapters True if both chapters and metadata should be saved, false if only
+		 *                           metadata should be updated.
 		 * @throws IOException If writing to the device memory fails
 		 */
-		void saveStory(int lastPageRead, int scrollOffset) throws IOException;
+		void saveStory(int lastPageRead, int scrollOffset, boolean saveChapters) throws IOException;
 
 		/**
 		 * Instructs the downloader to skip pre-existing chapters.
@@ -378,11 +380,13 @@ class DownloaderFactory {
 		}
 
 		@Override
-		public void saveStory(int lastPageRead, int scrollOffset) throws IOException{
+		public void saveStory(int lastPageRead, int scrollOffset, boolean saveChapters) throws IOException{
 			// Write each of the chapters downloaded into the file system
-			for (int i = 0; i < mText.size(); i++) {
-				final int key = mText.keyAt(i);
-				FileHandler.writeFile(mContext, mStoryId, key, mText.get(key));
+			if (saveChapters){
+				for (int i = 0; i < mText.size(); i++) {
+					final int key = mText.keyAt(i);
+					FileHandler.writeFile(mContext, mStoryId, key, mText.get(key));
+				}
 			}
 
 			// By default, the Story object has a date added equal to 0 upon creation. If this value

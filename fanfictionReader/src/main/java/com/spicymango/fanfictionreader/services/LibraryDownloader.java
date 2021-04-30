@@ -377,7 +377,7 @@ public class LibraryDownloader extends IntentService {
 					showSavingNotification(storyTitle, downloadStartTime);
 				}
 
-				downloader.saveStory(currPage,offset);
+				downloader.saveStory(currPage,offset, updated);
 
 				// If updated, add the title of the story to the list so that it is displayed
 				// in the completed notification
