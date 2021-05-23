@@ -111,6 +111,7 @@ public class LibraryDownloader extends IntentService {
 
 	/** Keeps track of errors*/
 	private boolean hasParsingError, hasConnectionError, hasIoError;
+	private int consecutiveConnectionErrors;
 
 	/**
 	 * Stores the time at which the update process began. This is used to calculate the time elapsed
@@ -181,6 +182,7 @@ public class LibraryDownloader extends IntentService {
 		hasParsingError = false;
 		hasConnectionError = false;
 		hasIoError = false;
+		consecutiveConnectionErrors = 0;
 
 		// An atomic integer is used to synchronize incoming requests (which occur on the main
 		// thread) with the website downloads, which occur asynchronously.
@@ -332,7 +334,7 @@ public class LibraryDownloader extends IntentService {
 		final DownloaderFactory.Downloader downloader = DownloaderFactory.getInstance(uri, LibraryDownloader.this, mWebView);
 
 		// The story variable holds the story's attributes
-		final Story story;
+		Story story;
 
 		// True if the story was updated, false otherwise. This is used to determine if the story's
 		// name should be added to the notification.
@@ -340,7 +342,26 @@ public class LibraryDownloader extends IntentService {
 
 		try {
 			// First, the story details are obtained in order to determine if a new update is available.
-			story = downloader.getStoryState();
+			// Note that should an IOException occur,it should retry as required.
+			while (true){
+				try {
+					story = downloader.getStoryState();
+					consecutiveConnectionErrors = 0;
+					break;
+				} catch (IOException e){
+					// Wait 5 seconds and re-download the chapter
+					try	{
+						Thread.sleep(5000);
+					}
+					catch(InterruptedException ex){
+						Thread.currentThread().interrupt();
+					}
+
+					consecutiveConnectionErrors++;
+					if (consecutiveConnectionErrors > 3) throw e;
+				}
+			}
+
 
 			// The story title can be obtained from the story attributes
 			final String storyTitle = story.getName();
@@ -351,7 +372,25 @@ public class LibraryDownloader extends IntentService {
 				// Download each missing chapter, updating the notification as required
 				while (downloader.hasNextChapter()) {
 					showUpdateNotification(storyTitle, downloader.getCurrentChapter(), downloader.getTotalChapters(), downloadStartTime);
-					downloader.downloadIfMissing();
+
+					while (true){
+						try {
+							downloader.downloadIfMissing();
+							consecutiveConnectionErrors = 0;
+							break;
+						} catch (IOException e){
+							// Wait 5 seconds and re-download the chapter
+							try	{
+								Thread.sleep(5000);
+							}
+							catch(InterruptedException ex){
+								Thread.currentThread().interrupt();
+							}
+
+							consecutiveConnectionErrors++;
+							if (consecutiveConnectionErrors > 3) throw e;
+						}
+					}
 				}
 			} else if (downloader.isUpdateNeeded()) {
 				// If an update is required, begin the process
@@ -363,7 +402,25 @@ public class LibraryDownloader extends IntentService {
 				// Download each chapter, updating the notification as required
 				while (downloader.hasNextChapter()) {
 					showUpdateNotification(storyTitle, downloader.getCurrentChapter(), downloader.getTotalChapters(), downloadStartTime);
-					downloader.downloadChapter();
+
+					while (true){
+						try {
+							downloader.downloadChapter();
+							consecutiveConnectionErrors = 0;
+							break;
+						} catch (IOException e){
+							// Wait 5 seconds and re-download the chapter
+							try	{
+								Thread.sleep(5000);
+							}
+							catch(InterruptedException ex){
+								Thread.currentThread().interrupt();
+							}
+
+							consecutiveConnectionErrors++;
+							if (consecutiveConnectionErrors > 3) throw e;
+						}
+					}
 				}
 				updated = true;
 			}
