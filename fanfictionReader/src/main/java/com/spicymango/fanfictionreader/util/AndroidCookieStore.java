@@ -117,7 +117,7 @@ public class AndroidCookieStore implements CookieStore {
 			final ListIterator<HttpCookie> iterator = cookieList.listIterator();
 			while (iterator.hasNext()){
 				final HttpCookie existingCookie = iterator.next();
-				if (existingCookie.equals(httpCookie)){
+				if (existingCookie != null && existingCookie.equals(httpCookie)){
 					iterator.set(httpCookie);
 					return;
 				}
