@@ -165,7 +165,9 @@ public class CloudflareFragment extends Fragment {
 		public void onReceivedError(WebView view, WebResourceRequest request,
 									WebResourceError error) {
 			super.onReceivedError(view, request, error);
-			closeFragment("404");
+			if (!request.getUrl().toString().contains("pagead")) {
+				closeFragment("404");
+			}
 		}
 
 		@Override
