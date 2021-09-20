@@ -536,9 +536,11 @@ class DownloaderFactory {
 										WebResourceError error) {
 				super.onReceivedError(view, request, error);
 
-				mHtmlFromWebView = "404";
-				synchronized (mutex) {
-					mutex.notify();
+				if (!request.getUrl().toString().contains("pagead")) {
+					mHtmlFromWebView = "404";
+					synchronized (mutex) {
+						mutex.notify();
+					}
 				}
 			}
 
